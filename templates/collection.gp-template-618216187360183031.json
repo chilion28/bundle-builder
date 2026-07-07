@@ -1,0 +1,81 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_global_section_619060268827149105-1": {
+      "type": "gp-global-section-619060268827149105",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "",
+        "ggk7Ql--A4V_text_-1756488287": "15,000+ 5-star reviews",
+        "ggSwL4B5oE7_text_-966551691": "decorated and shipped in the usa",
+        "gg8A9jqlxpN_text_-2141820665": "fast custom production"
+      }
+    },
+    "gp_global_section_619060331221615451-2": {
+      "type": "gp-global-section-619060331221615451",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "",
+        "ggf8iTJD_Ha_text_-1411787252": "Step 1",
+        "ggF0XTIuky5_text_68254240": "Choose your state",
+        "ggmpyQqEiNe_text_852527030": "Step 2",
+        "ggxjKTBkpNi_text_-1807806287": "Choose your style",
+        "ggYTl6uXBts_text_1171765024": "Step 3",
+        "ggok82rYtMI_text_1208225707": "Customize Your Hat",
+        "gg-r0AKfk4u_text_852008465": "Step 2: Choose Your California License Plate Style",
+        "ggWD72XBEzh_text_-1229370595": "All designs are fully customizable in the next step."
+      }
+    },
+    "gp_section_618217598139499478": {
+      "type": "gp-section-618217598139499478",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "086eb5fbae68c336339a205febc375c15972f7f3e330dbfa1bb0f687ba6edfa6_1_1_0_0__1"
+      }
+    },
+    "gp_section_618223676088648401": {
+      "type": "gp-section-618223676088648401",
+      "settings": {
+        "checksum": "bc53bb12a21d884ae7ad47aae03d048d80b523f8e080322badbbb081c3356aa0_1_1_0_0__1",
+        "ggiOpCPGE9g_label": "<p>Most Popular</p>",
+        "ggSMKHhiYhk_text": "Best Seller",
+        "ggLZ1u45BUH_viewMoreText": "Show more",
+        "ggLZ1u45BUH_viewLessText": "Show less",
+        "ggOCOKMwFKf_text": "Classic Look",
+        "ggyuk1aMD2Z_text": "<p>Goes with everything</p>",
+        "ggKdxSkoGij_text": "great gift",
+        "gg8XePpsXSJ_text": "<p>Multiple hat styles and color options</p>",
+        "ggGa2C61szO_text": "Printed on 100% leather",
+        "ggtsL5wSidD_text": "<p>Our patches are riveted not glued</p>",
+        "ggMJq0dc3kO_label": "Customize this design →",
+        "ggJyPeiZ-EW_text": "<p><strong><sup>*</sup>You can customize everything in the next step</strong></p>"
+      }
+    },
+    "gp_section_618223774638015446": {
+      "type": "gp-section-618223774638015446",
+      "settings": {
+        "checksum": "a1bfd97dedfdb26ffef98f66df1549698591742dc2c99d2cd110d33be7ec339b_1_1_0_0__1",
+        "gggRwAoqGmg_sortingTextDisplay": "Sorting",
+        "gggRwAoqGmg_quantityTextDisplay": "%number% products",
+        "ggZRfWaL9pC_label": "Choose this design",
+        "ggbY4OSNkAv_previousText": "PREVIOUS",
+        "ggbY4OSNkAv_nextText": "NEXT"
+      }
+    }
+  },
+  "order": [
+    "gp_section_618217598139499478",
+    "gp_global_section_619060268827149105-1",
+    "gp_global_section_619060331221615451-2",
+    "gp_section_618223676088648401",
+    "gp_section_618223774638015446"
+  ]
+}

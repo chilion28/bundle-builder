@@ -1,0 +1,52 @@
+
+<script type="text/javascript">
+  document.addEventListener('wonderment:shipments_loaded', function(event) {
+  
+    document.addEventListener('rebuy.ready', function(event){
+      if(event.detail.widget.id == "{{section.settings.rebuy-widget-id}}") {
+        const widget = event.detail.widget;
+        const orderId = window.wonderment.shipments[0].order.id;
+        if (orderId) {
+          widget.data.shopify_order_ids = [orderId];
+          widget.getWidgetProducts()
+        }
+      }
+    });
+    
+    let rebuyContainer = document.createElement('div');
+    rebuyContainer.dataset.rebuyId = "{{section.settings.rebuy-widget-id}}";
+    rebuyContainer.dataset.rebuyShopifyOrderIds = event.shipments[0].order.id;
+  document.getElementById('wonderment-rebuy').appendChild(rebuyContainer);
+        
+    Rebuy.init();
+  });
+</script>
+ 
+<div id="wonderment-rebuy"></div>
+
+
+{% schema %}
+  {
+    "name": "📦 Wondersection Rebuy",
+	"tag": "section",
+    "settings": [
+    {
+      "type": "text",
+      "id": "rebuy-widget-id",
+      "label": "Rebuy Widget ID"
+	}
+  ],
+	"presets": [
+    {
+      "name": "📦 Wondersection Rebuy"
+    }
+  ]
+  }
+{% endschema %}
+
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

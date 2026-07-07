@@ -1,0 +1,589 @@
+{% for collection in product.collections %}
+
+	{% if collection.title == 'License Plates' or collection.title == 'Image Hats' %}
+        <button class="accordion">View Bulk Pricing</button>
+        <div class="accordion-content">
+            <table class="discount-info">
+                <thead>
+                    <tr>
+                        <th class="discount-box-header">Order More Save More</th>
+                        <th class="discount-box-header2">Price per item</th>
+                      </tr>
+                </thead>
+                
+                <tbody>
+                <tr>
+                    <td class="discount-box-header2">2+</td>
+                    <td><span class="saso-price">$ 32.99</span></td>
+                  </tr>    
+                <tr>
+                    <td class="discount-box-header2">3+</td>
+                    <td><span class="saso-price">$ 30.99</span></td>
+                  </tr>    
+                <tr>
+                    <td class="discount-box-header2">6+</td>
+                    <td><span class="saso-price">$ 29.99</span></td>
+                  </tr>    
+                <tr>
+                    <td class="discount-box-header2">12+</td>
+                    <td><span class="saso-price">$ 24.99</span></td>
+                  </tr>    
+                <tr>
+                    <td class="discount-box-header2">24+</td>
+                    <td><span class="saso-price">$ 22.99</span></td>
+                  </tr>    
+                <tr>
+                    <td class="discount-box-header2">36+</td>
+                  {% if collection.title == 'Plaid'%}
+                      <td><span class="saso-price">$ 19.99</span>
+                  {% else %}
+                    <td><span class="saso-price">$ 16.99</span></td>
+                  {% endif %}
+                  </tr>    
+                </tbody>
+            </table>
+        </div>
+	{% endif %}
+
+{% endfor %}
+
+{% if product.tags contains "Bulk Discount Switchblade" %}
+<table>
+  <thead>
+  <tr>
+          <th class="discount-box-header">Order More Save More</th>
+            <th class="discount-box-header2">Price per item</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+  <tr>
+      <td class="discount-box-header2">2+</td>
+      <td><span class="saso-price">$ 28.99</span></td>
+  </tr>    
+  <tr>
+      <td class="discount-box-header2">3+</td>
+      <td><span class="saso-price">$ 27.99</span></td>
+  </tr>    
+  <tr>
+      <td class="discount-box-header2">6+</td>
+      <td><span class="saso-price">$ 26.99</span></td>
+  </tr>    
+  <tr>
+      <td class="discount-box-header2">12+</td>
+      <td><span class="saso-price">$ 24.99</span></td>
+  </tr>    
+    </tbody>
+</table>
+{% endif %}
+
+
+{% if product.tags contains "Sarape Custom Hats"%}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 32.99</span></td>
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 30.99</span></td>
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 29.99</span></td>
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+
+{% if product.tags contains "Discount12" %}
+<table>
+  <thead>
+  <tr>
+          <th class="discount-box-header">Order More Save More</th>
+            <th class="discount-box-header2">Price per item</th>
+    </tr>
+    </thead>
+    
+    <tbody>
+  <tr>
+      <td class="discount-box-header2">2+</td>
+      <td><span class="saso-price">$ 28.99</span></td>
+  </tr>    
+  <tr>
+      <td class="discount-box-header2">3+</td>
+      <td><span class="saso-price">$ 27.99</span></td>
+  </tr>    
+  <tr>
+      <td class="discount-box-header2">6+</td>
+      <td><span class="saso-price">$ 26.99</span></td>
+  </tr>    
+  <tr>
+      <td class="discount-box-header2">12+</td>
+      <td><span class="saso-price">$ 24.99</span></td>
+  </tr>    
+    </tbody>
+</table>
+{% endif %}
+{% if product.tags contains "Discount3615" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 32.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 30.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 29.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+
+{% if product.tags contains "Discount3618" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 32.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 30.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 29.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 16.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+
+{% if product.tags contains "GSTbulk" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 27.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 25.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 18.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 14.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+
+{% if product.tags contains "Work-Hats" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 32.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 30.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 29.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 16.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+
+{% if product.tags contains "Butterfly Custom" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 16.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 15.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 14.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 13.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+
+{% if product.tags contains "Tshirtbulk" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 21.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 18.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 17.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 16.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+{% if product.tags contains "wfcolor" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 27.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 25.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 18.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 14.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+{% if product.tags contains "Signatureblankbulk" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 28.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 27.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 20.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+{% if product.tags contains "BulkFlagHat" %}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 32.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 30.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 29.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 16.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}
+{% if product.tags contains "Tacohatbulk"%}
+		<table>
+    	<thead>
+			<tr>
+            	<th class="discount-box-header">Order More Save More</th>
+                <th class="discount-box-header2">Price per item</th>
+            	
+  			</tr>
+        </thead>
+        
+        <tbody>
+    	<tr>
+        	<td class="discount-box-header2">2+</td>
+        	<td><span class="saso-price">$ 32.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">3+</td>
+        	<td><span class="saso-price">$ 30.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">6+</td>
+        	<td><span class="saso-price">$ 29.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">12+</td>
+        	<td><span class="saso-price">$ 24.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">24+</td>
+        	<td><span class="saso-price">$ 22.99</span></td>
+            
+  		</tr>    
+    	<tr>
+        	<td class="discount-box-header2">36+</td>
+        	<td><span class="saso-price">$ 19.99</span></td>
+            
+  		</tr>    
+        </tbody>
+    </table>
+{% endif %}

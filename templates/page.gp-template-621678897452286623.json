@@ -1,0 +1,110 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_621679328224084639": {
+      "settings": {
+        "checksum": "957883d3b132296dbec90cc494b154b406d74b7dd9e185b79286f5b99c10f823_1_1_0_0__1",
+        "gg2OBkR89jW_text": "<p>Get featured in our ads, social media, website, and more.</p>",
+        "ggCKGJEqlp5_text": "<p>Share how CityLocs license plate hats help your business, team, and customers.</p>",
+        "ggMEI-abdaE_text": "<p>If we use your video, you'll receive a $200 CityLocs Gift Card</p>",
+        "ggRDwBLVtW5_childItem_0": "<p>Phone videos are perfect! Takes 2-3 minutes</p>",
+        "ggRhsJbc-oa_text": "Featured",
+        "ggXQUGgp8FM_text": "<p>Business partner spotlight</p>",
+        "ggYjpifOoP0_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-image-3.png",
+        "ggYjpifOoP0_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-image-3b-mobile.png",
+        "ggdEifJ45OE_text": "Get your business",
+        "ggrn51SGU7J_label": "<p>Submit your testimonial video</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-621679328224084639"
+    },
+    "gp_section_622246721723827192": {
+      "settings": {
+        "checksum": "d582949658cf5ddf952997156e4c47acff49c3e870fd3fe574b34e8b04a6faad_1_1_0_0__1",
+        "ggA4MoXgUfQ_text": "Instructional Video",
+        "ggCAL_4B2g-_text": "<strong>In the instructional video you'll learn:</strong>",
+        "ggDnqG_fa2a_text": "<strong>Learn what to say, how to say it and more.</strong>",
+        "ggEhmhjBID6_html5Url": "https://cdn.shopify.com/videos/c/o/v/a7038caf8436405f9ed42b7c81e5cac1.mp4",
+        "ggEhmhjBID6_vimeoUrl": "https://vimeo.com/1095883398",
+        "ggEhmhjBID6_youtubeUrl": "https://www.youtube.com/watch?v=NfASaHFN1zg",
+        "ggKlDMskOSJ_childItem_0": "<p>How have the hats helped promote your business?</p>",
+        "ggKlDMskOSJ_childItem_1": "<p>What do your employees think about them?</p>",
+        "ggKlDMskOSJ_childItem_2": "<p>Do your staff wear them outside of work?</p>",
+        "ggKlDMskOSJ_childItem_3": "<p>Have customers or clients commented on them?</p>",
+        "ggKlDMskOSJ_childItem_4": "<p>Have you gifted them to customers or employees?</p>",
+        "ggKlDMskOSJ_childItem_5": "<p>What makes CityLocs license plate hats stand out?</p>",
+        "ggKlDMskOSJ_childItem_6": "<p>Why did you choose CityLocs?</p>",
+        "ggRfvGQn0f1_childItem_0": "<p>What to talk about</p>",
+        "ggRfvGQn0f1_childItem_1": "<p>How to record on your phone</p>",
+        "ggRfvGQn0f1_childItem_2": "<p>Best lighting and background tips</p>",
+        "ggRfvGQn0f1_childItem_3": "<p>Examples of great videos</p>",
+        "ggSqOb5DBM9_text": "<p>Even a simple 30-60 second video makes a big impact!</p>",
+        "gghG21czhmr_text": "<strong>You don't need a script – just be real</strong>",
+        "ggvWmuAR2Q2_text": "What to talk about"
+      },
+      "type": "gp-section-622246721723827192"
+    },
+    "gp_section_622253208080744993": {
+      "settings": {
+        "checksum": "bc09f8f6b367ce717728bc73bda8552559db8f58163632525ee1472a450e8031_1_1_0_0__1",
+        "ggCWOE5xhi1_text": "Email Campaigns",
+        "ggMnzJhNll6_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/placeholder-img.png",
+        "ggST90J5WJU_text": "Your business could be seen by thousands",
+        "gglhcapgYFI_text": "Future Spotlights",
+        "ggqRPrCUTW2_text": "<strong>Selected videos my be featured across:</strong>",
+        "ggqXMdyOC6y_text": "Paid Ads",
+        "gguZ5dnBM3d_text": "Social Media",
+        "ggweMZCijmi_text": "Website"
+      },
+      "type": "gp-section-622253208080744993"
+    },
+    "gp_section_622255590764184344": {
+      "settings": {
+        "checksum": "e669be2efaf03763df714842c80c8d8833790708346918ead786229fbd84316d_1_1_0_0__1",
+        "ggDlCe3mXPa_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/giftcard5_2x_67c21530-6410-4bd2-aa3a-5add6abf8a82.png",
+        "ggDptD27KG8_text": "Your business could be seen by thousands",
+        "ggDtSC7S_Sm_text": "$200 CityLocs Gift Card",
+        "ggPn6UtQc4s_text": "if we use your story, You'll Receive a",
+        "ggVMDXslh03_text": "It's our way of saying Thank You!"
+      },
+      "type": "gp-section-622255590764184344"
+    },
+    "gp_section_623163691570823821": {
+      "settings": {
+        "checksum": "a89605e932bd6f968a6e6bcfee8273015e21a3b19328169dbc31061ad52cdfc4_1_1_0_0__1",
+        "ggasMaHA-dr_text": "Submit your video"
+      },
+      "type": "gp-section-623163691570823821"
+    },
+    "gp_section_623425140759200724": {
+      "settings": {
+        "checksum": "685a5c87ac0f95ba51fd8a556c130e49b15bc4838c87e9c1abb5665fe44fe228_1_1_0_0__1",
+        "ggJJdqWKC4__label": "<p>Submit testimonial video</p>",
+        "ggMtSPdiCa__text": "Showcase your team",
+        "ggcs5rZgh39_text": "<p>Get featured in our ads, social media, website, email campaigns and more</p>",
+        "ggcsNEDBI1c_text": "Get Rewarded",
+        "ggdF98vjD9N_text": "<p>If we use your video, you'll receive a <strong>$200 CityLocs Gift Card!</strong></p>",
+        "ggfZ7n-5LaV_text": "WHy Businesses participate",
+        "gggIijK9Xes_text": "<p>Highlight your team culture, employees, and the real impact of license plate hats.</p>",
+        "gglQqfV9Pn__text": "Promote your business"
+      },
+      "type": "gp-section-623425140759200724"
+    }
+  },
+  "order": [
+    "gp_section_621679328224084639",
+    "gp_section_623425140759200724",
+    "gp_section_622246721723827192",
+    "gp_section_622253208080744993",
+    "gp_section_622255590764184344",
+    "gp_section_623163691570823821"
+  ]
+}

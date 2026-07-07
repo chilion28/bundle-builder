@@ -1,0 +1,73 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_621265562365920202": {
+      "settings": {
+        "checksum": "569ac45694bcb09e0e7135eb51c2725e5dc3120c9c2145ed493a54a29acadabe_1_1_0_0__1",
+        "gg2BqLPhJMj_text": "Step 1:",
+        "ggK8Fb6BuP-_text": "your way",
+        "ggKg0zhBhRT_text": "<p>over 1,000+ Reviews</p>",
+        "ggOLbsTVBQ3_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-image-3Artboard-1.png",
+        "ggOLbsTVBQ3_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-image-3-mobileArtboard-2.png",
+        "ggQAonRLroz_text": "&nbsp;Choose your state",
+        "ggTZFO5ytes_childItem_0": "<p>All 50 U. S. states available&nbsp;</p>",
+        "ggWP9MUjLm6_text": "Build your custom Metal license plate",
+        "ggXikwuk005_text": "<p>Choose your state, personalize your text, and&nbsp;we'll make it for you.</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-621265562365920202"
+    },
+    "gp_section_621265562365985738": {
+      "settings": {
+        "checksum": "1ad09273a9cf337595695bf20fbcc4580c24bef7779f2f6b92d9bc2ca79e9800_1_1_0_0__1",
+        "ggKtTmcrJ6r_text": "Trusted By More Than 250,000 Customers"
+      },
+      "type": "gp-section-621265562365985738"
+    },
+    "gp_section_621265562366051274": {
+      "settings": {
+        "checksum": "dbcd718328308bc2a08b946c43c8c43454a2fe58fa6d2752ecfaecd85ed58e68_1_1_0_0__1",
+        "gg15qifrKgC_text": "<p>Custom decorated by our team and shipped from the USA</p>",
+        "ggLIVvEpdeV_srcSet_desktop_src": "https://ucarecdn.com/3495fcb4-ec4c-4d5e-b41d-722b7af46a44/-/format/auto/-/preview/3000x3000/-/quality/lighter/S1-min.png",
+        "ggQUlFSh6ut_text": "<p>Fast Custom Production</p>",
+        "ggTXfQ774cG_srcSet_desktop_src": "https://ucarecdn.com/4e6beb65-4402-471a-9ebf-390201a06758/-/format/auto/-/preview/3000x3000/-/quality/lighter/s2-min.png",
+        "ggW7pMHipgh_text": "<p>decorated and shipped in the USA</p>",
+        "ggWdMaI8yAx_srcSet_desktop_src": "https://ucarecdn.com/601d7943-0f15-4064-bef2-4067bfa3e8ff/-/format/auto/-/preview/3000x3000/-/quality/lighter/14-min.png",
+        "ggZ3bo2fBTJ_srcSet_desktop_src": "https://ucarecdn.com/72eff214-e480-4df7-82aa-1f866ef0fea4/-/format/auto/-/preview/3000x3000/-/quality/lighter/33-min.png",
+        "gglP5b1u32z_srcSet_desktop_src": "https://ucarecdn.com/3ea590a2-b789-46cf-a43e-67908e1c2386/-/format/auto/-/preview/3000x3000/-/quality/lighter/s11-min.png",
+        "ggnijTw2VKl_text": "<p>Loved by thousands of happy customers</p>",
+        "ggqR5kRcCUJ_text": "<p>1000+ 5-STAR REVIEWS</p>",
+        "ggvM9OHoAbB_text": "<p>Made in 5-7 days and delivered in 10-12 business days</p>"
+      },
+      "type": "gp-section-621265562366051274"
+    },
+    "gp_section_621524268261311463": {
+      "settings": {
+        "checksum": "c7731253d7dd8219e0d79319e19c6cf5566ea4eb48c57d2e8ff8b3ce74221b05_1_1_0_0__1"
+      },
+      "type": "gp-section-621524268261311463"
+    },
+    "gp_section_621567557303796682": {
+      "settings": {
+        "checksum": "741e15164ffa2c7b569b5acd16f2b00370375065290c8d6ae7e9c83122bd5dc0_1_1_0_0__1",
+        "ggMb5WjYQrG_text": "<p><strong>For decor use only. Not street legal.</strong></p>"
+      },
+      "type": "gp-section-621567557303796682"
+    }
+  },
+  "order": [
+    "gp_section_621265562365920202",
+    "gp_section_621567557303796682",
+    "gp_section_621265562366051274",
+    "gp_section_621265562365985738",
+    "gp_section_621524268261311463"
+  ]
+}

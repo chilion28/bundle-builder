@@ -1,0 +1,273 @@
+
+    {% render 'gp-head', isThemeSection: true %}
+    
+    <style {% if section.settings.section_preload == "false" %} class="gps-link gps-style" type="text/disabled-css" {% endif %}>.gps-619060716141282005.gps.gpsil [style*="--bg:"]{background:var(--bg)}.gps-619060716141282005.gps.gpsil [style*="--bga:"]{background-attachment:var(--bga)}.gps-619060716141282005.gps.gpsil [style*="--bgc:"]{background-color:var(--bgc)}.gps-619060716141282005.gps.gpsil [style*="--bgi:"]{background-image:var(--bgi)}.gps-619060716141282005.gps.gpsil [style*="--bgp:"]{background-position:var(--bgp)}.gps-619060716141282005.gps.gpsil [style*="--bgr:"]{background-repeat:var(--bgr)}.gps-619060716141282005.gps.gpsil [style*="--bgs:"]{background-size:var(--bgs)}.gps-619060716141282005.gps.gpsil [style*="--b:"]{border:var(--b)}.gps-619060716141282005.gps.gpsil [style*="--bb:"]{border-bottom:var(--bb)}.gps-619060716141282005.gps.gpsil [style*="--bc:"]{border-color:var(--bc)}.gps-619060716141282005.gps.gpsil [style*="--bblr:"]{border-bottom-left-radius:var(--bblr)}.gps-619060716141282005.gps.gpsil [style*="--bbrr:"]{border-bottom-right-radius:var(--bbrr)}.gps-619060716141282005.gps.gpsil [style*="--bl:"]{border-left:var(--bl)}.gps-619060716141282005.gps.gpsil [style*="--bs:"]{border-style:var(--bs)}.gps-619060716141282005.gps.gpsil [style*="--bt:"]{border-top:var(--bt)}.gps-619060716141282005.gps.gpsil [style*="--btlr:"]{border-top-left-radius:var(--btlr)}.gps-619060716141282005.gps.gpsil [style*="--btrr:"]{border-top-right-radius:var(--btrr)}.gps-619060716141282005.gps.gpsil [style*="--bw:"]{border-width:var(--bw)}.gps-619060716141282005.gps.gpsil [style*="--c:"]{color:var(--c)}.gps-619060716141282005.gps.gpsil [style*="--cg:"]{-moz-column-gap:var(--cg);column-gap:var(--cg)}.gps-619060716141282005.gps.gpsil [style*="--gtc:"]{grid-template-columns:var(--gtc)}.gps-619060716141282005.gps.gpsil [style*="--h:"]{height:var(--h)}.gps-619060716141282005.gps.gpsil [style*="--jc:"]{justify-content:var(--jc)}.gps-619060716141282005.gps.gpsil [style*="--m:"]{margin:var(--m)}.gps-619060716141282005.gps.gpsil [style*="--mb:"]{margin-bottom:var(--mb)}.gps-619060716141282005.gps.gpsil [style*="--op:"]{opacity:var(--op)}.gps-619060716141282005.gps.gpsil [style*="--o:"]{order:var(--o)}.gps-619060716141282005.gps.gpsil [style*="--pc:"]{place-content:var(--pc)}.gps-619060716141282005.gps.gpsil [style*="--p:"]{padding:var(--p)}.gps-619060716141282005.gps.gpsil [style*="--pb:"]{padding-bottom:var(--pb)}.gps-619060716141282005.gps.gpsil [style*="--pl:"]{padding-left:var(--pl)}.gps-619060716141282005.gps.gpsil [style*="--pr:"]{padding-right:var(--pr)}.gps-619060716141282005.gps.gpsil [style*="--pt:"]{padding-top:var(--pt)}.gps-619060716141282005.gps.gpsil [style*="--rg:"]{row-gap:var(--rg)}.gps-619060716141282005.gps.gpsil [style*="--ta:"]{text-align:var(--ta)}.gps-619060716141282005.gps.gpsil [style*="--t:"]{transform:var(--t)}.gps-619060716141282005.gps.gpsil [style*="--w:"]{width:var(--w)}@media only screen and (max-width:1024px){.gps-619060716141282005.gps.gpsil [style*="--mb-tablet:"]{margin-bottom:var(--mb-tablet)}.gps-619060716141282005.gps.gpsil [style*="--pb-tablet:"]{padding-bottom:var(--pb-tablet)}.gps-619060716141282005.gps.gpsil [style*="--pl-tablet:"]{padding-left:var(--pl-tablet)}.gps-619060716141282005.gps.gpsil [style*="--pr-tablet:"]{padding-right:var(--pr-tablet)}.gps-619060716141282005.gps.gpsil [style*="--pt-tablet:"]{padding-top:var(--pt-tablet)}.gps-619060716141282005.gps.gpsil [style*="--w-tablet:"]{width:var(--w-tablet)}}@media only screen and (max-width:767px){.gps-619060716141282005.gps.gpsil [style*="--mb-mobile:"]{margin-bottom:var(--mb-mobile)}.gps-619060716141282005.gps.gpsil [style*="--pb-mobile:"]{padding-bottom:var(--pb-mobile)}.gps-619060716141282005.gps.gpsil [style*="--pl-mobile:"]{padding-left:var(--pl-mobile)}.gps-619060716141282005.gps.gpsil [style*="--pr-mobile:"]{padding-right:var(--pr-mobile)}.gps-619060716141282005.gps.gpsil [style*="--pt-mobile:"]{padding-top:var(--pt-mobile)}.gps-619060716141282005.gps.gpsil [style*="--w-mobile:"]{width:var(--w-mobile)}}.gps-619060716141282005 .gp-relative{position:relative}.gps-619060716141282005 .gp-mx-auto{margin-left:auto;margin-right:auto}.gps-619060716141282005 .gp-mb-0{margin-bottom:0}.gps-619060716141282005 .gp-flex{display:flex}.gps-619060716141282005 .gp-grid{display:grid}.gps-619060716141282005 .\!gp-hidden{display:none!important}.gps-619060716141282005 .gp-hidden{display:none}.gps-619060716141282005 .gp-max-w-full{max-width:100%}.gps-619060716141282005 .gp-grid-rows-\[1fr\]{grid-template-rows:1fr}.gps-619060716141282005 .gp-flex-col{flex-direction:column}.gps-619060716141282005 .gp-transition-colors{transition-duration:.15s;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1)}.gps-619060716141282005 .gp-duration-200{transition-duration:.2s}.gps-619060716141282005 .gp-ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}@media (max-width:1024px){.gps-619060716141282005 .tablet\:\!gp-hidden{display:none!important}.gps-619060716141282005 .tablet\:gp-hidden{display:none}}@media (max-width:767px){.gps-619060716141282005 .mobile\:\!gp-hidden{display:none!important}.gps-619060716141282005 .mobile\:gp-hidden{display:none}}.gps-619060716141282005 .\[\&_\*\]\:gp-max-w-full *{max-width:100%}</style>
+    
+  
+    
+    
+    
+
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+
+    
+        <section
+          class="gp-mx-auto gp-max-w-full [&_*]:gp-max-w-full {% if section.settings.section_preload == "false" %}gps-lazy {% endif %}"
+          style="--w:100%;--w-tablet:calc(var(--g-ct-w, 100%) + 2 * var(--g-ct-p, 15px));--w-mobile:calc(var(--g-ct-w, 100%) + 2 * var(--g-ct-p, 15px));--pl:none;--pl-tablet:none;--pl-mobile:none;--pr:none;--pr-tablet:none;--pr-mobile:none"
+        >
+          
+    <gp-row gp-data='{"background":{"desktop":{"type":"color","color":"transparent","image":{"src":"","width":0,"height":0},"size":"cover","position":{"x":50,"y":50},"repeat":"no-repeat","attachment":"scroll"}},"uid":"gTkCleuc95"}' data-id="gTkCleuc95" id="gTkCleuc95" data-same-height-subgrid-container class="gTkCleuc95 gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--blockPadding:base;--pt:0px;--pb:0px;--pt-tablet:0px;--pb-tablet:0px;--pt-mobile:0px;--pb-mobile:0px;--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:100%;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gdY-KUffgx gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"gjcB8upUhW"}' data-id="gjcB8upUhW" id="gjcB8upUhW" data-same-height-subgrid-container class="gjcB8upUhW gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--mb:0px;--mb-tablet:0px;--mb-mobile:0px;--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:var(--g-ct-w, 1200px);--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gP7NFitKUl gp-relative gp-flex gp-flex-col"
+    >
+      
+  
+    <div
+      data-id="gFf2aDbm4O"
+      style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:left;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll"
+      data-keep-class="true"
+      class="gFf2aDbm4O gp-custom-code">
+      <div>
+    
+    </div>
+    </div>
+  
+      <style id="custom-css-gFf2aDbm4O">
+        @import url("https://use.typekit.net/qcy3niw.css");
+
+:root {
+--fs-sm: clamp(0.8rem, 0.17vi + 0.76rem, 0.89rem);
+--fs-base: clamp(1rem, 0.34vi + 0.91rem, 1.19rem);
+--fs-md: clamp(1.25rem, 0.61vi + 1.1rem, 1.58rem);
+--fs-lg: clamp(1.56rem, 1vi + 1.31rem, 2.11rem);
+--fs-xl: clamp(1.95rem, 1.56vi + 1.56rem, 2.81rem);
+--fs-xxl: clamp(2.44rem, 2.38vi + 1.85rem, 3.75rem);
+--fs-xxxl: clamp(3.05rem, 3.54vi + 2.17rem, 5rem);
+--fs-supersized: clamp(3.375rem, 0.9318rem + 6.5152vw, 8.75rem);
+}
+
+/** {border: 1px solid red !important;}*/
+.din-condensed-light h1, .din-condensed-light h2 {
+    font-family: "din-condensed", sans-serif !important;
+    font-weight: 300;
+    font-style: normal;
+}
+
+.din-condensed-regular h1, .din-condensed-regular h2 {
+    font-family: "din-condensed", sans-serif !important;
+font-weight: 400;
+font-style: normal;
+}
+
+.brushtones-regular h1, .brushtones-regular h2 {
+    font-family: "brushtones", sans-serif !important;
+font-weight: 400;
+font-style: normal;
+}
+
+
+.coffee-service h1, .coffee-service h2 {
+    font-family: "coffee-service", sans-serif !important;
+font-weight: 400;
+font-style: normal;
+}
+
+.flood h1, .flood h2 {
+    font-family: "flood-std", sans-serif !important;
+font-weight: 400;
+font-style: normal;
+}
+
+.angled-text {
+  display: inline-block;
+  transform: rotate(-5deg);
+}
+
+.custom-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Hard Overrides */
+.gCvI4QUvIh {--jc: center !important;}
+
+gp-row#g3UUNM2jjA, gp-row#gB1CAb4c46 {
+
+    object-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 164px;
+   
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(85%, -50%);
+    opacity: 1;
+}
+
+
+.fs-md p {font-size: var(--fs-md) !important; line-height:1.8rem;}
+.fs-lg p {font-size: var(--fs-lg) !important; line-height:2.2rem;}
+.fs-xl {font-size: var(--fs-xl) !important;}
+.fs-xxl {font-size: var(--fs-xxl) !important;}
+.fs-xxxl, .fs-xxxl h2 {font-size: var(--fs-xxxl) !important;}
+.fs-supersized h2 {font-size: var(--fs-supersized) !important;}
+
+
+.gYS2OWU7tB .gDQsoSQjRj, .glqH3RChOl, .gFboGSkFyO, .gde2XsPVfz{
+    border-right:1px solid #e3e3e3 !important;
+}
+
+.form-control {
+    height:54px !important;
+}
+
+label[aria-label="Phone"] {display:none;}
+#NOh426D6yso-SuzILAY_Nw input, #NOh426D6yso-SuzILAY_Nw textarea, #NOh426D6yso-SuzILAY_Nw select, #NOh426D6yso-SuzILAY_Nw .image label, #NOh426D6yso-SuzILAY_Nw .file label, #NOh426D6yso-SuzILAY_Nw .signature label, #NOh426D6yso-SuzILAY_Nw .form-control[disabled], #NOh426D6yso-SuzILAY_Nw .form-control[readonly]
+ {
+    background: #fff;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+    letter-spacing: normal !important;
+}
+
+input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="password"]::placeholder, input[type="number"]::placeholder, textarea::placeholder, select, input.form-control, .checkbox-inline label, .checkbox-inline input[type="checkbox"] + label, a[href="https://citylocs.com/pages/privacy-policy"], textarea, label {
+    font-family: Inter;
+    letter-spacing: normal !important;
+}
+/* HulkApps phone field: hide country code */
+.custom-phone-field > div:first-child {
+  display: none !important;
+}
+
+/* Make phone number input full width */
+.custom-phone-field > div:last-child {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 0 0 100% !important;
+}
+
+.custom-phone-field input[name="Phone"] {
+  width: 100% !important;
+}
+
+.g3UyK8RCix .gp-featured-image-wrapper {
+    mix-blend-mode: multiply;
+}
+.gps-618217543915537143 .\[\&_\*\]\:gp-max-w-full * {
+    max-width: 100%;
+    text-wrap-mode: wrap;
+    text-wrap-style: balance;
+}
+@media only screen and (max-width: 812px) {
+    .fs-md p {font-size: var(--fs-sm) !important; line-height:1.2rem;}
+    .fs-xxxl, .fs-xxxl h2 {font-size: var(--fs-xl) !important; line-height: 1em !important;}
+    gp-row#g3UUNM2jjA, gp-row#gB1CAb4c46 { display: none;}
+    .gYS2OWU7tB .gDQsoSQjRj, .glqH3RChOl, .gFboGSkFyO, .gde2XsPVfz{
+    border-right:none!important;}
+    
+}
+
+@media screen and (max-width: 767px) {
+
+  .gp-gallery-gRz7CLAAqi {display: none !important;}
+  
+  #gYS2OWU7tB {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  #gYS2OWU7tB > div {
+    width: 100% !important;
+  }
+
+  #gYS2OWU7tB h3 {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+  }
+
+  #gYS2OWU7tB p {
+    font-size: 12px !important;
+    line-height: 1.4 !important;
+  }
+  
+   #gYS2OWU7tB {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    justify-items: center;
+  }
+
+  /* make all items fill nicely */
+  #gYS2OWU7tB > div {
+    width: 100% !important;
+    text-align: center;
+  }
+
+  /* LAST ITEM FULL WIDTH */
+  #gYS2OWU7tB > div:last-child {
+    grid-column: 1 / -1;
+    max-width: 280px; /* controls how wide it feels */
+    margin: 0 auto;
+  }
+  
+   #gZVGtfDThB {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  /* FORM FIRST */
+  #gZVGtfDThB > div:nth-child(2) {
+    order: -1;
+  }
+
+  /* TEXT SECOND */
+  #gZVGtfDThB > div:nth-child(1) {
+    order: 1;
+  }
+}
+
+      </style>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+    </div>
+
+      
+    </gp-row>
+  
+        </section>
+      
+  
+    
+{% schema %}
+  {
+    "presets": [{ "name": "Section - Custom CSS" }],
+    "name": "Section - Custom CSS",
+    "tag": "section",
+    "class": "gps-619060716141282005 gps gpsil",
+    "settings": [{"type":"paragraph","content":"Section design by GemPages. [Click here to start design](https://admin.shopify.com/store/citylocs/apps/gempages-cro/app/shopify/edit?pageType=THEME_SECTION&editorId=619060716141282005)"},{"type":"select","label":"Section Preload","id":"section_preload","options":[{"label":"On","value":"true"},{"label":"Off","value":"false"},{"label":"Off Lazy Script","value":"off_lazy_script"}],"default":"off_lazy_script"},{"type":"text","label":"Checksum","id":"checksum"}],
+    "blocks": [{"type": "@app"}],
+    "locales": {}
+  }
+{% endschema %}

@@ -1,0 +1,15 @@
+{% if content_for_header contains "mobilemenu\/async.js" %}
+{% render 'qikify-mobilemenu' %}
+{% endif %}
+{% if content_for_header contains "slideshow\/async.js" %}
+{% render 'qikify-slideshow' %}
+{% endif %}
+{% if content_for_header contains "tmenu\/async.js" %}
+{% render 'qikify-tmenu' %}
+{% endif %}
+{% if content_for_header contains "tranzi\/async.js" %}
+{% render 'qikify-tranzi' %}
+{% endif %}
+{% if content_for_header contains "tmenu\/async.js" or content_for_header contains "mobilemenu\/async.js" %}
+{% render 'qikify-navigator' %}
+{% endif %}

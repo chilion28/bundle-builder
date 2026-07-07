@@ -1,0 +1,100 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_594902990591099826": {
+      "settings": {
+        "checksum": "0d72928aec45fe93c1dfb53a6251fcf7f709e73a147ac79d6689ab57a7eeafdd_1_1_0_0__1",
+        "gg0tC-ZdqA8_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bk-Pro-Five-Profile-Page-1.jpg",
+        "ggCBLpK4FWL_text": "<p><span style=\"background-color:transparent;color:#FFFFFF;font-size:11pt;\">Key Vibes:</span></p>",
+        "ggFiNW7d18R_text": "Trucker Hat",
+        "ggG7Bww0BA2_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:20px;\">A&nbsp;<strong>classic everyday hat</strong> known for comfort and breathability.</span></p>",
+        "ggRxK4WrV_E_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:16px;\"><strong>Adjustable snapback</strong> closure for a perfect fit.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:16px;\">Made with&nbsp;<strong>6 structured panels</strong> for a traditional shape.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:16px;\">Features a&nbsp;<strong>mesh back</strong> that allows air to flow and&nbsp;<strong>keeps you cool</strong>, especially outdoors.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:16px;\">Lightweight and available in a&nbsp;<strong>wide variety of colors</strong>.</span></p>",
+        "ggfOzp7wpYw_text": "<strong>Trucker Hat</strong>",
+        "gggWac9BU9E_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:17px;\"><strong>Ideal for:</strong>&nbsp;</span><span style=\"background-color:transparent;color:#000000;font-size:16px;\"><i>casual wear, outdoor activities, working in the sun, and anyone who wants a relaxed,breathable style.</i></span></p>",
+        "ggqiizwSUiH_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Casual • Cool • Laid-back</span></p>"
+      },
+      "type": "gp-section-594902990591099826"
+    },
+    "gp_section_595030077566091964": {
+      "settings": {
+        "checksum": "cbc1eb0ff4cfeeed14c18487a4ff0496cb3b62e0dc62efa62cc9d09292f5b4f4_1_1_0_0__1",
+        "ggvdEHPJe6l_text": "Hat Guide &amp; Description",
+        "section_preload": "true"
+      },
+      "type": "gp-section-595030077566091964"
+    },
+    "gp_section_595032853524251234": {
+      "settings": {
+        "checksum": "ce01837f1316fb80cc89cdc105c3ea4ed8fd6eeb2ecfa5d296f59d21a23011ec_1_1_0_0__1",
+        "gg-zm22-fNP_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Premium • Performance • Designed by Us</span></p>",
+        "gg2hWdhJ_px_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Unique 5-panel A-frame design</strong> for a clean, modern front and a slightly taller profile.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Adjustable</strong> closure for a customizable fit.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Made from&nbsp;<strong>performance fabric</strong> that is&nbsp;<strong>water-resistant</strong> and easy to clean.</span><br><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Built-in&nbsp;<strong>laser-cut ventilation holes</strong> for breathable comfort without mesh.</span></p>",
+        "gg7ioBtrfo1_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:20px;\">A&nbsp;<strong>CityLocs exclusive</strong>, engineered for performance and style</span></p>",
+        "ggXEmHXsfGN_text": "<strong>Pro Five Hat</strong>",
+        "ggcmB8w4MvS_text": "Pro Five Hat",
+        "ggeN2IS77nc_text": "<p><span style=\"background-color:transparent;color:#FFFFFF;font-size:11pt;\">Key Vibes:</span></p>",
+        "ggm8PTsgk0Y_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bk-Pro-Five-Profile-Page-1.jpg",
+        "ggm8PTsgk0Y_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bk-Pro-Five-Profile-Page.jpg",
+        "ggpcjqOuF5w_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:17px;\"><strong>Ideal for:</strong>&nbsp;</span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><i>sports, travel, streetwear, golf, outdoor workers — anyone who wants durability, comfort, and style in one hat.</i></span></p>"
+      },
+      "type": "gp-section-595032853524251234"
+    },
+    "gp_section_595032853524251409": {
+      "settings": {
+        "checksum": "cf337ca28d6fad957222b76433d8a753cc92572e6c325b8e7af0a0faa2e8444d_1_1_0_0__1",
+        "gg622gyp_kK_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Sleek • Fitted • Athletic</span></p>",
+        "gg71XJLCMFe_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bk-FlexFit-Profile-Page-1.jpg",
+        "gggH_WqpmF9_text": "Flex-Fit Hat",
+        "ggjIzfIZQkc_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Not adjustable</strong> — instead, it has a&nbsp;<strong>flexible elastic band</strong> inside that stretches to fit your head.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Comes in different size ranges (e.g., S/M, L/XL) for a&nbsp;<strong>snug, custom feel</strong>.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Flat bill</strong> design for a modern profile.</span></p>",
+        "ggjPLUtoofC_text": "<p><span style=\"background-color:transparent;color:#FFFFFF;font-size:11pt;\">Key Vibes:</span></p>",
+        "ggwKHOWYGbg_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:16px;\"><strong>Ideal for:</strong>&nbsp;<i>active wearers, people who dislike adjustment snaps, and those who prefer a fitted, secure feel.</i></span><br>&nbsp;</p>",
+        "ggwaQLww6G5_text": "<strong>FlexFit Hat</strong>",
+        "ggyOuGqehut_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:20px;\">A&nbsp;<strong>comfortable, form-fitted hat</strong> with a clean, minimal look</span></p>"
+      },
+      "type": "gp-section-595032853524251409"
+    },
+    "gp_section_595032853524316770": {
+      "settings": {
+        "checksum": "97dfafec20a571e83bd839b7300ab9bea46dc10e1d7fdbc5b712a7648ff28a0a_1_1_0_0__1",
+        "gg5DI8kcYED_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Adjustable</strong> with a snapback closure to fit most head sizes.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Built from&nbsp;<strong>6 solid panels</strong>, offering a firm shape and clean front for logos and artwork.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>No mesh</strong>, so it has a more solid, street-style appearance.</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Available in many&nbsp;<strong>color combinations</strong> to match your personal style.</span></p>",
+        "gg6aFTrIElY_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bk-Snapback-Profile-Page.jpg",
+        "ggFdJf-nycB_text": "<strong>Snapback Hat</strong>",
+        "ggFnMBQ8g1D_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:20px;\">A&nbsp;<strong>bold, modern look</strong> with a flat bill and structured fit.</span></p>",
+        "ggIko4CQmTm_text": "<p><span style=\"background-color:transparent;color:#FFFFFF;font-size:11pt;\">Key Vibes:</span></p>",
+        "ggaP_oI2Sm7_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Fresh • Street • Sharp</span></p>",
+        "gghJlwGZxCh_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:17px;\"><strong>Ideal for:</strong>&nbsp;</span><span style=\"background-color:transparent;color:#000000;font-size:16px;\"><i>fashion-forward outfits, streetwear, and people who like a firmer, more structured hat.</i></span></p>",
+        "ggw1zS0AAh3_text": "Snapback Hat"
+      },
+      "type": "gp-section-595032853524316770"
+    },
+    "gp_section_595032853541028540": {
+      "settings": {
+        "checksum": "13b95d41b724a299d5e090042a0797d7e5a188078fd2f9f0bc53926f94e33d31_1_1_0_0__1",
+        "gg3Z-_xeTBm_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Signature-Profile-Page.jpg",
+        "gg3gdbStj_R_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:20px;\">A&nbsp;<strong>flat bill snapback designed to turn heads</strong>, featuring exclusive CityLocs graphics that make every hat stand out.</span></p>",
+        "ggPrQWMkZEK_text": "<strong>Signature Series Hat</strong>",
+        "ggUYH5hSIi3_text": "<p><span style=\"background-color:transparent;color:#FFFFFF;font-size:11pt;\">Key Vibes:</span></p>",
+        "ggXZZVJief__text": "<p><span style=\"background-color:transparent;color:#000000;font-size:16px;\"><strong>Ideal for:</strong>&nbsp;anyone who wants their hat to&nbsp;<strong>reflect their style, story, or city</strong></span></p>",
+        "ggiall5iyny_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Unique • Graphic-Driven • Signature CityLocs</span></p>",
+        "ggmaqtybIos_text": "Signature Series Hat",
+        "ggopEFjVIuV_text": "<p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Custom CityLocs artwork</strong> printed on the&nbsp;<strong>bill, crown, or both</strong> for a unique, eye-catching look</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>6-panel structured build</strong> that holds its shape and showcases the design</span></p><p><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\"><strong>Adjustable snapback — one size fits most</strong> for everyday comfort</span><br><span style=\"background-color:transparent;color:#000000;font-size:22px;\"><strong>• </strong></span><span style=\"background-color:transparent;color:#000000;font-size:11pt;\">Crafted with quality materials for long-lasting wear</span></p>"
+      },
+      "type": "gp-section-595032853541028540"
+    }
+  },
+  "order": [
+    "gp_section_595030077566091964",
+    "gp_section_594902990591099826",
+    "gp_section_595032853524316770",
+    "gp_section_595032853524251409",
+    "gp_section_595032853524251234",
+    "gp_section_595032853541028540"
+  ]
+}

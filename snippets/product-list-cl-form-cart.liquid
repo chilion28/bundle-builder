@@ -1,0 +1,42 @@
+ <div class="plate-font-3">
+            Total Quantity: ${totalQty} piece(s)
+          </div>
+          <div class="plate-price">
+            Unit Price: $${indiPrice} each
+          </div>
+          <div class="plate-font-2">
+            ${messageDiscount}
+          </div>
+          <div class="plate-font-2">
+            <span style="font-weight: bold;">SUBTOTAL $${ subTotal }</span>
+          </div>
+
+          <div>
+            <div
+              class="button-primary"
+              id="product-cl-add-cart"
+              @click="addToCart($event)"
+            >
+          Add To Cart
+            </div>
+              <div class="cl-lightbox" v-show=displayStyle>
+                <div id="approvePopUp" style="margin-left: auto; padding: 25px 50px 25px 50px; margin-right: auto; margin-top: 200px; background-color: rgb(246, 246, 246);">
+                  <h3 style="color: rgb(0, 0, 0); font-size: 18px;">Please look over the custom text to make sure its correct. <br>
+                      All sales are final on custom items.</h3>
+                  <div style="display: flex;">
+                    <div @click="toggleApproval()" id="continueBtnApproval">Go Back To Confirm</div>
+                    <div @click="addToCart($event)" id="btnApproval">Continue With Order</div>
+                  </div>
+                </div>
+              </div>
+
+      </div>
+    </div>
+
+     <div data-payment-terms-reference style="display: none;">
+    {{ form | payment_terms }}
+  </div>
+
+  {% if enable_local_pickup %}
+    <div class="surface-pick-up" data-surface-pick-up></div>
+  {% endif %}

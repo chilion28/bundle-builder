@@ -1,0 +1,303 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+
+{% assign swatch = option %}
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign is_style = false %}
+{% assign option_index = 0 %}
+{% assign downcased_option = option | downcase %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    {% assign downcased_option = swatch | downcase %}
+    {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+      {% assign is_color = true %}
+    {% elsif downcased_option contains 'style' %}
+      {% assign is_style = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+<style>
+  @media (max-width: 767px) {
+    .style-img-swatch-options { height: auto !important; }
+    .style-img-btn-container  { flex-grow: 0 !important; }
+    .style-img-btn            { width: auto !important; height: auto !important; padding: 2px !important; }
+  }
+  @keyframes truckerfade {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="swatch clearfix" data-option-index="{{ option_index }}">
+  {% assign values = '' %}
+{% comment %}  set styles selection {% endcomment %}
+  {% if is_style %}
+    <div class="option_title center">SELECT HAT STYLE</div>
+  {% endif %}
+
+  <div class="swatch_options style-img-swatch-options">
+  {% for variant in product.variants %}
+    {% assign value = variant.options[option_index] %}
+    {% unless values contains value %}
+      {% assign values = values | join: ',' %}
+      {% assign values = values | append: ',' | append: value %}
+      {% assign values = values | split: ',' %}
+
+      {% if is_style %}
+          <div class="selection-button-container style-img-btn-container" style="margin: 4px;">
+            <div
+              data-value='{{ value }}'
+              class="selection-button style-img-btn"
+              :class="selected == '{{ value }}' ? 'button-on' : ''"
+              @click="selectionButton($event)"
+            >
+              {%- comment -%} Use the first variant image for this style. Fall back to the product image. {%- endcomment -%}
+              <img
+                class="style-swatch-img"
+                src="{{ variant.featured_image | default: product.featured_image | image_url: width: 100, height: 100, crop: 'center' }}"
+                alt="{{ value }}"
+                loading="lazy"
+                width="48"
+                height="48"
+                style="max-width:40px; height:auto;"
+              />
+            </div>
+          </div>
+      {% endif %}
+    {% endunless %}
+  {% endfor %}
+</div>
+
+</div>
+
+<div id="trucker-hat-modal" style="display:none;position:fixed;inset:0;z-index:10000;">
+  <div id="trucker-hat-backdrop" style="position:absolute;inset:0;background:rgba(2,50,82,0.45);cursor:pointer;display:none;"></div>
+  <div id="trucker-hat-panel" style="position:absolute;max-width:340px;width:calc(100% - 32px);padding:20px 22px;border-left:4px solid #023252;border-radius:0 12px 12px 0;background:linear-gradient(135deg,#f0f6fb 0%,#e8f4fc 100%);box-shadow:0 8px 30px rgba(2,50,82,0.25);font-family:Arial,sans-serif;">
+    <button id="trucker-hat-close" aria-label="Close" style="display:none;position:absolute;top:10px;right:12px;background:none;border:none;font-size:22px;color:#023252;cursor:pointer;line-height:1;padding:0;">&times;</button>
+    <div style="font-size:17px;font-weight:800;color:#023252;margin-bottom:5px;letter-spacing:0.4px;">Trucker Hat</div>
+    <div style="font-size:13px;color:#556;margin-bottom:12px;font-style:italic;line-height:1.55;">A classic everyday hat known for comfort and breathability.</div>
+    <ul style="margin:0 0 14px 0;padding:0;list-style:none;">
+      <li style="font-size:12.5px;color:#333;padding:4px 0;display:flex;gap:8px;line-height:1.55;"><span style="color:#023252;font-weight:900;flex-shrink:0;">&#8226;</span>Adjustable snapback closure for a perfect fit.</li>
+      <li style="font-size:12.5px;color:#333;padding:4px 0;display:flex;gap:8px;line-height:1.55;"><span style="color:#023252;font-weight:900;flex-shrink:0;">&#8226;</span>Made with 6 structured panels for a traditional shape.</li>
+      <li style="font-size:12.5px;color:#333;padding:4px 0;display:flex;gap:8px;line-height:1.55;"><span style="color:#023252;font-weight:900;flex-shrink:0;">&#8226;</span>Features a mesh back that allows air to flow and keeps you cool, especially outdoors.</li>
+      <li style="font-size:12.5px;color:#333;padding:4px 0;display:flex;gap:8px;line-height:1.55;"><span style="color:#023252;font-weight:900;flex-shrink:0;">&#8226;</span>Lightweight and available in a wide variety of colors.</li>
+      <li style="font-size:12.5px;color:#333;padding:4px 0;display:flex;gap:8px;line-height:1.55;"><span style="color:#023252;font-weight:900;flex-shrink:0;">&#8226;</span><span><strong style="color:#023252;">Ideal for:</strong> casual wear, outdoor activities, working in the sun, and anyone who wants a relaxed, breathable style.</span></li>
+    </ul>
+    <div style="border-top:1px solid rgba(2,50,82,0.15);padding-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;">
+      <span style="font-size:11px;font-weight:700;color:#023252;text-transform:uppercase;letter-spacing:0.8px;margin-right:2px;">Key Vibes:</span>
+      <span style="font-size:11px;font-weight:600;background:#023252;color:#fff;padding:3px 11px;border-radius:20px;">Casual</span>
+      <span style="font-size:11px;font-weight:600;background:#023252;color:#fff;padding:3px 11px;border-radius:20px;">Cool</span>
+      <span style="font-size:11px;font-weight:600;background:#023252;color:#fff;padding:3px 11px;border-radius:20px;">Laid-back</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  function updateStyleSwatches() {
+    var mobile = window.innerWidth < 768;
+
+    document.querySelectorAll('.style-swatch-img').forEach(function (img) {
+      var btn = img.parentNode;
+      var label = btn.querySelector('.style-swatch-label');
+
+      if (mobile) {
+        if (label) btn.removeChild(label);
+        img.style.display = '';
+        btn.style.padding = '2px';
+        btn.style.width = 'auto';
+        btn.style.height = 'auto';
+      } else {
+        if (!label) {
+          label = document.createElement('span');
+          label.className = 'style-swatch-label';
+          label.textContent = img.getAttribute('alt');
+          btn.insertBefore(label, img);
+        }
+        img.style.display = 'none';
+        btn.style.padding = '';
+        btn.style.width = '';
+        btn.style.height = '';
+      }
+    });
+  }
+
+  function applyBtnSelectedStyle(btn) {
+    var mobile = window.innerWidth < 768;
+    if (!mobile) return;
+    if (btn.classList.contains('button-on')) {
+      btn.style.setProperty('background-color', 'transparent', 'important');
+      btn.style.setProperty('border-color', '#023252', 'important');
+      btn.style.setProperty('border-width', '3px', 'important');
+    } else {
+      btn.style.removeProperty('background-color');
+      btn.style.removeProperty('border-color');
+      btn.style.removeProperty('border-width');
+    }
+  }
+
+  // --- Mobile tap tooltip ---
+  var tooltip = null;
+  var tooltipTimer = null;
+  var truckerHideTimer = null;
+
+  function getTooltip() {
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.id = 'style-swatch-tooltip';
+      tooltip.style.cssText = [
+        'position:fixed',
+        'background:#023252',
+        'color:#fff',
+        'font-size:12px',
+        'font-family:Arial,sans-serif',
+        'font-weight:bold',
+        'padding:4px 10px',
+        'border-radius:4px',
+        'pointer-events:none',
+        'white-space:nowrap',
+        'z-index:9999',
+        'opacity:0',
+        'transition:opacity 0.15s',
+      ].join(';');
+      document.body.appendChild(tooltip);
+    }
+    return tooltip;
+  }
+
+  function showTooltip(btn) {
+    if (window.innerWidth >= 768) return;
+    var img = btn.querySelector('.style-swatch-img');
+    if (!img) return;
+    var label = img.getAttribute('alt') || '';
+    var tip = getTooltip();
+    tip.textContent = label;
+    tip.style.opacity = '0';
+    tip.style.display = 'block';
+    var rect = btn.getBoundingClientRect();
+    tip.style.left = (rect.left + rect.width / 2 - tip.offsetWidth / 2) + 'px';
+    tip.style.top  = (rect.top - tip.offsetHeight - 6) + 'px';
+    tip.style.opacity = '1';
+    clearTimeout(tooltipTimer);
+    tooltipTimer = setTimeout(function () { tip.style.opacity = '0'; }, 1800);
+  }
+
+  function attachTooltipListeners() {
+    document.querySelectorAll('.style-img-btn').forEach(function (btn) {
+      if (btn._tooltipBound) return;
+      btn._tooltipBound = true;
+      btn.addEventListener('click', function () { showTooltip(btn); });
+    });
+  }
+
+  function showTruckerModal(mode, btn) {
+    var modal = document.getElementById('trucker-hat-modal');
+    var backdrop = document.getElementById('trucker-hat-backdrop');
+    var panel = document.getElementById('trucker-hat-panel');
+    var closeBtn = document.getElementById('trucker-hat-close');
+    if (!modal || !panel) return;
+    clearTimeout(truckerHideTimer);
+    if (mode === 'hover') {
+      // Make the full-screen wrapper invisible to pointer events so it can't
+      // steal mouseleave from the button the instant the modal appears.
+      modal.style.pointerEvents = 'none';
+      panel.style.pointerEvents = 'auto';
+      backdrop.style.display = 'none';
+      closeBtn.style.display = 'none';
+      var rect = btn.getBoundingClientRect();
+      panel.style.top = (rect.bottom + 8) + 'px';
+      panel.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 356)) + 'px';
+      panel.style.transform = 'none';
+    } else {
+      modal.style.pointerEvents = '';
+      panel.style.pointerEvents = '';
+      backdrop.style.display = 'block';
+      closeBtn.style.display = 'block';
+      panel.style.top = '50%';
+      panel.style.left = '50%';
+      panel.style.transform = 'translate(-50%, -50%)';
+    }
+    modal.style.display = 'block';
+    panel.style.animation = 'none';
+    void panel.offsetHeight;
+    panel.style.animation = 'truckerfade 0.25s ease';
+  }
+
+  function hideTruckerModal() {
+    var modal = document.getElementById('trucker-hat-modal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function attachTruckerListeners() {
+    var truckerBtn = document.querySelector('.style-img-btn[data-value="Trucker"]');
+    if (!truckerBtn || truckerBtn._truckerBound) return;
+    truckerBtn._truckerBound = true;
+
+    truckerBtn.addEventListener('click', function () {
+      if (window.innerWidth < 768) showTruckerModal('click', truckerBtn);
+    });
+    truckerBtn.addEventListener('mouseenter', function () {
+      if (window.innerWidth >= 768) {
+        clearTimeout(truckerHideTimer);
+        showTruckerModal('hover', truckerBtn);
+      }
+    });
+    // Use a short delay so moving from button → panel doesn't flash-hide.
+    truckerBtn.addEventListener('mouseleave', function () {
+      if (window.innerWidth >= 768) {
+        truckerHideTimer = setTimeout(hideTruckerModal, 120);
+      }
+    });
+
+    var panel = document.getElementById('trucker-hat-panel');
+    if (panel && !panel._truckerPanelBound) {
+      panel._truckerPanelBound = true;
+      panel.addEventListener('mouseenter', function () {
+        clearTimeout(truckerHideTimer);
+      });
+      panel.addEventListener('mouseleave', function () {
+        if (window.innerWidth >= 768) {
+          truckerHideTimer = setTimeout(hideTruckerModal, 120);
+        }
+      });
+    }
+
+    var closeBtn = document.getElementById('trucker-hat-close');
+    if (closeBtn && !closeBtn._closeBound) {
+      closeBtn._closeBound = true;
+      closeBtn.addEventListener('click', hideTruckerModal);
+    }
+    var backdrop = document.getElementById('trucker-hat-backdrop');
+    if (backdrop && !backdrop._backdropBound) {
+      backdrop._backdropBound = true;
+      backdrop.addEventListener('click', hideTruckerModal);
+    }
+  }
+
+  function observeButtons() {
+    document.querySelectorAll('.style-img-btn').forEach(function (btn) {
+      if (btn._swatchObserver) return;
+      btn._swatchObserver = new MutationObserver(function () {
+        applyBtnSelectedStyle(btn);
+      });
+      btn._swatchObserver.observe(btn, { attributes: true, attributeFilter: ['class'] });
+      applyBtnSelectedStyle(btn);
+    });
+  }
+
+  // Run immediately, after DOM ready, and after Alpine.js finishes — whichever fires last wins
+  updateStyleSwatches();
+  observeButtons();
+  attachTooltipListeners();
+  attachTruckerListeners();
+  document.addEventListener('DOMContentLoaded', function () { updateStyleSwatches(); observeButtons(); attachTooltipListeners(); attachTruckerListeners(); });
+  document.addEventListener('alpine:initialized', function () { updateStyleSwatches(); observeButtons(); attachTooltipListeners(); attachTruckerListeners(); });
+  window.addEventListener('resize', updateStyleSwatches);
+})();
+</script>

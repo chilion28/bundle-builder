@@ -1,0 +1,90 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_535318052682597604": {
+      "settings": {
+        "checksum": "1dd37c2fc6649f7136fc3c878a868fbc195f4acb21296e73bd0732112c8e5ad4_1_1_0_8__1"
+      },
+      "type": "gp-section-535318052682597604"
+    },
+    "gp_section_535318052783260430": {
+      "settings": {
+        "checksum": "b3b58939303690a1d82e0890e4b73abaa8c546e363ece165fc2bb862361034d2_1_1_0_8__1",
+        "gg2GFRbBbCR_errorMessage": "Cannot add product to cart",
+        "gg2GFRbBbCR_outOfStockLabel": "Out Of Stock",
+        "gg2GFRbBbCR_successMessage": "Add product to cart successfully",
+        "gg2GFRbBbCR_unavailableLabel": "Unavailable",
+        "gglQ_n0mpLm_viewLessText": "Show less",
+        "gglQ_n0mpLm_viewMoreText": "Show more",
+        "ggyOPtWNFru_customContent_prefix": "(Save",
+        "ggyOPtWNFru_customContent_suffix": ")"
+      },
+      "type": "gp-section-535318052783260430"
+    },
+    "gp_section_535318052800037638": {
+      "settings": {
+        "checksum": "6f33b1475799a49f8896552c623b5a03b57efaa66101851866ec793560bc9e3e_1_1_0_8__1",
+        "ggCnNtfR5MC_text": "Camera Tag Coming Soon",
+        "ggFnSHR_l2W_alt": "Alt Image",
+        "ggFnSHR_l2W_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-32ce928b-eb4e-4892-92d3-b8bdea6fc8f9.png",
+        "ggFnSHR_l2W_title": "Image Title",
+        "ggLKGNvSujX_errorMessage": "Cannot add product to cart",
+        "ggLKGNvSujX_label": "Add to cart",
+        "ggLKGNvSujX_outOfStockLabel": "Out of stock",
+        "ggLKGNvSujX_successMessage": "Add product to cart successfully",
+        "ggLKGNvSujX_unavailableLabel": "Unavailable",
+        "ggNUMnkc3gp_text": "<p>Bestseller of the week</p>",
+        "ggd6Hj6_W3h_text": "<p>140 purchases</p>",
+        "ggjV36FksmP_text": "<p>Say goodbye to boring camera tags! The <i>Echosworld Special Edition Camera Tags</i> are designed to bring a fresh, urban flair to your film production toolkit. Unlike standard camera tags, these tags fuse functionality with style, giving you a sleek, modern look that stands out on set. Perfect for keeping your cameras organized, they feature bold, eye-catching designs, durable construction, and a vibe that captures the essence of the city.</p><p>Whether you're working on a big-budget feature or an indie passion project, these tags add personality to your equipment while helping maintain order during chaotic shoots. Film production has never looked so good!</p>",
+        "ggsmxaD1Vs-_alt": "Alt Image",
+        "ggsmxaD1Vs-_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-b8d75a0e-2c34-4596-84b2-6fb220d95582.jpg",
+        "ggsmxaD1Vs-_title": "Image Title"
+      },
+      "type": "gp-section-535318052800037638"
+    },
+    "gp_section_535318052800037910": {
+      "settings": {
+        "checksum": "459a72291e087de05bdfe58a17cf04332b5292a78d2da6739e1d735ab18c8df3_1_1_0_8__1",
+        "gg3P12S7L8T_alt": "Alt Image",
+        "gg3P12S7L8T_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-9ab60743-2817-44f9-a4bd-a5437b22be2b.png",
+        "gg3P12S7L8T_title": "Image Title",
+        "gg9UIgv5kPe_text": "<p>With product insurance</p>",
+        "ggDHk6hw3lK_alt": "Alt Image",
+        "ggDHk6hw3lK_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-0a839090-cfbe-4caa-ab18-49ad5f00b2ca.png",
+        "ggDHk6hw3lK_title": "Image Title",
+        "ggU3O6murhk_alt": "Alt Image",
+        "ggU3O6murhk_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-4c9e448b-4cb1-4034-800e-ec5db8747b57.png",
+        "ggU3O6murhk_title": "Image Title",
+        "ggZNYqMmKPw_text": "<p>Secure Packaging</p>",
+        "ggd_i7ooBof_text": "<p>Free Shipping</p>",
+        "ggjI4icYq9q_text": "<p>24/7 Support</p>",
+        "ggxHrv7YKJl_text": "<p>Free shipping worldwide</p>",
+        "ggxdQTZzsMd_text": "<p>Whenever you need</p>"
+      },
+      "type": "gp-section-535318052800037910"
+    },
+    "gp_section_535318337056408804": {
+      "settings": {
+        "checksum": "c7c986beb05e68151d5d272b98fd356da1a54e6a55136b791da8683b05eca2c7_1_1_0_8__1",
+        "ggblIA_NUdH_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-c0bafd9f-36d1-45ac-a289-ddec4bbc2ee5.png",
+        "section_preload": "true"
+      },
+      "type": "gp-section-535318337056408804"
+    }
+  },
+  "order": [
+    "gp_section_535318337056408804",
+    "gp_section_535318052800037638",
+    "gp_section_535318052682597604",
+    "gp_section_535318052783260430",
+    "gp_section_535318052800037910"
+  ]
+}

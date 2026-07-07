@@ -1,0 +1,29 @@
+ {%- layout none -%}
+    {% assign cartProdIdArr = "" | split: '' %}
+    {% assign cartProdCollIdArr = "" | split: '' %}
+{
+"cart_data": {{cart | json}}
+{%- if cart -%}
+
+{%- for item in cart.items -%}
+,"{{item.id}}": {{item.product | json}}
+,"prod_tag_{{ forloop.index | minus: 1 }}": {{ item.product.tags | json }}
+	{% assign cartProdId = item.product.id | split: ',' %}
+	{% assign cartProdIdArr = cartProdIdArr | concat: cartProdId %}
+	{% assign cartProdWiseCollIdArr = "" | split: '' %}
+	{% assign cartCollName = "" %}
+	{% for collection in item.product.collections %}
+	  {% assign cartCollId = collection.id | split: ',' %}
+	  {% assign cartProdCollIdArr = cartProdCollIdArr | concat: cartCollId %}
+	  {% assign cartProdWiseCollIdArr = cartProdWiseCollIdArr | concat: cartCollId %}
+	  {% assign cartCollName = cartCollName | append: ', ' | append: collection.title %}
+  	{% endfor %}
+	{% assign cartCollName = cartCollName | remove_first: ', ' %}
+,"prod_coll_{{ forloop.index | minus: 1 }}": {{ cartProdWiseCollIdArr | json }}
+,"prod_coll_name_{{item.id}}": {{ cartCollName | json }}
+{%- endfor -%}
+,"cart_prod_id_arr": {{ cartProdIdArr | json }}
+,"cart_prod_coll_id_arr": {{ cartProdCollIdArr | json }}
+
+{%- endif -%}
+}

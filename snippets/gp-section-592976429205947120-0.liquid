@@ -1,0 +1,912 @@
+<div gp-el-wrapper style="--bs:none;--bw:1px 1px 1px 1px;--bc:#121212;--shadow:none;--d:none;--d-mobile:block;--d-tablet:none;--op:100%;--op-mobile:100%;--op-tablet:100%;--pageType:GP_PRODUCT;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--mb:0px;--mb-mobile:10px;--mb-tablet:0px" class="gBU3wq-4ge ">
+      
+    {%- assign total_combinations = 1 -%}
+    {% for option in product.options_with_values %}{%- assign total_combinations = total_combinations | times: option.values.size -%}{% endfor %}
+    <gp-product-variants
+      data-id="gBU3wq-4ge" has-pre-selected="true" class
+      gp-data='{
+        "setting":{"blankText":"Please select an option","column":{"desktop":1},"combineFullWidth":{"desktop":true},"combineHeight":"45px","combineWidth":{"desktop":"100%"},"hasOnlyDefaultVariant":false,"hasPreSelected":true,"label":false,"layout":{"desktop":"vertical"},"optionAlign":{"desktop":"left"},"optionType":"singleOption","price":true,"showAsSwatches":true,"soldOutStyle":"disable","variantPresets":[{"isEdited":true,"optionName":"base","optionType":"rectangle_list","presets":{"rectangle_list":{"height":"45px","optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"line-2","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"hover":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"normal":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"text-2","hover":"text-2","normal":"text-2"},"spacing":"16px","width":{"desktop":""}}}},{"isEdited":true,"optionName":"Color","optionType":"dropdown","presets":{"dropdown":{"height":"42px","optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"#242424","isCustom":true,"width":"1px 1px 1px 1px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"#242424","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"#242424","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"50px","bbrr":"50px","btlr":"50px","btrr":"50px","radiusType":"custom"},"hover":{"bblr":"50px","bbrr":"50px","btlr":"50px","btrr":"50px","radiusType":"custom"},"normal":{"bblr":"50px","bbrr":"50px","btlr":"50px","btrr":"50px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"#242424","hover":"#242424","normal":"#242424"},"width":{"desktop":"100%","mobile":"100%","tablet":"100%"}}}},{"isEdited":true,"optionName":"Size","optionType":"dropdown","presets":{"dropdown":{"height":"42px","optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"#242424","isCustom":true,"width":"1px 1px 1px 1px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"#242424","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"#242424","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"50px","bbrr":"50px","btlr":"50px","btrr":"50px","radiusType":"custom"},"hover":{"bblr":"50px","bbrr":"50px","btlr":"50px","btrr":"50px","radiusType":"custom"},"normal":{"bblr":"50px","bbrr":"50px","btlr":"50px","btrr":"50px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"shadow-1"}},"optionTextColor":{"active":"#242424","hover":"#242424","normal":"#242424"},"width":{"desktop":"100%","mobile":"100%","tablet":"100%"}}}}]},
+        "styles":{"align":{"desktop":"left"},"dropdownItemWidth":{"desktop":"fill","mobile":"fill","tablet":"fill"},"fixedDropdownWidth":{"desktop":"240px"},"fullWidth":{"desktop":true},"labelColor":"text-2","labelGap":"12px","labelTypo":{"attrs":{"bold":false,"color":"text-1","transform":"uppercase"},"custom":{"fontSize":{"desktop":"16px","mobile":"12px","tablet":"13px"},"fontStyle":"normal","fontVariants":["100","200","300","regular","500","600","700","800","900"],"fontWeight":"400","letterSpacing":{"desktop":"normal"},"lineHeight":{"desktop":"130%","mobile":"130%","tablet":"130%"}},"type":"paragraph-2"},"marginBottom":{"desktop":"23px","mobile":"10px"},"optionBgColor":{"active":"bg-3","hover":"bg-3","normal":"bg-3"},"optionBorder":{"active":{"border":"solid","borderType":"style-3","borderWidth":"2px","color":"line-3","isCustom":false,"width":"2px 2px 2px 2px"},"hover":{"border":"solid","borderType":"style-3","borderWidth":"1px","color":"line-3","isCustom":false,"width":"1px 1px 1px 1px"},"normal":{"border":"solid","borderType":"style-2","borderWidth":"1px","color":"line-2","isCustom":false,"width":"1px 1px 1px 1px"}},"optionHasShadow":{"active":false,"hover":false,"normal":false},"optionRounded":{"active":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"hover":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"},"normal":{"bblr":"0px","bbrr":"0px","btlr":"0px","btrr":"0px","radiusType":"custom"}},"optionShadow":{"active":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"none"},"hover":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"none"},"normal":{"angle":90,"blur":"12px","color":"rgba(0, 0, 0, 0.20)","distance":"4px","spread":"0px","type":"none"}},"optionSpacing":"30px","optionTextColor":{"active":"text-2","hover":"text-2","normal":"text-2"},"optionTypo":{"custom":{"fontSize":{"desktop":"13px","mobile":"12px","tablet":"13px"},"fontStyle":"normal","fontWeight":"600","letterSpacing":{"desktop":"normal"},"lineHeight":{"desktop":"130%","mobile":"130%","tablet":"130%"}},"type":"paragraph-2"},"swatchAutoWidth":{"desktop":true},"swatchHeight":{"desktop":"45px"},"swatchItemWidth":{"desktop":"auto"},"swatchSpacing":"var(--g-s-m)","swatchWidth":{"desktop":"80px"},"width":{"desktop":"100%"}},
+        "variants":{{product.variants | json | escape}},
+        "optionsWithValues": {{product.options_with_values | json | escape}},
+        "variantSelected": {{ variant | json | escape }},
+        "variantInventoryQuantity": {{product.variants | map: 'inventory_quantity' | json | escape}},
+        "variantInventoryPolicy": {{product.variants | map: 'inventory_policy' | json | escape}},
+        "moneyFormat": {{shop.money_format | json | escape}},
+        "productId": {{product.id | json | escape}},
+        "productUrl": {{product.url | json | escape}},
+        "productHandle": {{product.handle | json | escape}},
+        "displayState": {"desktop":false,"mobile":true,"tablet":false},
+        "totalVariantCombinations": {{total_combinations}},
+        "firstAvailableVariant": {{product.selected_or_first_available_variant | json | escape}}
+      }
+    '>
+      <div class="gp-hidden" style="--hvr-shadow: none; --hvr-shadow-tablet: none; --hvr-shadow-mobile: none"></div>
+      {%- assign options = product.options_with_values -%}
+      {%- assign variants = product.variants -%}
+      {% if options.size == 0 or options.size == 1 and variants.size == 1 and variants[0].title == 'Default Title' and variants[0].option1 == 'Default Title' %}<div></div>{% else %}<div
+            class="gp-flex gp-flex-col !gp-ml-0"
+            style="--gtc:repeat(1, minmax(0, 1fr));--ta:left;--w:100%;--w-tablet:100%;--w-mobile:100%"
+          >
+          
+      {%- assign presets = "base($2)rectangle_list($1)Color($2)dropdown($1)Size($2)dropdown" | split: '($1)' -%}
+      {% assign hiddenPresetOptions = "" | split: ',' %}
+      
+      {% assign all_option_names = options | map: 'name' %}
+      {% assign filtered_options_string = '' %}
+      {% assign delimiter = '||' %}
+      
+      {% for item_name in all_option_names %}
+        {% assign is_excluded = false %}
+        {% for exclude_name in hiddenPresetOptions %}
+          {% if item_name == exclude_name %}
+            {% assign is_excluded = true %}
+          {% endif %}
+        {% endfor %}
+        
+        {% unless is_excluded %}
+          {% if filtered_options_string == '' %}
+            {% assign filtered_options_string = item_name %}
+          {% else %}
+            {% assign filtered_options_string = filtered_options_string | append: delimiter | append: item_name %}
+          {% endif %}
+        {% endunless %}
+      {% endfor %}
+      
+      {% assign filtered_options_array = filtered_options_string | split: delimiter %}
+      
+      {% assign last_option_name = filtered_options_array | last %}
+      
+      {% for option in options %}
+        <div
+        option-name="{{option.name | escape}}"
+        class="gp-flex variant-inside gp-flex-col gp-items-start {% if hiddenPresetOptions contains option.name %}gp-hidden{% endif %}"
+        style="--mb: 23px;--mb-mobile: 10px;--minw-tablet:unset;--minw-mobile:unset;{% if forloop.last or option.name == last_option_name %}--mb:0;--mb-mobile:0;--mb-tablet:0;{% endif %}"
+        >
+          {%- assign showVariantClass = 'variant-display' -%}
+          {%- assign optionName = option.name  -%}
+          {% for preset in presets %}
+            {%- assign presetDetail = preset | split: '($2)' -%}
+            {% if presetDetail[1] == 'dropdown' and presetDetail[0] == optionName %}{%- assign showVariantClass = '' -%} {%- break -%}{% endif %}
+          {% endfor %}
+           
+          <div
+              variant-option-name="{{option.name | escape}}"
+              class="variant-option-group gp-flex gp-w-full gp-flex-wrap gp-items-center  gp-justify-start"
+              style="--rg: var(--g-s-m);--cg: var(--g-s-m);"
+            >
+              {%- assign values = option.values -%}
+              {%- assign rootForloop = forloop.index0 -%}
+              
+                {%- if option.position == 1 -%}
+                  {%- assign selectedValue = variant.option1 -%}
+                {%- elsif option.position == 2 -%}
+                  {%- assign selectedValue = variant.option2 -%}
+                {%- else -%}
+                  {%- assign selectedValue = variant.option3 -%}
+                {%- endif -%}
+              
+              
+              
+      {% if shop.metafields.GEMPAGES.swatchesJSONFormat and shop.metafields.GEMPAGES.swatchesJSONFormat != blank %}
+    {%- assign optionRendered = false -%}
+    {%- assign swatches = shop.metafields.GEMPAGES.swatchesJSONFormat.value -%}
+
+    {%- assign variantPresetString = "base($1)rectangle_list($2)Color($1)dropdown($2)Size($1)dropdown" -%}
+      {%- assign optionName = option.name | replace: "'", "&apos;" | replace: '"', "&quot;" -%}
+      {%- assign items = variantPresetString | split: '($2)' -%}
+      {%- assign type = 'dropdown' -%}
+      {% for item in items %}
+        {%- assign itemPreset = item | split: '($1)' -%}
+        {% if itemPreset[0] == optionName %}{%- assign type = itemPreset[1] -%}{% endif %}
+        {% if itemPreset[0] == 'base' %}{%- assign type = itemPreset[1] -%}{% endif %}
+      {% endfor %}
+
+    {% for swatch in swatches %}
+      {%- assign optionTitle = swatch.optionTitle -%}
+      {%- assign optionType = swatch.optionType -%}
+      {%- assign labelsString = "" -%}
+      {%- assign colorArraysString = "" -%}
+      {%- assign imageUrlsString = "" -%}
+
+      {% for optionValue in swatch.optionValues %}
+        {%- assign labelsString = labelsString | append: optionValue.label | append: '|||' -%}
+        {%- assign colorsJoined = optionValue.colors | join: '|||' -%}
+        {%- assign colorArraysString = colorArraysString | append: colorsJoined | append: '|||' -%}
+        {%- assign imageUrlsString = imageUrlsString | append: optionValue.imageUrl | append: '|||' -%}
+      {% endfor %}
+
+      {%- assign labels = labelsString | split: '|||' | slice: 0, labelsString.size -%}
+      {%- assign colorStrings = colorArraysString | split: '|||' | slice: 0, colorArraysString.size -%}
+      {%- assign imageUrls = imageUrlsString | split: '|||' | slice: 0, imageUrlsString.size -%}
+
+      {% if optionTitle == option.name %}
+        {%- assign optionRendered = true -%}
+        
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-gBU3wq-4ge"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    {% case type %}
+      {% when "rectangle_list" %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="rectangle_list" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    
+    </div>
+      {% when "color" %}
+      
+    {% assign colorsString = null %}
+    {% assign colors = null %}
+    {% for label in labels %}
+      {% if label == value %}
+        {% assign colorsString = colorStrings[forloop.index0] %}
+      {% endif %}
+    {% endfor %}
+    {% if colorsString != null %}
+      {% assign colors = colorsString | split: '|||' %}
+    {% endif %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="color" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }} gp-p-[4px]"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% endif %}">
+      {% if colors != null and colors.size > 0 %}
+      {% for color in colors %}
+          {% assign backgroundType = "background-color" %}
+          {% if color contains "linear-gradient" %}{% assign backgroundType = "background-image" %}{% endif %}
+          <div
+            class="color gp-relative gp-h-full gp-w-full gp-overflow-hidden gp-min-w-fit gp-flex gp-color-circle"
+            data-test="{{ backgroundType }}: {{ color }}"
+            style="{{ backgroundType }}: {{ color }}; {% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% endif %}"></div>
+        {% endfor %}
+      {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative color gp-line-clamp-2 gp-flex gp-h-full gp-w-full gp-items-center gp-justify-center"
+        style="{% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% endif %} ">
+         
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image_shopify" %}
+      
+      {% assign imageUrl = null %}
+      {% for variant in variants %}
+        {% assign valueIncludesSelectedOption = false %}
+        {% for item in variant.options %}
+          {% if item == value %}
+          {% assign valueIncludesSelectedOption = true %}
+          {% endif %}
+        {% endfor %}
+        {% if valueIncludesSelectedOption and variant.featured_image or variant.featured_media%}
+          {% unless imageUrl %}
+            {% if variant.featured_media %}
+              {% assign imageUrl = variant.featured_media.preview_image.src | product_img_url: '200x'  %}
+            {% else %}
+              {% assign imageUrl = variant.featured_image.src | product_img_url: '200x'  %}
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image_shopify" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image" %}
+      
+    {% assign imageUrl = null %}
+    {% for label in labels %}
+    {% if label == value %}
+      {% assign imageUrl = imageUrls[forloop.index0] %}
+    {% endif %}
+    {% endfor %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% else %}
+    {% endcase %}
+    
+      </div>
+    </label>{% endfor %}
+      {% if type == "dropdown" %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;--active-bblr:0px;--active-bbrr:0px;--active-btlr:0px;--active-btrr:0px;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if optionRendered == false %}
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-gBU3wq-4ge"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="optionType" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    
+    </div>
+    
+      </div>
+    </label>{% endfor %}
+      {% if type == "dropdown" %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;--active-bblr:0px;--active-bbrr:0px;--active-btlr:0px;--active-btrr:0px;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}{% endif %}
+  {% else %}
+    {%- assign optionRendered = false -%}
+    {%- assign swatches = shop.metafields.GEMPAGES.swatches -%}
+    {%- assign swatchesItems = swatches | split: '($1)' -%}
+
+    {%- assign variantPresetString = "base($1)rectangle_list($2)Color($1)dropdown($2)Size($1)dropdown" -%}
+      {%- assign optionName = option.name | replace: "'", "&apos;" | replace: '"', "&quot;" -%}
+      {%- assign items = variantPresetString | split: '($2)' -%}
+      {%- assign type = 'dropdown' -%}
+      {% for item in items %}
+        {%- assign itemPreset = item | split: '($1)' -%}
+        {% if itemPreset[0] == optionName %}{%- assign type = itemPreset[1] -%}{% endif %}
+        {% if itemPreset[0] == 'base' %}{%- assign type = itemPreset[1] -%}{% endif %}
+      {% endfor %}
+
+    {% for swatchesItem in swatchesItems %}
+      {%- assign colorArraysString = "" -%}
+      {%- assign labelsString = "" -%}
+      {%- assign imageUrlsString = "" -%}
+      {%- assign attrItems = swatchesItem | split: '($3)' -%}
+
+      {% for attrItem in attrItems %}
+          {%- assign attrs = attrItem | split: '($2)' -%}
+          {%- assign optionKey = attrs[0] -%}
+          {%- assign optionValue = attrs[1] -%}
+          
+            {% if optionKey == 'optionTitle' %}
+              {% assign optionTitle = optionValue %}
+            {% elsif optionKey == 'optionType' %}
+              {% assign optionType = optionValue %}
+            {% endif %}
+          
+
+          {% if optionKey == "optionValues" %}
+            {%- assign opValueItems = optionValue | split: '($4)' -%}
+            {% for opValueItem in opValueItems %}
+                {%- assign opValueItemAttrs = opValueItem | split: '($6)' -%}
+                {% for opValueItemAttr in opValueItemAttrs %}
+                    {%- assign attrs = opValueItemAttr | split: '($5)' -%}
+                    {%- assign opValueItemKey = attrs[0] -%}
+                    {%- assign opValueItemValue = attrs[1] -%}
+
+                    {% if opValueItemKey == "label" %}{%- assign labelsString = labelsString | append: opValueItemValue -%}
+                       {%- assign labelsString = labelsString | append: "($8)" -%}{% endif %}
+
+                    {% if opValueItemKey == "colors" %}{%- assign colorArraysString = colorArraysString | append: opValueItemValue -%}
+                       {%- assign colorArraysString = colorArraysString | append: "($8)" -%}{% endif %}
+
+                    {% if opValueItemKey == "imageUrl" %}{%- assign imageUrlsString = imageUrlsString | append: opValueItemValue -%}
+                       {%- assign imageUrlsString = imageUrlsString | append: "($8)" -%}{% endif %}
+                  {% endfor %}
+              {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+      {%- assign labels = labelsString | split: '($8)' -%}
+      {%- assign colorStrings = colorArraysString | split: '($8)' -%}
+      {%- assign imageUrls = imageUrlsString | split: '($8)' -%}
+
+      {% if optionTitle == option.name %}
+        {%- assign optionRendered = true -%}
+        
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-gBU3wq-4ge"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    {% case type %}
+      {% when "rectangle_list" %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="rectangle_list" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    
+    </div>
+      {% when "color" %}
+      
+    {% assign colorsString = null %}
+    {% assign colors = null %}
+    {% for label in labels %}
+      {% if label == value %}
+        {% assign colorsString = colorStrings[forloop.index0] %}
+      {% endif %}
+    {% endfor %}
+    {% if colorsString != null %}
+      {% assign colors = colorsString | split: '|||' %}
+    {% endif %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="color" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }} gp-p-[4px]"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--minw: 32px;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% endif %}">
+      {% if colors != null and colors.size > 0 %}
+      {% for color in colors %}
+          {% assign backgroundType = "background-color" %}
+          {% if color contains "linear-gradient" %}{% assign backgroundType = "background-image" %}{% endif %}
+          <div
+            class="color gp-relative gp-h-full gp-w-full gp-overflow-hidden gp-min-w-fit gp-flex gp-color-circle"
+            data-test="{{ backgroundType }}: {{ color }}"
+            style="{{ backgroundType }}: {{ color }}; {% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% endif %}"></div>
+        {% endfor %}
+      {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative color gp-line-clamp-2 gp-flex gp-h-full gp-w-full gp-items-center gp-justify-center"
+        style="{% if selectedValue == value %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% else %}--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 999999px;--bbrr: 999999px;--btlr: 999999px;--btrr: 999999px;--hvr-bblr: 999999px;--hvr-bbrr: 999999px;--hvr-btlr: 999999px;--hvr-btrr: 999999px;--focus-bblr: 999999px;--focus-bbrr: 999999px;--focus-btlr: 999999px;--focus-btrr: 999999px;--active-bblr: 999999px;--active-bbrr: 999999px;--active-btlr: 999999px;--active-btrr: 999999px;{% endif %} ">
+         
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image_shopify" %}
+      
+      {% assign imageUrl = null %}
+      {% for variant in variants %}
+        {% assign valueIncludesSelectedOption = false %}
+        {% for item in variant.options %}
+          {% if item == value %}
+          {% assign valueIncludesSelectedOption = true %}
+          {% endif %}
+        {% endfor %}
+        {% if valueIncludesSelectedOption and variant.featured_image or variant.featured_media%}
+          {% unless imageUrl %}
+            {% if variant.featured_media %}
+              {% assign imageUrl = variant.featured_media.preview_image.src | product_img_url: '200x'  %}
+            {% else %}
+              {% assign imageUrl = variant.featured_image.src | product_img_url: '200x'  %}
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+      
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image_shopify" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% when "image" %}
+      
+    {% assign imageUrl = null %}
+    {% for label in labels %}
+    {% if label == value %}
+      {% assign imageUrl = imageUrls[forloop.index0] %}
+    {% endif %}
+    {% endfor %}
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="image" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      {% if imageUrl != null and imageUrl != "" %}
+      <img class="gp-object-cover gp-rounded-none" style="width: 64px; height: 64px" src="{{imageUrl}}" alt="" />
+    {% else %}
+      <div
+        class="option-value gp-overflow-hidden gp-relative gp-flex gp-flex-col gp-justify-center gp-items-center gp-gap-[6px"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+        <svg width="15" height="12" viewBox="0 0 15 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="2" fill="#D6D6D6"></circle><path d="M0.196854 10.6453L2.40968 8.05946C2.4846 7.97175 2.57719 7.9008 2.68141 7.85124C2.78562 7.80168 2.89913 7.77461 3.01452 7.77181C3.12991 7.76902 3.2446 7.79055 3.3511 7.835C3.45761 7.87945 3.55353 7.94583 3.63262 8.02981L4.66733 9.12714L8.71205 4.29464C8.79123 4.19995 8.89077 4.1243 9.00325 4.07333C9.11573 4.02236 9.23827 3.99737 9.36176 4.00022C9.48524 4.00307 9.6065 4.03369 9.71651 4.08979C9.82651 4.1459 9.92245 4.22605 9.99717 4.32429L14.8329 10.6772C14.9254 10.7989 14.982 10.9441 14.9964 11.0962C15.0107 11.2484 14.9823 11.4016 14.9144 11.5385C14.8464 11.6754 14.7415 11.7907 14.6115 11.8713C14.4815 11.952 14.3316 11.9948 14.1786 11.995L0.822048 12C0.664945 11.9999 0.511148 11.9549 0.378853 11.8703C0.246557 11.7857 0.141299 11.6649 0.0755311 11.5224C0.00976323 11.3799 -0.013762 11.2216 0.00773837 11.0661C0.0292388 10.9107 0.0948652 10.7646 0.196854 10.6453Z" fill="#D6D6D6"></path></svg>
+        <span class="gp-text-center  gp-overflow-hidden gp-text-ellipsis gp-px-1" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    {% endif %}
+    </div>
+  
+      {% else %}
+    {% endcase %}
+    
+      </div>
+    </label>{% endfor %}
+      {% if type == "dropdown" %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;--active-bblr:0px;--active-bbrr:0px;--active-btlr:0px;--active-btrr:0px;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {% if optionRendered == false %}
+    {% for value in values %}
+    {%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    
+    <label
+      id="{{option.name | escape | handleize}}-{{value | escape | handleize}}"
+      for="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      class="option-item gp-group gp-relative !gp-block gp-child-item-gBU3wq-4ge"
+      
+    >
+      <div class="gp-hidden !gp-max-w-[150px] gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-absolute gp-bottom-[calc(100%+20px)] gp-text-[12px] group-hover:gp-block gp-w-max gp-bg-[#333333] gp-text-[#F9F9F9] gp-px-[8px] gp-py-[4px] gp-rounded-[8px] gp-mb-[-10px] after:gp-content-[''] after:gp-absolute after:gp-p-[7px] after:gp-left-0 after:gp-w-full after:gp-bottom-[-10px]">
+        <p class="gp-text-[#F9F9F9]">{{value | escape}}</p>
+        <svg class="gp-absolute gp-left-[50%] gp-translate-x-[-50%] gp-translate-y-0 gp-z-10 gp-bottom-[-4px]" width="8" height="4" viewBox="0 0 16 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 10L0 0L16 1.41326e-06L8 10Z" fill="#333333"/>
+        </svg>
+      </div>
+      <input
+        checked="{%- if option.selected_value == value -%}true{% else %}false{%- endif -%}"
+        name="{{product.id}}-options-{{option.name | escape}}"
+        id="{{product.id}}-gBU3wq-4ge-{{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+        value="{{value | escape}}"
+        type="radio"
+        class="gp-sr-only gp-absolute gp-bottom-0 gp-right-0"
+      />
+      <span class="gp-sr-only">{{value | escape}}</span>
+      <div
+        option-name="{{option.name | escape}}" option-name-value="{{value | escape}}" data-gp-option-value-id="{{value.id}}"
+        class="option-item-inner gp-w-auto gp-h-auto {% if option_disabled == true %}gp-opacity-20{% endif %}">
+        
+    
+    <div
+      id="value-wrapper-{{option.name | escape | strip | handleize}}-{{value | escape | strip | handleize}}" option-data="{{option.name | escape}}" option-value="{{value | escape}}" option-position="{{option.position}}" data-gp-option-available="{{value.available}}" option-type="optionType" data-disabled="{%- if option_disabled == true -%} disabled  {%- endif -%}" data-hidden="true"
+      class="gp-relative gp-flex gp-cursor-pointer gp-items-center gp-justify-center gp-text-center option-value-wrapper gp-overflow-hidden gp-w-full gp-h-full data-[disabled='disabled']:gp-pointer-events-none data-[disabled='disabled']:!gp-cursor-not-allowed
+  data-[hidden='false']:gp-flex {{option.name | escape}}-{{option.position}}-{{ forloop.index }}"
+      style="{% if selectedValue == value %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: none;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% else %}--fs: normal;--ff: var(--g-font-body, body);--weight: 600;--size: 13px;--size-tablet: 13px;--size-mobile: 12px;--lh: 130%;--lh-tablet: 130%;--lh-mobile: 130%;--ls: normal;--d: flex;--jc: center;	--ai: center;--w: 100%;--h: 100%;--of: hidden;--hvr-c: unset;--bs: solid;--hvr-bs: solid;--focus-bs: undefined;--bw: 1px 1px 1px 1px;--hvr-bw: 1px 1px 1px 1px;--focus-bw: undefined;--bc: var(--g-c-line-2, line-2);--hvr-bc: var(--g-c-line-3, line-3);--focus-bc: undefined;--bblr: 0px;--bbrr: 0px;--btlr: 0px;--btrr: 0px;--hvr-bblr: 0px;--hvr-bbrr: 0px;--hvr-btlr: 0px;--hvr-btrr: 0px;--focus-bblr: 0px;--focus-bbrr: 0px;--focus-btlr: 0px;--focus-btrr: 0px;--active-bblr: 0px;--active-bbrr: 0px;--active-btlr: 0px;--active-btrr: 0px;{% endif %}">
+      
+      <div
+        class="option-value gp-overflow-hidden gp-relative"
+        style=" --pl: 16px;--pr: 16px;--pl-tablet: 16px;--pr-tablet: 16px;--pl-mobile: 16px;--pr-mobile: 16px;--pt: 0px;--pb: 0px;">
+         
+        <span class="gp-text-center" style="--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal">{{value}}</span>
+      </div>
+    
+    </div>
+    
+      </div>
+    </label>{% endfor %}
+      {% if type == "dropdown" %}
+    <select
+      aria-label="{{option.name | escape}}" autocomplete="off" id="p-variant-dropdown-{{option.position}}" name="{%- if option -%}{{option.name | escape}}{% else %}Select Option{%- endif -%}" option-data="{{option.name}}" option-type="{{optionType}}" option-renderer="{{optionRendered}}"
+      class="dropdown-option-item gp-truncate gp-bg-auto gp-pl-4 gp-pr-6 gp-outline-none gp-shadow-none gp-border-g-line-2 hover:gp-border-g-line-3 active:gp-text-g-text-2 hover:gp-text-g-text-2 gp-text-g-text-2 active:gp-bg-g-bg-3 hover:gp-bg-g-bg-3 gp-bg-g-bg-3"
+      style="--w:true;--w-tablet:true;--w-mobile:true;--h:[object Object];--shadow:none;--hvr-shadow:none;--bg:var(--g-c-bg-3, bg-3);--bs:solid;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-2, line-2);--fs:normal;--ff:var(--g-font-body, body);--weight:600;--size:13px;--size-tablet:13px;--size-mobile:12px;--lh:130%;--lh-tablet:130%;--lh-mobile:130%;--ls:normal;--hvr-c:var(--g-c-text-2, text-2);--c:var(--g-c-text-2, text-2);--hvr-bg:var(--g-c-bg-3, bg-3);--hvr-bs:solid;--hvr-bw:1px 1px 1px 1px;--hvr-bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--hvr-bblr:0px;--hvr-bbrr:0px;--hvr-btlr:0px;--hvr-btrr:0px;--focus-bblr:0px;--focus-bbrr:0px;--focus-btlr:0px;--focus-btrr:0px;--active-bblr:0px;--active-bbrr:0px;--active-btlr:0px;--active-btrr:0px;appearance:none;background-image:url(https://cdn.shopify.com/s/files/1/1827/4239/t/1/assets/ico-select.svg?v=155563818344741998551488860031);background-repeat:no-repeat;background-position:right 16px center"
+    >
+      
+      {% for value in values %}{%- liquid
+      assign option_disabled = true
+      for variantItem in product.variants
+        case option.position
+          when 1
+            if variantItem.available and variantItem.option1 == value
+              assign option_disabled = false
+            endif
+          when 2
+            if variantItem.available and variantItem.option2 == value
+              assign option_disabled = false
+            endif
+          when 3
+            if variantItem.available and variantItem.option3 == value
+              assign option_disabled = false
+            endif
+        endcase
+      endfor
+    -%}
+    {% if option_disabled == true %}{% if value == selectedValue %}<option disabled selected option-position="{{option.position}}"
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option disabled 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% endif %}{% else %}{% if value == selectedValue %}<option selected option-position="{{option.position}}" 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+>{{value}}</option>{% else %}<option 
+  option-data="{{option.name | escape}}"
+  option-value="{{value | escape}}"
+  data-gp-option-value-id="{{value.id}}"
+  data-gp-option-available="{{value.available}}"
+  value="{{value | escape}}"
+  class="option-value-wrapper"
+  key="{{value | escape}}"
+ option-position="{{option.position}}">{{value}}</option>{% endif %}{% endif %}{% endfor %}
+    </select>{% endif %}{% endif %}
+  {% endif %}
+      
+          </div>
+      </div>{% endfor %}
+    
+        </div>{% endif %}
+    </gp-product-variants>
+
+    <script {% if section.settings.section_preload == "false" %}class="gps-link" delay {% else %}src{% endif %}="https://assets.gemcommerce.com/assets-v2/gp-product-variant-v7-5.js?v={{ shop.metafields.GEMPAGES.ASSETS_VERSION }}" defer="defer"></script>
+  
+      </div>

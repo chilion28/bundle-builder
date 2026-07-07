@@ -1,0 +1,44 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_624462098402902856": {
+      "settings": {
+        "checksum": "2f982bc5346bb20cbdace3834ed8b0365a14b8f8b52f34dae0e1394c613c9caf_1_1_0_0__1",
+        "ggNl6uxfST0_label": "<p>Buy Now</p>",
+        "ggmCS13TXeq_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Work-Hats-Category_1.jpg"
+      },
+      "type": "gp-section-624462098402902856"
+    },
+    "gp_section_624462098402968392": {
+      "settings": {
+        "checksum": "a496cf39d901b13774408f8847074f1f792de9c795f21be4dd57f55fd148c0d4_1_1_0_0__1",
+        "ggZG3ihIl_5_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Tlaloc-Landing-Page-Banner_5416c7f7-ed22-42fa-822d-18e901ff0df3.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-624462098402968392"
+    },
+    "gp_section_624462098403033928": {
+      "settings": {
+        "checksum": "e7e8effd2d1906fdcd49a1f92f67222c2e6ea1e4f1483d4bb99f54320b30f465_1_1_0_0__1",
+        "gg4l_Y-99Rc_label": "<p>Buy Now</p>",
+        "ggLvSUn4Pm2_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Monogram-Hats-01.jpg",
+        "gg_IAJAtYFT_label": "<p>Buy Now</p>",
+        "gglTP9zeIfb_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/US-License-Plate-Hats.jpg"
+      },
+      "type": "gp-section-624462098403033928"
+    }
+  },
+  "order": [
+    "gp_section_624462098402968392",
+    "gp_section_624462098403033928",
+    "gp_section_624462098402902856"
+  ]
+}

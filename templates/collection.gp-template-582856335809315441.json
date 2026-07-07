@@ -1,0 +1,33 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_582856335859647089": {
+      "settings": {
+        "checksum": "092b03457d6dc8f2448df35c85be5cb661c2f8fb841ba9c384953cdc48dca5ae_1_1_0_10__1",
+        "ggQ9WBQwQH0_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-22bf9f7d-5105-4618-a829-da83e0a718e7.jpg",
+        "ggQ9WBQwQH0_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-4517dd0b-5e3f-4e85-8b3d-457f56c3f9f5.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-582856335859647089"
+    },
+    "gp_section_582856335859712625": {
+      "settings": {
+        "checksum": "7e89f64339bdfaa02b608f2c01e8f98e20108eac01a20dc915ba141161ea7fe7_1_1_0_10__1",
+        "gg3sct63Y6__text": "Salsa Picante Hat Collection"
+      },
+      "type": "gp-section-582856335859712625"
+    }
+  },
+  "order": [
+    "gp_section_582856335859647089",
+    "gp_section_582856335859712625"
+  ]
+}

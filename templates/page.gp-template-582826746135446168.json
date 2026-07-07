@@ -1,0 +1,85 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_582826751353160305": {
+      "settings": {
+        "checksum": "a70f2ab5f39acd4952d6ac508eba4a4e22ce6871d1137d07d0e5627e862c9abe_1_1_0_0__1",
+        "ggecTQfU6LP_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-22bf9f7d-5105-4618-a829-da83e0a718e7.jpg",
+        "ggecTQfU6LP_background_desktop_videoHtml5": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+        "ggecTQfU6LP_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gempages_490500299719443603-4517dd0b-5e3f-4e85-8b3d-457f56c3f9f5.jpg",
+        "ggecTQfU6LP_background_mobile_videoHtml5": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+        "section_preload": "true"
+      },
+      "type": "gp-section-582826751353160305"
+    },
+    "gp_section_582826751890031448": {
+      "settings": {
+        "checksum": "f3447c1f30f15a7497e6f96e7fcea93615efd0312c2592171e2597accd9beb6d_1_1_0_0__1",
+        "gg0fKIr9zFT_text": "<p>© 2022 GemPages</p>",
+        "gg5DHjQOvKH_alt": "ApplePay",
+        "gg5DHjQOvKH_srcSet_desktop_src": "https://ucarecdn.com/c246d805-0a9b-4830-ac84-3c906898c8ee/-/format/auto/",
+        "gg5DHjQOvKH_title": "ApplePay",
+        "gg5tZ_FRVCH_alt": "PayPal",
+        "gg5tZ_FRVCH_srcSet_desktop_src": "https://ucarecdn.com/39630368-d870-49f7-8f7c-f88e983470a5/-/format/auto/",
+        "gg5tZ_FRVCH_title": "PayPal",
+        "ggEetSr2Ypa_alt": "Alt Image",
+        "ggEetSr2Ypa_srcSet_desktop_src": "https://ucarecdn.com/fad668e6-55e2-4dfe-b3df-9f35856e550f/-/format/auto/",
+        "ggEetSr2Ypa_title": "Image Title",
+        "ggGkVuymoE4_alt": "GPay",
+        "ggGkVuymoE4_srcSet_desktop_src": "https://ucarecdn.com/25fb21c5-6520-4960-b4fe-1fb074277809/-/format/auto/",
+        "ggGkVuymoE4_title": "GPay",
+        "ggK7f4GCGXr_text": "<p>demo.gempages@gmail.com</p>",
+        "ggTdOox38Hh_alt": "Alt Image",
+        "ggTdOox38Hh_srcSet_desktop_src": "https://ucarecdn.com/026f1597-2118-4edc-a0fa-b643f402f00f/-/format/auto/",
+        "ggTdOox38Hh_title": "Image Title",
+        "gghJJzwxhHv_alt": "Visa",
+        "gghJJzwxhHv_srcSet_desktop_src": "https://ucarecdn.com/3fbe7db7-13d4-476c-af3d-377ed83a3264/-/format/auto/",
+        "gghJJzwxhHv_title": "Visa",
+        "ggjw8nPf2LD_alt": "Alt Image",
+        "ggjw8nPf2LD_srcSet_desktop_src": "https://ucarecdn.com/add0f662-1953-4a41-afdd-7321c2ccbfc5/-/format/auto/",
+        "ggjw8nPf2LD_title": "Image Title",
+        "ggoZZC4k_Md_text": "<p>+102 3343 4722</p>",
+        "ggvG9N3M1go_text": "<p>2118 Thornridge Cir, Connecticut 35624</p>",
+        "ggxW9oezBt0_alt": "MasterCard",
+        "ggxW9oezBt0_srcSet_desktop_src": "https://ucarecdn.com/5abf8b6b-ff0a-40c8-acaf-21fba4be80d5/-/format/auto/",
+        "ggxW9oezBt0_title": "MasterCard"
+      },
+      "type": "gp-section-582826751890031448"
+    },
+    "gp_section_582850610097816177": {
+      "settings": {
+        "checksum": "0a79797b4063f3da018b0f950971422b54e748b06dd08b54764e7692f97b6f8f_1_1_0_0__1"
+      },
+      "type": "gp-section-582850610097816177"
+    },
+    "gp_section_582851963868152664": {
+      "settings": {
+        "checksum": "f6b18c190258d3d16c823fca52d5368fe3256682b7b24c1d95d4d09313d1f9a3_1_1_0_0__1"
+      },
+      "type": "gp-section-582851963868152664"
+    },
+    "gp_section_582852386419114648": {
+      "settings": {
+        "checksum": "5c02d8433ffe8cad3d9e0477250a13f06c2aac78d5d87e13542537a813ac437d_1_1_0_0__1",
+        "gg7ajHfSSpt_text": "<p>Experience our prestigious after-sales service</p>",
+        "gg_iFzt2xBF_text": "Salsa Picante Collection&nbsp;"
+      },
+      "type": "gp-section-582852386419114648"
+    }
+  },
+  "order": [
+    "gp_section_582826751353160305",
+    "gp_section_582852386419114648",
+    "gp_section_582851963868152664",
+    "gp_section_582850610097816177",
+    "gp_section_582826751890031448"
+  ]
+}

@@ -1,0 +1,70 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_619060615360545493": {
+      "settings": {
+        "checksum": "a9aee244832d5e6ed0d469ae5e3123aad6adbc6c8da7434be6b8acd6a92029d6_1_1_0_0__1",
+        "ggOcD6BPMoZ_text": "fast custom production",
+        "ggTalXtKhBA_text": "15,000+ 5-star reviews",
+        "ggY7utnm52E_text": "decorated and shipped in the usa"
+      },
+      "type": "gp-section-619060615360545493"
+    },
+    "gp_section_619060745954394929": {
+      "settings": {
+        "checksum": "b8c0080aa2864dda06588630a01bbf9dc19de28bd8ea3bc34111e0fd04c2292a_1_1_0_0__1",
+        "gg1wqKDYpIn_text": "Add Your Text",
+        "ggIDL3iLAyB_text": "Step 3",
+        "ggMmJKG9uB2_text": "Step 2",
+        "ggOBB92joDi_text": "Make it yours in just a few simple steps.",
+        "ggTfkG7nbCR_text": "<p>Customize your hat</p>",
+        "ggX00vFhtUB_text": "Step 1",
+        "ggfHqn5V5Pb_text": "Step 1 of 3",
+        "ggjFXjQtdvE_text": "<p>This is what will appear on your plate.</p>",
+        "ggjiCySV8pK_text": "<p>Choose your state</p>",
+        "ggtf_rMw2GN_text": "<strong>Step 3: Customize your hat</strong>",
+        "ggtrnETEEdR_text": "<p>Choose your style</p>"
+      },
+      "type": "gp-section-619060745954394929"
+    },
+    "gp_section_619060766573593173": {
+      "settings": {
+        "checksum": "5174eb06bb3269abaabe6888a934cf646742bf6d78389aebd73fbc2844d666ab_1_1_0_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-619060766573593173"
+    },
+    "gp_section_619099594487235285": {
+      "settings": {
+        "checksum": "a46c2fd2a3265360450cce534ac33dbb5a7f1322a15d36eb75fcee97e1be72cf_1_1_0_0__1",
+        "gg-ymWJuUmQ_text": "<p>total ( ${totalQty} hats)</p>",
+        "gg2eT4qYagJ_text": "<p>Mix &amp; Match your favorites. Most customers buy 2 or more!</p>",
+        "gg94RzCri6o_text": "<p><span style=\"color:#FFFFFF;\">$${indiPrice} each</span></p>",
+        "ggAYBZHgpsR_text": "<p><span style=\"color:#FFFFFF;\">${messageDiscount}</span></p>",
+        "ggIi3mCQd9H_text": "&nbsp;${totalQty} hats selected",
+        "ggKjZEwRM3e_text": "Step 2 of 3",
+        "ggN3bx4ZyOY_text": "<p>All styles are fully customizable with your text and plate colors.</p>",
+        "gg_Wqc7DURS_text": "Choose Your Hat Style",
+        "ggcUqxUESUN_text": "<p><span style=\"color:#FFFFFF;\">$${ subTotal }</span></p>",
+        "ggmmObv4iPv_text": "<p>Mix &amp; match your favorites.</p>",
+        "ggr7VHKZQm0_text": "Step 3 of 3",
+        "gguqtJFtCk6_text": "Choose Colors &amp; Quantities"
+      },
+      "type": "gp-section-619099594487235285"
+    }
+  },
+  "order": [
+    "gp_section_619060766573593173",
+    "gp_section_619060615360545493",
+    "gp_section_619060745954394929",
+    "gp_section_619099594487235285"
+  ]
+}

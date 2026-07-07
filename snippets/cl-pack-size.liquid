@@ -1,0 +1,209 @@
+{% comment %}
+  "Buy More Save More" pack-size quick-add buttons (big card layout).
+
+  SHOWS WHEN: custom.pack_size_widget = true on the PRODUCT (one at a time) OR on a
+  COLLECTION (bulk), AND the product has volume tiers in the CityLocs discount app.
+  Works for single- and multi-variant products.
+
+  TOGGLE: add the boolean metafield custom.pack_size_widget for both Products and
+  Collections (Settings > Custom data). Set True on a product, or on a collection to
+  cover all its products. Product wins; else any enabled collection turns it on.
+
+  (Pill variant archived in cl-pack-size-pills.liquid.)
+{% endcomment %}
+
+{%- assign cl_pack_ok = false -%}
+{%- if product.metafields.custom.pack_size_widget.value -%}{%- assign cl_pack_ok = true -%}{%- endif -%}
+{%- unless cl_pack_ok -%}
+  {%- for c in product.collections -%}
+    {%- if c.metafields.custom.pack_size_widget.value -%}{%- assign cl_pack_ok = true -%}{%- break -%}{%- endif -%}
+  {%- endfor -%}
+{%- endunless -%}
+
+{% if cl_pack_ok %}
+  {%- capture cl_vprices -%}{ {% for v in product.variants %}"{{ v.id }}":{{ v.price }}{% unless forloop.last %},{% endunless %}{% endfor %} }{%- endcapture -%}
+  <div
+    class="cl-pack-size"
+    data-variant="{{ product.selected_or_first_available_variant.id }}"
+    data-base="{{ product.selected_or_first_available_variant.price }}"
+    data-prices='{{ cl_vprices }}'
+    data-tags="{{ product.tags | join: ',' | escape }}"
+    style="display:none;"
+  >
+    <div class="cl-pack-title">Buy More Save More</div>
+    <div class="cl-pack-options"></div>
+    <div class="cl-pack-hint" style="display:none;"></div>
+    <div class="cl-pack-note">Volume discounts are applied at checkout.</div>
+  </div>
+
+  <script>
+  (function () {
+    if (window.__clPackInit) return;
+    window.__clPackInit = true;
+
+    function money(cents) { return '$' + (cents / 100).toFixed(2); }
+    function plural(name, qty) {
+      var s = (name || 'item').trim().replace(/s$/i, ''); // naive singular ("Plates" -> "Plate")
+      return qty === 1 ? s : s + 's';
+    }
+
+    // ----- variant awareness -----
+    function currentVariantId(box) {
+      var el = document.querySelector('form[action*="/cart/add"] [name="id"]') || document.querySelector('[name="id"]');
+      return (el && el.value) || box.getAttribute('data-variant');
+    }
+    function baseFor(box, id) {
+      var map = box._prices || {};
+      return map[id] || parseInt(box.getAttribute('data-base'), 10) || 0;
+    }
+
+    // Clicking a pack button sets the quantity stepper (it does NOT add to cart —
+    // the customer still clicks the theme's Add to cart). Handles the theme's
+    // 1–9 select + "10+" input toggle.
+    function setStepperQty(qty) {
+      var sel = document.querySelector('[data-quantity-select]');
+      var inp = document.querySelector('[data-quantity-input]');
+      var selWrap = sel && sel.closest('.form-field--qty-select');
+      var inpWrap = inp && inp.closest('.form-field--qty-input');
+
+      if (qty >= 10) {
+        if (sel) { sel.value = '10+'; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+        if (selWrap) selWrap.classList.add('hidden');
+        if (inpWrap) inpWrap.classList.remove('hidden');
+      } else {
+        if (sel) { sel.value = String(qty); sel.dispatchEvent(new Event('change', { bubbles: true })); }
+        if (selWrap) selWrap.classList.remove('hidden');
+        if (inpWrap) inpWrap.classList.add('hidden');
+      }
+      if (inp) {
+        inp.value = String(qty);
+        inp.dispatchEvent(new Event('input', { bubbles: true }));
+        inp.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+      syncHighlight();
+    }
+
+    // Render the pack cards using the currently selected variant's price.
+    function renderCards(box) {
+      var t = box._tiers; if (!t) return;
+      var base = baseFor(box, currentVariantId(box));
+      var wrap = box.querySelector('.cl-pack-options');
+      wrap.innerHTML = '';
+
+      t.qtys.forEach(function (qty, i) {
+        var offCents = t.amounts[i] * 100;
+        var perHat = base - offCents;
+        var pct = Math.round((offCents / base) * 100);
+        var deal = i === 0 ? 'Regular price' : (pct + '% OFF');
+
+        var eachHtml;
+        if (i === 0) {
+          eachHtml = '<span class="cl-pack-now">' + money(perHat) + '</span> each';
+        } else {
+          var prev = base - (t.amounts[i - 1] * 100);
+          eachHtml = '<span class="cl-pack-was">' + money(prev) + '</span>' +
+                     '<span class="cl-pack-now">' + money(perHat) + '</span> each';
+        }
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'cl-pack-btn' + (i === 0 ? '' : ' cl-pack-btn--deal');
+        btn.setAttribute('data-qty', qty);
+        btn.innerHTML =
+          '<span class="cl-pack-qty">' + qty + ' ' + plural(t.noun, qty) + '</span>' +
+          '<span class="cl-pack-deal">' + deal + '</span>' +
+          '<span class="cl-pack-each">' + eachHtml + '</span>';
+        btn.addEventListener('click', function () { setStepperQty(qty); });
+        wrap.appendChild(btn);
+      });
+
+      syncHighlight();
+    }
+
+    function buildOne(box) {
+      var tags = (box.getAttribute('data-tags') || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+      if (!tags.length) return;
+      try { box._prices = JSON.parse(box.getAttribute('data-prices') || '{}'); } catch (e) { box._prices = {}; }
+
+      fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(JSON.stringify(tags)))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.discountBreak || !d.discountAmount) return;
+          box._tiers = {
+            qtys: [1].concat(d.discountBreak.map(Number)),
+            amounts: [0].concat(d.discountAmount.map(Number)),
+            noun: (d.name || d.discountMessage || 'item')
+          };
+          renderCards(box);
+          box.style.display = 'block';
+          reposition(box);
+          attachWatches();
+        })
+        .catch(function () {});
+    }
+
+    function reposition(box) {
+      var place = function () {
+        var qty = document.querySelector('[data-quantity-wrapper]');
+        if (qty && qty.parentNode && box !== qty.previousElementSibling) qty.parentNode.insertBefore(box, qty);
+      };
+      place();
+      [300, 800, 1600].forEach(function (ms) { setTimeout(place, ms); });
+    }
+
+    // ----- qty stepper highlight + next-tier hint -----
+    function stepperQty() {
+      var sel = document.querySelector('[data-quantity-select]');
+      var inp = document.querySelector('[data-quantity-input]');
+      if (sel && sel.value && sel.value !== '10+') return parseInt(sel.value, 10) || 0;
+      if (inp && inp.value) return parseInt(inp.value, 10) || 0;
+      return 1;
+    }
+    function syncHighlight() {
+      var q = stepperQty();
+      document.querySelectorAll('.cl-pack-size').forEach(function (box) {
+        var t = box._tiers; if (!t) return;
+        var base = baseFor(box, currentVariantId(box));
+        var matched = false;
+        box.querySelectorAll('.cl-pack-btn').forEach(function (b) {
+          var on = parseInt(b.getAttribute('data-qty'), 10) === q;
+          b.classList.toggle('is-active', on);
+          if (on) matched = true;
+        });
+        var hint = box.querySelector('.cl-pack-hint'); if (!hint) return;
+        if (matched || q <= 0) { hint.style.display = 'none'; hint.innerHTML = ''; return; }
+        var next = null;
+        for (var i = 0; i < t.qtys.length; i++) { if (t.qtys[i] > q) { next = i; break; } }
+        if (next === null) { hint.style.display = 'none'; return; }
+        var price = money(base - (t.amounts[next] * 100));
+        hint.innerHTML = 'Add <strong>' + (t.qtys[next] - q) + '</strong> more to unlock <strong>' +
+                         price + '</strong> each (' + t.qtys[next] + '-Pack)';
+        hint.style.display = 'block';
+      });
+    }
+
+    var _watch = false;
+    function attachWatches() {
+      if (_watch) return;
+      _watch = true;
+      // qty stepper changes → highlight/hint
+      document.addEventListener('change', function (e) {
+        if (e.target.matches && e.target.matches('[data-quantity-select], [data-quantity-input]')) syncHighlight();
+      });
+      document.addEventListener('input', function (e) {
+        if (e.target.matches && e.target.matches('[data-quantity-input]')) syncHighlight();
+      });
+      // variant changes → re-price the cards
+      document.addEventListener('change', function (e) {
+        if (e.target.matches && e.target.matches('[name="id"]')) {
+          document.querySelectorAll('.cl-pack-size').forEach(renderCards);
+        }
+      });
+    }
+
+    function init() { document.querySelectorAll('.cl-pack-size').forEach(buildOne); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+  </script>
+{% endif %}

@@ -1,0 +1,31 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_573424809304654598": {
+      "settings": {
+        "checksum": "9520f85ef3c9a23efe2e96bbbdb57a607eb2a13214a202d74645a810636a834f_1_1_0_30__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-573424809304654598"
+    },
+    "gp_section_573426308835443937": {
+      "settings": {
+        "checksum": "3b3c08580dd1daec5035dda625540c98c8a8929cc1ab7499cb7cff16fdcf6998_1_1_0_30__1",
+        "gg3sct63Y6__text": "Golf Hat Collection"
+      },
+      "type": "gp-section-573426308835443937"
+    }
+  },
+  "order": [
+    "gp_section_573424809304654598",
+    "gp_section_573426308835443937"
+  ]
+}

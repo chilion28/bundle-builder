@@ -1,0 +1,17 @@
+                {%- layout none -%}
+{%- assign limit = 100 -%}
+{%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+{%- assign pageUrl = contentForQuerystring | split:'"pageurl":"' | last | split:'"' | first | split:'.myshopify.com' | last | replace:'\/','/' | replace:'%20',' ' | replace:'\u0026','&' -%}
+{% assign pageUrl = pageUrl | split: "limit=" %}
+{% capture pageTypeString %}{{ pageUrl[1] | json }}{% endcapture %}
+{% if pageTypeString contains '"' %}{%- assign limit = pageUrl[1] -%}{% else %}{% endif %}
+    {
+      "id":{{collection.id}},
+      "product_data":{
+            {% paginate collection.products by limit %}
+            {% for product in collection.products %}
+                "{{ forloop.index }}" : {{product | json }}{%- if forloop.index != collection.products.length -%},{%-endif-%}
+            {% endfor %}
+            {% endpaginate %}
+      }
+    }

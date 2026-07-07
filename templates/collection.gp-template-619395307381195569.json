@@ -1,0 +1,86 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_619395520871269077": {
+      "settings": {
+        "checksum": "d89610e64772b7b388433a641d0b004cfb8f8f09cd444a502e11d53ba0be9926_1_1_0_0__1",
+        "gg-ezDve_aa_text": "GIFT Bundles",
+        "gg-f470O_8C_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/FD2026-hero-dope-dad-4.png",
+        "gg-f470O_8C_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/FD2026-hero-dope-dad-3-mobile.png",
+        "gg0MGbODAyf_text": "<p>The dad in your life will spend money on kids, the house, the dog, the grill, and everyone else first... then keep using the same beat up hat and old cup for the next 10 years.</p>",
+        "ggFI-ifEOxO_text": "Father's day",
+        "ggPW0HeJpz6_text": "<p>A premium leather patch hat</p>",
+        "ggWENBjR37y_text": "<p>A switchblade style bottle opener</p>",
+        "ggXSiDuAsBT_text": "<p>A 20 oz. insulated tumbler</p>",
+        "ggeq3n7bst2_text": "<p>Instead of another random gadget he'll never touch, give him something he'll actually use every day.</p>",
+        "gghXa6GbEo1_label": "<p>Shop Father's Day Bundles</p>",
+        "ggkK8sQjj1y_text": "Limited edition",
+        "ggwDCSvAfQD_text": "<p><strong>Each Father's Day bundle includes:</strong></p>",
+        "ggxsbvCKf7a_text": "<p>That's why this Father's Day bundle makes such a perfect gift.</p>",
+        "ggzV_sepU7C_text": "<p><strong>Dads never ask for anything.</strong></p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-619395520871269077"
+    },
+    "gp_section_619668545197834837": {
+      "settings": {
+        "checksum": "f4948df13e3d6aa2cafcb514bc9767b740a0589dd9739aefc8be29777e21b31a_1_1_0_0__1",
+        "gg0Ep6j4yDT_text": "<p><span style=\"background-color:transparent;color:#000000;\">Whether he’s grilling in the backyard, coaching ball games, working in the garage, heading to the lake, or relaxing with a cold drink after work… this bundle fits right into his everyday life.</span></p>",
+        "gg1qMGaJhSq_text": "<span style=\"background-color:transparent;color:#000000;\">designed to match and built with a rugged style dads love</span>"
+      },
+      "type": "gp-section-619668545197834837"
+    },
+    "gp_section_619679080249295707": {
+      "settings": {
+        "checksum": "4cce37d1ec29094ad40673a978c23ce0cd975b5b71fe6231afe7369fa76686e9_1_1_0_0__1",
+        "gg38hNOx9NY_text": "Ready to gift",
+        "gg7Jfj60NhS_text": "father's day delivery",
+        "ggdE-5rI6lA_text": "<p>Order by June 10th for delivery by Father's Day.</p>",
+        "gggvLzMrwHZ_text": "high quality",
+        "ggjY5AfXYl2_text": "made for dads",
+        "ggmWUwBiWJj_text": "<p>Thoughtful gifts made for every kind of dad.</p>",
+        "ggolQX1eFYU_text": "<p>Designed by dads. Approved by legends.</p>",
+        "ggtM1UIxeku_text": "<p>Built tough for everyday use.</p>"
+      },
+      "type": "gp-section-619679080249295707"
+    },
+    "gp_section_620077380165173919": {
+      "settings": {
+        "checksum": "c74404710b6f68b0661501af15cd123ec9bea4fc18dcf36a3134124557d984ba_1_1_0_0__1",
+        "ggLnWvVNR_u_text": "Shop all bundles",
+        "ggkFX6r702U_text": "<p>Find the bundle that's perfect for the dad in your life.</p>",
+        "ggs76IFIyzc_label": "Shop this bundle"
+      },
+      "type": "gp-section-620077380165173919"
+    },
+    "gp_section_620092842349429735": {
+      "settings": {
+        "checksum": "224ad2e21702028d1d68006d68e19f287f7d172c1507d08951b0b636ac5b1e93_1_1_0_0__1"
+      },
+      "type": "gp-section-620092842349429735"
+    },
+    "gp_section_620098974958748319": {
+      "settings": {
+        "checksum": "963b7bb081c17d31af16356990e8b93278e12b69ddc128afc63833abd2c8b10e_1_1_0_0__1",
+        "ggp0foFLFTs_text": "<span style=\"background-color:transparent;color:#000000;\">choose from fan favorite styles like</span>"
+      },
+      "type": "gp-section-620098974958748319"
+    }
+  },
+  "order": [
+    "gp_section_619395520871269077",
+    "gp_section_619668545197834837",
+    "gp_section_620098974958748319",
+    "gp_section_619679080249295707",
+    "gp_section_620077380165173919",
+    "gp_section_620092842349429735"
+  ]
+}

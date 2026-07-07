@@ -1,0 +1,51 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_592976429205947120": {
+      "settings": {
+        "checksum": "711e9a4fa42d372d9d00efe48d1565f0982436f921022d2e405c91c756d46097_1_1_0_0__1",
+        "gg2K-BiXVgo_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggBNJXNPIE0_text": "<p>4+ items</p>",
+        "ggCpJzP-Ixj_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "ggFAjwEGpLU_text": "<p>15% Off + 🚛 Freeship</p>",
+        "ggGB9tbdkrg_text": "<p>Worldwide free shipping</p>",
+        "ggM81IbBQeh_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggOH9TQz4jR_text": "<p>Mix &amp; match any color or size</p>",
+        "ggS_qDk2LEt_text": "<p>15% Off + 🚛 Freeship</p>",
+        "ggUabf6PpPV_text": "<p>Size guide</p>",
+        "ggVgFJMf3kS_text": "<p>2 items</p>",
+        "ggWkY8TvbMq_text": "<p>Black Friday Sale</p>",
+        "ggWr08X6ILL_text": "<p>Our 30-day refund policy allows you to return your purchase for a full refund within 30 days of the original purchase date if you're not satisfied.</p>",
+        "gg_A5aH0i7i_errorMessage": "Cannot add product to cart",
+        "gg_A5aH0i7i_label": "Add to cart",
+        "gg_A5aH0i7i_outOfStockLabel": "Out of stock",
+        "gg_A5aH0i7i_successMessage": "Add product to cart successfully",
+        "gg_A5aH0i7i_unavailableLabel": "Unavailable",
+        "gga71AUIQi2_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "ggdpSASlCko_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/badge.svg",
+        "ggeQd7EUFaQ_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "ggfbf6MdGPG_childItem_0": "<p>Material</p>",
+        "ggfbf6MdGPG_childItem_1": "<p>Shipping</p>",
+        "ggfbf6MdGPG_childItem_2": "<p>Care instruction</p>",
+        "ggkzV06sxzy_text": "<p>Most popular</p>",
+        "gglZ5tesjdp_text": "<p>15% Off + 🚛 Freeship</p>",
+        "ggqJu0dCVcr_displayContent": "{percent_discount} off",
+        "ggt8drk81Bv_displayContent": "{percent_discount} off",
+        "ggzUYIZDDcw_text": "<p>3 items</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-592976429205947120"
+    }
+  },
+  "order": [
+    "gp_section_592976429205947120"
+  ]
+}

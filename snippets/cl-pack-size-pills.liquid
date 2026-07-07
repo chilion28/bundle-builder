@@ -1,0 +1,129 @@
+{% comment %}
+  Pack-size quick-add pills. Renders only for single-variant products that have
+  volume tiers in the CityLocs discount app. Each pill adds that quantity to the
+  cart and opens the AMP drawer. Reuses /apps/citylocs/discount-info.
+{% endcomment %}
+{% if product.variants.size == 1 %}
+  <div
+    class="cl-pack-size"
+    data-variant="{{ product.selected_or_first_available_variant.id }}"
+    data-tags="{{ product.tags | join: ',' | escape }}"
+    style="display:none;"
+  >
+    <span class="cl-pack-label">Choose Pack Size</span>
+    <div class="cl-pack-pills"></div>
+  </div>
+
+  <script>
+  (function () {
+    if (window.__clPackInit) return;
+    window.__clPackInit = true;
+
+    // The personalization "Custom Text" field, if this product has one.
+    function customTextField() {
+      return document.querySelector('input[name="properties[Custom Text]"]')
+          || document.querySelector('#user_input')
+          || null;
+    }
+
+    // Gather every personalization line-item property currently in the form.
+    function collectProperties() {
+      var props = {};
+      document.querySelectorAll('[name^="properties["]').forEach(function (f) {
+        var m = f.name.match(/^properties\[(.+)\]$/);
+        if (!m) return;
+        var val = (f.value || '').trim();
+        if (val) props[m[1]] = val;
+      });
+      return props;
+    }
+
+    function flagMissingText(field) {
+      field.style.borderColor = '#e24b4a';
+      field.focus();
+      field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var box = field.closest('.cl-pack-size') ? null : field.parentNode;
+      var note = document.getElementById('cl-pack-err');
+      if (!note) {
+        note = document.createElement('div');
+        note.id = 'cl-pack-err';
+        note.className = 'cl-pack-err';
+        note.textContent = 'Please enter your custom text before adding to cart.';
+        field.insertAdjacentElement('afterend', note);
+      }
+      field.addEventListener('input', function clear() {
+        field.style.borderColor = '';
+        if (note && note.parentNode) note.remove();
+        field.removeEventListener('input', clear);
+      });
+    }
+
+    function addToCart(variantId, qty, btn) {
+      // If personalization is available, require the custom text first.
+      var ctf = customTextField();
+      if (ctf && !(ctf.value || '').trim()) { flagMissingText(ctf); return; }
+
+      var label = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Adding…';
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: variantId, quantity: qty, properties: collectProperties() })
+      })
+      .then(function (r) { return r.json(); })
+      .then(function () {
+        btn.disabled = false; btn.innerHTML = label;
+        if (window.AMP_API && AMP_API.OPEN_CART) AMP_API.OPEN_CART();
+        else window.location.href = '/cart';
+      })
+      .catch(function () { btn.disabled = false; btn.innerHTML = label; });
+    }
+
+    function buildOne(box) {
+      var variantId = box.getAttribute('data-variant');
+      var tags = (box.getAttribute('data-tags') || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+      if (!variantId || !tags.length) return;
+
+      fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(JSON.stringify(tags)))
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.discountBreak) return;
+          var qtys = [1].concat(d.discountBreak.map(Number));
+          var wrap = box.querySelector('.cl-pack-pills');
+          wrap.innerHTML = '';
+
+          qtys.forEach(function (qty) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cl-pack-pill';
+            btn.textContent = qty === 1 ? 'Single' : (qty + '-Pack');
+            btn.addEventListener('click', function () { addToCart(variantId, qty, btn); });
+            wrap.appendChild(btn);
+          });
+
+          box.style.display = 'block';
+          reposition(box);
+        })
+        .catch(function () {});
+    }
+
+    // Move the pills to sit directly above the quantity stepper (below the Preview button),
+    // re-asserting a few times in case the personalization app injects/re-renders after us.
+    function reposition(box) {
+      var place = function () {
+        var qty = document.querySelector('[data-quantity-wrapper]');
+        if (qty && qty.parentNode && box !== qty.previousElementSibling) {
+          qty.parentNode.insertBefore(box, qty);
+        }
+      };
+      place();
+      [300, 800, 1600].forEach(function (ms) { setTimeout(place, ms); });
+    }
+
+    function init() { document.querySelectorAll('.cl-pack-size').forEach(buildOne); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+  })();
+  </script>
+{% endif %}

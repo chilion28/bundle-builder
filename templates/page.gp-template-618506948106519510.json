@@ -1,0 +1,114 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_618511047065666518": {
+      "settings": {
+        "checksum": "c379711ab132f6b668344031fbb99942016c02d7542dee64ab3409ac4dcad67d_1_1_0_0__1",
+        "gg22-ACavrz_text": "Selected",
+        "ggMnMEV7OTk_text": "You Are",
+        "ggRBqEFydie_text": "officially",
+        "ggWo5drP_Ni_text": "father's day campaign",
+        "ggXLTPDsbgo_label": "<p>choose your timeslot <span style=\"background-color:rgba(40,40,40,0);color:#151515;\">→</span></p>",
+        "ggd10DyCIO5_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sched-hero-bg.png",
+        "ggd10DyCIO5_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sched-hero-bg-mobile-5.png",
+        "ggdeQFu5FNA_text": "<p>Limited time slots available – first come, first served.</p>",
+        "gglsai-Cvrh_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/CL-Logo-Light-4_2x_a26f427c-f6c9-43a6-a399-254a2c85774c.png",
+        "ggoFyq5VrjA_text": "<p>Congratulations.</p><p>&nbsp;</p><p>Out of over 300 applicants, you were selected to be part of our CityLocs Father's Day campaign, and we're excited to have you involved.</p><p>&nbsp;</p><p>This campaign is all about celebrating real dads and turning them into CityLocs hat models through a professional photo shoot that will be featured across our social media, website, and Father's Day marketing campaign.</p><p>&nbsp;</p><p>We truly appreciate you taking the time to share your story with us, and we can't wait to bring this experience to life.</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-618511047065666518"
+    },
+    "gp_section_618517683981255377": {
+      "settings": {
+        "checksum": "98f05087c75bcdeaab4208253388ed36795e83883672719bc6867a39b6e1e3b6_1_1_0_0__1",
+        "gg-8SJTy2dx_text": "<p>A full experience with a pro photographer.</p>",
+        "gg1oaZI5fLX_text": "<p>Be featured on our website, social media &amp; more</p>",
+        "gg4a0WdbafG_text": "Featured in our campaign",
+        "ggEkhr5XbP1_text": "<p>Celebrate fatherhood. Inspire others.</p>",
+        "ggQxRgrVxwX_text": "Exclusive father's day hat",
+        "ggXVI1rCB08_text": "Photos to keep",
+        "ggXsL6Xkwr-_text": "<p>High-quality photos you'll own forever.</p>",
+        "ggaWM9Pwa6f_text": "Be part of something big",
+        "ggd1u30t62U_text": "Professional Photoshoot",
+        "ggg5unz0sN5_text": "<p>You'll receive a CityLocs hat to keep.</p>"
+      },
+      "type": "gp-section-618517683981255377"
+    },
+    "gp_section_618618619034600149": {
+      "settings": {
+        "checksum": "4126cb41423d191db05fd567f52d9c123160da939e5411a9fb2c9c92c2182ca5_1_1_0_0__1",
+        "gg7HK6TNovc_text": "<p>While your camera time may be shorter, we want to make sure every dad has enough time to feel comfortable, look great, and enjoy the experience.</p>",
+        "gg8Tz9Sl_wY_text": "<p>This is an <i><strong>individual dad-focused shoot</strong></i>, not a family photo session.</p>",
+        "gg95cpsizXG_text": "<p>This is a <i><strong><u>volunteer-based campaign</u></strong></i> and is not a paid modeling shoot.</p>",
+        "gg9bXdJO5RS_text": "Recommended",
+        "gg9i8BOry9y_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sched-img-2x2.png",
+        "ggGGcE8lXTl_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sched-img-2bx2.png",
+        "ggLSEwMLtv5_childItem_0": "<p>Large logos</p>",
+        "ggLSEwMLtv5_childItem_1": "<p>Sports team apparel</p>",
+        "ggLSEwMLtv5_childItem_2": "<p>Busy graphics or distracting designs</p>",
+        "ggN0D8X-BPH_text": "<span style=\"background-color:transparent;color:#151515;\"><strong>What to wear</strong></span>",
+        "ggPRazaPvQI_childItem_0": "<p>compensation</p>",
+        "ggQ9Zd0ZShT_text": "<p>However, selected dads will receive:</p>",
+        "ggTFlL5FaDH_text": "<p>To respect everyone's time and keep the schedule running smoothly, we'll be focusing on each selected dad individually throughout the shoot.</p>",
+        "ggXTPQ360gl_childItem_0": "<p>Individual shoot only</p>",
+        "ggZs3VGLpSP_childItem_0": "<p>Polos</p>",
+        "ggZs3VGLpSP_childItem_1": "<p>Button-ups</p>",
+        "ggZs3VGLpSP_childItem_2": "<p>Button-downs</p>",
+        "ggZs3VGLpSP_childItem_3": "<p>Clean workwear-inspired outfits</p>",
+        "ggZs3VGLpSP_childItem_4": "<p>Neutral or solid colors</p>",
+        "ggcR3jSdUGO_text": "<p>The focus of this campaign is YOU and the CityLos hats, so clean and timeless outfits work best.</p>",
+        "gge3yYvP03S_childItem_0": "<p>Professional photos to keep</p>",
+        "gge3yYvP03S_childItem_1": "<p>CityLocs merchandise</p>",
+        "gge3yYvP03S_childItem_2": "<p>The opportunity to be featured in our Father&#039;s Day Campaign</p>",
+        "ggiXjkDCxn6_childItem_0": "<p>Shoot Time</p>",
+        "ggirndCvqO7_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sched-img-1bx2.png",
+        "ggirndCvqO7_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/style-guide-1b.png",
+        "gglioZg8N1L_text": "<p>During the shoot, we'll also be filming a<i><strong> short interview about being a dad,</strong></i> your story, and what fatherhood means to you. Nothing overly formal –– just real conversations and real moments.</p>",
+        "ggn06_QwVs2_text": "<p>A fresh haircut or beard trim is highly recommended if possible.</p>",
+        "ggo7qHAXQIQ_text": "<span style=\"background-color:transparent;color:#FFFFFF;\"><strong>Important shoot Details</strong></span>",
+        "ggrWQW9WYd__text": "Please avoid",
+        "ggvbt5rk5YL_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/style-guide-1cb.png",
+        "ggwE_dknlrq_text": "<p>Please plan to be with us for about <i><strong>1 hour</strong></i>.</p>"
+      },
+      "type": "gp-section-618618619034600149"
+    },
+    "gp_section_618657858057142997": {
+      "settings": {
+        "checksum": "55bc5bcf69b4d154f6c2851499f2ee600243c1a9d8b11bf12bdc661d7498ee2b_1_1_0_0__1",
+        "gg9NFxbfYS3_text": "<span style=\"background-color:transparent;color:#FFFFFF;\"><strong>Location</strong></span>",
+        "ggKFNJ3OrOC_text": "<p>The shoot will take place in:</p>",
+        "ggfLP6Tc0nL_text": "<p>The exact address and final instructions will be sent to you 1 day before your scheduled shoot time.</p>",
+        "ggg9HjXgj_y_text": "<p>We're honored to have you be part of this project and excited to showcase the dads behind the stories.</p>",
+        "ggghDrScFdW_text": "<p><strong>–– Team CityLocs</strong></p>",
+        "ggnHBhXmf-q_text": "<p>See you at the shoot.</p>",
+        "ggsngGZZEGR_text": "<p><strong>City of Industry, CA 91744</strong></p>"
+      },
+      "type": "gp-section-618657858057142997"
+    },
+    "gp_section_619641635432563285": {
+      "settings": {
+        "checksum": "a277e7a18eab04c78f40b27b85f1c0270b876745d798498bde9fb426c12f2980_1_1_0_0__1",
+        "ggSzUcHZz2T_text": "<p><span style=\"background-color:transparent;color:#000000;\">Thank you for the overwhelming support.</span></p>",
+        "ggn6ykp4n9p_text": "<span style=\"background-color:transparent;color:#000000;\"><strong>No More Time Slots Available</strong></span>",
+        "ggqJn2n4Qmg_text": "<p><span style=\"background-color:transparent;color:#000000;\">All spots for the CityLocs photoshoot campaign have been filled and scheduling is now closed.</span></p>"
+      },
+      "type": "gp-section-619641635432563285"
+    }
+  },
+  "order": [
+    "gp_section_618511047065666518",
+    "gp_section_618517683981255377",
+    "gp_section_619641635432563285",
+    "gp_section_618618619034600149",
+    "gp_section_618657858057142997"
+  ],
+  "layout": "theme.gempages.footer"
+}

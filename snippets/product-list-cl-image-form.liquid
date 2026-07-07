@@ -1,0 +1,710 @@
+{% comment %}
+  @param product
+
+  @param selected_variant
+
+  @param show_dynamic_checkout_button {Boolean}
+    If true, show dynamic checkout button
+{% endcomment %}
+
+{% if is_product_modal and show_dynamic_checkout_button %}
+  {% assign quickshop_smart_buttons = true %}
+{% endif %}
+
+{% if is_product_modal == false and show_dynamic_checkout_button %}
+  {% assign product_smart_buttons = true %}
+{% endif %}
+
+{% if product.selling_plan_groups.size > 0 %}
+  {% assign show_dynamic_checkout_button = false %}
+{% endif %}
+
+{% if selected_variant.available == false %}
+  {% assign quickshop_smart_buttons = false %}
+  {% assign product_smart_buttons = false %}
+{% endif %}
+
+{% assign product_form_class = '' %}
+
+{% if show_dcb %}
+  {% if product_smart_buttons or quickshop_smart_buttons %}
+    {% assign product_form_class = 'smart-payment-enabled' %}
+  {% endif %}
+{% endif %}
+
+{% form 'product', product, class: product_form_class, data-product-form: '' %}
+  {% comment %}
+    Display variant options for a product
+
+    @param product
+    @param selected_variant
+    @param style
+
+    @param enable_swatches
+    @param swatches_shape
+    @param swatches_option_trigger
+    @param swatches_option_style
+    @param swatches_product_page_size
+    @param swatch_colors
+
+    @param select_main_classes
+    @param select_classes
+    @param input_select_wrapper_classes
+    @param input_select_classes
+    @param input_select_label_classes
+    @param input_select_chevron_classes
+
+    @param radios_classes
+    @param option_header_classes
+    @param option_name_classes
+    @param option_values_classes
+    @param option_value_classes
+    @param option_value_label_classes
+    @param option_value_input_classes
+    @param option_value_name_classes
+
+    @param swatches_classes
+    @param option_swatch_wrapper_classes
+    @param option_swatch_classes
+    @param option_swatch_inner_classes
+  {% endcomment %}
+  {% assign product = product %}
+  {% assign selected_variant = selected_variant %}
+  {% assign style = settings.product_option_style %}
+  {% assign enable_swatches = settings.swatches_enable %}
+  {% assign sold_out_options = settings.sold_out_options %}
+  {% assign swatches_shape = settings.swatches_shape %}
+  {% assign swatches_option_trigger = settings.swatches_swatch_trigger %}
+  {% assign swatches_option_style = settings.swatches_option_style %}
+  {% assign swatches_product_page_size = settings.swatches_product_page_size %}
+  {% assign swatches_custom_colors = settings.swatches_custom_colors %}
+  {% assign swatch_file_type = 'files' %}
+  {% assign select_main_classes = 'form-options' %}
+  {% assign select_classes = 'form-field form-options' %}
+  {% assign input_select_wrapper_classes = 'form-field-select-wrapper' %}
+  {% assign input_select_classes = 'form-field-input form-field-select' %}
+  {% assign input_select_label_classes = 'form-field-title' %}
+  {% assign radios_classes = 'form-options form-options-selectable-boxes' %}
+  {% assign option_header_classes = 'options-selection__option-header' %}
+  {% assign option_name_classes = 'options-selection__option-name' %}
+  {% assign option_values_classes = 'options-selection__option-values' %}
+  {% assign option_value_classes = 'options-selection__option-value' %}
+  {% assign option_value_label_classes = 'options-selection__option-value-label' %}
+  {% assign option_value_input_classes = 'options-selection__option-value-input' %}
+  {% assign option_value_name_classes = 'options-selection__option-value-name' %}
+  {% assign swatches_classes = 'form-options form-options-swatches' %}
+  {% assign option_swatch_wrapper_classes = 'option-value-name option-value-swatch-wrapper' %}
+  {% assign option_swatch_classes = 'swatch' %}
+  {% assign option_swatch_inner_classes = 'swatch-inner' %}
+
+  {% comment %}Inject @pixelunion/shopify-variants-ui/variant-selection begin{% endcomment %}
+  {% comment %}
+    Display variant options for a product
+  
+    @param product
+    @param selected_variant
+j    @param variant_selection_id
+    @param sold_out_options
+    @param style
+  
+    @param enable_swatches
+    @param swatches_shape
+    @param swatches_option_trigger
+    @param swatches_option_style
+    @param swatches_product_page_size
+    @param swatches_custom_colors
+  {% endcomment %}
+  
+  {% comment %} <variant-selection
+    {% if variant_selection_id != blank %}id="{{ variant_selection_id }}"{% endif %}
+    class="variant-selection"
+    product-url="{{ product.url }}.js"
+    variant="{% if selected_variant %}{{ selected_variant.id }}{% else %}not-selected{% endif %}"
+    data-variant-selection
+  >
+    {% if product.has_only_default_variant %}
+      <input
+        class="variant-selection__variants variant-selection__variants--default"
+        name="id"
+        type="hidden"
+        value="{{ product.variants.first.id }}"
+        data-variants
+      >
+    {% else %}
+      <noscript>
+        <style>
+          .variant-selection__variants {
+            display: block !important;
+          }
+        </style>
+      </noscript>
+      <select
+        class="variant-selection__variants"
+        name="id"
+        style="display: none"
+        data-variants
+      >
+        <option
+          value="not-selected"
+          disabled
+          {% if selected_variant == blank %}selected{% endif %}
+        >
+          {{ 'product.variants.choose_variant' | t }}
+        </option>
+        {% for variant in product.variants %}
+          <option
+            {% if selected_variant and selected_variant.id == variant.id %}selected{% endif %}
+            value="{{ variant.id }}"
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            {{ variant.title }} - {{ variant.price | money }}
+          </option>
+        {% endfor %}
+      </select>
+  
+      {% comment %}Inject @pixelunion/shopify-variants-ui/options-selection begin{% endcomment %}
+      {% comment %}
+        Display variant options for a product
+      
+        @param product
+        @param selected_variant
+        @param variant_selection_id
+        @param sold_out_options
+        @param style
+      
+        @param enable_swatches
+        @param swatches_shape
+        @param swatches_option_trigger
+        @param swatches_option_style
+        @param swatches_product_page_size
+        @param swatches_custom_colors
+        @param swatch_file_type
+      {% endcomment %}
+      
+      <options-selection
+        {% if variant_selection_id != blank %}variant-selection="{{ variant_selection_id }}"{% endif %}
+        style="display: none;"
+        {% if sold_out_options == 'disabled' %}disable-unavailable{% endif %}
+        {% if sold_out_options == 'hidden' %}remove-unavailable{% endif %}
+        data-options-selection
+      >
+        <script>
+          (function() {
+            const scriptTag = document.scripts[document.scripts.length - 1];
+            const parentTag = scriptTag.parentNode;
+      
+            parentTag.style.display = '';
+          })()
+        </script>
+      
+        {% for option in product.options_with_values %}
+          {% assign option_index = forloop.index0 %}
+          {% assign show_swatches = false %}
+          {% if enable_swatches %}
+            {%- assign swatches_option_trigger = swatches_option_trigger | strip | downcase -%}
+            {%- assign option_name = option.name | strip | downcase -%}
+      
+            {% if option_name == swatches_option_trigger %}
+              {% assign show_swatches = true %}
+              {% assign swatch_option_key = 'option' | append: forloop.index %}
+            {% endif %}
+          {% endif %}
+      
+          {% if style == 'select' and show_swatches == false %}
+            {%
+              render 'options-select',
+              product: product,
+              selected_variant: selected_variant,
+              option: option,
+              option_index: option_index
+            %}
+          {% elsif style == 'radio' or show_swatches == true %}
+            {%
+              render 'options-radios',
+              product: product,
+              selected_variant: selected_variant,
+              option: option,
+              option_index: option_index,
+              show_swatches: show_swatches,
+              swatch_option_key: swatch_option_key,
+              swatch_size: swatches_product_page_size,
+              swatches_option_style: swatches_option_style,
+              swatch_file_type: swatch_file_type,
+              swatches_custom_colors: swatches_custom_colors,
+              swatches_shape: swatches_shape,
+            %}
+          {% endif %}
+        {% endfor %}
+      </options-selection>
+      {% comment %}Inject @pixelunion/shopify-variants-ui/options-selection end{% endcomment %}
+  
+    {% endif %}
+  </variant-selection> {% endcomment %}
+  {% comment %}Inject @pixelunion/shopify-variants-ui/variant-selection end{% endcomment %}
+
+    <div id="add-to-cart-form">
+      {% comment %} {% render 'select_state' %} {% endcomment %}  
+
+      <div class="center-align" :class="checkLoading()">
+        <div class="lds-hourglass"></div>
+      </div>
+
+      <div :class="checkOptions()">
+
+        {% if template == "product.custom" 
+          or template == "product.pc-custom" 
+          or template == "product.list-options"
+          or template == "product.nocustom-list-options" %}
+
+          {% for option in product.options %}
+            {% if option == "Style" %}
+              {% render 'product-swatch-clplate', option: option  %}
+            {% endif %}  
+          {% endfor %}
+      {% endif %}
+
+        {% comment %} <div>left</div> {% endcomment %}
+        <div id="product-list-options">
+                <div class="product-list-box" v-for="option in options" :key="option.id">
+                  <div style="flex: 1;">
+                    <img style="max-width: 80px;" :src="setProdImg(`${ option.featured_media.preview_image.src }`)"  alt="Plate Image" @click="displayImg( `${ option.featured_media.preview_image.src }` )"> 
+                  </div>
+                  
+                  <div class="product-list-child-2" style="display: flex; flex-direction: column; padding: 25px;">
+                    <div class="product-box-title">${ option.option3 }</div>
+                    <div class="product-box-title">${ option.option2 }</div>
+                    <div class="product-box-title">${ option.option1 }</div>
+                  </div>
+
+                    <div class="product-list-child-2 flex-container">
+                      <div class="flex-child">
+                        <div type="button" class="qty-add-sub" @click="minQty( `${option.id}` )">
+                        <span class="qty-minus">-</span>  
+                        </div>  
+                      </div>
+                      <div style="flex: 2; min-width: 60px;">
+                       <input class="qty-box" type="text" id="qty" name="qty" :value="handleQty(`${ option.id }`)" @input="inputQty(`${ option.id }`, $event.target.value)" >     
+                      </div>
+                      <div class="flex-child">
+                        <div type="button" class="qty-add-sub" @click="addQty( `${option.id}` )">
+                        <span class="qty-add">+</span>    
+                        </div>
+                      </div>
+                    </div>
+                </div>            
+            </div>
+          {% comment %} scroll box end {% endcomment %}
+        {% comment %} <div class="scroll-button"></div>     {% endcomment %}
+        </div>
+          <div class="plate-font-2">
+            SUBTOTAL
+          </div>
+          <div class="plate-price">
+            $${ subTotal }
+          </div>
+          <div class="plate-font-3">
+            Total Quantity: ${totalQty} piece(s) Unit Price: $${indiPrice}
+          </div>
+          <div class="plate-font-2">
+            ${messageDiscount}
+          </div>
+    
+
+          <div>
+            <div
+              class="button-primary"
+              id="product-cl-add-cart"
+              @click="addToCart($event)"
+            >
+          Add To Cart
+            </div>
+        
+        
+          </div>
+      </div>
+    </div>
+
+
+  <div data-payment-terms-reference style="display: none;">
+    {{ form | payment_terms }}
+  </div>
+
+  {% if enable_local_pickup %}
+    <div class="surface-pick-up" data-surface-pick-up></div>
+  {% endif %}
+{% endform %}
+
+{% comment %} vue setup for product scroll {% endcomment %}
+
+<script>
+
+  const { ref, reactive, createApp, watch, onBeforeMount } = Vue;
+
+  if(document.querySelector('#add-to-cart-form')) { 
+
+    const productForm = createApp({
+      delimiters: ['${', '}'],
+      setup() {
+        let comments = ref([]);
+        let selected = ref("Snapback");
+        let page = 1;
+        let isLoading = ref(true);
+        let variant = ref([]);
+        let options = ref([]);
+        let items = ref([0, 1, 2, 3, 4, 5, 6, 7]);
+        let qtySelected = reactive({});
+        let basePrice = ref(34.99);
+        let totalQty = ref(0);
+        let subTotal = ref(0.00);
+        let indiPrice = ref(0.00);
+        let messageDiscount = ref("ORDER MORE THAN 1 FOR DISCOUNTED PRICING");
+        let prevCartItem = false;
+        let cartData;
+        let scrollContent;
+
+        const load = async $state => {
+            try {
+              const productGet = await axios.get("{{ product.handle }}.js");
+
+              productGet.data.variants.forEach((prodEl, idx) => {
+                if( prodEl.inventory_management != "shopify" || 
+                  (prodEl.inventory_management == "shopify" && prodEl.inventory_quantity > 0) ) {
+                  variant.value.push(prodEl);
+                }
+              })
+
+              const selectedVars = variant.value.filter(varEl => varEl.option1 == selected.value);
+              options.value = [];
+              options.value.push(...selectedVars);
+
+              const queryString = window.location.search;
+              const urlParams = new URLSearchParams(queryString);
+              const itemId = urlParams.get('id');
+              const editProduct = urlParams.get('editProduct');
+
+              if(editProduct) {
+                prevCartItem = true;
+                checkProduct(itemId);
+              } else {
+                isLoading.value = false;
+              }
+
+            } catch (error) {
+              console.log(error);
+            }
+        }
+
+        const checkLoading = () => {
+          if(!isLoading.value) {
+            return "hide-div";
+          }
+        }
+
+        const checkOptions = () => {
+          if(isLoading.value) {
+            return "hide-div";
+          }
+        }
+
+        const selectionButton = (event) => {
+            event.preventDefault();
+            const clickedOption = event.currentTarget.dataset.value;
+            selected.value = clickedOption;
+        }
+
+        const addQty = (optionId, inputVal) => {
+          if(inputVal) {
+            qtySelected[optionId] = inputVal;
+            return;
+          }
+
+          let optionQty = 0;
+          if(qtySelected[optionId]) {
+            optionQty = qtySelected[optionId];
+          }
+          optionQty++;
+          qtySelected[optionId] = optionQty;
+        }
+
+        const inputQty = (optionId, inputVal) => {
+          qtySelected[optionId] = Number(inputVal);
+        }
+
+        const minQty = (optionId) => {
+          if(qtySelected[optionId] > 0) {          
+            let optionQty = 0;
+            if(qtySelected[optionId]) {
+              optionQty = qtySelected[optionId];
+            } else {
+            return;
+          }
+            optionQty = optionQty - 1;
+            qtySelected[optionId] = optionQty;
+          }
+        }
+
+        const handleQty = (prodID) => {
+          if(qtySelected[prodID]) {
+          return qtySelected[prodID];
+        } else {
+          return 0;
+        }
+        }
+
+        const displayImg = (imgSrc) => {
+          Fancybox.show([ {
+            src: imgSrc,
+            type: "image",
+          } ]);
+        }
+
+        const checkProduct = (itemId) => {
+          const prodTitle = $(".product-title").text().trim();
+          event.preventDefault();
+          axios({
+            method: 'GET',
+            url: '/cart.js'
+          })
+          .then( (response) => {
+            cartData = response.data;
+
+            cartData.items.forEach(el => {
+            if( el.product_title == prodTitle && el.id == itemId) {
+              addQty(el.id, el.quantity);
+            }
+
+          })
+            isLoading.value = false;
+          })
+          .catch( (error) => {
+            console.error('Error:', error);
+          });
+        }
+
+        const addToCart = (event) => {
+          event.preventDefault();
+
+          const fileInput = document.querySelector('.pplr_monogram.fileupload');
+          const imgUrl = document.querySelector('.img_url');
+          const cropImgUrl = document.querySelector('.crop_img_url');
+
+          // Check if element exists first
+          if (fileInput) {
+              // Element exists, now check if it's empty
+              if (fileInput.files.length === 0) {
+                Fancybox.show([{
+                  src: "Please upload your photo",
+                  type: "html"
+              }]);
+                return;
+              }
+          } else {
+              console.log('File input element not found on page');
+              return;
+          }
+          
+          const base_url = window.location.origin;
+          const cartUrl = base_url + '/cart';
+
+          if(totalQty.value > 0 && !prevCartItem) {
+            let items = [];
+            let url = '/cart/add.js';
+          
+            Object.keys(qtySelected).forEach(selected => {
+              let currentItem = {
+                id: selected,
+                quantity: qtySelected[selected],
+                properties: {
+                  '_Upload Photo': imgUrl ? imgUrl.src : '',
+                  '_Crop Data': cropImgUrl ? cropImgUrl.src : '',
+                  '_Original Image': fileInput && fileInput.files.length > 0 ? fileInput.files[0].name : '',
+                  '_Upload Photo_original': fileInput && fileInput.files.length > 0 ? fileInput.files[0].name : '',
+                  '_Upload Photo_crop': cropImgUrl ? cropImgUrl.src : '',
+                  '_Upload Photo_rotation': '0'
+                }
+              }
+          
+              items.push(currentItem);
+            })
+          
+            axios({
+              method: 'post',
+              url: url,
+              data: { 
+                items: items
+              }
+            })
+            .then( (response) => {
+              console.log(response);
+              return;              
+              window.location.href = cartUrl;
+            })
+            .catch( (error) => {
+              console.error('Error:', error);
+            }); 
+          } else if(totalQty.value > 0 && prevCartItem) {
+
+            let updates = {};
+            let items = [];
+
+            Object.keys(qtySelected).forEach((selected, idx) => { 
+
+              let currentItem = {
+                id: selected,
+                quantity: qtySelected[selected]
+              }
+
+              if (fileInput && fileInput.files.length > 0) {
+                currentItem.properties = {
+                    '_Upload Photo': imgUrl.src,
+                    '_Crop Data': cropImgUrl.src,
+                    '_Original Image': fileInput.files[0].name,
+                    '_Upload Photo_original': fileInput.files[0].name,
+                    '_Upload Photo_crop': cropImgUrl.src,
+                    '_Upload Photo_rotation': '0'
+                }
+            }
+      
+              items.push(currentItem);             
+            }) 
+
+            postShopifyAPI({ items });
+          } 
+        }
+
+        watch( selected, () => {
+            const updatedOptions = variant.value.filter(varEl => varEl.option1 == selected.value);
+            options.value = [];
+            options.value.push(...updatedOptions);
+        })
+
+        watch( qtySelected, () => {
+          const discountQtys = [1, 2, 3, 6, 12, 24, 36];
+          const discountAmounts1 = [0.01, 2, 4, 5, 10, 12, 16];
+
+          let buildQty = 0;
+            Object.keys(qtySelected).forEach(selected => {
+              buildQty = buildQty + qtySelected[selected];
+            });
+
+            let idxPrice;
+
+            for(let i = 0; i < discountQtys.length; i++) {
+              if(buildQty == discountQtys[i]) {
+                idxPrice = i;
+                break;
+              } else if( buildQty < discountQtys[i]) {
+                idxPrice = i - 1;
+                break;
+              } else {
+                idxPrice = discountQtys.length - 1;
+              }
+            }
+
+            function calculateCost() {
+                let totalProdCost = buildQty * basePrice.value;
+
+                if(buildQty != 1 && buildQty != 0) {
+                    const discountApplied = totalProdCost - (discountAmounts1[idxPrice] * buildQty);
+                    totalProdCost = discountApplied;
+                }
+
+                // if qty is above 0 run
+
+                subTotal.value = totalProdCost.toFixed(2);
+
+                let individualCost = 0;
+                if(buildQty > 0) {
+                  individualCost = totalProdCost / buildQty;
+                }
+                indiPrice.value = individualCost.toFixed(2);
+            } 
+
+
+          totalQty.value = buildQty;  
+          calculateCost();
+          if(idxPrice == discountQtys.length - 1) {
+            messageDiscount.value = "YOU SAVED $16 PER HAT!";
+            return ;
+          }
+          calculateRemainingQty(discountQtys[idxPrice + 1], discountAmounts1[idxPrice + 1]);
+        })
+
+        function calculateRemainingQty(nextQty, nextDiscountAmount) {
+            const qtyTotal = totalQty.value;
+            let toNextQtyDiscount = nextQty - qtyTotal;
+            let nextQtyDiscount = (basePrice.value - nextDiscountAmount).toFixed(2);
+            const message = `ORDER ${toNextQtyDiscount} MORE AND GET THEM AT ${nextQtyDiscount} EACH`;
+            messageDiscount.value = message;
+        }
+
+        function postShopifyAPI(data) {
+          let updates = {
+          }
+          data.items.forEach(el => {
+            updates[el.id] = 0; 
+          })
+          // remove all quantites before we update
+            axios({
+                method: 'post',
+                url: '/cart/update.js',
+                data: {
+                  updates: updates
+                }
+              })
+              .then(response => {
+                // add after removing
+                  axios({
+                    method: 'post',
+                    url: '/cart/add.js',
+                    data: data
+                  })
+                  .then(response => {
+                    console.log('hit response');
+                    window.location.href = "https://citylocs.com/cart";
+                  })
+                  .catch( (error) => {
+                    console.error('Error:', error);
+                  })
+
+              })
+              .catch( (error) => {
+                console.error('Error:', error);
+              });
+        }
+        
+        onBeforeMount(load);
+
+        return {
+          selected,
+          comments,
+          page,
+          variant,
+          options,
+          items,
+          selectionButton,
+          addQty,
+          minQty,
+          inputQty,
+          handleQty,
+          addToCart,
+          totalQty,
+          subTotal,
+          indiPrice,
+          messageDiscount,
+          checkLoading,
+          checkOptions,
+          displayImg
+        };
+      },
+      methods: {
+        setProdImg(optionImg) {
+          return optionImg;
+        }
+      }
+    })
+    productForm.mount('#add-to-cart-form')
+
+  }
+</script>
+

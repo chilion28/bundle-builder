@@ -1,0 +1,113 @@
+<ul class="cartitems--list" data-cart-item-list>
+    {% assign is_plate_hat = '' %}
+    {% assign productsCheck = "US License Plate Hat, Country Flag Hats, Monogram Hat, Royal Crest, Western" | split: ", " %}
+    {% assign productListHere = "" | split: "," %}
+    
+    {% for item in cart.items %}
+      {% unless productListHere contains item.product.title %}
+          {% if productsCheck contains item.product.type %}
+              {% assign productListHere = productListHere | append: item.product.title | append: "," %}
+              {%
+                  render 'cart-clplate-item',
+                  cartItems: cart.items,
+                  item: item,
+                  show_sku: show_sku,
+                  item_index: forloop.index,
+                %}
+          {% else %}      
+                {%
+                    render 'cart-item',
+                    item: item,
+                    show_sku: show_sku,
+                    item_index: forloop.index,
+                %}
+          {% endif %}
+      {% endunless %}
+    {% endfor %}
+  </ul>
+  
+  <script>
+    const { createApp, onBeforeMount } = Vue;
+  
+    const checkOutForm = createApp({
+      delimiters: ['${', '}'],
+      setup(e) {
+        const updateQty = (qty, item, action) => {     
+          // jquery to change value immediately 
+  
+          let updatedQty;   
+          if(action == "input") {
+            updatedQty = Number(qty);
+          } else if(action == "add") {
+            updatedQty = qty + 1;
+          } else if(action == "min") {
+            updatedQty = qty - 1;
+          }
+  
+          $(`#${item}`).val(updatedQty);
+  
+           postShopifyAPI('/cart/update.js', {
+            updates: {
+              [item]: updatedQty
+            } 
+          })  
+        }
+  
+        const reloadFromAjax = () => {
+          let new_url = "https://citylocs.com/cart";
+          if( document.referrer != new_url) {
+            window.location.reload();
+          }
+  
+        }
+        
+  
+        {% comment %} function postShopifyAPI(url, data) {
+          axios({
+              method: 'post',
+              url: url,
+              data: data
+            })
+            .then(response => {
+              window.location.reload();
+            })
+            .catch( (error) => {
+              console.error('Error:', error);
+            }); 
+        } {% endcomment %}
+
+         function postShopifyAPI(url, data) {
+          axios({
+              method: 'post',
+              url: url,
+              data: data
+            })
+            .then(response => {
+              window.location.reload();
+            })
+            // NEW
+            .catch((error) => {
+              console.error('Error:', error);
+
+              var message =
+                (error.response && error.response.data && error.response.data.message) || '';
+
+              if (/pack/i.test(message) && window.showBundleCartNotice) {
+                window.showBundleCartNotice(message);
+              }
+
+              setTimeout(function () {
+                window.location.reload();
+              }, message ? 1800 : 0);
+            });
+        }
+  
+        onBeforeMount(reloadFromAjax)
+  
+        return {
+          updateQty,
+        }
+      }
+    })
+    checkOutForm.mount(".cartitems--list");
+  </script>

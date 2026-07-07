@@ -1,0 +1,761 @@
+<script>
+  document.documentElement.classList.add(
+    'cl-bundle-personalizer-page'
+  );
+</script>
+
+<style>
+  html.cl-bundle-personalizer-page,
+  html.cl-bundle-personalizer-page body {
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+    background: #fff !important;
+  }
+
+  html.cl-bundle-personalizer-page header,
+  html.cl-bundle-personalizer-page footer,
+  html.cl-bundle-personalizer-page .announcement-bar,
+  html.cl-bundle-personalizer-page .header-wrapper,
+  html.cl-bundle-personalizer-page .site-header,
+  html.cl-bundle-personalizer-page .site-footer,
+  html.cl-bundle-personalizer-page #shopify-section-header,
+  html.cl-bundle-personalizer-page #shopify-section-footer,
+  html.cl-bundle-personalizer-page
+    .shopify-section-group-header-group,
+  html.cl-bundle-personalizer-page
+    .shopify-section-group-footer-group {
+    display: none !important;
+  }
+
+  html.cl-bundle-personalizer-page main,
+  html.cl-bundle-personalizer-page #MainContent,
+  html.cl-bundle-personalizer-page .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .cl-bundle-personalizer,
+  .cl-bundle-personalizer * {
+    box-sizing: border-box;
+  }
+
+  .cl-bundle-personalizer {
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+  }
+
+  .cl-bundle-personalizer__layout {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 0.95fr)
+      minmax(0, 1.05fr);
+    gap: 28px;
+    align-items: start;
+  }
+
+  .cl-inline-preview {
+    position: sticky;
+    top: 10px;
+    overflow: hidden;
+    min-height: 340px;
+    border: 1px solid #e1e3e6;
+    border-radius: 14px;
+    background: #f7f7f7;
+  }
+
+  .cl-inline-preview__heading {
+    padding: 15px 18px;
+    border-bottom: 1px solid #e1e3e6;
+    background: #fff;
+  }
+
+  .cl-inline-preview__heading strong {
+    display: block;
+    font-size: 17px;
+    line-height: 1.3;
+  }
+
+  .cl-inline-preview__heading span {
+    display: block;
+    margin-top: 3px;
+    color: #6b6f75;
+    font-size: 13px;
+  }
+
+  .cl-inline-preview__stage {
+    display: flex;
+    min-height: 300px;
+    padding: 14px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cl-inline-preview__placeholder {
+    max-width: 310px;
+    color: #777c83;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .cl-inline-preview__loading {
+    display: none;
+    color: #666c73;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .cl-inline-preview.is-loading
+    .cl-inline-preview__loading {
+    display: block;
+  }
+
+  .cl-inline-preview.is-loading
+    .cl-inline-preview__placeholder {
+    display: none;
+  }
+
+  .cl-inline-preview__image {
+    display: none;
+    width: 100%;
+    height: auto;
+    max-height: 640px;
+    object-fit: contain;
+  }
+
+  .cl-inline-preview.has-image
+    .cl-inline-preview__image {
+    display: block;
+  }
+
+  .cl-inline-preview.has-image
+    .cl-inline-preview__placeholder,
+  .cl-inline-preview.has-image
+    .cl-inline-preview__loading {
+    display: none;
+  }
+
+  .cl-bundle-personalizer__options {
+    min-width: 0;
+  }
+
+  .cl-bundle-personalizer__loading {
+    padding: 28px;
+    border: 1px dashed #c9cdd2;
+    border-radius: 10px;
+    color: #666b72;
+    text-align: center;
+  }
+
+  .cl-bundle-personalizer__loading[hidden] {
+    display: none;
+  }
+
+  .cl-bundle-personalizer__mount {
+    width: 100%;
+  }
+
+  /*
+   * The actual Zepto Preview button remains in the DOM
+   * so the script can trigger it, but customers do not
+   * need to click it.
+   */
+  .cl-auto-preview-trigger {
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  body > iframe[title*="chat" i],
+  body > div[id*="chat" i],
+  body > div[class*="chat-widget" i] {
+    display: none !important;
+  }
+
+  @media (max-width: 767px) {
+    .cl-bundle-personalizer {
+      padding: 12px;
+    }
+
+    .cl-bundle-personalizer__layout {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .cl-inline-preview {
+      position: relative;
+      top: auto;
+      min-height: 260px;
+    }
+
+    .cl-inline-preview__stage {
+      min-height: 230px;
+      padding: 10px;
+    }
+  }
+</style>
+
+{% assign selected_variant =
+  product.selected_or_first_available_variant
+%}
+
+{% assign form_id =
+  'cl-bundle-pplr-form-' | append: product.id
+%}
+
+<div
+  id="cl-bundle-personalizer"
+  class="cl-bundle-personalizer"
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+>
+  <div class="cl-bundle-personalizer__layout">
+
+    <aside
+      id="cl-inline-preview"
+      class="cl-inline-preview"
+    >
+      <div class="cl-inline-preview__heading">
+        <strong>Your Live Preview</strong>
+        <span>
+          Your preview updates as you enter your text.
+        </span>
+      </div>
+
+      <div class="cl-inline-preview__stage">
+        <div
+          id="cl-inline-preview-placeholder"
+          class="cl-inline-preview__placeholder"
+        >
+          Enter your personalization to generate your
+          license plate preview.
+        </div>
+
+        <div
+          id="cl-inline-preview-loading"
+          class="cl-inline-preview__loading"
+        >
+          Updating your preview…
+        </div>
+
+        <img
+          id="cl-inline-preview-image"
+          class="cl-inline-preview__image"
+          alt="Your personalized license plate preview"
+        >
+      </div>
+    </aside>
+
+    <div class="cl-bundle-personalizer__options">
+      {% form
+        'product',
+        product,
+        id: form_id,
+        class: 'cl-bundle-personalizer__form'
+      %}
+
+        <input
+          type="hidden"
+          name="id"
+          value="{{ selected_variant.id }}"
+        >
+
+        <input
+          type="hidden"
+          name="quantity"
+          value="1"
+        >
+
+        <div
+          id="cl-bundle-personalizer-loading"
+          class="cl-bundle-personalizer__loading"
+        >
+          Loading your personalization options…
+        </div>
+
+        <div
+          id="pplr-{{ product.id }}"
+          data-id="{{ product.id }}"
+          data-handle="{{ product.handle }}"
+          class="
+            product-personalizer
+            cl-bundle-personalizer__mount
+          "
+        ></div>
+
+      {% endform %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (() => {
+    const root = document.getElementById(
+      'cl-bundle-personalizer'
+    );
+
+    if (!root || root.dataset.initialized === 'true') {
+      return;
+    }
+
+    root.dataset.initialized = 'true';
+
+    const mount = root.querySelector(
+      '.product-personalizer'
+    );
+
+    const initialLoader = document.getElementById(
+      'cl-bundle-personalizer-loading'
+    );
+
+    const previewPanel = document.getElementById(
+      'cl-inline-preview'
+    );
+
+    const previewImage = document.getElementById(
+      'cl-inline-preview-image'
+    );
+
+    const previewPlaceholder = document.getElementById(
+      'cl-inline-preview-placeholder'
+    );
+
+    const AUTO_PREVIEW_TEST_ENABLED = false;
+
+    let previewButton = null;
+    let previewTimer = null;
+    let previewTimeout = null;
+    let rendering = false;
+    let loaded = false;
+    let heightTimer = null;
+
+    function normalizeText(value) {
+      return String(value || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    function sendMessage(type, extra = {}) {
+      if (window.parent === window) return;
+
+      window.parent.postMessage(
+        {
+          type,
+          productId: root.dataset.productId,
+          productHandle: root.dataset.productHandle,
+          ...extra
+        },
+        window.location.origin
+      );
+    }
+
+    function sendHeight() {
+      window.clearTimeout(heightTimer);
+
+      heightTimer = window.setTimeout(() => {
+        const height = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight,
+          root.scrollHeight
+        );
+
+        sendMessage('cl:zepto-height', {
+          height: height + 20
+        });
+      }, 100);
+    }
+
+    function isVisible(element) {
+      if (!element) return false;
+
+      const style = window.getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        rect.width > 2 &&
+        rect.height > 2
+      );
+    }
+
+    function findPreviewButton() {
+      const controls = Array.from(
+        root.querySelectorAll(
+          [
+            'button',
+            'input[type="button"]',
+            'input[type="submit"]',
+            'a[role="button"]'
+          ].join(',')
+        )
+      );
+
+      return controls.find((control) => {
+        const label = normalizeText(
+          control.textContent ||
+          control.value ||
+          control.getAttribute('aria-label')
+        );
+
+        return (
+          label === 'preview' ||
+          label === 'view preview'
+        );
+      }) || null;
+    }
+
+function getVisiblePersonalizationFields() {
+  const selector = [
+    'input:not([type="hidden"])' +
+      ':not([type="checkbox"])' +
+      ':not([type="radio"])' +
+      ':not([type="button"])' +
+      ':not([type="submit"])',
+    'textarea',
+    'select'
+  ].join(',');
+
+  return Array.from(
+    mount.querySelectorAll(selector)
+  ).filter((field) => {
+    return !field.disabled && isVisible(field);
+  });
+}
+
+function fieldHasValue(field) {
+  return String(field.value || '').trim() !== '';
+}
+
+function canGeneratePreview() {
+  const visibleFields =
+    getVisiblePersonalizationFields();
+
+  if (!visibleFields.length) {
+    return false;
+  }
+
+  /*
+   * Use explicitly required fields when Zepto marks
+   * them. Otherwise, require all currently visible
+   * personalization fields.
+   */
+  const requiredFields = visibleFields.filter(
+    (field) => {
+      return (
+        field.required ||
+        field.getAttribute('aria-required') === 'true'
+      );
+    }
+  );
+
+  const fieldsToValidate =
+    requiredFields.length
+      ? requiredFields
+      : visibleFields;
+
+  return fieldsToValidate.every(fieldHasValue);
+}
+
+
+
+
+
+
+    function findCloseControl(overlay) {
+      const controls = Array.from(
+        overlay.querySelectorAll(
+          [
+            'button',
+            'a',
+            '[role="button"]',
+            '[aria-label]',
+            '[title]'
+          ].join(',')
+        )
+      );
+
+      const labeled = controls.find((control) => {
+        const label = normalizeText(
+          control.getAttribute('aria-label') ||
+          control.getAttribute('title') ||
+          control.textContent
+        );
+
+        const className = normalizeText(
+          control.className
+        );
+
+        return (
+          label === 'close' ||
+          label === 'x' ||
+          label === '×' ||
+          label.includes('close') ||
+          className.includes('close')
+        );
+      });
+
+      if (labeled) return labeled;
+
+      const overlayRect =
+        overlay.getBoundingClientRect();
+
+      return controls.find((control) => {
+        const rect = control.getBoundingClientRect();
+
+        return (
+          rect.width > 10 &&
+          rect.width < 100 &&
+          rect.height > 10 &&
+          rect.height < 100 &&
+          rect.top <
+            overlayRect.top + 120 &&
+          rect.right >
+            overlayRect.right - 140
+        );
+      }) || null;
+    }
+
+    function clearRenderTimeout() {
+      if (previewTimeout) {
+        window.clearTimeout(previewTimeout);
+        previewTimeout = null;
+      }
+    }
+
+    function finishRendering() {
+      rendering = false;
+      clearRenderTimeout();
+      previewPanel.classList.remove('is-loading');
+      sendHeight();
+    }
+
+    function closeZeptoPreviewOverlay(overlay) {
+  if (!overlay) return;
+
+  const closeControl =
+    findCloseControl(overlay);
+
+  if (closeControl) {
+    closeControl.click();
+  } else {
+    overlay.style.display = 'none';
+  }
+
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+}
+
+
+
+  const overlay = getCandidateOverlays()[0];
+
+  if (!overlay) {
+    return false;
+  }
+
+  const image = findLargestImage(overlay);
+  const canvas = findLargestCanvas(overlay);
+
+  let previewSource = '';
+
+  /*
+   * Do not hide the Zepto modal until its preview
+   * image has actually finished loading.
+   */
+  if (
+    image &&
+    image.complete &&
+    image.naturalWidth > 0 &&
+    image.naturalHeight > 0
+  ) {
+    previewSource =
+      image.currentSrc ||
+      image.src ||
+      '';
+  } else if (
+    canvas &&
+    canvas.width > 0 &&
+    canvas.height > 0
+  ) {
+    try {
+      previewSource =
+        canvas.toDataURL('image/png');
+    } catch (error) {
+      console.warn(
+        'Could not export the Zepto preview canvas.',
+        error
+      );
+    }
+  }
+
+  /*
+   * The modal exists, but the preview has not
+   * finished rendering yet. The MutationObserver
+   * will call this function again.
+   */
+  if (!previewSource) {
+    return false;
+  }
+
+  /*
+   * Only hide the modal after we have successfully
+   * found the generated preview.
+   */
+  overlay.style.opacity = '0';
+  overlay.style.pointerEvents = 'none';
+
+  previewImage.onload = () => {
+    previewPanel.classList.add('has-image');
+    previewPanel.classList.remove('is-loading');
+    previewPlaceholder.hidden = true;
+    sendHeight();
+  };
+
+  previewImage.onerror = () => {
+    console.warn(
+      'The generated Zepto preview image could not load.'
+    );
+
+    previewPanel.classList.remove('is-loading');
+  };
+
+  previewImage.src = previewSource;
+
+  closeZeptoPreviewOverlay(overlay);
+  finishRendering();
+
+  return true;
+}
+
+
+
+
+function preparePreviewButton() {
+  previewButton = findPreviewButton();
+
+  if (!previewButton) {
+    return;
+  }
+
+  if (AUTO_PREVIEW_TEST_ENABLED) {
+    previewButton.classList.add(
+      'cl-auto-preview-trigger'
+    );
+  } else {
+    previewButton.classList.remove(
+      'cl-auto-preview-trigger'
+    );
+  }
+}
+
+    function markLoaded() {
+      if (loaded) return;
+
+      const renderedField = mount.querySelector(
+        'input, select, textarea, button'
+      );
+
+      if (!renderedField) return;
+
+      loaded = true;
+      initialLoader.hidden = true;
+
+      preparePreviewButton();
+
+      sendMessage('cl:zepto-ready');
+      sendHeight();
+    }
+
+    root.addEventListener(
+      'input',
+      (event) => {
+        if (
+          event.target.matches(
+            'input, textarea, select'
+          )
+        ) {
+          schedulePreview();
+        }
+      },
+      true
+    );
+
+    root.addEventListener(
+      'change',
+      (event) => {
+        if (
+          event.target.matches(
+            'input, textarea, select'
+          )
+        ) {
+          schedulePreview();
+        }
+      },
+      true
+    );
+
+    const bodyObserver = new MutationObserver(() => {
+      markLoaded();
+
+      if (rendering) {
+        captureGeneratedPreview();
+      }
+
+      sendHeight();
+    });
+
+    bodyObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true
+    });
+
+    window.addEventListener(
+      'pplrAppInitiated',
+      () => {
+        window.setTimeout(() => {
+          markLoaded();
+          preparePreviewButton();
+        }, 150);
+      }
+    );
+
+    window.addEventListener(
+      'pplrAddToCartCompleted',
+      () => {
+        sendMessage('cl:zepto-added');
+      }
+    );
+
+    if ('ResizeObserver' in window) {
+      const resizeObserver = new ResizeObserver(
+        sendHeight
+      );
+
+      resizeObserver.observe(root);
+    }
+
+    window.setTimeout(markLoaded, 500);
+    window.setTimeout(markLoaded, 1500);
+    window.setTimeout(markLoaded, 3000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Bundle personalizer",
+  "settings": []
+}
+{% endschema %}

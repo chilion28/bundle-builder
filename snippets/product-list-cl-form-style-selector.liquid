@@ -1,0 +1,23 @@
+<div id="add-to-cart-form">
+
+<div class="center-align" :class="checkLoading()">
+        <div class="lds-hourglass"></div>
+      </div>
+
+      {% if template == "product.list-mandatory2nd-options" %}
+        <div id="2ndmandatory" style="display: none;"></div>
+      {% endif %}
+
+      <div :class="checkOptions()">
+
+        {% if template == "product.custom" or template == "product.pc-custom" or template == "product.list-options" or template == "product.list-mandatory2nd-options" or template == "product.gp-template-619060056830247729" %}
+          {% for option in product.options %}
+            {% if option == "Style" %}
+              {% if product.title == 'Alabama Plate Hat' %}
+                {% render 'product-swatch-mobile-clplate', option: option %}
+              {% else %}
+                {% render 'product-swatch-clplate', option: option  %}
+              {% endif %}
+            {% endif %}  
+          {% endfor %}
+      {% endif %}

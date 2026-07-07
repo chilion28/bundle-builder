@@ -1,0 +1,32 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_593745627817444143": {
+      "settings": {
+        "checksum": "7f44a4fcad46ed5f01b98b4040dd833eddaa741f548e6517e4e8ef1f80fb9849_1_1_0_0__1",
+        "ggCXbZc-nTZ_viewLessText": "Show less",
+        "ggCXbZc-nTZ_viewMoreText": "Show more",
+        "ggXlUYjGZu2_errorMessage": "Cannot add product to cart",
+        "ggXlUYjGZu2_label": "Add to cart",
+        "ggXlUYjGZu2_outOfStockLabel": "Out of stock",
+        "ggXlUYjGZu2_successMessage": "Add product to cart successfully",
+        "ggXlUYjGZu2_unavailableLabel": "Unavailable",
+        "ggXlUYjGZu2_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggwtP8YqdYq_text": "Quantity",
+        "section_preload": "true"
+      },
+      "type": "gp-section-593745627817444143"
+    }
+  },
+  "order": [
+    "gp_section_593745627817444143"
+  ]
+}

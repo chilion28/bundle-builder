@@ -1,0 +1,612 @@
+{% comment %}
+  cl-bundle-cart.liquid
+  GLOBAL bundle cart behavior + styling.
+  Render once near the end of theme.liquid:  {% render 'cl-bundle-cart' %}
+
+  Owns everything that acts on the cart (drawer + /cart page), site-wide:
+    - decorateAmpBundleCart        (drawer grouped header + line tint, index-matched)
+    - decorateCartPageBundle       (cart-page grouped header + line tint, key-matched)
+    - lockFreeGiftCartQty          (locks the free-gift line qty in the drawer)
+    - enforceFreeGiftCartRules     (removes disqualified gifts)
+    - showBundleCartNotice + fetch-intercept (surfaces the 422 validation message)
+    - scheduleCartPolice / onCartChanged + cart:updated / cart:refresh + MutationObserver
+
+  Self-contained: carries its own copies of the few shared helpers so it does
+  NOT depend on the builder-page script having run. Reads the bundle name from
+  the line's _bundle_name property (not builderConfig).
+
+  IMPORTANT: after adding this, DELETE these same functions from the GemPages
+  builder template so they don't double-fire.
+{% endcomment %}
+
+<style>
+  /* ---- Free-gift line lock (drawer) ---- */
+  .cl-free-gift-cart-line .amp-cart__line-quantity-selector { opacity: 0.45 !important; }
+  .cl-free-gift-cart-line .amp-cart__line-quantity-selector-less,
+  .cl-free-gift-cart-line .amp-cart__line-quantity-selector-more { cursor: not-allowed !important; }
+
+  /* ---- Drawer grouped header + line tint ---- */
+  .cl-amp-bundle-header {
+    padding: 18px 24px;
+    background: #e4f4fd;
+    border-top: 1px solid #d1e3ec;
+    border-bottom: 1px solid #d1e3ec;
+    border-left: 3px solid #00a0ea;
+  }
+  .cl-amp-bundle-title { font-size: 18px; font-weight: 800; color: #1d1d1d; }
+  .cl-amp-bundle-subtitle { margin-top: 4px; font-size: 13px; color: #44597e; font-weight: 700; }
+
+  .cl-amp-bundle-line {
+    border-left: 3px solid #00a0ea;
+    background: #f7fcff !important;
+  }
+  .cl-amp-free-gift-line {
+    border-left: 3px solid #4d9f24;
+    background: #f2ffec !important;
+    position: relative;
+  }
+  .cl-amp-free-gift-line::after {
+    content: "FREE";
+    position: absolute;
+    right: 18px;
+    top: 28px;
+    background: #4d9f24;
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 4px;
+  }
+
+  /* ---- Cart-page grouped header + line tint ---- */
+  .cl-cartpage-bundle-header {
+    display: flex; flex-direction: column;
+    padding: 10px 14px; margin: 8px 0 0;
+    background: #eef9ff; border-left: 3px solid #00a0ea; border-radius: 6px 6px 0 0;
+  }
+  .cl-cartpage-bundle-title { font-weight: 800; }
+  .cl-cartpage-bundle-sub { font-size: 12px; color: #0076ad; font-weight: 700; }
+  .cl-cartpage-bundle-line { border-left: 3px solid #00a0ea; }
+  .cl-cartpage-gift-line { border-left-color: #4d9f24; }
+
+  /* ---- Validation rejection notice (drawer + cart page) ---- */
+  .cl-pack-cart-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff4f4;
+  border: 1px solid #f3c2c2;
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.amp-cart__cart-lines .cl-pack-cart-notice {
+    max-width:92% !important;
+    margin:16px auto !important;
+}
+
+.cl-pack-cart-notice-text { flex: 1; }
+.cl-pack-cart-notice-dismiss {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: #b42318;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.cl-pack-cart-notice-body { flex: 1; }
+
+.cl-pack-cart-notice-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.cl-pack-cart-notice-link {
+  color: #b42318;
+  text-decoration: underline;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.cl-pack-cart-notice-link:hover {
+  color: #8a1a12;
+}
+
+.cl-pack-edit-hint {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fff7e6;
+  border: 1px solid #ffe0a3;
+  color: #8a5a00;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.cl-pack-edit-hint-text { font-weight: 600; }
+.cl-pack-edit-hint-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.cl-pack-edit-hint-link { color: #8a5a00; font-weight: 800; text-decoration: underline; font-size: 12.5px; }
+.cl-pack-edit-hint-link:hover { color: #5c3c00; }
+.amp-cart__cart-lines .cl-pack-edit-hint { max-width: 92%; margin: 12px auto; }
+</style>
+{%- assign cl_pack_entries = '' -%}
+{%- for collection in collections -%}
+  {%- assign cl_pack_title = collection.metafields.custom.builder_title -%}
+  {%- if cl_pack_title != blank -%}
+    {%- if cl_pack_entries != '' -%}{%- assign cl_pack_entries = cl_pack_entries | append: ',' -%}{%- endif -%}
+    {%- capture cl_pack_pair -%}{{ cl_pack_title | json }}:{{ collection.handle | json }}{%- endcapture -%}
+    {%- assign cl_pack_entries = cl_pack_entries | append: cl_pack_pair -%}
+  {%- endif -%}
+{%- endfor -%}
+<script>
+  window.CL_BUNDLE_COLLECTIONS = { {{ cl_pack_entries }} };
+</script>
+<script>
+(function () {
+  // Guard against double-inclusion.
+  if (window._clBundleCartLoaded) return;
+  window._clBundleCartLoaded = true;
+
+  // Shared with the builder page: the builder sets window.clCheckoutInProgress
+  // = true while it adds its pack, so gift-policing pauses during that add.
+  if (typeof window.clCheckoutInProgress === 'undefined') {
+    window.clCheckoutInProgress = false;
+  }
+
+  var DEFAULT_BUNDLE_NAME = 'Your Pack';
+
+
+  function getActiveBundleLinks() {
+  var seen = {};
+  var links = [];
+
+  document.querySelectorAll('.cl-amp-bundle-line[data-cl-collection], .cart-item[data-cartitem-collection]').forEach(function (el) {
+    var handle = el.dataset.clCollection || el.getAttribute('data-cartitem-collection');
+    if (!handle || seen[handle]) return;
+    seen[handle] = true;
+
+    var name = el.dataset.clPackName || DEFAULT_BUNDLE_NAME;
+    links.push({ name: name, handle: handle });
+  });
+
+  return links;
+}
+
+  function renderBundleEditHint() {
+    var links = getActiveBundleLinks();
+    var containers = [
+      document.querySelector('.amp-cart__cart-lines'),
+      document.querySelector('.cartitems--list')
+    ].filter(Boolean);
+
+    containers.forEach(function (container) {
+      var existing = container.querySelector('.cl-pack-edit-hint');
+
+      if (!links.length) { if (existing) existing.remove(); return; }
+
+      var linksHtml = links.map(function (link) {
+        return '<a class="cl-pack-edit-hint-link" href="/collections/' + link.handle + '">Edit ' + link.name + '</a>';
+      }).join('');
+
+      var html =
+        '<div class="cl-pack-edit-hint-text">' +
+          '⚠️ Changing your pack quantities here may affect your bundle discount or free gift. ' +
+          'For the best price, edit your pack on the builder page.' +
+        '</div>' +
+        (linksHtml ? '<div class="cl-pack-edit-hint-links">' + linksHtml + '</div>' : '');
+
+      if (existing) {
+        existing.innerHTML = html;
+      } else {
+        var note = document.createElement('div');
+        note.className = 'cl-pack-edit-hint';
+        note.innerHTML = html;
+        container.prepend(note);
+      }
+    });
+  }
+
+  // ---- Notice ----
+function showBundleCartNotice(message) {
+  document.querySelectorAll('.cl-pack-cart-notice').forEach(function (el) { el.remove(); });
+
+  var links = getActiveBundleLinks();
+  var linksHtml = links.map(function (link) {
+    return '<a class="cl-pack-cart-notice-link" href="/collections/' + link.handle + '">Edit your ' + link.name + '</a>';
+  }).join('');
+
+  [document.querySelector('.amp-cart__cart-lines'),
+   document.querySelector('.cartitems--list')]
+    .filter(Boolean)
+    .forEach(function (target) {
+      var notice = document.createElement('div');
+      notice.className = 'cl-pack-cart-notice';
+      notice.innerHTML =
+        '<div class="cl-pack-cart-notice-body">' +
+          '<span class="cl-pack-cart-notice-text">This is a fixed-size pack. To change it, remove an item or start a new pack.</span>' +
+          (linksHtml ? '<div class="cl-pack-cart-notice-links">' + linksHtml + '</div>' : '') +
+        '</div>' +
+        '<button type="button" class="cl-pack-cart-notice-dismiss" aria-label="Dismiss">&times;</button>';
+      target.prepend(notice);
+    });
+}
+
+window.showBundleCartNotice = showBundleCartNotice;
+
+
+// Dismiss via delegation so it works for notices in either container.
+document.addEventListener('click', function (e) {
+  if (e.target.closest('.cl-pack-cart-notice-dismiss')) {
+    document.querySelectorAll('.cl-pack-cart-notice').forEach(function (el) { el.remove(); });
+  }
+});
+
+  // ---- Fetch intercept: surface ONLY our validation rejection (message contains "pack") ----
+  if (!window._clFetchWrapped) {
+    window._clFetchWrapped = true;
+    var _clFetch = window.fetch;
+    window.fetch = async function () {
+      var args = arguments;
+      var res = await _clFetch.apply(this, args);
+      try {
+        var url = typeof args[0] === 'string' ? args[0] : (args[0] && args[0].url) || '';
+        if (/\/cart\/(change|add)\.js/.test(url) && res.status === 422) {
+          var data = await res.clone().json().catch(function () { return null; });
+          if (data && data.message && /pack/i.test(data.message)) {
+            showBundleCartNotice(data.message);
+          }
+        }
+      } catch (e) { /* never let detection break a real request */ }
+      return res;
+    };
+  }
+
+  // ---- XHR intercept: catches 422 rejections from ANY script's /cart/change.js
+//      call (e.g. the theme's remove-link handler, which has no error handling
+//      of its own and otherwise leaves the line frozen/grayed-out forever). ----
+if (!window._clXhrWrapped) {
+  window._clXhrWrapped = true;
+
+  var _clXhrOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method, url) {
+    this._clUrl = url;
+    return _clXhrOpen.apply(this, arguments);
+  };
+
+  var _clXhrSend = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.send = function () {
+    this.addEventListener('load', function () {
+      try {
+        var url = this._clUrl || '';
+        if (/\/cart\/(change|update|add)\.js/.test(url) && this.status === 422) {
+          var data = JSON.parse(this.responseText || '{}');
+          if (data && data.message && /pack/i.test(data.message)) {
+            showBundleCartNotice(data.message);
+            setTimeout(function () { window.location.reload(); }, 1800);
+          }
+        }
+      } catch (e) { /* never let detection break a real request */ }
+    });
+    return _clXhrSend.apply(this, arguments);
+  };
+}
+
+  // ---- Drawer decoration (index-matched; AMP lines have no key) ----
+function decorateAmpBundleCartFromCart(cart) {
+  if (!cart || !cart.items) return;
+
+  var lineEls = Array.prototype.slice.call(document.querySelectorAll('.amp-cart__cart-line'));
+  if (!lineEls.length) return;
+
+  document.querySelectorAll('.cl-amp-bundle-header').forEach(function (el) { el.remove(); });
+  lineEls.forEach(function (el) {
+  el.classList.remove('cl-amp-bundle-line', 'cl-amp-free-gift-line', 'cl-free-gift-cart-line');
+  delete el.dataset.clCollection;
+  delete el.dataset.clPackName;
+});
+
+  var lastBundleId = null;
+
+  lineEls.forEach(function (el, i) {
+    var item = cart.items[i];
+    var props = (item && item.properties) || {};
+    var bundleId = props._bundle_id;
+
+    if (!bundleId) { lastBundleId = null; return; }
+
+    el.classList.add('cl-amp-bundle-line');
+    el.dataset.clCollection = props._bundle_collection || '';
+    el.dataset.clPackName = props._bundle_name || DEFAULT_BUNDLE_NAME;
+
+    if (props._bundle_free_gift === 'true') {
+      el.classList.add('cl-amp-free-gift-line', 'cl-free-gift-cart-line');
+    }
+
+    if (bundleId !== lastBundleId) {
+      var header = document.createElement('div');
+      header.className = 'cl-amp-bundle-header';
+      header.innerHTML =
+        '<div class="cl-amp-bundle-title">' + (props._bundle_name || DEFAULT_BUNDLE_NAME) + '</div>' +
+        '<div class="cl-amp-bundle-subtitle">' + (props._bundle_size || '') + '-piece pack • Mix &amp; Match</div>';
+      el.parentNode.insertBefore(header, el);
+      lastBundleId = bundleId;
+    }
+  });
+}
+
+  // ---- Cart-page decoration (key-matched via data-cartitem-key) ----
+  async function decorateCartPageBundle() {
+    var list = document.querySelector('.cartitems--list');
+    if (!list) return;
+
+    var cart;
+    try { cart = await fetch('/cart.js').then(function (r) { return r.json(); }); }
+    catch (e) { return; }
+    if (!cart.items) return;
+
+    var byKey = {};
+    cart.items.forEach(function (i) { byKey[i.key] = i.properties || {}; });
+
+    document.querySelectorAll('.cl-cartpage-bundle-header').forEach(function (el) { el.remove(); });
+
+    var lastBundleId = null;
+    list.querySelectorAll('.cart-item').forEach(function (li) {
+      li.classList.remove('cl-cartpage-bundle-line', 'cl-cartpage-gift-line');
+      var key = li.getAttribute('data-cartitem-key');
+      var props = byKey[key] || {};
+      var bundleId = props._bundle_id;
+
+      if (!bundleId) { lastBundleId = null; return; }
+
+      // NEW
+        li.classList.add('cl-cartpage-bundle-line');
+        li.dataset.clPackName = props._bundle_name || DEFAULT_BUNDLE_NAME;
+
+        var giftBadge = Array.prototype.find.call(
+        li.querySelectorAll('.discount-list-item'),
+        function (node) { return /free bundle gift/i.test(node.textContent); }
+        );
+
+        if (giftBadge) li.classList.add('cl-cartpage-gift-line');
+
+      if (bundleId !== lastBundleId) {
+        var header = document.createElement('div');
+        header.className = 'cl-cartpage-bundle-header';
+        header.innerHTML =
+          '<span class="cl-cartpage-bundle-title">' + (props._bundle_name || DEFAULT_BUNDLE_NAME) + '</span>' +
+          '<span class="cl-cartpage-bundle-sub">' + (props._bundle_size || '') + '-piece pack • Mix &amp; Match</span>';
+        li.parentNode.insertBefore(header, li);
+        lastBundleId = bundleId;
+      }
+    });
+  }
+
+  // ---- Free-gift line qty lock (drawer) ----
+function lockFreeGiftCartQty() {
+  document.querySelectorAll('.amp-cart__cart-line').forEach(function (line) {
+    var isGift = line.classList.contains('cl-amp-free-gift-line');
+    var qtyInput = line.querySelector('.amp-cart__line-quantity-selector-input');
+    var minusBtn = line.querySelector('.amp-cart__line-quantity-selector-less');
+    var plusBtn  = line.querySelector('.amp-cart__line-quantity-selector-more');
+
+    if (isGift) {
+      line.classList.add('cl-qty-locked-by-us');
+      if (qtyInput) { qtyInput.value = '1'; qtyInput.readOnly = true; qtyInput.setAttribute('aria-readonly', 'true'); }
+      [minusBtn, plusBtn].forEach(function (btn) {
+        if (!btn) return;
+        btn.disabled = true;
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.35';
+      });
+    } else if (line.classList.contains('cl-qty-locked-by-us')) {
+      // We locked this line on a previous (stale/misclassified) pass — undo only our own lock.
+      line.classList.remove('cl-qty-locked-by-us');
+      if (qtyInput) { qtyInput.readOnly = false; qtyInput.removeAttribute('aria-readonly'); }
+      [minusBtn, plusBtn].forEach(function (btn) {
+        if (!btn) return;
+        btn.disabled = false;
+        btn.style.pointerEvents = '';
+        btn.style.opacity = '';
+      });
+    }
+  });
+}
+
+  // ---- Free-gift line qty lock (cart page) ----
+function lockFreeGiftCartPageQty() {
+  document.querySelectorAll('.cart-item.cl-cartpage-gift-line').forEach(function (li) {
+    var input = li.querySelector('.qty-box-2');
+    var buttons = li.querySelectorAll('.qty-add-sub-2');
+
+    if (input) {
+      input.readOnly = true;
+      input.setAttribute('aria-readonly', 'true');
+    }
+
+    buttons.forEach(function (btn) {
+      btn.disabled = true;
+      btn.style.pointerEvents = 'none';
+      btn.style.opacity = '0.35';
+    });
+  });
+}
+
+  // ---- Remove disqualified gifts ----
+  var clGiftRuleRunning = false;
+  async function enforceFreeGiftCartRules() {
+    if (window.clCheckoutInProgress || clGiftRuleRunning) return;
+    clGiftRuleRunning = true;
+
+    try {
+      var cart = await fetch('/cart.js').then(function (r) { return r.json(); });
+      var gifts = cart.items.filter(function (i) {
+        return i.properties && i.properties._bundle_free_gift === 'true';
+      });
+
+      var removedAny = false;
+
+      for (var g = 0; g < gifts.length; g++) {
+        var gift = gifts[g];
+        var bundleId = gift.properties && gift.properties._bundle_id;
+        var threshold = Number(gift.properties && gift.properties._bundle_free_gift_min) || 0;
+
+        var paidForBundle = cart.items
+          .filter(function (i) {
+            return i.properties &&
+                   i.properties._bundle_item === 'true' &&
+                   i.properties._bundle_id === bundleId;
+          })
+          .reduce(function (sum, i) { return sum + i.quantity; }, 0);
+
+        var earned = threshold > 0 && paidForBundle >= threshold;
+
+        if (!earned && gift.quantity !== 0) {
+          await fetch('/cart/change.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: gift.key, quantity: 0 })
+          });
+          removedAny = true;
+        }
+      }
+
+      if (removedAny && window.AMP_API && window.AMP_API.OPEN_CART) {
+        setTimeout(function () { window.AMP_API.OPEN_CART(); }, 300);
+      }
+    } catch (err) {
+      console.warn('Free gift cart rule error:', err);
+    }
+
+    clGiftRuleRunning = false;
+  }
+
+  // ---- Watcher ----
+  var clCartChangeTimer = null;
+
+  async function onCartChanged() {
+  await enforceFreeGiftCartRules();
+
+  await decorateCartPageBundle();
+  lockFreeGiftCartQty();
+  lockFreeGiftCartPageQty();
+   renderBundleEditHint();  
+}
+
+function scheduleCartPolice() {
+  clearTimeout(clCartChangeTimer);
+  clearTimeout(window._clCartPoliceT2);
+  clearTimeout(window._clCartPoliceT3);
+
+  clCartChangeTimer = setTimeout(onCartChanged, 150);
+  window._clCartPoliceT2 = setTimeout(onCartChanged, 500);
+  window._clCartPoliceT3 = setTimeout(onCartChanged, 1200);
+}
+
+
+  document.addEventListener('cart:updated', scheduleCartPolice);
+  document.addEventListener('cart:refresh', scheduleCartPolice);
+
+
+
+
+function boot() {
+  
+
+  var cartPageList = document.querySelector('.cartitems--list');
+  if (cartPageList) {
+    new MutationObserver(scheduleCartPolice).observe(cartPageList, { childList: true, subtree: true });
+  }
+
+  decorateCartPageBundle().then(lockFreeGiftCartPageQty);
+  scheduleCartPolice();
+}
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+
+
+var _clPrevAmpCartUpdated = window.AMP_CART_UPDATED;
+window.AMP_CART_UPDATED = function (cart, cartTarget) {
+  var result = cartTarget;
+  if (typeof _clPrevAmpCartUpdated === 'function') {
+    result = _clPrevAmpCartUpdated(cart, cartTarget) || cartTarget;
+  }
+
+  enforceFreeGiftCartRules().then(function () {
+    requestAnimationFrame(function () {
+      decorateAmpBundleCartFromCart(cart);
+      lockFreeGiftCartQty();
+       renderBundleEditHint();  
+    });
+  });
+
+  return result;
+};
+
+var _clPrevAmpCartLoaded = window.AMP_CART_LOADED;
+window.AMP_CART_LOADED = function (cart) {
+  if (typeof _clPrevAmpCartLoaded === 'function') _clPrevAmpCartLoaded(cart);
+
+  enforceFreeGiftCartRules().then(function () {
+    requestAnimationFrame(function () {
+      decorateAmpBundleCartFromCart(cart);
+      lockFreeGiftCartQty();
+       renderBundleEditHint();  
+    });
+  });
+};
+
+// Redirect bundle-line title clicks (drawer) to the builder collection.
+// Synchronous: reads the handle stamped during decoration, so navigation
+// happens immediately and beats AMP's own link handling.
+// Bundle lines have NO anchor; AMP navigates via its own JS handler on the
+// title/image. Intercept clicks on those elements and redirect to the builder.
+document.addEventListener('click', function (e) {
+  var line = e.target.closest('.cl-amp-bundle-line');
+  if (!line) return;
+
+  // Only hijack clicks on the navigating elements (title text / product image),
+  // NOT the qty buttons or the remove (×) control.
+  var nav = e.target.closest('.amp-cart__cart-line-title, .amp-cart__cart-line-image');
+  if (!nav) return;
+
+  var handle = line.dataset.clCollection;
+  if (!handle) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  window.location.href = '/collections/' + handle;
+}, true);
+
+document.addEventListener('click', function (e) {
+  var link = e.target.closest('.cart-item--content-title a, .cart-item--image-wrapper a');
+  if (!link) return;
+
+  var li = link.closest('.cart-item');
+  if (!li) return;
+
+  var handle = li.getAttribute('data-cartitem-collection');
+  if (!handle) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  window.location.href = '/collections/' + handle;
+}, true);
+  
+
+})();
+</script>

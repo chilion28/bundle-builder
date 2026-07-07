@@ -1,0 +1,57 @@
+{% comment %}
+  Set the extension of your color files below. Use 'png', 'jpeg', 'jpg' or 'gif'.
+{% endcomment %}
+{% assign file_extension = 'png' %}
+
+{% assign swatch = option %}
+{% assign found_option = false %}
+{% assign is_color = false %}
+{% assign is_style = false %}
+{% assign option_index = 0 %}
+{% assign downcased_option = option | downcase %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    {% assign downcased_option = swatch | downcase %}
+    {% if downcased_option contains 'color' or downcased_option contains 'colour' %}
+      {% assign is_color = true %}
+    {% elsif downcased_option contains 'style' %} 
+      {% assign is_style = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+<div class="swatch clearfix" data-option-index="{{ option_index }}">
+  {% assign values = '' %}
+{% comment %}  set styles selection {% endcomment %}
+  {% if is_style %}
+    <div class="option_title center">SELECT HAT STYLE</div>
+  {% endif %}
+
+  <div class="swatch_options">
+  {% for variant in product.variants %}
+    {% assign value = variant.options[option_index] %}
+    {% unless values contains value %}
+      {% assign values = values | join: ',' %}
+      {% assign values = values | append: ',' | append: value %}
+      {% assign values = values | split: ',' %}
+
+      {% if is_style %}
+          <div class="selection-button-container" style="margin: 4px;">
+            <div
+              data-value='{{ value }}'
+              class="selection-button"
+              :class="selected == '{{ value }}' ? 'button-on' : ''"
+              @click="selectionButton($event)" 
+            >
+              <span class="text">{{ value }}</span>
+            </div>
+          </div>
+      {% endif %}  
+    {% endunless %}
+  {% endfor %}
+</div>
+</div>
+

@@ -1,0 +1,227 @@
+function getDiscounts (discountData) {
+  const types = discountData.types;
+  const discounts = discountData.discounts;
+  const messages = discountData.messages;
+  console.log(5);
+  console.log(discounts);
+  
+  // get data from cart
+  const cartData = fetch("/cart.js")
+  .then(response => response.json())
+  .then(jsonData => jsonData)
+
+  cartData.then(async data => {
+    const cartItems = data.items;
+    let totalDiscount = data.total_discount;
+    let total_price = data.total_price;
+    var qualifiedItems = {};
+    var totalQtyItems = {};
+    var selectedDiscounts = {};
+
+    for (const item of cartItems) {
+      const prodItem = await getProductDetails(item.handle);
+      for (let tag of prodItem.tags) {
+        tag = tag.trim().toLowerCase();
+        
+        // check if tag is in discount
+        const foundDiscount = types.find(e => e.tag.toLowerCase() == tag);
+
+        // if tag is in discount then create object with array of each product
+        if(foundDiscount && !qualifiedItems[tag]) {
+          qualifiedItems[tag] = [item];
+          totalQtyItems[tag] = item.quantity;
+        } else if(foundDiscount && qualifiedItems[tag]) {
+           qualifiedItems[tag].push(item);
+          totalQtyItems[tag] = item.quantity + totalQtyItems[tag];
+        }
+
+      }
+              console.log('finished')
+    }
+
+    Object.keys(totalQtyItems).forEach(el => {
+      for (const [i, discount] of discounts.entries()) { 
+        if(totalQtyItems[el] < discount.quantity) {
+          selectedDiscounts[el] = {
+            current: discounts[i - 1],
+            next: discount
+          }
+          break;
+        } else if (totalQtyItems[el] == discount.quantity) {
+          selectedDiscounts[el] = {
+            current: discount,
+            next: discounts[i + 1]
+          }
+          break;
+        } else {
+          
+        }
+      }
+
+      setDiscountsCart(qualifiedItems, selectedDiscounts, messages, totalQtyItems);
+    })
+
+  })
+}
+
+function getProductDetails(handle) {
+  return fetch(window.Shopify.routes.root + `products/${handle}.js`)
+  .then(resp => resp.json())
+  .then(prodData => prodData);
+}
+
+function setDiscountsCart(discountableItems, discounts, messages, totalDiscountQty) {
+
+  let updatedCart = [];
+  Object.keys(discountableItems).forEach(item => {
+    discountableItems[item].forEach(discountedItem => {
+      if(discounts[item]['current']) {
+        const updatedItem = {};
+        const discountMessage = messages.find(e => e.idTag == discounts[item]['current']['idTag']);
+        const deductAmount = Number(discounts[item]['current']['deduct'] * 100);
+        const totalDiscount = discountedItem.price - deductAmount;
+        updatedItem.id = discountedItem['id'].toString();
+        updatedItem.discounted_price = totalDiscount;
+        updatedItem.final_line_price = totalDiscount;
+        updatedItem.final_price = totalDiscount;
+        updatedItem.line_price = totalDiscount;
+        updatedItem.line_level_total_discount = deductAmount;
+        updatedItem.total_discount =  deductAmount;
+        updatedItem.discounts = [
+          {
+            amount: Number(discounts[item]['current']['deduct'] * 100),
+            title: buildMessage(discountMessage, discounts[item], totalDiscountQty[item], discountedItem.price)
+          }
+        ]
+        updatedCart.push(updatedItem);
+      }
+    })
+  })
+
+  // update append cart
+  // const cartUpdate = {};
+
+  // updatedCart.forEach(item => {
+  //   cartUpdate[item.id] = item;
+  // })
+
+  const updateCartServer = fetch(window.Shopify.routes.root + 'cart/change.js', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(updatedCart[0])
+  })
+  .then(response => {
+    return response.json();
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+
+  console.log(122)
+  updateCartServer.then(serverResp => console.log(serverResp))
+
+function buildMessage(discountMessage, discounts, currentQty, currentPrice) {
+  const qty = Number(discounts['next']['quantity']) - Number(currentQty);
+  let discountPrice = Number(currentPrice) - Number(discounts['next']['deduct']) * 100;
+  discountPrice = (discountPrice / 100).toFixed(2);
+  const plural = qty > 1 ? 's' : '' 
+  return `Order ${qty} more ${discountMessage.message}${plural} (total ${discounts.next.quantity} to get each one at ${discountPrice})`;
+}
+  
+}
+
+discountFetch.then(d => getDiscounts(d));
+
+{% comment %} function getDiscounts() {
+    var discountResults = fetch('apps/clapp/discount-build')
+        .then(response => response.json())
+        .then(data => {
+            checkTags(data);
+        })
+}
+
+function checkTags(discountData) {
+    const types = discountData.types;
+    const discounts = discountData.discounts;
+    let productDiscounts = {};
+
+    $(".qty-box-2").each(function(index) {
+        const qty = parseInt($(this).val());
+        const parentElTags = $(this).closest('.cart-item--content.cl-plate-cart-item').find('.discountData').text();
+
+        const tagsArray = parentElTags.split(',');
+
+        tagsArray.forEach(tag => {
+            tag = tag.trim().toLowerCase();
+
+            // check if tag is in discount
+            const foundDiscount = types.find(e => e.tag.toLowerCase() == tag);
+
+            if (foundDiscount) {
+                // check if product discount set
+                if (!productDiscounts[tag]) {
+                    productDiscounts[tag] = qty;
+                } else {
+                    productDiscounts[tag] = productDiscounts[tag] + qty;
+                }
+            }
+        })
+
+    })
+    const discountGroup = discountDeduct(discounts, productDiscounts);
+    setPricingComments(discountGroup);
+    
+}
+
+// find the groups for discounts
+function discountDeduct(discounts, productDiscounts) {
+    let discountPrice = {}
+
+    // const discs = discounts.filter(e => e.idTag == foundDiscount.id);
+    Object.keys(productDiscounts).forEach((discTag, idx) => {
+      // if(idx != 0 && Object.keys(discountPrice).length > 0) { return }
+      discounts.every((discount, index) => {
+        if( productDiscounts[discTag] == discount.quantity || productDiscounts[discTag] < discount.quantity) {
+          discountPrice[discTag] = {
+            'current': index == 0 ? '' : discounts[index - 1],
+            'next': discount
+          };
+          return false;
+        } else {
+          return true;
+        }
+      })
+    })
+  return discountPrice;
+}
+
+// reset pricing and comment for discounts
+function setPricingComments(selectedDiscounts) {
+  console.log(selectedDiscounts);
+  
+  $(".qty-box-2").each(function(index) {
+      const qty = parseInt($(this).val());
+      const parentElTags = $(this).closest('.cart-item--content.cl-plate-cart-item').find('.discountData').text();
+      const priceItem = $(this).closest('.cart-item--content.cl-plate-cart-item').find('.a_pplr_item_price').text();
+      const tagsArray = parentElTags.split(','); 
+
+      tagsArray.forEach(tag => {
+        tag = tag.trim().toLowerCase();
+        // check if tag is in selected discounts
+          Object.keys(selectedDiscounts).forEach(selected => {
+            if(selected == tag) {
+              console.log(76)
+              console.log(tag)
+            }
+          })
+      })
+  })
+  
+
+}
+
+$(function() {
+    getDiscounts();
+}); {% endcomment %}

@@ -1,0 +1,49 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_623570723675308872": {
+      "settings": {
+        "checksum": "970333bf0a386c91c8ac13d26d6f266eb67c0ab2d39c2b8192f5ae6b18878f1f_1_1_1_0__1",
+        "gg1Xu1lOBuY_errorMessage": "Cannot add product to cart",
+        "gg1Xu1lOBuY_label": "Add to cart",
+        "gg1Xu1lOBuY_outOfStockLabel": "Out Of Stock",
+        "gg1Xu1lOBuY_successMessage": "Add product to cart successfully",
+        "gg1Xu1lOBuY_unavailableLabel": "Unavailable",
+        "gg1Xu1lOBuY_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "section_preload": "true"
+      },
+      "type": "gp-section-623570723675308872"
+    },
+    "gp_section_623576563790643742": {
+      "settings": {
+        "checksum": "4ba2955e8cd1c0239926ff92217484df28708dd3793a89eb35bea57ffcb02b48_1_1_1_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-623576563790643742"
+    },
+    "gp_section_623582278966051656": {
+      "settings": {
+        "checksum": "a8b8d22c2329081192b3d728661c6c156ffbe9b93693f0fbac7e8b037974c998_1_1_1_0__1",
+        "ggBDQpPyzrf_text": "The More You Bundle, The More You Save",
+        "ggZOOMgUl2W_viewLessText": "Show less",
+        "ggZOOMgUl2W_viewMoreText": "Show more",
+        "ggj8TyayEvD_text": "<p>create your pack</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-623582278966051656"
+    }
+  },
+  "order": [
+    "gp_section_623582278966051656",
+    "gp_section_623570723675308872",
+    "gp_section_623576563790643742"
+  ]
+}

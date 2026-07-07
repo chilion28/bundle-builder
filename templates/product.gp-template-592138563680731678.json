@@ -1,0 +1,37 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_592138569938633246": {
+      "type": "gp-section-592138569938633246",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "f79325b6aea8c803bc272cefbf407be9c97247bbd24da53040b7f4445a4d3828_1_1_0_0__1",
+        "ggj9QYf5I_r_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggj9QYf5I_r_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Pet-Banner-MOBILE.jpg",
+        "gg2gjHiTOVZ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Hat-CLip-AZTEC-LRG_7c958c9d-7549-48fd-92d6-c109aa702a46.jpg",
+        "ggX8uHwcsqO_text": "<p><strong>Select Your Hat</strong></p>",
+        "gg-iqfOSPPy_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Product-Page-content-01.jpg",
+        "ggC8ElxlQ8m_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggjSEkTqDMz_viewMoreText": "Show more",
+        "ggjSEkTqDMz_viewLessText": "Show less",
+        "ggT_YiG1SOj_text": "Quantity",
+        "ggyqi1b_OGF_label": "ADD TO CART",
+        "ggyqi1b_OGF_outOfStockLabel": "Out of stock",
+        "ggyqi1b_OGF_unavailableLabel": "Unavailable",
+        "ggyqi1b_OGF_successMessage": "Add product to cart successfully",
+        "ggyqi1b_OGF_errorMessage": "Cannot add product to cart"
+      }
+    }
+  },
+  "order": [
+    "gp_section_592138569938633246"
+  ]
+}

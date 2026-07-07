@@ -1,0 +1,135 @@
+
+
+<style>
+  .wonderment-loading-spinner-container{
+    display: flex;
+    min-height: 800px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+  .wonderment-loading-spinner {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 50%;
+      padding: 0.25em;
+      width: 3em;
+      height: 3em;
+      color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+      background-color: transparent;
+      font-size: 16px;
+      overflow: hidden;
+  }
+  .wonderment-loading-spinner::-webkit-progress-bar {
+      background-color: transparent;
+  }
+  /* Indeterminate */
+  .wonderment-loading-spinner:indeterminate {
+      -webkit-mask-image: linear-gradient(transparent 50%, black 50%), linear-gradient(to right, transparent 50%, black 50%);
+      mask-image: linear-gradient(transparent 50%, black 50%), linear-gradient(to right, transparent 50%, black 50%);
+      animation: wonderment-loading-spinner 6s infinite cubic-bezier(0.3, 0.6, 1, 1);
+  }
+  :-ms-lang(x), .wonderment-loading-spinner:indeterminate {
+      animation: none;
+  }
+  .wonderment-loading-spinner:indeterminate::before,
+  .wonderment-loading-spinner:indeterminate::-webkit-progress-value {
+      content: "";
+      display: block;
+      box-sizing: border-box;
+      margin-bottom: 0.25em;
+      border: solid 0.25em transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      width: 100% !important;
+      height: 100%;
+      background-color: transparent;
+      animation: wonderment-loading-spinner-pseudo 0.75s infinite linear alternate;
+  }
+  .wonderment-loading-spinner:indeterminate::-moz-progress-bar {
+      box-sizing: border-box;
+      border: solid 0.25em transparent;
+      border-top-color: currentColor;
+      border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      animation: wonderment-loading-spinner-pseudo 0.75s infinite linear alternate;
+  }
+  .wonderment-loading-spinner:indeterminate::-ms-fill {
+      animation-name: -ms-ring;
+  }
+  @keyframes wonderment-loading-spinner {
+      0% {
+          transform: rotate(0deg);
+      }
+      12.5% {
+          transform: rotate(180deg);
+          animation-timing-function: linear;
+      }
+      25% {
+          transform: rotate(630deg);
+      }
+      37.5% {
+          transform: rotate(810deg);
+          animation-timing-function: linear;
+      }
+      50% {
+          transform: rotate(1260deg);
+      }
+      62.5% {
+          transform: rotate(1440deg);
+          animation-timing-function: linear;
+      }
+      75% {
+          transform: rotate(1890deg);
+      }
+      87.5% {
+          transform: rotate(2070deg);
+          animation-timing-function: linear;
+      }
+      100% {
+          transform: rotate(2520deg);
+      }
+  }
+  @keyframes wonderment-loading-spinner-pseudo {
+      0% {
+          transform: rotate(-30deg);
+      }
+      29.4% {
+          border-left-color: transparent;
+      }
+      29.41% {
+          border-left-color: currentColor;
+      }
+      64.7% {
+          border-bottom-color: transparent;
+      }
+      64.71% {
+          border-bottom-color: currentColor;
+      }
+      100% {
+          border-left-color: currentColor;
+          border-bottom-color: currentColor;
+          transform: rotate(225deg);
+      }
+  }
+</style>
+<link
+  rel="stylesheet"
+  href="https://cdn.wonderment.com/styles/wonderment-block-styles.css?shop={{shop.permanent_domain}}"
+>
+<div id="pre-wonderment-load" class="wonderment-loading-spinner-container">
+  <progress class="wonderment-loading-spinner"></progress>
+</div>
+
+<div id="wonderment-default-tracking-block-{{ section.id }}" data-settings="{}"></div>
+<script
+  crossorigin
+  src="https://cdn.wonderment.com/wonderment-block.bundle.js"
+  async
+  onload="window.renderWonderment('wonderment-default-tracking-block-{{ section.id }}')"
+></script>

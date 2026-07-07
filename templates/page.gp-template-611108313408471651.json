@@ -1,0 +1,28 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_611108313475580515": {
+      "settings": {
+        "checksum": "e7389a30c072998e8a86c123835b083c910694a9d88dd08aa26933bc112c86ce_1_1_0_0__1",
+        "ggE1KsuuSor_label": "<p>START CUSTOMIZING</p>",
+        "ggHpv6kic7U_text": "<p>Your Name. Your Grind. Your Gear.</p><p><br>You’ve already done the hard part.</p><p>Now it’s time to rep it.<br>Your state. Your story. Your style.</p><p>Make sure people remember it.</p>",
+        "ggMkQ37LbVU_text": "Custom Gear That Tells Your Story",
+        "ggTaAB4dVeb_text": "Wear What You’ve Built",
+        "gg_lytnRP5h_text": "<p>Greg didn’t just open a bar.<br>He rebuilt Trotter’s Tavern brick by brick—while still working his day job.</p><p>That’s not just hustle. That’s legacy.</p><p>&nbsp;</p><p>WATCH HIS STORY ↓</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-611108313475580515"
+    }
+  },
+  "order": [
+    "gp_section_611108313475580515"
+  ]
+}

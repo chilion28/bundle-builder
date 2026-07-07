@@ -1,0 +1,49 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_593579021841728240": {
+      "settings": {
+        "checksum": "75aa8f0c34147f6d8dc53a1c33afce5d088b47126bf692ddd22ee2a3a5e479b5_1_1_0_0__1",
+        "gg4h9RKh60I_viewLessText": "Show less",
+        "gg4h9RKh60I_viewMoreText": "Show more",
+        "gg858PJkycC_text": "Quantity",
+        "ggC9g3d4T4k_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggC9g3d4T4k_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Pet-Banner-MOBILE.jpg",
+        "gg_28CREwsa_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "gg_28CREwsa_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/custom-text-banner-1.jpg",
+        "ggbGndWG40P_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Brown-Trucker-RECTANGLE-PATCH.jpg",
+        "ggiBuXjaaFi_errorMessage": "Cannot add product to cart",
+        "ggiBuXjaaFi_label": "Add to cart",
+        "ggiBuXjaaFi_outOfStockLabel": "Out of stock",
+        "ggiBuXjaaFi_successMessage": "Add product to cart successfully",
+        "ggiBuXjaaFi_unavailableLabel": "Unavailable",
+        "ggiBuXjaaFi_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggjKxxi0QVj_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/custom-text-banner-1.jpg",
+        "ggm7kiLQnH1_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Brown-Trucker-ROUND-PATCH.png",
+        "ggtOfccx7Hp_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Brown-Trucker-SQUARE-PATCH.jpg"
+      },
+      "type": "gp-section-593579021841728240"
+    },
+    "gp_section_593852534183953199": {
+      "settings": {
+        "checksum": "a9c51e93b6b9ee0f415272dd03d6c21cfe0e5c1d87c6fa399d09ca256d937cb5_1_1_0_0__1",
+        "ggHW-YyIWiM_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Product-Page-content-03.jpg",
+        "ggHW-YyIWiM_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Pet-Banner-MOBILE.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-593852534183953199"
+    }
+  },
+  "order": [
+    "gp_section_593852534183953199",
+    "gp_section_593579021841728240"
+  ]
+}

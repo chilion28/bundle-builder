@@ -1,0 +1,66 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_601864143074493015": {
+      "settings": {
+        "checksum": "ea4367f090b1de9b374499a88e00ad866eb04103608101a4d2ff0dc48517c735_1_1_0_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-601864143074493015"
+    },
+    "gp_section_601864143074558551": {
+      "settings": {
+        "checksum": "73fac08ee3fa80899749fdffed194c1434a54c2d76f10a890e566940df99c0b5_1_1_0_0__1",
+        "gg-c7_cDBux_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "gg-c7_cDBux_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_05_1200x-100.jpg",
+        "ggC8ElxlQ8m_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggDtZxiW65K_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggDtZxiW65K_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_03_1200x-100.jpg",
+        "ggT_YiG1SOj_text": "Quantity",
+        "ggX8uHwcsqO_text": "<p><strong>Select Your Hat</strong></p>",
+        "ggelfIBzvLX_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggelfIBzvLX_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_01_1200x-100.jpg",
+        "ggeypHYfEgM_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggeypHYfEgM_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_04_1200x-100.jpg",
+        "gggDytWQF0y_text": "<p><strong>•&nbsp;Trucker:</strong>&nbsp;Breathable mesh back, mid profile, snap closure</p><p><strong>• Snapback:</strong>&nbsp;Flat brim, high crown, adjustable snap—one size</p><p><strong>• Pro Five:</strong>&nbsp;5-panel A-frame; water-resistant; laser-cut vents; adjustable fit</p>",
+        "ggooUDdSnrl_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggooUDdSnrl_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_02_1200x-100.jpg",
+        "ggoxTSXX0eQ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Product-Page-baners-1.jpg",
+        "ggyqi1b_OGF_errorMessage": "Cannot add product to cart",
+        "ggyqi1b_OGF_label": "ADD TO CART",
+        "ggyqi1b_OGF_outOfStockLabel": "Out of stock",
+        "ggyqi1b_OGF_successMessage": "Add product to cart successfully",
+        "ggyqi1b_OGF_unavailableLabel": "Unavailable"
+      },
+      "type": "gp-section-601864143074558551"
+    },
+    "gp_section_601864143074624087": {
+      "settings": {
+        "checksum": "b37f50bca9f7e5534ca83c6378f2e60fc89afe8c5d5c1f8048d3592fe53903e2_1_1_0_0__1",
+        "ggkzck7DtnL_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggkzck7DtnL_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Pet-Banner-MOBILE.jpg"
+      },
+      "type": "gp-section-601864143074624087"
+    },
+    "gp_section_601864143074689623": {
+      "settings": {
+        "checksum": "c8e72b151a987c3494b20a5a7452dfd17d6a56234bceb86af95927c1417f6419_1_1_0_0__1"
+      },
+      "type": "gp-section-601864143074689623"
+    }
+  },
+  "order": [
+    "gp_section_601864143074493015",
+    "gp_section_601864143074624087",
+    "gp_section_601864143074558551",
+    "gp_section_601864143074689623"
+  ]
+}

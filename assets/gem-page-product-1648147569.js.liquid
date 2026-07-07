@@ -1,0 +1,373 @@
+{% comment %}
+	GEMPAGE BUILDER (https://apps.shopify.com/gempage)
+
+	You SHOULD NOT modify source code in this page because
+	It is automatically generated from GEMPAGE BUILDER
+	Try to edit page with the live editor.
+{% endcomment %}
+(function( jQuery ){
+  var $module = jQuery('#m-1570092283913').children('.module');
+  $module.gfV3Product();
+})( window.GemQuery || jQuery );(function(jQuery) {
+  var $module = jQuery('#m-1570092283913-0').children('.module');
+  var effect = $module.attr('data-effect');
+  var magnify = $module.attr('data-zoom-level');
+  var displayType = $module.attr('data-displaytype');
+  $module.gfV3ProductImage({
+    'effect': effect,
+    'displayType': displayType,
+    'magnify': magnify
+  });
+})(window.GemQuery || jQuery);
+(function(jQuery) {
+var $module = jQuery('#m-1631949298749').children('.module');
+$module.gfV4ProductImageList({
+  onImageClicked: function(imageUrl, imageZoomUrl) {}
+});
+
+var style = $module.attr('data-style');
+switch(style) {
+  case 'slider':
+      var navspeed = $module.data('navspeed'),
+          navlg = $module.data('navlg'),
+          navmd = $module.data('navmd'),
+          navsm = $module.data('navsm'),
+          navxs = $module.data('navxs'),
+          collg = $module.data('collg'),
+          colmd = $module.data('colmd'),
+          colsm = $module.data('colsm'),
+          colxs = $module.data('colxs'),
+          dotslg = $module.data('dotslg'),
+          dotsmd = $module.data('dotsmd'),
+          dotssm = $module.data('dotssm'),
+          dotsxs = $module.data('dotsxs'),
+
+          marginlg = parseInt($module.data('mlg')),
+          marginmd = parseInt($module.data('mmd')),
+          marginsm = parseInt($module.data('msm')),
+          marginxs = parseInt($module.data('mxs'));
+
+      var mode = jQuery('.gryffeditor').hasClass('editing') ? 'dev' : 'production';
+      if(mode == 'production') {
+          var loop = $module.data('loop');
+      } else {
+          var loop = 0;
+      }
+      $module.find('.gf_product-images-list').children().each( function( index ) {
+        jQuery(this).attr( 'data-position', index );
+      });
+      $module.find('.gf_product-images-list').owlCarousel({
+          mouseDrag: false,
+          navSpeed: navspeed,
+          autoWidth: !1,
+          loop: loop,
+          responsiveClass:true,
+          responsive:{
+              0:{
+                  items:colxs,
+                  nav: navxs,
+                  dots:dotsxs,
+                  margin: marginxs
+              },
+              768:{
+                  items:colsm,
+                  nav: navsm,
+                  dots:dotssm,
+                  margin: marginsm
+              },
+              992:{
+                  items:colmd,
+                  nav: navmd,
+                  dots:dotsmd,
+                  margin: marginmd
+              },
+              1200:{
+                  items:collg,
+                  nav: navlg,
+                  dots:dotslg,
+                  margin: marginlg
+              }
+          },
+          onInitialized: function(){
+            $module.closest('.module-wrap[data-label="(P) Image List"]').addClass('gf-carousel-loaded');
+          }
+      }); 
+      break;
+}
+})(window.GemQuery || jQuery); 
+    /* add your custom script here */(function(jQuery) {
+    var $module = jQuery('#m-1617609731036').children('.module');
+    $module.gfV3ProductPrice({
+        displayCurrency: true
+    });
+})(window.GemQuery || jQuery);(function(jQuery) {
+  var $module = jQuery('#m-1570092283891').children('.module');
+  var mode = jQuery('.gryffeditor').hasClass('editing') ? 'dev' : 'production';
+
+  var blankOption = $module.attr('data-blankoption');
+  var blankOptionText = $module.attr('data-blankoptiontext');
+  var style = $module.attr('data-style');
+
+  $module.gfV3ProductVariants({
+    mode: mode,
+    blankOption: blankOption,
+    blankOptionText: blankOptionText,
+    style: style,
+    onVariantSelected: function(variant, $select) {}
+  });
+})(window.GemQuery || jQuery);(function( jQuery ){
+  var $module = jQuery('#m-1570092283885').children('.module');
+  var style = $module.attr('data-style');
+  var updatePrice = $module.attr('data-updateprice');
+
+  $module.gfV3ProductQuantity({
+    'style': style,
+    'updatePrice': updatePrice
+  });
+})( window.GemQuery || jQuery );(function( jQuery ){
+  var $module = jQuery('#m-1570092283913-3').children('.module');
+  $module.gfV3ProductCartButton({ onItemAdded: function(data) {}});
+})( window.GemQuery || jQuery );/* add your custom script here */(function( jQuery ){
+  var $module = jQuery('#m-1587982839341').children('.module');
+  var activeTab = parseInt($module.attr('data-activeTab')) - 1;
+  var mode = jQuery('.gryffeditor').hasClass('editing') ? 'dev' : 'production';
+
+  $module.gfV3ResTabs({
+      'activeTab': activeTab,
+      'mode': mode,
+      tabSelected: function(index) {
+        var tabInactiveBgColor = $module.attr('data-inactiveTabBgColor');
+        var tabInactiveColor = $module.attr('data-inactiveTabColor');
+        var tabBgColor = $module.attr('data-tabBgColor');
+        var tabColor = $module.attr('data-tabColor');
+        var borderColor = $module.attr('data-borderColor');
+        var borderSize = $module.attr('data-borderSize');
+
+        var $gfTabs = $module.find('>ul>li.gf_tab');
+        var $gfTabActive = $module.find('>ul>li.gf_tab-active');
+        var $gfTabPanels = $module.find('>.gf_tab-panel');
+
+        if($module.hasClass('style1')) {
+          $gfTabs
+            .css('margin-left', '-' + borderSize)
+            .css('border', borderSize + ' solid ' + borderColor)
+            .css('border-bottom', borderSize + ' solid ' + borderColor);
+
+          $module.find('>ul>li.gf_tab:first').css('margin-left', '0px');
+
+        } else if($module.hasClass('style3')) {
+          $gfTabs.css('border-bottom', borderSize + ' solid ' + tabBgColor);
+        }
+
+        if(!$module.hasClass('style3')) {
+          $gfTabs.css('background-color', tabInactiveBgColor);
+          $gfTabActive.css('background-color', tabBgColor);
+        }
+
+        $gfTabs.css('color', tabInactiveColor);
+        $gfTabActive.css('color', tabColor);
+
+        if($module.hasClass('style1')) {
+          $gfTabActive.children('.gf_tab-bottom')
+          .css('backgroundColor', tabBgColor)
+          .css('height', borderSize)
+          .css('bottom', '-' + borderSize);
+        } else if($module.hasClass('style3')) {
+          $gfTabActive.children('.gf_tab-bottom')
+          .css('backgroundColor', borderColor)
+          .css('height', borderSize)
+          .css('bottom', '-' + borderSize);
+        }
+        $gfTabPanels
+        .css('top', '-' + borderSize)
+        .css('background-color', tabBgColor)
+        .css('border', '1px solid ' + borderColor);
+
+        if($module.hasClass('style1')) {
+          $gfTabPanels.css('border', borderSize + ' solid ' + borderColor);
+        } else {
+          $gfTabPanels.css('border', 'none');
+        }
+        // Fix (P) Desc read more bug	
+        $module.find('.module-wrap[data-label="(P) Description"]').each(function(index, el) {	
+            if (jQuery(el).children('.module').data('gfv3productdesc') != undefined) {	
+                jQuery(el).children(".module").data("gfv3productdesc").initReadMore();	
+            }	
+        });
+      }
+  });
+  if(mode == 'dev') {
+    var moduleId = "1587982839341";
+    var moduleIdSlug = moduleId.toString().replace(/-/g, '');
+    if (moduleIdSlug == "1587982839341") {
+      window.getTab1587982839341 = function() {
+        return $module.data('gfv3restabs');
+      }
+    }
+  }
+})( window.GemQuery || jQuery );
+(function( jQuery ){
+  var $module = jQuery('#m-1631952585330').children('.module');
+  $module.gfV2HeroBanner({});
+  
+})( window.GemQuery || jQuery );
+    (function( jQuery ){
+  var $module = jQuery('#m-1570092283869').children('.module');
+  $module.gfV2HeroBanner({});
+  
+})( window.GemQuery || jQuery );(function( jQuery ){
+  var $module = jQuery('#m-1570092283821').children('.module');
+  $module.gfV2HeroBanner({});
+  
+})( window.GemQuery || jQuery );
+    
+    
+    
+    
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1570092283953').children('.module');
+        
+            var token_test = '2269641474.1677ed0.63eaaf968720481a866e9263fc8639e1';
+            var token = $module.data('token') != '' ? $module.data('token') : token_test;
+            var num_photos = parseInt($module.data('photos')) > 1 ? parseInt($module.data('photos')) : 1;
+            var num_columns = parseInt($module.data('columns')) > 1 ? parseInt($module.data('columns')) : num_photos;
+            var padding = parseInt($module.data('padding')) > 0 ? parseInt($module.data('padding')) : 0;
+
+            var instaTag = jQuery.trim($module.data('hashtag')) != '' ? jQuery.trim($module.data('hashtag')) : '';
+
+            if(instaTag != '') {
+                var instaUrl = 'https://api.instagram.com/v1/tags/' + instaTag + '/media/recent';
+            } else {
+                var instaUrl = 'https://api.instagram.com/v1/users/self/media/recent';
+            }
+
+            jQuery.ajax({
+                url: instaUrl,
+                dataType: 'jsonp',
+                type: 'GET',
+                data: {
+                    access_token: token, 
+                    count: num_photos
+                },
+                success: function(data) {
+                    var html = '';
+                    if(data.data != undefined) {
+                        for(var i = 0; i < data.data.length; i++) {
+                            if(i % num_columns == 0) {
+                                html += '<div class="gf_clearfix"></div>';
+                            }
+                            html += '<li><a href="' + data.data[i].link + '" target="_blank" style="padding: ' + padding + 'px;">';
+                                html+= '<img src="'+ data.data[i]['images'].standard_resolution.url + '" alt="' + data.data[i].caption + '" />';
+                            html += '</a></li>';
+                        }
+                        $module.html(html).hide();
+                        $module.find('li').css('width', (100/num_columns)+'%');
+
+                        $module.closest('.module-wrap').css('marginLeft', padding * -1);
+                        $module.closest('.module-wrap').css('marginRight', padding * -1);
+                    }
+                    $module.fadeIn();
+                },
+                error: function(data){  
+                    console.log(data);
+                }
+            });
+        });
+    (function( jQuery ){
+  var $module = jQuery('#m-1570092283834').children('.module');
+
+})( window.GemQuery || jQuery );
+    
+        jQuery(function() {
+            var $module = jQuery('#m-1570092283834-child1').children('.module');
+            $module.gfV3Product();
+        }); 
+    (function(jQuery) {
+  var $module = jQuery('#m-1570092283834-child1-0').children('.module');
+  var effect = $module.attr('data-effect');
+  var magnify = $module.attr('data-zoom-level');
+  var displayType = $module.attr('data-displaytype');
+  $module.gfV3ProductImage({
+    'effect': effect,
+    'displayType': displayType,
+    'magnify': magnify
+  });
+})(window.GemQuery || jQuery);/* add your custom script here */(function(jQuery) {
+    var $module = jQuery('#m-1570092283834-child1-2').children('.module');
+    $module.gfV3ProductPrice({
+        displayCurrency: true
+    });
+})(window.GemQuery || jQuery);(function( jQuery ){
+  var $module = jQuery('#m-1570092283834-child1-3').children('.module');
+  $module.gfV3ProductCartButton({ onItemAdded: function(data) {}});
+})( window.GemQuery || jQuery );
+        jQuery(function() {
+            var $module = jQuery('#m-1570092283834-child2').children('.module');
+            $module.gfV3Product();
+        }); 
+    (function(jQuery) {
+  var $module = jQuery('#m-1570092283834-child2-0').children('.module');
+  var effect = $module.attr('data-effect');
+  var magnify = $module.attr('data-zoom-level');
+  var displayType = $module.attr('data-displaytype');
+  $module.gfV3ProductImage({
+    'effect': effect,
+    'displayType': displayType,
+    'magnify': magnify
+  });
+})(window.GemQuery || jQuery);/* add your custom script here */(function(jQuery) {
+    var $module = jQuery('#m-1570092283834-child2-2').children('.module');
+    $module.gfV3ProductPrice({
+        displayCurrency: true
+    });
+})(window.GemQuery || jQuery);(function( jQuery ){
+  var $module = jQuery('#m-1570092283834-child2-3').children('.module');
+  $module.gfV3ProductCartButton({ onItemAdded: function(data) {}});
+})( window.GemQuery || jQuery );
+        jQuery(function() {
+            var $module = jQuery('#m-1570092283834-child3').children('.module');
+            $module.gfV3Product();
+        }); 
+    (function(jQuery) {
+  var $module = jQuery('#m-1570092283834-child3-0').children('.module');
+  var effect = $module.attr('data-effect');
+  var magnify = $module.attr('data-zoom-level');
+  var displayType = $module.attr('data-displaytype');
+  $module.gfV3ProductImage({
+    'effect': effect,
+    'displayType': displayType,
+    'magnify': magnify
+  });
+})(window.GemQuery || jQuery);/* add your custom script here */(function(jQuery) {
+    var $module = jQuery('#m-1570092283834-child3-2').children('.module');
+    $module.gfV3ProductPrice({
+        displayCurrency: true
+    });
+})(window.GemQuery || jQuery);(function( jQuery ){
+  var $module = jQuery('#m-1570092283834-child3-3').children('.module');
+  $module.gfV3ProductCartButton({ onItemAdded: function(data) {}});
+})( window.GemQuery || jQuery );
+        jQuery(function() {
+            var $module = jQuery('#m-1570092283834-child4').children('.module');
+            $module.gfV3Product();
+        }); 
+    (function(jQuery) {
+  var $module = jQuery('#m-1570092283834-child4-0').children('.module');
+  var effect = $module.attr('data-effect');
+  var magnify = $module.attr('data-zoom-level');
+  var displayType = $module.attr('data-displaytype');
+  $module.gfV3ProductImage({
+    'effect': effect,
+    'displayType': displayType,
+    'magnify': magnify
+  });
+})(window.GemQuery || jQuery);/* add your custom script here */(function(jQuery) {
+    var $module = jQuery('#m-1570092283834-child4-2').children('.module');
+    $module.gfV3ProductPrice({
+        displayCurrency: true
+    });
+})(window.GemQuery || jQuery);(function( jQuery ){
+  var $module = jQuery('#m-1570092283834-child4-3').children('.module');
+  $module.gfV3ProductCartButton({ onItemAdded: function(data) {}});
+})( window.GemQuery || jQuery );

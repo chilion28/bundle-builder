@@ -1,0 +1,1216 @@
+
+    {% render 'gp-head', isThemeSection: true %}
+    
+    <style {% if section.settings.section_preload == "false" %} class="gps-link gps-style" type="text/disabled-css" {% endif %}>.gps-621771429603443658.gps.gpsil [style*="--bg:"]{background:var(--bg)}.gps-621771429603443658.gps.gpsil [style*="--bga:"]{background-attachment:var(--bga)}.gps-621771429603443658.gps.gpsil [style*="--bgc:"]{background-color:var(--bgc)}.gps-621771429603443658.gps.gpsil [style*="--bgi:"]{background-image:var(--bgi)}.gps-621771429603443658.gps.gpsil [style*="--bgp:"]{background-position:var(--bgp)}.gps-621771429603443658.gps.gpsil [style*="--bgr:"]{background-repeat:var(--bgr)}.gps-621771429603443658.gps.gpsil [style*="--bgs:"]{background-size:var(--bgs)}.gps-621771429603443658.gps.gpsil [style*="--b:"]{border:var(--b)}.gps-621771429603443658.gps.gpsil [style*="--bb:"]{border-bottom:var(--bb)}.gps-621771429603443658.gps.gpsil [style*="--bc:"]{border-color:var(--bc)}.gps-621771429603443658.gps.gpsil [style*="--bblr:"]{border-bottom-left-radius:var(--bblr)}.gps-621771429603443658.gps.gpsil [style*="--bbrr:"]{border-bottom-right-radius:var(--bbrr)}.gps-621771429603443658.gps.gpsil [style*="--bl:"]{border-left:var(--bl)}.gps-621771429603443658.gps.gpsil [style*="--bs:"]{border-style:var(--bs)}.gps-621771429603443658.gps.gpsil [style*="--bt:"]{border-top:var(--bt)}.gps-621771429603443658.gps.gpsil [style*="--btlr:"]{border-top-left-radius:var(--btlr)}.gps-621771429603443658.gps.gpsil [style*="--btrr:"]{border-top-right-radius:var(--btrr)}.gps-621771429603443658.gps.gpsil [style*="--bw:"]{border-width:var(--bw)}.gps-621771429603443658.gps.gpsil [style*="--c:"]{color:var(--c)}.gps-621771429603443658.gps.gpsil [style*="--cg:"]{-moz-column-gap:var(--cg);column-gap:var(--cg)}.gps-621771429603443658.gps.gpsil [style*="--gtc:"]{grid-template-columns:var(--gtc)}.gps-621771429603443658.gps.gpsil [style*="--jc:"]{justify-content:var(--jc)}.gps-621771429603443658.gps.gpsil [style*="--op:"]{opacity:var(--op)}.gps-621771429603443658.gps.gpsil [style*="--o:"]{order:var(--o)}.gps-621771429603443658.gps.gpsil [style*="--pc:"]{place-content:var(--pc)}.gps-621771429603443658.gps.gpsil [style*="--p:"]{padding:var(--p)}.gps-621771429603443658.gps.gpsil [style*="--pb:"]{padding-bottom:var(--pb)}.gps-621771429603443658.gps.gpsil [style*="--pl:"]{padding-left:var(--pl)}.gps-621771429603443658.gps.gpsil [style*="--pr:"]{padding-right:var(--pr)}.gps-621771429603443658.gps.gpsil [style*="--pt:"]{padding-top:var(--pt)}.gps-621771429603443658.gps.gpsil [style*="--rg:"]{row-gap:var(--rg)}.gps-621771429603443658.gps.gpsil [style*="--ta:"]{text-align:var(--ta)}.gps-621771429603443658.gps.gpsil [style*="--t:"]{transform:var(--t)}.gps-621771429603443658.gps.gpsil [style*="--w:"]{width:var(--w)}@media only screen and (max-width:1024px){.gps-621771429603443658.gps.gpsil [style*="--pl-tablet:"]{padding-left:var(--pl-tablet)}.gps-621771429603443658.gps.gpsil [style*="--pr-tablet:"]{padding-right:var(--pr-tablet)}.gps-621771429603443658.gps.gpsil [style*="--w-tablet:"]{width:var(--w-tablet)}}@media only screen and (max-width:767px){.gps-621771429603443658.gps.gpsil [style*="--pl-mobile:"]{padding-left:var(--pl-mobile)}.gps-621771429603443658.gps.gpsil [style*="--pr-mobile:"]{padding-right:var(--pr-mobile)}.gps-621771429603443658.gps.gpsil [style*="--w-mobile:"]{width:var(--w-mobile)}}.gps-621771429603443658 .gp-relative{position:relative}.gps-621771429603443658 .gp-mx-auto{margin-left:auto;margin-right:auto}.gps-621771429603443658 .gp-mb-0{margin-bottom:0}.gps-621771429603443658 .gp-flex{display:flex}.gps-621771429603443658 .gp-grid{display:grid}.gps-621771429603443658 .\!gp-hidden{display:none!important}.gps-621771429603443658 .gp-hidden{display:none}.gps-621771429603443658 .gp-max-w-full{max-width:100%}.gps-621771429603443658 .gp-grid-rows-\[1fr\]{grid-template-rows:1fr}.gps-621771429603443658 .gp-flex-col{flex-direction:column}.gps-621771429603443658 .gp-transition-colors{transition-duration:.15s;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1)}.gps-621771429603443658 .gp-duration-200{transition-duration:.2s}.gps-621771429603443658 .gp-ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}@media (max-width:1024px){.gps-621771429603443658 .tablet\:\!gp-hidden{display:none!important}.gps-621771429603443658 .tablet\:gp-hidden{display:none}}@media (max-width:767px){.gps-621771429603443658 .mobile\:\!gp-hidden{display:none!important}.gps-621771429603443658 .mobile\:gp-hidden{display:none}}.gps-621771429603443658 .\[\&_\*\]\:gp-max-w-full *{max-width:100%}</style>
+    
+  
+    
+    
+    
+
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+
+    
+        <section
+          class="gp-mx-auto gp-max-w-full [&_*]:gp-max-w-full {% if section.settings.section_preload == "false" %}gps-lazy {% endif %}"
+          style="--w:100%;--w-tablet:calc(var(--g-ct-w, 100%) + 2 * var(--g-ct-p, 15px));--w-mobile:calc(var(--g-ct-w, 100%) + 2 * var(--g-ct-p, 15px));--pl:none;--pl-tablet:none;--pl-mobile:none;--pr:none;--pr-tablet:none;--pr-mobile:none"
+        >
+          
+    <gp-row gp-data='{"background":{"desktop":{"type":"color","color":"transparent","image":{"src":"","width":0,"height":0},"size":"cover","position":{"x":50,"y":50},"repeat":"no-repeat","attachment":"scroll"}},"uid":"gl6FuiPDI-"}' data-id="gl6FuiPDI-" id="gl6FuiPDI-" data-same-height-subgrid-container class="gl6FuiPDI- gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--blockPadding:base;--pt:var(--g-s-2xl);--pb:var(--g-s-2xl);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:100%;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gNywS8HQ8a gp-relative gp-flex gp-flex-col"
+    >
+      
+  
+    <div
+      data-id="g6GERytaM-"
+      style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:left;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll"
+      data-keep-class="true"
+      class="g6GERytaM- gp-custom-code">
+      <div>
+    <style>
+  .cl-style-slider-wrap {
+    margin: 20px 0 24px;
+    border-radius: 16px;
+    padding: 28px;
+    background: #f4f4f4;
+  }
+
+  .cl-style-slider-title {
+    font-family: Inter, sans-serif;
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    margin: 0 0 6px !important;
+  }
+
+  .cl-style-slider {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 4px 4px 18px;
+    margin-top: 1em;
+  }
+
+  .cl-style-card {
+    min-width: 150px;
+    scroll-snap-align: start;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 1em !important;
+    background: #fff !important;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: .2s ease;
+  }
+
+  .cl-style-card.is-active {
+    border: 3px solid #111;
+  }
+
+  .cl-style-card__badge {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    background: #111;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 7px 10px;
+    border-radius: 10px 0 8px 0;
+    text-transform: uppercase;
+  }
+
+  .cl-style-card__image {
+    width: 80%;
+    margin: auto;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 10px;
+    padding: 10px;
+  }
+
+  .cl-style-card__title {
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .cl-style-card__desc {
+    font-family: Inter, sans-serif;
+    font-size: 12px;
+    color: #555;
+    font-weight: 300;
+    text-wrap: balance;
+  }
+
+  /*.cl-hide-original-style,*/
+  /*[option-name="Size"] {*/
+  /*  display: none !important;*/
+  /*}*/
+  
+  .cl-hide-original-style {
+  display: none !important;
+    }
+    
+    [option-name="Size"] {
+      display: none !important;
+    }
+    
+
+  .cl-custom-product-gallery {
+    width: 100%;
+    border: 1px solid #e5e5e5;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    display: block;
+  }
+
+  .cl-custom-product-gallery img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+  }
+  
+
+
+  @media (max-width: 767px) {
+    .cl-style-slider-wrap {
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .cl-style-card {
+      min-width: 220px;
+    }
+  }
+</style>
+
+<script>
+(function () {
+  const CL = {
+    selectors: {
+      form: 'form[action*="/cart/add"]',
+      productData: 'gp-product-images-v3[gp-data]',
+      styleSelect: 'select[option-data="Style"]',
+      sizeSelect: 'select[option-data="Size"]',
+      colorSwatch: '[option-data="Color"][option-value]',
+      colorLabel: '[option-name="Color"] legend.variant-display span',
+      productButton: 'gp-product-button'
+    },
+
+    styleMeta: {
+      'Snapback': {
+        desc: 'Flat brim, classic fit',
+        badge: '★ Most Popular',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/Snapback_liner.svg?v=1777580563'
+      },
+      'Trucker': {
+        desc: 'Mesh back, breathable',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/trucker_lineart.svg?v=1778615583'
+      },
+      'Pro Five A Frame': {
+        desc: 'Higher crown, structured',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/a-frame-lineart.svg?v=1779899012'
+      },
+      'Flex Fit': {
+        desc: 'Stretch fit, one size',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/Flexfit.svg?v=1778615663'
+      },
+      'Signature Series': {
+        desc: 'Premium specialty styles',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/Snapback_liner.svg?v=1777580563'
+      }
+    },
+
+    displayColor(color) {
+      return String(color || '').replace(/\s*FF$/i, '').trim();
+    },
+
+    getVariants() {
+      const el = document.querySelector(CL.selectors.productData);
+      if (!el) return [];
+
+      try {
+        return JSON.parse(el.getAttribute('gp-data'))?.product?.variants || [];
+      } catch (e) {
+        console.warn('[CL] Could not parse product variants', e);
+        return [];
+      }
+    },
+
+    getVariantImage(variant) {
+      let src =
+        variant?.featured_image?.src ||
+        variant?.featured_media?.preview_image?.src ||
+        variant?.image?.src ||
+        '';
+
+      if (!src) return '';
+      if (src.startsWith('//')) src = 'https:' + src;
+
+      return src;
+    },
+
+    updateVariantInputs(variantId) {
+      document.querySelectorAll(CL.selectors.form).forEach(function (form) {
+        const input = form.querySelector('input[name="id"]');
+        if (!input) return;
+
+        input.value = variantId;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    },
+
+    updateProductButton(variantId) {
+      document.querySelectorAll(CL.selectors.productButton).forEach(function (wrap) {
+        wrap.setAttribute('variant-id', String(variantId));
+
+        const buttons = wrap.querySelectorAll('button, [role="button"], .button-primary');
+
+        buttons.forEach(function (button) {
+          button.disabled = false;
+          button.removeAttribute('disabled');
+          button.removeAttribute('aria-disabled');
+          button.classList.remove('disabled', 'is-disabled', 'sold-out', 'out-of-stock');
+
+          if (/out of stock|sold out|unavailable/i.test(button.textContent)) {
+            button.textContent = 'Add to cart';
+          }
+        });
+      });
+    },
+
+    updateUrl(variantId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('variant', variantId);
+      window.history.replaceState({}, '', url.toString());
+    },
+
+    updateColorLabel(color) {
+      const label = document.querySelector(CL.selectors.colorLabel);
+      if (label) label.textContent = CL.displayColor(color);
+    },
+
+    buildGallery() {
+      const oldGallery =
+        document.querySelector('gp-product-images-v3[data-id="gNHe7PZ2o4"]') ||
+        document.querySelector('gp-product-images-v3') ||
+        document.querySelector('.gckYyx4CKX');
+
+      if (!oldGallery || document.querySelector('.cl-custom-product-gallery')) return;
+
+      const gallery = document.createElement('div');
+      gallery.className = 'cl-custom-product-gallery';
+      gallery.innerHTML = '<img class="cl-custom-product-gallery__img" alt="">';
+
+      oldGallery.insertAdjacentElement('beforebegin', gallery);
+      oldGallery.style.display = 'none';
+    },
+
+    updateGallery(variant) {
+      const src = CL.getVariantImage(variant);
+      const img = document.querySelector('.cl-custom-product-gallery__img');
+
+      if (!src || !img) return;
+
+      img.src = src;
+      img.srcset = src;
+    }
+  };
+
+  let isApplying = false;
+
+  function ready(callback) {
+    let attempts = 0;
+
+    const timer = setInterval(function () {
+      attempts++;
+
+      const form = document.querySelector(CL.selectors.form);
+      const productData = document.querySelector(CL.selectors.productData);
+      const styleSelect = document.querySelector(CL.selectors.styleSelect);
+
+      if (form && productData && styleSelect) {
+        clearInterval(timer);
+        callback();
+      }
+
+      if (attempts > 80) clearInterval(timer);
+    }, 250);
+  }
+
+  function findFirstVariantForStyle(style) {
+  const variants = CL.getVariants().filter(function (variant) {
+    return variant.option1 === style;
+  });
+
+  if (!variants.length) return null;
+
+  return (
+    variants.find(function (variant) {
+      return variant.available === true;
+    }) ||
+    variants.find(function (variant) {
+      return variant.id && variant.option2 && variant.option3;
+    }) ||
+    variants[0]
+  );
+}
+
+  function findVariant(style, size, color) {
+    return CL.getVariants().find(function (variant) {
+      return (
+        variant.option1 === style &&
+        (!size || variant.option2 === size) &&
+        String(variant.option3 || '').trim() === String(color || '').trim()
+      );
+    }) || CL.getVariants().find(function (variant) {
+      return (
+        variant.option1 === style &&
+        (!size || variant.option2 === size) &&
+        CL.displayColor(variant.option3) === CL.displayColor(color)
+      );
+    });
+  }
+
+  function updateStyleCards(style) {
+    document.querySelectorAll('.cl-style-card').forEach(function (card) {
+      card.classList.toggle('is-active', card.dataset.styleValue === style);
+    });
+  }
+
+  function updateSizeSelect(variant) {
+    const sizeSelect = document.querySelector(CL.selectors.sizeSelect);
+    if (!sizeSelect || !variant.option2) return;
+
+    [...sizeSelect.options].forEach(function (option) {
+      option.selected = option.value === variant.option2;
+    });
+
+    sizeSelect.value = variant.option2;
+    sizeSelect.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function updateColorOptions(variant) {
+    const style = variant.option1;
+    const size = variant.option2;
+
+    const colorsForStyle = CL.getVariants()
+      .filter(function (v) {
+        return (
+          v.option1 === style &&
+          (!size || v.option2 === size)
+        );
+      })
+      .map(function (v) {
+        return CL.displayColor(v.option3);
+      });
+
+    document.querySelectorAll(CL.selectors.colorSwatch).forEach(function (colorEl) {
+      const swatchColor = CL.displayColor(colorEl.getAttribute('option-value'));
+      const label = colorEl.closest('label.option-item') || colorEl.closest('label');
+      const show = colorsForStyle.includes(swatchColor);
+
+      colorEl.disabled = !show;
+      colorEl.toggleAttribute('data-disabled', !show);
+      colorEl.setAttribute('data-gp-option-available', show ? 'true' : 'false');
+
+      if (label) {
+        label.style.display = show ? '' : 'none';
+        label.classList.toggle('cl-color-hidden', !show);
+        label.classList.remove('selected', 'active', 'is-active');
+        label.setAttribute('aria-checked', 'false');
+      }
+
+      colorEl.checked = false;
+      colorEl.removeAttribute('checked');
+    });
+  }
+
+  function selectColor(color) {
+    const exactColor = String(color || '').trim();
+    const displayColor = CL.displayColor(color);
+
+    const colorEl = [...document.querySelectorAll(CL.selectors.colorSwatch)].find(function (el) {
+      return String(el.getAttribute('option-value') || '').trim() === exactColor;
+    }) || [...document.querySelectorAll(CL.selectors.colorSwatch)].find(function (el) {
+      return CL.displayColor(el.getAttribute('option-value')) === displayColor;
+    });
+
+    if (!colorEl) return;
+
+    const label = colorEl.closest('label.option-item') || colorEl.closest('label');
+
+    colorEl.disabled = false;
+    colorEl.removeAttribute('disabled');
+    colorEl.removeAttribute('data-disabled');
+    colorEl.setAttribute('data-gp-option-available', 'true');
+    colorEl.checked = true;
+    colorEl.setAttribute('checked', 'checked');
+
+    if (label) {
+      label.style.display = '';
+      label.classList.add('selected', 'active', 'is-active');
+      label.setAttribute('aria-checked', 'true');
+    }
+
+    colorEl.dispatchEvent(new Event('input', { bubbles: true }));
+    colorEl.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function applyVariant(variant) {
+    if (!variant || isApplying) return;
+
+    isApplying = true;
+
+    const styleSelect = document.querySelector(CL.selectors.styleSelect);
+
+    if (styleSelect) {
+      styleSelect.value = variant.option1;
+    }
+
+    const finalVariant =
+  findVariant(variant.option1, variant.option2, variant.option3) ||
+  findFirstVariantForStyle(variant.option1) ||
+  variant;
+
+updateSizeSelect(finalVariant);
+updateColorOptions(finalVariant);
+selectColor(finalVariant.option3);
+
+    CL.updateVariantInputs(finalVariant.id);
+CL.updateProductButton(finalVariant.id);
+CL.updateUrl(finalVariant.id);
+CL.updateColorLabel(finalVariant.option3);
+CL.updateGallery(finalVariant);
+updateStyleCards(finalVariant.option1);
+
+    setTimeout(function () {
+  CL.updateVariantInputs(finalVariant.id);
+  CL.updateProductButton(finalVariant.id);
+}, 150);
+
+    setTimeout(function () {
+      isApplying = false;
+    }, 250);
+  }
+
+  function buildStyleCards() {
+    const styleSelect = document.querySelector(CL.selectors.styleSelect);
+    if (!styleSelect) return;
+
+    const styleBlock =
+      styleSelect.closest('[option-name="Style"]') ||
+      styleSelect.parentElement;
+
+    if (!styleBlock) return;
+
+    document.querySelectorAll('.cl-style-slider-wrap').forEach(function (el) {
+      el.remove();
+    });
+
+    styleBlock.classList.add('cl-hide-original-style');
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cl-style-slider-wrap';
+
+    wrapper.innerHTML = `
+      <h3 class="cl-style-slider-title">Choose Your Hat Style</h3>
+      <div class="cl-style-slider"></div>
+    `;
+
+    const slider = wrapper.querySelector('.cl-style-slider');
+
+    [...styleSelect.options].forEach(function (option) {
+      if (!option.value) return;
+
+      const value = option.value;
+      const meta = CL.styleMeta[value] || {};
+
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'cl-style-card';
+      card.dataset.styleValue = value;
+
+      card.innerHTML = `
+        ${meta.badge ? `<div class="cl-style-card__badge">${meta.badge}</div>` : ''}
+        ${meta.img ? `<img class="cl-style-card__image" src="${meta.img}" alt="${value}">` : ''}
+        <div class="cl-style-card__title">${value}</div>
+        <div class="cl-style-card__desc">${meta.desc || ''}</div>
+      `;
+
+      card.addEventListener('click', function () {
+        const variant = findFirstVariantForStyle(value);
+        applyVariant(variant);
+      });
+
+      slider.appendChild(card);
+    });
+
+    styleBlock.insertAdjacentElement('beforebegin', wrapper);
+  }
+
+  function bindColorClicks() {
+    document.addEventListener('click', function (event) {
+      const swatch = event.target.closest(CL.selectors.colorSwatch);
+      if (!swatch || isApplying) return;
+
+      setTimeout(function () {
+        const styleSelect = document.querySelector(CL.selectors.styleSelect);
+        const sizeSelect = document.querySelector(CL.selectors.sizeSelect);
+
+        if (!styleSelect) return;
+
+        const variant = findVariant(
+          styleSelect.value,
+          sizeSelect ? sizeSelect.value : null,
+          swatch.getAttribute('option-value')
+        );
+
+        if (variant) applyVariant(variant);
+      }, 80);
+    }, true);
+  }
+
+  ready(function () {
+    CL.buildGallery();
+    buildStyleCards();
+    bindColorClicks();
+
+    const styleSelect = document.querySelector(CL.selectors.styleSelect);
+
+    const urlVariantId = new URLSearchParams(window.location.search).get('variant');
+
+    const initialVariant =
+      CL.getVariants().find(function (v) {
+        return String(v.id) === String(urlVariantId);
+      }) ||
+      findFirstVariantForStyle(styleSelect.value);
+
+    applyVariant(initialVariant);
+  });
+})();
+</script>
+
+<script>
+(function () {
+  function buildStyleCardsOnly() {
+    const styleSelect = document.querySelector('select[option-data="Style"]');
+    if (!styleSelect) return;
+
+    const styleBlock =
+      styleSelect.closest('[option-name="Style"]') ||
+      styleSelect.parentElement;
+
+    if (!styleBlock) return;
+
+    document.querySelectorAll('.cl-style-slider-wrap').forEach(el => el.remove());
+
+    styleBlock.classList.add('cl-hide-original-style');
+
+    const styleMeta = {
+      'Snapback': {
+        desc: 'Flat brim, classic fit',
+        badge: '★ Most Popular',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/Snapback_liner.svg?v=1777580563'
+      },
+      'Trucker': {
+        desc: 'Mesh back, breathable',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/trucker_lineart.svg?v=1778615583'
+      },
+      'Pro Five A Frame': {
+        desc: 'Higher crown, structured',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/a-frame-lineart.svg?v=1779899012'
+      },
+      'Flex Fit': {
+        desc: 'Stretch fit, two sizes',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/Flexfit.svg?v=1778615663'
+      },
+      'Signature Series': {
+        desc: 'Premium specialty styles',
+        img: 'https://cdn.shopify.com/s/files/1/0519/6401/files/Snapback_liner.svg?v=1777580563'
+      }
+    };
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'cl-style-slider-wrap';
+
+    wrapper.innerHTML = `
+      <h3 class="cl-style-slider-title">Choose Your Hat Style</h3>
+      <div class="cl-style-slider"></div>
+    `;
+
+    const slider = wrapper.querySelector('.cl-style-slider');
+
+    [...styleSelect.options].forEach(option => {
+      if (!option.value) return;
+
+      const value = option.value;
+      const meta = styleMeta[value] || {};
+
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'cl-style-card';
+      card.dataset.styleValue = value;
+
+      card.innerHTML = `
+        ${meta.badge ? `<div class="cl-style-card__badge">${meta.badge}</div>` : ''}
+        ${meta.img ? `<img class="cl-style-card__image" src="${meta.img}" alt="${value}">` : ''}
+        <div class="cl-style-card__title">${value}</div>
+        <div class="cl-style-card__desc">${meta.desc || ''}</div>
+      `;
+
+      card.addEventListener('click', function () {
+        styleSelect.value = value;
+
+        styleSelect.dispatchEvent(new Event('input', { bubbles: true }));
+        styleSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+        document.querySelectorAll('.cl-style-card').forEach(c => {
+          c.classList.toggle('is-active', c.dataset.styleValue === value);
+        });
+      });
+
+      slider.appendChild(card);
+    });
+
+    styleBlock.insertAdjacentElement('beforebegin', wrapper);
+
+    document.querySelectorAll('.cl-style-card').forEach(card => {
+      card.classList.toggle(
+        'is-active',
+        card.dataset.styleValue === styleSelect.value
+      );
+    });
+  }
+
+  let attempts = 0;
+
+  const timer = setInterval(function () {
+    attempts++;
+
+    if (document.querySelector('select[option-data="Style"]')) {
+      clearInterval(timer);
+      buildStyleCardsOnly();
+    }
+
+    if (attempts > 60) clearInterval(timer);
+  }, 250);
+})();
+</script>
+
+<script>
+(function () {
+  if (window.__CL_MOBILE_ATC_ZEPTO_FIX_V1) return;
+  window.__CL_MOBILE_ATC_ZEPTO_FIX_V1 = true;
+
+  const CL_FIX = {
+    zeptoSrc: '//cdn-zeptoapps.com/product-personalizer/canvas-script.php?shop=citylocs.myshopify.com&prid=8770875719768&kkr=tomato',
+    zeptoRetryCount: 0,
+    maxZeptoRetries: 5,
+
+    selectors: {
+      form: 'form[action*="/cart/add"]',
+      atcButton: 'gp-product-button button[name="add"], button[name="add"]',
+      gpProductButton: 'gp-product-button',
+      zeptoReady: '.product-personalizer, #pplr_html, #pplr, .pplr-wrapper, .pplr_text, .pplr_check_order'
+    },
+
+    isZeptoReady() {
+      return !!document.querySelector(this.selectors.zeptoReady);
+    },
+
+    setButtonState(label, disabled) {
+      document.querySelectorAll(this.selectors.atcButton).forEach(button => {
+        button.disabled = !!disabled;
+        button.dataset.clOriginalText = button.dataset.clOriginalText || button.textContent.trim();
+        button.textContent = label || button.dataset.clOriginalText || 'Add to cart';
+      });
+    },
+
+    restoreButtonState() {
+      document.querySelectorAll(this.selectors.atcButton).forEach(button => {
+        button.disabled = false;
+        button.textContent = button.dataset.clOriginalText || 'Add to cart';
+      });
+    },
+
+    reloadZepto() {
+      if (this.isZeptoReady()) return;
+      if (this.zeptoRetryCount >= this.maxZeptoRetries) {
+        this.setButtonState('Personalizer failed to load. Refresh page.', true);
+        return;
+      }
+
+      this.zeptoRetryCount += 1;
+
+      const oldScript = [...document.querySelectorAll('script[src*="canvas-script.php"]')]
+        .find(script => script.src.includes('product-personalizer'));
+
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.defer = true;
+      script.src = this.zeptoSrc + '&cl_reload=' + Date.now();
+
+      document.body.appendChild(script);
+    },
+
+    startZeptoWatchdog() {
+      let checks = 0;
+
+      const timer = setInterval(() => {
+        checks += 1;
+
+        if (this.isZeptoReady()) {
+          clearInterval(timer);
+          this.restoreButtonState();
+          return;
+        }
+
+        this.setButtonState('Loading personalization...', true);
+
+        if ([8, 16, 28, 42, 58].includes(checks)) {
+          this.reloadZepto();
+        }
+
+        if (checks >= 80) {
+          clearInterval(timer);
+
+          if (!this.isZeptoReady()) {
+            this.setButtonState('Personalizer failed to load. Refresh page.', true);
+          }
+        }
+      }, 500);
+    },
+
+    getVariantId(form) {
+      const gpButton = document.querySelector(this.selectors.gpProductButton);
+      const gpVariantId = gpButton?.getAttribute('variant-id');
+
+      const inputVariantId =
+        form?.querySelector('[name="id"]')?.value ||
+        form?.querySelector('input[name="id"]')?.value;
+
+      return gpVariantId || inputVariantId;
+    },
+
+    getQuantity(form) {
+      return (
+        form?.querySelector('[name="quantity"]')?.value ||
+        document.querySelector('[name="quantity"]')?.value ||
+        1
+      );
+    },
+
+    buildFormData(form) {
+      const formData = new FormData(form);
+      const variantId = this.getVariantId(form);
+
+      if (variantId) formData.set('id', variantId);
+      if (!formData.get('quantity')) formData.set('quantity', this.getQuantity(form));
+
+      return formData;
+    },
+
+    async refreshCart() {
+      const cart = await fetch('/cart.js', { cache: 'no-store' }).then(r => r.json());
+      const count = cart.item_count || 0;
+    
+      document.querySelectorAll('.site-header-cart--count[data-header-cart-count]').forEach(el => {
+      el.textContent = '';
+      el.setAttribute('data-header-cart-count', count);
+      el.classList.toggle('visible', count > 0);
+    });
+    
+      document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart } }));
+      document.dispatchEvent(new CustomEvent('cart:open', { detail: { cart } }));
+      window.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart } }));
+      window.dispatchEvent(new CustomEvent('cart:open', { detail: { cart } }));
+    
+      const cartButton = document.querySelector('.site-header-cart--button');
+    
+      if (cartButton) {
+        cartButton.dispatchEvent(new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        }));
+      }
+    
+      setTimeout(() => {
+        const ampCart = document.querySelector('.amp-cart');
+        const ampDrawer = document.querySelector('.amp-cart-drawer');
+        const ampInner = document.querySelector('.amp-cart-drawer__inner');
+    
+        if (ampCart) {
+          ampCart.classList.remove('false');
+          ampCart.classList.add('true', 'is-open', 'active');
+        }
+    
+        if (ampDrawer) {
+          ampDrawer.classList.add('is-open', 'active', 'open');
+          ampDrawer.style.display = 'block';
+        }
+    
+        if (ampInner) {
+          ampInner.focus();
+        }
+      }, 250);
+    
+      setTimeout(() => {
+        document.querySelector('.site-header-cart--button')?.click();
+      }, 700);
+    },
+
+    async addToCart(button) {
+      const form = document.querySelector(this.selectors.form);
+
+      if (!form) {
+        window.location.href = '/cart';
+        return;
+      }
+
+      if (!this.isZeptoReady()) {
+        this.setButtonState('Loading personalization...', true);
+        this.reloadZepto();
+
+        setTimeout(() => {
+          if (this.isZeptoReady()) this.restoreButtonState();
+        }, 1200);
+
+        return;
+      }
+
+      if (typeof form.reportValidity === 'function' && !form.reportValidity()) {
+        return;
+      }
+
+      const originalText = button.textContent.trim();
+
+      button.disabled = true;
+      button.textContent = 'Adding...';
+
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json'
+          },
+          body: this.buildFormData(form)
+        });
+
+        if (!response.ok) throw new Error('Cart add failed');
+
+        button.textContent = 'Added ✓';
+
+        await this.refreshCart();
+
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = originalText || 'Add to cart';
+        }, 900);
+
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = originalText || 'Add to cart';
+        console.error('[CL] Add to cart failed:', error);
+        alert('Sorry, this item could not be added. Please try again.');
+      }
+    },
+
+    bindAddToCart() {
+      document.addEventListener('click', event => {
+        const button = event.target.closest(this.selectors.atcButton);
+        if (!button) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        this.addToCart(button);
+
+        return false;
+      }, true);
+    },
+
+    init() {
+      this.startZeptoWatchdog();
+      this.bindAddToCart();
+    }
+  };
+
+  function CLUpdateCartBadge() {
+    fetch('/cart.js', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(cart => {
+        const count = cart.item_count || 0;
+
+        document.querySelectorAll('.site-header-cart--count[data-header-cart-count]').forEach(el => {
+          el.textContent = '';
+          el.setAttribute('data-header-cart-count', count);
+          el.classList.toggle('visible', count > 0);
+        });
+      });
+  }
+
+  document.addEventListener('click', function (event) {
+  const removeBtn = event.target.closest(
+    `
+    .amp-cart__item-remove,
+    .amp-cart__item-remove-button,
+    .amp-cart__line-item-remove,
+    .amp-cart-remove,
+    .cart-item__remove,
+    [data-cart-remove],
+    [data-line-item-remove],
+    [data-amp-cart-remove],
+    button[name="remove"],
+    a[href*="/cart/change"],
+    a[href*="quantity=0"]
+    `
+  );
+
+  if (!removeBtn) return;
+
+  setTimeout(CLUpdateCartBadge, 300);
+  setTimeout(CLUpdateCartBadge, 700);
+  setTimeout(CLUpdateCartBadge, 1200);
+  setTimeout(CLUpdateCartBadge, 2000);
+}, true);
+
+['cart:refresh', 'cart:updated', 'cart:change', 'cart:remove', 'ajaxCart:updated'].forEach(function (eventName) {
+  document.addEventListener(eventName, CLUpdateCartBadge);
+  window.addEventListener(eventName, CLUpdateCartBadge);
+});
+
+
+function CLUpdateCartBadge() {
+  fetch('/cart.js', { cache: 'no-store' })
+    .then(res => res.json())
+    .then(cart => {
+      const count = cart.item_count || 0;
+
+      document.querySelectorAll('.site-header-cart--count[data-header-cart-count]').forEach(el => {
+        el.textContent = '';
+        el.setAttribute('data-header-cart-count', count);
+        el.classList.toggle('visible', count > 0);
+      });
+    });
+}
+
+(function CLWatchCartRequests() {
+  const shouldUpdate = url =>
+    typeof url === 'string' &&
+    (
+      url.includes('/cart/add') ||
+      url.includes('/cart/change') ||
+      url.includes('/cart/update') ||
+      url.includes('/cart/clear')
+    );
+
+  const originalFetch = window.fetch;
+
+  window.fetch = function () {
+    const url = arguments[0]?.url || arguments[0];
+
+    return originalFetch.apply(this, arguments).then(response => {
+      if (shouldUpdate(String(url))) {
+        setTimeout(CLUpdateCartBadge, 300);
+        setTimeout(CLUpdateCartBadge, 800);
+        setTimeout(CLUpdateCartBadge, 1500);
+      }
+
+      return response;
+    });
+  };
+
+  const originalOpen = XMLHttpRequest.prototype.open;
+
+  XMLHttpRequest.prototype.open = function (method, url) {
+    this.addEventListener('loadend', function () {
+      if (shouldUpdate(String(url))) {
+        setTimeout(CLUpdateCartBadge, 300);
+        setTimeout(CLUpdateCartBadge, 800);
+        setTimeout(CLUpdateCartBadge, 1500);
+      }
+    });
+
+    return originalOpen.apply(this, arguments);
+  };
+})();
+
+  CL_FIX.init();
+
+})();
+</script>
+    </div>
+    </div>
+  
+  
+    <div
+      data-id="gbFJryXoJ2"
+      style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:left;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll"
+      data-keep-class="true"
+      class="gbFJryXoJ2 gp-custom-code">
+      <div>
+    <script>
+(function () {
+  if (window.__clAmpUpsellPersonalizationV2) return;
+  window.__clAmpUpsellPersonalizationV2 = true;
+
+  function getPersonalization() {
+    const t1 = document.querySelector('[name*="Custom Text"]:not([name*="Two"])');
+    const t2 = document.querySelector('[name*="Custom Text Two"]');
+
+    return {
+      "Custom Text": t1?.value?.trim() || "",
+      "Custom Text Two": t2?.value?.trim() || ""
+    };
+  }
+
+  function gidToVariantId(gid) {
+    return String(gid || '').split('/').pop();
+  }
+
+  function showAmpToast(message) {
+    let toast = document.querySelector('.cl-amp-toast');
+
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.className = 'cl-amp-toast';
+      document.body.appendChild(toast);
+    }
+
+    toast.textContent = message;
+    toast.classList.add('is-visible');
+
+    setTimeout(() => {
+      toast.classList.remove('is-visible');
+    }, 2600);
+  }
+
+  function getSelectedAmpItems() {
+    return [...document.querySelectorAll('.amp-embedded-product-upsells__upsell-item')]
+      .filter(item => item.querySelector('.amp-embedded-product-upsells__upsell-item-checkbox')?.checked)
+      .map(item => {
+        const selector = item.querySelector('.amp-embedded-product-upsells__upsell-item-variant-selector');
+        const id = gidToVariantId(selector?.value);
+
+        return id ? {
+          id: Number(id),
+          quantity: 1,
+          properties: getPersonalization()
+        } : null;
+      })
+      .filter(Boolean);
+  }
+
+  async function refreshCartDrawer() {
+    document.dispatchEvent(new CustomEvent('cart:refresh'));
+    document.dispatchEvent(new CustomEvent('cart:open'));
+
+    const cartToggle = document.querySelector(
+      '[data-cart-drawer-toggle], [data-cart-toggle], .site-header-cart, .header-cart, a[href="/cart"]'
+    );
+
+    if (cartToggle) {
+      setTimeout(() => cartToggle.click(), 250);
+    }
+  }
+
+  async function addUpsells(button) {
+    const items = getSelectedAmpItems();
+
+    if (!items.length) {
+      showAmpToast('Please select an upsell first.');
+      return;
+    }
+
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Adding...';
+    button.classList.add('is-loading');
+
+    try {
+      const response = await fetch('/cart/add.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ items })
+      });
+
+      if (!response.ok) throw new Error('Cart add failed');
+
+      button.textContent = 'Added ✓';
+      showAmpToast('Upsell added to cart ✓');
+
+      await fetch('/cart.js', { cache: 'no-store' });
+
+      setTimeout(refreshCartDrawer, 300);
+
+      document
+        .querySelectorAll('.amp-embedded-product-upsells__upsell-item-checkbox')
+        .forEach(cb => cb.checked = false);
+
+      setTimeout(() => {
+        button.disabled = false;
+        button.textContent = originalText || 'Add';
+        button.classList.remove('is-loading');
+      }, 1200);
+
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = originalText || 'Add';
+      button.classList.remove('is-loading');
+      showAmpToast('Sorry, the upsell could not be added.');
+    }
+  }
+
+  document.addEventListener('click', function (event) {
+    const button = event.target.closest('.amp-embedded-product-upsells__upsell-item-button');
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    addUpsells(button);
+    return false;
+  }, true);
+})();
+</script>
+
+<style>
+.cl-amp-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 24px;
+  z-index: 999999;
+  background: #111;
+  color: #fff;
+  padding: 13px 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+.cl-amp-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.amp-embedded-product-upsells__upsell-item-button.is-loading {
+  opacity: .75;
+  cursor: wait;
+}
+
+@media (max-width: 767px) {
+  .cl-amp-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 18px;
+    text-align: center;
+  }
+}
+</style>
+    </div>
+    </div>
+  
+    </div>
+
+      
+    </gp-row>
+  
+        </section>
+      
+  
+    
+{% schema %}
+  {
+    "presets": [{ "name": "custom-code" }],
+    "name": "custom-code",
+    "tag": "section",
+    "class": "gps-621771429603443658 gps gpsil",
+    "settings": [{"type":"paragraph","content":"Section design by GemPages. [Click here to start design](https://admin.shopify.com/store/citylocs/apps/gempages-cro/app/shopify/edit?pageType=THEME_SECTION&editorId=621771429603443658)"},{"type":"select","label":"Section Preload","id":"section_preload","options":[{"label":"On","value":"true"},{"label":"Off","value":"false"},{"label":"Off Lazy Script","value":"off_lazy_script"}],"default":"off_lazy_script"},{"type":"text","label":"Checksum","id":"checksum"}],
+    "blocks": [{"type": "@app"}],
+    "locales": {}
+  }
+{% endschema %}

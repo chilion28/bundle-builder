@@ -1,0 +1,89 @@
+<style type="text/css">
+  @font-face {
+  font-family: 'Angil';
+   src: url('{{ "angillatattoopersonaluseonly.ttf" | asset_url }}')  format('truetype');
+}
+  @font-face {
+    font-family: 'Impact';
+       src: url('{{ "impact.ttf" | asset_url }}')  format('truetype');
+  }
+  @font-face {
+    font-family: 'Bebas';
+       src: url('{{ "bebas.ttf" | asset_url }}')  format('truetype');
+  }
+  @font-face {
+    font-family: 'LicensePlate';
+       src: url('{{ "CL_License_Plate.woff" | asset_url }}')  format('woff');
+  }
+@font-face {
+  font-family: 'Script';
+   src: url('{{ "edwardian.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Frank';
+   src: url('{{ "fetteunzfraktur.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Razor';
+   src: url('{{ "h74rbl.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Kiss Me';
+   src: url('{{ "kgkissmeslowly.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Boston';
+   src: url('{{ "lhfbostontruckstylec.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Military';
+   src: url('{{ "lintsec.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Oklahoma';
+   src: url('{{ "oklahoma.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Old English';
+   src: url('{{ "oldeenglish.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+  font-family: 'Sanchez';
+   src: url('{{ "sanchezregular.ttf" | asset_url }}')  format('truetype');
+}
+@font-face {
+    font-family: 'OGLicensePlate';
+       src: url('{{ "CLocs-License-Plate.svg" | asset_url }}') format('svg');
+  }
+  @font-face {
+      font-family: 'Nier';
+         src: url('{{ "nier.ttf" | asset_url }}') format('truetype');
+    }
+
+.preview_information_text {
+  -moz-opacity: 0.54;
+  -khtml-opacity: 0.54;
+  opacity: 0.8;
+  -ms-filter:"progid:DXImageTransform.Microsoft.Alpha"(Opacity=54);
+  filter: progid:DXImageTransform.Microsoft.Alpha(opacity=54);
+  filter:alpha(opacity=54);
+  width: 100%;
+  position: absolute;
+  text-align: center;
+  border: 1px solid rebeccapurple;
+  font-size: 18px;
+  color: white;
+  background-color: red;
+}
+
+</style>
+
+    {% comment %} {{ 'jquery.textfill.min.js' | asset_url | script_tag }} {% endcomment %}
+    {{ 'fitty.min.js' | asset_url | script_tag }}
+    {% comment %} {{ 'jquery.arctext.js' | asset_url | script_tag }} 
+  	{{ 'FontLoader.js' | asset_url | script_tag }} {% endcomment %}
+	  {{ 'previewimage.js' | asset_url | script_tag }} 
+
+    <div class="fancybox preview_fancybox"  id="img_preview_fancybox" rel="group" style="display:none;">
+      <div style="position: relative;" >
+          {{ 'preview.css' | asset_url | stylesheet_tag }}

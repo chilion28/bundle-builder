@@ -1,0 +1,93 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_622257870586512013": {
+      "settings": {
+        "checksum": "5b95e9cf2610a429887dcb438e7d79d5b1f0ef3d505c1b30b3097a9d8620ba21_1_1_0_0__1",
+        "gg-LZQF2Phe_text": "<p>Handcrafted in the USA</p>",
+        "gg6Cl8unNCW_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-dad-2.png",
+        "ggNtzrcyKUO_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-dad-2.png",
+        "ggPmt-AjixE_text": "<p>Perfect Gift for Dad</p>",
+        "ggU37b0E4ST_text": "<p>Premium Leather Patch</p>",
+        "ggWyO-dIS1X_text": "For the dad who says he wants <span style=\"color:#F9C60F;\">nothing</span>",
+        "ggitjcvwnL3_text": "The father's day gift",
+        "ggsyQiIH8g__text": "<p>Create personalized hat with his initial and name he'll be proud to wear</p>"
+      },
+      "type": "gp-section-622257870586512013"
+    },
+    "gp_section_622257870586577549": {
+      "settings": {
+        "checksum": "76a64781768f33bb14e439829c1562b3edf15f0806b33d1586dc07900d652977_1_1_0_0__1"
+      },
+      "type": "gp-section-622257870586577549"
+    },
+    "gp_section_622257870586643085": {
+      "settings": {
+        "checksum": "62246cd9dadd63a899e835156f93b241d181b75fa600205b2f65893bc5cf7492_1_1_0_0__1"
+      },
+      "type": "gp-section-622257870586643085"
+    },
+    "gp_section_622257870586708621": {
+      "settings": {
+        "checksum": "3777a63ad803634b448061afc7d93417204a396b707f6e9a0f7b92b08c186761_1_1_0_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-622257870586708621"
+    },
+    "gp_section_622257870586774157": {
+      "settings": {
+        "checksum": "5daaacb4c4de04e7314ff145d5b047f700e1f70550a189455a5464a5ab4e0339_1_1_0_0__1",
+        "ggizr_eAHsi_childItem_0": "<p>Product Description</p>",
+        "ggizr_eAHsi_childItem_1": "<p>Reviews</p>",
+        "ggotpgH6PTP_viewLessText": "Show less",
+        "ggotpgH6PTP_viewMoreText": "Show more"
+      },
+      "type": "gp-section-622257870586774157"
+    },
+    "gp_section_622257870586905229": {
+      "settings": {
+        "checksum": "161436deb5ef137c32bcbcf2f83b742d532100ff0cb27a18618fa005c7b010b7_1_1_0_0__1",
+        "gg3F-wvZNh5_text": "Choose your hat",
+        "gg9wBzJNO5w_text": "<p>Review your spelling and checkout</p>",
+        "ggMmdlL6b0w_errorMessage": "Cannot add product to cart",
+        "ggMmdlL6b0w_label": "Add to cart",
+        "ggMmdlL6b0w_outOfStockLabel": "Out of stock",
+        "ggMmdlL6b0w_successMessage": "Add product to cart successfully",
+        "ggMmdlL6b0w_unavailableLabel": "Unavailable",
+        "ggMmdlL6b0w_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggO-Tx7F7v2_text": "<p>Add your custom text</p>",
+        "ggO_UBTcBM4_text": "<p>Pick hat style and color</p>",
+        "ggTU3ceEZMr_errorMessage": "Cannot add product to cart",
+        "ggTU3ceEZMr_label": "Add to cart",
+        "ggTU3ceEZMr_outOfStockLabel": "Out of stock",
+        "ggTU3ceEZMr_successMessage": "Add product to cart successfully",
+        "ggTU3ceEZMr_unavailableLabel": "Unavailable",
+        "ggTU3ceEZMr_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggbCLOZ_20-_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/background_settings.jpg",
+        "ggjnkq4fNE5_text": "<p><i>Perfect Gift for Dad!</i></p>",
+        "ggouShhACy8_text": "Add your Text",
+        "ggpLShHqLmu_text": "review and order",
+        "ggqR3PXgS-k_text": "<p>Personalize your patch</p>",
+        "ggsnRJ77xRt_text": "<p>Add your custom text</p>",
+        "ggtlNj7ijum_text": "<span style=\"color:#F9C60F;\">Personalize</span> your&nbsp;"
+      },
+      "type": "gp-section-622257870586905229"
+    }
+  },
+  "order": [
+    "gp_section_622257870586708621",
+    "gp_section_622257870586512013",
+    "gp_section_622257870586905229",
+    "gp_section_622257870586774157",
+    "gp_section_622257870586643085",
+    "gp_section_622257870586577549"
+  ]
+}

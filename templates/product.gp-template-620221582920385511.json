@@ -1,0 +1,131 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_620222627587293855": {
+      "type": "gp-section-620222627587293855",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "4a499b5b092411550fcab02384f24c34cf3a8c8c3b5898ee990f0622140e719b_1_1_0_0__1"
+      }
+    },
+    "gp_section_620222646478439071": {
+      "type": "gp-section-620222646478439071",
+      "settings": {
+        "checksum": "5627d4f77795885ce9cb48e8906ea0fcaea98c2af236151452e59b6671c77959_1_1_0_0__1",
+        "ggjnkq4fNE5_text": "<p><i>Perfect Gift for Dad!</i></p>",
+        "ggO-Tx7F7v2_text": "<p>Add your custom text</p>",
+        "ggMmdlL6b0w_label": "Add to cart",
+        "ggMmdlL6b0w_outOfStockLabel": "Out of stock",
+        "ggMmdlL6b0w_unavailableLabel": "Unavailable",
+        "ggMmdlL6b0w_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggMmdlL6b0w_successMessage": "Add product to cart successfully",
+        "ggMmdlL6b0w_errorMessage": "Cannot add product to cart",
+        "ggPmt-AjixE_text": "<p>Perfect Gift for Dad</p>",
+        "ggU37b0E4ST_text": "<p>Premium Leather Patch</p>",
+        "gg-LZQF2Phe_text": "<p>Handcrafted in the USA</p>",
+        "ggT_r7K8hn6_text": "father's day delivery",
+        "ggscIiM0xMJ_text": "<p>To ensure delivery by Father's, order by June 14th.</p>",
+        "gght6vIOUT3_viewMoreText": "Show more",
+        "gght6vIOUT3_viewLessText": "Show less",
+        "ggIGrfCMDaQ_text": "<p>Add your custom text</p>",
+        "ggwIrKUse7d_label": "Add to cart",
+        "ggwIrKUse7d_outOfStockLabel": "Out of stock",
+        "ggwIrKUse7d_unavailableLabel": "Unavailable",
+        "ggwIrKUse7d_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggwIrKUse7d_successMessage": "Add product to cart successfully",
+        "ggwIrKUse7d_errorMessage": "Cannot add product to cart"
+      }
+    },
+    "gp_section_620254404188045923": {
+      "type": "gp-section-620254404188045923",
+      "settings": {
+        "checksum": "bc4a4a81a514454f0b8faa29a35a1120dde73df8cf3b0a37951ffd58b90a1ad6_1_1_0_0__1",
+        "ggizr_eAHsi_childItem_0": "<p>Product Description</p>",
+        "ggizr_eAHsi_childItem_1": "<p>Reviews</p>",
+        "ggotpgH6PTP_viewMoreText": "Show more",
+        "ggotpgH6PTP_viewLessText": "Show less"
+      }
+    },
+    "gp_section_620263070475748298": {
+      "type": "gp-section-620263070475748298",
+      "settings": {
+        "checksum": "68aede636c5a6d526461c41a91f326664ee98dca7100e7107ddef8c252241a85_1_1_0_0__1"
+      }
+    },
+    "gp_section_621523554373993418": {
+      "type": "gp-section-621523554373993418",
+      "settings": {
+        "checksum": "f2bbe588044d402ee183cc01f2f90c53740b53be179fd314795bd1083a20a55b_1_1_0_0__1"
+      }
+    },
+    "gp_section_621571823649162215": {
+      "type": "gp-section-621571823649162215",
+      "settings": {
+        "checksum": "3ad2c1fd2634cd23d31be8fc78e92ec06d74e1205f4bea31950dad7c244f8b15_1_1_0_0__1",
+        "gg6Cl8unNCW_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-dad-mobile.png",
+        "ggNtzrcyKUO_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-dad-2.png",
+        "ggitjcvwnL3_text": "The father's day gift",
+        "ggWyO-dIS1X_text": "For the dad who says he wants <span style=\"color:#F9C60F;\">nothing</span>",
+        "ggsyQiIH8g__text": "<p>Create personalized hat with his initial and name he'll be proud to wear</p>"
+      }
+    },
+    "gp_section_621572794898973283": {
+      "type": "gp-section-621572794898973283",
+      "settings": {
+        "checksum": "b6be3be54b6e49adab7676b5216046f4154020e58b35b731e8fd5ba89af22646_1_1_0_0__1"
+      }
+    },
+    "gp_section_621771451078279839": {
+      "type": "gp-section-621771451078279839",
+      "settings": {
+        "checksum": "ba89b8ef27ed33170e9f20dcf2c0765bb2c45d643a360d99db0925acaf8f9c5a_1_1_0_0__1"
+      }
+    },
+    "gp_section_622101301899035277": {
+      "type": "gp-section-622101301899035277",
+      "settings": {
+        "checksum": "3cc0c4dab33dd5f475a700c227c182a9bee0a634bc87ed747415a95d497572ba_1_1_0_0__1",
+        "ggO9oRI95gm_text": "<span style=\"color:#F9C60F;\">Personalize</span> your hat",
+        "ggBN-bAWvxG_text": "choose Your Hat",
+        "ggo9aW-OqaK_text": "<p>Pick style and color.</p>",
+        "ggRRVD3Kstu_text": "<p>Snapback</p>",
+        "ggu1M4TcX3J_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/black.png",
+        "ggu1M4TcX3J_title": "Snapback/Black",
+        "ggfNiAvWP97_text": "<p>Trucker</p>",
+        "gg4aJ5EcK1Q_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/gray-black.png",
+        "gg2tgJ2uRK6_text": "<p>Pro Five A-Frame</p>",
+        "ggh4f-cfYQE_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/royal-blue-back-p5.png",
+        "ggQp6Aq80zV_text": "<p>Signature Series</p>",
+        "ggHvUVaZVY6_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sarape-classic.png",
+        "ggVhG5euAHl_text": "Add your text",
+        "gg8DbXPU2qW_text": "<p>Enter Initial and Name</p>",
+        "ggIBumlQysw_text": "A",
+        "ggG2YLMr6O4_text": "Anthony",
+        "ggUTWC0kmYz_text": "preview Your design",
+        "ggX4nmc4jEy_text": "<p>See your custom hat before ordering.</p>",
+        "ggGiuwwjNl4_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sample.png",
+        "ggKfpS0244Y_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/trucker.png",
+        "ggXiP8V2Zhf_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/pro5.png"
+      }
+    }
+  },
+  "order": [
+    "gp_section_620222627587293855",
+    "gp_section_621571823649162215",
+    "gp_section_622101301899035277",
+    "gp_section_620222646478439071",
+    "gp_section_620263070475748298",
+    "gp_section_620254404188045923",
+    "gp_section_621771451078279839",
+    "gp_section_621572794898973283",
+    "gp_section_621523554373993418"
+  ]
+}

@@ -1,0 +1,42 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_592990599460684308": {
+      "settings": {
+        "checksum": "9a75bfefec3cd8c79f69551dc71883a8026dd0c4da34e6aab578817c32fde1e4_1_1_0_0__1",
+        "gg4HDXkDTOh_childItem_0": "<p>Material</p>",
+        "gg4HDXkDTOh_childItem_1": "<p>Comfort guarantee&nbsp;</p>",
+        "gg4HDXkDTOh_childItem_2": "<p>Shipping</p>",
+        "gg6UjNgIFof_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0703/5214/2562/files/gempages_518090459516502570-fd204759-bd9d-4564-9e30-3ff2facb72de.png",
+        "gg9i6RbQAHr_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0703/5214/2562/files/gempages_518090459516502570-83e1af8d-ad67-4b33-83ee-51f80fee6167.png",
+        "ggAfDOZJtE-_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0703/5214/2562/files/gempages_518090459516502570-eee8f948-1544-47ee-acc0-8fe5b99f735a.png",
+        "ggLHohO8prg_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "ggVTuljZ2aP_errorMessage": "Cannot add product to cart",
+        "ggVTuljZ2aP_label": "Add to cart",
+        "ggVTuljZ2aP_outOfStockLabel": "Out of stock",
+        "ggVTuljZ2aP_successMessage": "Add product to cart successfully",
+        "ggVTuljZ2aP_unavailableLabel": "Unavailable",
+        "ggWw1MzZaV1_displayContent": "{percent_discount} off",
+        "gghQ176stC3_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "ggm9ATTuwCf_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0703/5214/2562/files/gempages_518090459516502570-2b1f58d6-457d-4734-a2f5-b5db983ef2fb.png",
+        "ggo8fSmKbbO_text": "<p>Lorem ipsum dolor sit amet, consectetur&nbsp;</p>",
+        "ggrSzxih6_h_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggrl5W7s4sO_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0703/5214/2562/files/gempages_518090459516502570-af77021a-12c9-40dd-8132-2c59edf287dc.png",
+        "ggw-VkH21sH_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "section_preload": "true"
+      },
+      "type": "gp-section-592990599460684308"
+    }
+  },
+  "order": [
+    "gp_section_592990599460684308"
+  ]
+}
