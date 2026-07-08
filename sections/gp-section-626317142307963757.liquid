@@ -1131,8 +1131,8 @@
 .cl-amp-bundle-header {
   padding: 18px 24px;
   background: #eef9e9;
-  border-top: 1px solid #d7efd0;
-  border-bottom: 1px solid #d7efd0;
+  border-top: 1px solid #bde8ff;
+  border-bottom: 1px solid #bde8ff;
 }
 
 .cl-amp-bundle-title {
@@ -1162,7 +1162,7 @@
   position: absolute;
   right: 18px;
   top: 18px;
-  background: #4d9f24;
+  background: #00a0ea;
   color: #fff;
   font-weight: 800;
   font-size: 12px;
@@ -1254,7 +1254,7 @@
   background: #f7fcff !important;
 }
 .cl-amp-free-gift-line {
-  border-left: 3px solid #4d9f24;
+  border-left: 3px solid #00a0ea;
 }
 .cl-pack-cart-notice {
   margin: 0 0 12px;
@@ -1276,7 +1276,7 @@
 .cl-cartpage-bundle-title { font-weight: 800; }
 .cl-cartpage-bundle-sub { font-size: 12px; color: #0076ad; font-weight: 700; }
 .cl-cartpage-bundle-line { border-left: 3px solid #00a0ea; }
-.cl-cartpage-gift-line { border-left-color: #4d9f24; }
+.cl-cartpage-gift-line { border-left-color: #00a0ea; }
 
 /*6-24-2026*/
 .cl-gift-progress-banner {
@@ -1604,7 +1604,7 @@ gp-product.cl-in-pack .gkBonhMcMd {
   display: block;
   font-size: 10px;
   font-weight: 700;
-  color: #4d9f24;
+  color: #00a0ea;
   margin-top: 2px;
 }
 
@@ -1992,6 +1992,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let modalEditingKey = null;     // key of the line being edited (or null)
     let modalEditingData = null;    // item data when editing without a card
     let modalProductTitle = '';
+    let modalProductHandle = '';
 
     function escapeHtml(s) {
       return String(s == null ? '' : s)
@@ -2056,6 +2057,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderPersonalizationPreview(config, values) {
       const box = document.querySelector('[data-cl-modal-preview]');
       if (!box) return;
+      // Prefer the shared config-driven Zepto preview (real plate image + fonts),
+      // exposed by cl-pack-grid.js. Falls back to the flat plate if unavailable.
+      if (window.CLPlatePreview && modalProductHandle &&
+          window.CLPlatePreview(box, modalProductHandle, values)) {
+        return;
+      }
       const get = label => (values[label] || '').toString();
       if (/plate/i.test(config.productType || '')) {
         const state = (modalProductTitle || '').trim().split(/\s+/)[0] || 'CUSTOM';
@@ -2085,6 +2092,7 @@ document.addEventListener('DOMContentLoaded', () => {
       modalActiveConfig = data.personalizationConfig || null;
       modalPersonalization = { ...values };
       modalProductTitle = data.title || '';
+      modalProductHandle = data.handle || '';
       if (!modalActiveConfig) {
         if (formEl) { formEl.hidden = true; formEl.innerHTML = ''; }
         if (previewEl) { previewEl.hidden = true; previewEl.innerHTML = ''; }
@@ -2229,10 +2237,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (builderConfig.milestoneStyle === 'slots') return renderMilestoneSlots();
   selectedMilestones = [0, ...packSizes];
 
+  // The number now lives INSIDE each dot, so don't also render the separate
+  // labels row — that produced the doubled "0 2 3 6 …" strip.
   if (milestoneLabels) {
-    milestoneLabels.innerHTML = selectedMilestones
-      .map(qty => `<span>${qty}</span>`)
-      .join('');
+    milestoneLabels.innerHTML = '';
   }
 
   if (milestoneDots) {
@@ -2292,6 +2300,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getProductHandlesFromCards() {
     const handles = new Set();
+
+    document.querySelectorAll('[data-cl-card]').forEach(card => {
+      const handle = card.getAttribute('data-cl-handle');
+      if (handle) handles.add(handle);
+    });
 
     document.querySelectorAll('gp-product').forEach(card => {
       try {
@@ -2407,6 +2420,28 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
     function getCardData(card) {
+    // Custom cl-pack-grid cards expose everything through data-cl-* attributes
+    // (kept live by the snippet's own variant-resolution JS).
+    if (card.hasAttribute('data-cl-card')) {
+      const handle = card.getAttribute('data-cl-handle') || '';
+      const variantId = card.getAttribute('data-cl-variant-id') || '';
+      const rule = discountRulesByHandle.get(handle) || defaultDiscountRule;
+      const config = getPersonalizationConfig(handle);
+      return {
+        key: variantId,
+        variantId: Number(variantId),
+        title: card.getAttribute('data-cl-title') || capitalize(builderConfig.itemSingular),
+        variant: card.getAttribute('data-cl-variant-title') || '',
+        price: Number(card.getAttribute('data-cl-price')) || 0,
+        image: normalizeImage(card.getAttribute('data-cl-image') || ''),
+        handle,
+        discountKey: rule.key,
+        discountRule: rule,
+        personalized: card.hasAttribute('data-cl-personalized'),
+        personalizationConfig: config
+      };
+    }
+
     const form = card.querySelector('form[action="/cart/add"]');
     const variantInput = form?.querySelector('input[name="id"]');
     const title = card.querySelector('h2')?.textContent?.trim() || capitalize(builderConfig.itemSingular);
@@ -2704,7 +2739,9 @@ function renderGiftProgressBanner(totalQty) {
     function getRepresentativeBasePrice() {
   const counts = {};
   let best = 0;
-  document.querySelectorAll('gp-product').forEach(card => {
+  // Read the custom cl-pack-grid cards (the GemPages gp-product list was
+  // replaced). getCardData() has a [data-cl-card] branch returning data-cl-price.
+  document.querySelectorAll('[data-cl-card]').forEach(card => {
     const p = getCardData(card).price;
     if (p > 0) {
       counts[p] = (counts[p] || 0) + 1;
@@ -3298,7 +3335,7 @@ if (thumbsEl) {
       card.getAttribute('gp-data') ||
       card.getAttribute('gp-context');
 
-    let handle = '';
+    let handle = card.getAttribute('data-cl-handle') || '';
 
     if (raw) {
       const gpData = JSON.parse(raw);
@@ -3449,6 +3486,30 @@ descEl.innerHTML = product.description || '';
 
 
         function updateSwatchBadges(card, productTitle) {
+  if (card.hasAttribute('data-cl-card')) {
+    const handle = card.getAttribute('data-cl-handle');
+    card.querySelectorAll('[data-cl-value]').forEach(btn => {
+      const value = btn.getAttribute('data-cl-value');
+      let qty = 0;
+      selected.forEach(item => {
+        if (item.handle !== handle) return;
+        const parts = String(item.variant || '').split(' / ');
+        if (parts.includes(value)) qty += item.qty || 0;
+      });
+      let badge = btn.querySelector('.cl-swatch-badge');
+      if (qty > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'cl-swatch-badge';
+          btn.appendChild(badge);
+        }
+        badge.textContent = qty;
+      } else if (badge) {
+        badge.remove();
+      }
+    });
+    return;
+  }
   card.querySelectorAll('.option-item').forEach(label => {
     const input = label.querySelector('input[type="radio"]');
     const variantTitle = input ? input.value : '';
@@ -3476,7 +3537,139 @@ descEl.innerHTML = product.description || '';
 
 
 
+        // Wires one custom cl-pack-grid card (snippets/cl-pack-grid.liquid).
+        // The snippet owns variant resolution + inline personalization inputs;
+        // this owns pack membership, button state and badges.
+        function initGridCard(card) {
+    if (card.__clWired) return;
+    card.__clWired = true;
+
+    const addBtn = card.querySelector('[data-cl-add]');
+    if (!addBtn) return;
+
+    const cardHandle = card.getAttribute('data-cl-handle') || '';
+    const isPersonalizedCard = card.hasAttribute('data-cl-personalized');
+
+    function getProductTotal() {
+      let total = 0;
+      selected.forEach(item => {
+        if (item.handle && item.handle === cardHandle) total += item.qty || 0;
+      });
+      return total;
+    }
+
+    function getActiveQty() {
+      const item = selected.get(getCardData(card).key);
+      return item ? item.qty : 0;
+    }
+
+    function updateCheckBadge(inPack) {
+      card.classList.toggle('cl-in-pack', inPack);
+      let check = card.querySelector('.cl-pack-check');
+      if (inPack && !check) {
+        check = document.createElement('span');
+        check.className = 'cl-pack-check';
+        check.textContent = '✓';
+        card.appendChild(check);
+      } else if (!inPack && check) {
+        check.remove();
+      }
+    }
+
+    function updateCardUI() {
+      const full = isPackFull();
+      const total = getProductTotal();
+
+      if (isPersonalizedCard) {
+        addBtn.classList.remove('is-added');
+        addBtn.classList.toggle('is-pack-full', full && total === 0);
+        addBtn.disabled = full;
+        addBtn.textContent = full
+          ? 'Your pack is full'
+          : (total > 0 ? `Add Another (${total})` : 'Personalize & Add');
+        addBtn.classList.toggle('is-invalid', !full && !(card.__clPerso && card.__clPerso.valid));
+      } else {
+        const activeQty = getActiveQty();
+        if (activeQty > 0) {
+          addBtn.disabled = false;
+          addBtn.classList.add('is-added');
+          addBtn.classList.remove('is-pack-full');
+          addBtn.textContent = '✓ Added — tap to remove';
+        } else if (full) {
+          addBtn.disabled = true;
+          addBtn.classList.remove('is-added');
+          addBtn.classList.add('is-pack-full');
+          addBtn.textContent = 'Your pack is full';
+        } else {
+          addBtn.disabled = false;
+          addBtn.classList.remove('is-added', 'is-pack-full');
+          addBtn.textContent = 'Add to Pack';
+        }
+      }
+
+      updateCheckBadge(total > 0);
+      updateSwatchBadges(card, getCardData(card).title);
+    }
+
+    function setActiveQty(newQty) {
+      const data = getCardData(card);
+      const finalQty = Math.max(0, newQty);
+
+      if (finalQty > 0) {
+        selected.set(data.key, refreshItemDiscountRule({ ...data, qty: finalQty }));
+        cardControls.set(data.key, { setQty() { updateCardUI(); } });
+      } else {
+        selected.delete(data.key);
+      }
+
+      renderSummary();
+    }
+
+    function commitInlinePersonalized() {
+      const perso = card.__clPerso;
+      if (!perso) return;
+      if (!perso.valid) {
+        // Nudge the shopper to the first empty field instead of silently failing.
+        const empty = Array.from(card.querySelectorAll('[data-cl-perso-input]'))
+          .find(input => !input.value.trim());
+        if (empty) empty.focus();
+        addBtn.classList.add('is-invalid');
+        return;
+      }
+      const data = getCardData(card);
+      if (!data.variantId) return;
+      const clean = perso.values;
+      const key = makeItemKey(data.variantId, clean);
+      const existing = selected.get(key);
+      const qty = existing ? existing.qty + 1 : 1;
+      selected.set(key, refreshItemDiscountRule({ ...data, key, qty, personalization: clean }));
+      cardControls.set(key, { setQty() { updateCardUI(); } });
+      perso.reset();
+      renderSummary();
+    }
+
+    addBtn.addEventListener('click', () => {
+      if (isPersonalizedCard) {
+        if (!isPackFull()) commitInlinePersonalized();
+        return;
+      }
+      if (getActiveQty() > 0) {
+        setActiveQty(0);
+      } else if (!isPackFull()) {
+        setActiveQty(1);
+      }
+    });
+
+    card.addEventListener('cl:variant-change', updateCardUI);
+    card.addEventListener('cl:perso-change', updateCardUI);
+
+    cardSyncers.push(updateCardUI);
+    updateCardUI();
+  }
+
         function initCards() {
+  document.querySelectorAll('[data-cl-card]').forEach(initGridCard);
+
   document.querySelectorAll('gp-product').forEach((card) => {
     if (card.querySelector('.cl-golf-builder-controls')) return;
 

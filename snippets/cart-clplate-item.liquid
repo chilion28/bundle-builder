@@ -12,14 +12,26 @@
   {%- assign item_has_discounts = true -%}
 {%- endif -%}
 
+{%- comment -%}
+  Bundle items must link back to the builder collection (never the individual
+  product page) so shoppers can't edit them off the pack size elsewhere.
+{%- endcomment -%}
+{%- assign bundle_collection = item.properties._bundle_collection -%}
+{%- if bundle_collection and bundle_collection != blank -%}
+  {%- assign item_link = '/collections/' | append: bundle_collection -%}
+{%- else -%}
+  {%- assign item_link = item.url -%}
+{%- endif -%}
+
 <li
   class="cart-item"
   data-cartitem
   data-cartitem-id="{{ item.variant_id }}"
   data-cartitem-key="{{ item.key }}"
+  {% if bundle_collection and bundle_collection != blank %}data-cartitem-collection="{{ bundle_collection }}"{% endif %}
   data-cartitem-price="{{ item.price }}">
   <figure class="cart-item--image-wrapper">
-    <a href="{{ item.url }}">
+    <a href="{{ item_link }}">
       {% if item.image %}
         {%
           render 'rimg',
@@ -37,7 +49,7 @@
 
     <div class="cart-item--content cl-plate-cart-item">
       <h2 class="cart-item--content-title">
-        <a href="{{ item.url }}">
+        <a href="{{ item_link }}">
           {{ item.product.title }}
         </a>
       </h2>
@@ -99,9 +111,16 @@
             </div>
             {% endif %}  
             <div class="breathe-space">
-              <a href="{{ itemDetail.product.url }}?editProduct=true&id={{ itemDetail.id }}" class="text-link text-link--accent">
-                Edit Details
-              </a>
+              {%- assign detail_bundle = itemDetail.properties._bundle_collection -%}
+              {%- if detail_bundle and detail_bundle != blank -%}
+                <a href="/collections/{{ detail_bundle }}" class="text-link text-link--accent">
+                  Edit Details
+                </a>
+              {%- else -%}
+                <a href="{{ itemDetail.product.url }}?editProduct=true&id={{ itemDetail.id }}" class="text-link text-link--accent">
+                  Edit Details
+                </a>
+              {%- endif -%}
             </div>
               <div class="flex-container" style="padding: 5px;">
                 <div class="flex-child">

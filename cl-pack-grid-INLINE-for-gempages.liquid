@@ -1,0 +1,114 @@
+{{ 'cl-pack-grid.css' | asset_url | stylesheet_tag }}
+
+<div class="cl-pack-toolbar" data-cl-toolbar hidden>
+  <div class="cl-pack-tool cl-pack-tool-state">
+    <label class="cl-pack-tool-label" for="cl-state-filter">State</label>
+    <div class="cl-pack-state-wrap">
+      <input type="text" id="cl-state-filter" class="cl-pack-input"
+        data-cl-state-filter list="cl-state-list" autocomplete="off"
+        placeholder="Search or choose a state…">
+      <datalist id="cl-state-list" data-cl-state-options></datalist>
+      <button type="button" class="cl-pack-state-clear" data-cl-state-clear aria-label="Clear state filter" hidden>&times;</button>
+    </div>
+  </div>
+  <div class="cl-pack-tool cl-pack-tool-sort">
+    <label class="cl-pack-tool-label" for="cl-sort">Sort</label>
+    <select id="cl-sort" class="cl-pack-input" data-cl-sort>
+      <option value="featured">Featured</option>
+      <option value="az">Name: A–Z</option>
+      <option value="za">Name: Z–A</option>
+    </select>
+  </div>
+  <div class="cl-pack-count" data-cl-result-count></div>
+</div>
+
+<div class="cl-pack-grid" data-cl-pack-grid>
+  {%- paginate collection.products by 250 -%}
+  {%- for product in collection.products -%}
+    {%- assign cl_pf = product.metafields.custom.personalization_fields.value -%}
+    {%- assign first_variant = product.selected_or_first_available_variant | default: product.variants.first -%}
+    <article
+      class="cl-grid-card{% if cl_pf and cl_pf.size > 0 %} is-personalized{% endif %}"
+      data-cl-card
+      data-cl-handle="{{ product.handle }}"
+      data-cl-title="{{ product.title | escape }}"
+      data-cl-product-type="{{ product.type | escape }}"
+      data-cl-variant-id="{{ first_variant.id }}"
+      data-cl-price="{{ first_variant.price }}"
+      data-cl-variant-title="{{ first_variant.title | escape }}"
+      data-cl-image="{{ first_variant.featured_image | default: product.featured_image | image_url: width: 600 }}"
+      {% if cl_pf and cl_pf.size > 0 %}data-cl-personalized data-cl-perso-fields='{{ cl_pf | json | escape }}'{% endif %}
+    >
+      <script type="application/json" data-cl-variants>
+        [
+          {%- for variant in product.variants -%}
+            {
+              "id": {{ variant.id }},
+              "price": {{ variant.price }},
+              "available": {{ variant.available }},
+              "title": {{ variant.title | json }},
+              "options": {{ variant.options | json }},
+              "image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 600 | json }}{% else %}null{% endif %}
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      </script>
+
+      <div class="cl-grid-media">
+        <img
+          data-cl-card-image
+          src="{{ first_variant.featured_image | default: product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.title | escape }}"
+          width="600"
+          height="600"
+          loading="lazy"
+        >
+      </div>
+
+      <div class="cl-grid-body">
+        <h3 class="cl-grid-title">{{ product.title }}</h3>
+        <div class="cl-grid-price" data-cl-card-price>{{ first_variant.price | money }}</div>
+
+        {%- for option in product.options_with_values -%}
+          <div class="cl-grid-option" data-cl-option-group data-cl-option-index="{{ forloop.index0 }}" data-cl-option-name="{{ option.name | escape }}">
+            <div class="cl-grid-option-label">
+              {{ option.name }}: <span data-cl-option-current>{{ option.selected_value | default: option.values.first }}</span>
+            </div>
+            <div class="cl-grid-option-values">
+              {%- for value in option.values -%}
+                <button type="button" class="cl-grid-swatch" data-cl-value="{{ value | escape }}">{{ value }}</button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endfor -%}
+
+        {%- if cl_pf and cl_pf.size > 0 -%}
+          <div class="cl-grid-perso" data-cl-perso>
+            <div class="cl-grid-perso-preview" data-cl-perso-preview></div>
+            <div class="cl-grid-perso-fields">
+              {%- for field_label in cl_pf -%}
+                <label class="cl-grid-perso-field">
+                  <span class="cl-grid-perso-head">
+                    <span>{{ field_label }}</span>
+                    <span class="cl-grid-perso-count" data-cl-perso-count="{{ field_label | escape }}"></span>
+                  </span>
+                  <input type="text" data-cl-perso-input="{{ field_label | escape }}" autocomplete="off">
+                </label>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <button type="button" class="cl-grid-add" data-cl-add>
+          {%- if cl_pf and cl_pf.size > 0 -%}Personalize &amp; Add{%- else -%}Add to Pack{%- endif -%}
+        </button>
+      </div>
+    </article>
+  {%- endfor -%}
+  {%- endpaginate -%}
+</div>
+
+<div class="cl-pack-empty" data-cl-no-results hidden>No hats match that state. <button type="button" class="cl-pack-linkbtn" data-cl-state-clear>Show all</button></div>
+<nav class="cl-pack-pagination" data-cl-pagination hidden aria-label="Product pages"></nav>
+
+<script src="{{ 'cl-pack-grid.js' | asset_url }}" defer></script>

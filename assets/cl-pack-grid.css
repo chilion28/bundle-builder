@@ -1,0 +1,458 @@
+.cl-pack-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto 4px;
+    padding: 8px;
+  }
+  .cl-pack-tool { display: flex; flex-direction: column; gap: 4px; }
+  .cl-pack-tool-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #666;
+    font-weight: 600;
+  }
+  /* Element-qualified so we beat the theme's `.gps button/input/select` reset
+     (equal specificity; our stylesheet loads in <body>, after the theme's
+     <head> CSS, so we win the tie). */
+  input.cl-pack-input,
+  select.cl-pack-input {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    color: #111;
+  }
+  input.cl-pack-input:focus,
+  select.cl-pack-input:focus { outline: none; border-color: #111; }
+  .cl-pack-tool-state { flex: 1 1 240px; min-width: 200px; }
+  .cl-pack-state-wrap { position: relative; display: flex; }
+  .cl-pack-state-wrap input.cl-pack-input { width: 100%; padding-right: 34px; }
+  /* Caret affordance (hidden once a state is chosen, when the clear × shows). */
+  .cl-pack-state-wrap::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid #888;
+    border-bottom: 2px solid #888;
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  .cl-pack-state-wrap.has-value::after { display: none; }
+  .cl-pack-state-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 40;
+    max-height: 280px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+    padding: 4px;
+  }
+  button.cl-pack-state-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 9px 12px;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    font-size: 14px;
+    color: #111;
+    cursor: pointer;
+  }
+  button.cl-pack-state-option:hover,
+  button.cl-pack-state-option.is-active { background: #f0f0f0; }
+  .cl-pack-state-empty { padding: 12px; color: #999; font-size: 14px; text-align: center; }
+  button.cl-pack-state-clear {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background: #eee;
+    color: #555;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  button.cl-pack-state-clear:hover { background: #ddd; }
+  .cl-pack-count {
+    margin-left: auto;
+    align-self: center;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+  }
+  .cl-pack-empty {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 8px;
+    text-align: center;
+    color: #666;
+    font-size: 15px;
+  }
+  button.cl-pack-linkbtn {
+    border: none;
+    background: none;
+    padding: 0;
+    color: #00a0ea;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .cl-pack-pagination {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 1200px;
+    margin: 20px auto 8px;
+    padding: 0 8px;
+  }
+  button.cl-pack-page {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    cursor: pointer;
+    transition: background .1s ease, border-color .1s ease;
+  }
+  button.cl-pack-page:hover:not(:disabled) { border-color: #111; }
+  button.cl-pack-page.is-current { background: #111; color: #fff; border-color: #111; }
+  button.cl-pack-page:disabled { opacity: .4; cursor: default; }
+  .cl-pack-page-gap { align-self: center; padding: 0 4px; color: #999; }
+  /* Cards hidden by filter/pagination — display:none keeps their lazy images from loading until shown. */
+  .cl-grid-card[hidden] { display: none !important; }
+  .cl-pack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 8px;
+  }
+  .cl-grid-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow .15s ease, border-color .15s ease;
+  }
+  .cl-grid-card.cl-in-pack {
+    border-color: #00a0ea;
+    box-shadow: 0 0 0 2px rgba(0, 160, 234, .25);
+  }
+  .cl-grid-media {
+    aspect-ratio: 1 / 1;
+    background: #f6f6f6;
+  }
+  .cl-grid-media.cl-zoomable { cursor: zoom-in; }
+  /* Image lightbox */
+  .cl-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, .85);
+  }
+  .cl-lightbox[hidden] { display: none; }
+  .cl-lightbox img {
+    max-width: 92vw;
+    max-height: 88vh;
+    border-radius: 12px;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, .5);
+    background: #fff;
+  }
+  .cl-lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background: #fff;
+    color: #111;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .cl-grid-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .cl-grid-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    flex: 1;
+  }
+  .cl-grid-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .cl-grid-price {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .cl-grid-option-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .cl-grid-option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  button.cl-grid-swatch {
+    position: relative;
+    padding: 6px 12px;
+    border: 1px solid #d5d5d5;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color .1s ease, background .1s ease;
+  }
+  button.cl-grid-swatch:hover { border-color: #999; }
+  button.cl-grid-swatch.is-selected {
+    border-color: #111;
+    background: #111;
+    color: #fff;
+  }
+  button.cl-grid-swatch.is-unavailable {
+    opacity: .4;
+    text-decoration: line-through;
+  }
+  button.cl-grid-swatch .cl-swatch-badge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #00a0ea;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+  }
+  .cl-grid-option[hidden] { display: none; }
+  /* #1 — image color swatches */
+  .cl-color-swatches { gap: 8px; }
+  button.cl-grid-swatch.cl-swatch-img {
+    width: 46px;
+    height: 46px;
+    padding: 0;
+    border-radius: 8px;
+    background: #fff;
+    /* No overflow:hidden — it would clip the count badge that sits outside the
+       button. The image rounds its own corners instead. */
+  }
+  button.cl-grid-swatch.cl-swatch-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 7px;
+  }
+  button.cl-grid-swatch.cl-swatch-img .cl-swatch-badge { z-index: 3; }
+  button.cl-grid-swatch.cl-swatch-img.is-selected {
+    border-color: #00a0ea;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(0, 160, 234, .45);
+  }
+  button.cl-grid-swatch.cl-swatch-img.is-unavailable {
+    opacity: .45;
+    text-decoration: none;
+  }
+  button.cl-grid-swatch.cl-swatch-img.is-unavailable::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 7px;
+    background: linear-gradient(to top left, transparent 45%, #c0392b 46%, #c0392b 54%, transparent 55%);
+  }
+  /* #2 — personalization accordion */
+  button.cl-grid-perso-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px dashed #cfcfcf;
+    border-radius: 10px;
+    background: #fafafa;
+    font-size: 13px;
+    font-weight: 700;
+    color: #111;
+    cursor: pointer;
+  }
+  button.cl-grid-perso-toggle:hover { border-color: #00a0ea; }
+  .cl-perso-caret {
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #888;
+    border-bottom: 2px solid #888;
+    transform: rotate(45deg);
+    transition: transform .15s ease;
+  }
+  button.cl-grid-perso-toggle.is-open .cl-perso-caret { transform: rotate(-135deg); }
+  button.cl-grid-perso-toggle.is-open { border-style: solid; border-color: #00a0ea; }
+  /* #3 — optional second line toggle */
+  .cl-perso-second-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cl-perso-second-toggle input { width: 16px; height: 16px; accent-color: #00a0ea; cursor: pointer; }
+  .cl-grid-perso {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border: 1px dashed #d5d5d5;
+    border-radius: 10px;
+    background: #fafafa;
+  }
+  .cl-grid-perso-preview .cl-plate { transform-origin: top center; }
+  /* Real license-plate font. Relative url() resolves to the sibling asset
+     (CL_License_Plate.woff lives in the same /assets/ folder as this CSS),
+     so no Liquid/asset_url is needed. */
+  @font-face {
+    font-family: 'CLLicensePlate';
+    src: url('CL_License_Plate.woff') format('woff');
+    font-display: swap;
+  }
+  /* Zepto-style plate preview: base photo + text overlay */
+  .cl-plate-photo {
+    position: relative;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .cl-plate-photo-img {
+    display: block;
+    width: 100%;
+    height: auto; /* let each plate image set its own aspect */
+  }
+  /* Each text field is anchored at its config center-x / top-y and centered
+     horizontally; font-size is set in JS (config px * displayWidth/800). */
+  .cl-plate-field {
+    position: absolute; /* anchor at left:cx% top:cy% (set inline) */
+    transform: translateX(-50%); /* center the (content-width) box on cx */
+    line-height: 1;
+    font-family: 'CLLicensePlate', 'Impact', sans-serif;
+    text-transform: uppercase;
+  }
+  /* Month/Year: also center vertically on cy (small boxes). */
+  .cl-plate-field.cl-plate-field-vc {
+    transform: translate(-50%, -50%);
+  }
+  .cl-plate-fitline {
+    display: inline-block;
+    white-space: nowrap;
+    transform-origin: center center; /* scaleX (fit) set in JS, on the line only */
+    letter-spacing: .01em;
+  }
+  .cl-grid-perso-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cl-grid-perso-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .cl-grid-perso-count { color: #999; font-weight: 400; }
+  .cl-grid-perso-field input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  .cl-grid-perso-field input:focus {
+    outline: none;
+    border-color: #111;
+  }
+  button.cl-grid-add {
+    margin-top: auto;
+    padding: 12px;
+    border: none;
+    border-radius: 999px;
+    background: #111 !important;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .1s ease;
+  }
+  button.cl-grid-add:hover:not(:disabled) { opacity: .85; }
+  button.cl-grid-add:disabled { cursor: default; opacity: .55; }
+  button.cl-grid-add.is-added { background: #00a0ea; }
+  button.cl-grid-add.is-invalid { background: #888; }
+  .cl-grid-card .cl-pack-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #00a0ea;
+    color: #fff;
+    font-size: 15px;
+    line-height: 26px;
+    text-align: center;
+    z-index: 2;
+  }
+  @media (max-width: 767px) {
+    .cl-pack-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .cl-grid-body { padding: 10px; gap: 8px; }
+  }
