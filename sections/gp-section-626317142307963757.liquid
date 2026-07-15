@@ -1859,7 +1859,8 @@ gp-product.cl-in-pack .gkBonhMcMd {
             id: {{ variant.id | json }},
             title: {{ variant.product.title | json }},
             variantTitle: {{ variant.title | json }},
-            image: {{ variant.image | default: variant.product.featured_image | image_url: width: 160 | json }},
+            {%- assign _gimg = variant.image | default: variant.product.featured_image -%}
+            image: {% if _gimg %}{{ _gimg | image_url: width: 160 | json }}{% else %}null{% endif %},
             price: {{ variant.price | json }}
           }{% unless forloop.last %},{% endunless %}
         {% endfor %}
@@ -1873,7 +1874,8 @@ gp-product.cl-in-pack .gkBonhMcMd {
       id: {{ variant.id | json }},
       title: {{ variant.product.title | json }},
       variantTitle: {{ variant.title | json }},
-      image: {{ variant.image | default: variant.product.featured_image | image_url: width: 160 | json }},
+      {%- assign _fgimg = variant.image | default: variant.product.featured_image -%}
+      image: {% if _fgimg %}{{ _fgimg | image_url: width: 160 | json }}{% else %}null{% endif %},
       price: {{ variant.price | json }},
       tags: {{ variant.product.tags | json }}
     }{% unless forloop.last %},{% endunless %}
@@ -3664,6 +3666,13 @@ descEl.innerHTML = product.description || '';
           addBtn.textContent = 'Add to Pack';
         }
       }
+      // Sold out: the currently selected variant is unavailable → block adding.
+      if (card.getAttribute('data-cl-available') === 'false') {
+        addBtn.disabled = true;
+        addBtn.classList.remove('is-added', 'is-invalid');
+        addBtn.classList.add('is-pack-full');
+        addBtn.textContent = 'Sold out';
+      }
 
       updateCheckBadge(total > 0);
       updateSwatchBadges(card, getCardData(card).title);
@@ -3684,6 +3693,7 @@ descEl.innerHTML = product.description || '';
     }
 
     function commitInlinePersonalized() {
+      if (card.getAttribute('data-cl-available') === 'false') return; // sold out
       const perso = card.__clPerso;
       if (!perso) return;
       if (!perso.valid) {
@@ -3712,6 +3722,7 @@ descEl.innerHTML = product.description || '';
     }
 
     addBtn.addEventListener('click', () => {
+      if (card.getAttribute('data-cl-available') === 'false') return; // sold out
       if (isPersonalizedCard) {
         if (!isPackFull()) commitInlinePersonalized();
         return;

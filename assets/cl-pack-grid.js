@@ -227,6 +227,18 @@
   }
   window.CLLightbox = openLightbox; // let the builder modal's big image use it too
 
+  // Fixed 3-Hat Bundle — generic plate design (pulled from Zepto canvas-script
+  // for product 8858683703384; base image generic-blank-template.png). Two text
+  // frames: main (Custom Text One, y31.53) + top line (Custom Text Two, y10.23).
+  // cx/w/size are best-estimate and tuned visually against Zepto's own preview.
+  CL_PLATE_CFG['bundle-generic'] = {
+    img: 'generic-blank-template.png',
+    f: {
+      'Custom Text One': { cx: 50, cy: 29, w: 70, size: 175, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 15.5, w: 58, size: 48, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
   // Expose for the builder section's Edit modal.
   window.CLPlatePreview = function (previewEl, handle, values) {
     var cfgObj = CL_PLATE_CFG[handle];
@@ -268,6 +280,12 @@
       });
     });
 
+    // Fully sold out (no available variant) → flag the card so the grid can
+    // drop it entirely (avoids an empty-swatch "Sold out" card).
+    if (!variants.some(function (v) { return v.available; })) {
+      card.setAttribute('data-cl-soldout', '');
+    }
+
     // Selected value per option index, seeded from the first available variant.
     var seed = variants.filter(function (v) { return v.available; })[0] || variants[0];
     var selection = seed.options.slice();
@@ -298,11 +316,14 @@
           if (values.indexOf(v.options[idx]) === -1) values.push(v.options[idx]);
         });
 
-        // If the current selection is no longer valid at this level, snap to
-        // the first value (prefer one with stock further down).
-        if (values.indexOf(selection[idx]) === -1) {
+        // Snap to an available value if the current selection is no longer
+        // valid at this level OR is sold out — so we never resolve to an
+        // out-of-stock variant (sold-out swatches are hidden below).
+        var selAvailable = candidates.some(function (v) { return v.options[idx] === selection[idx] && v.available; });
+        if (values.indexOf(selection[idx]) === -1 || !selAvailable) {
           var availableFirst = candidates.filter(function (v) { return v.available; })[0];
-          selection[idx] = availableFirst ? availableFirst.options[idx] : values[0];
+          if (availableFirst) selection[idx] = availableFirst.options[idx];
+          else if (values.indexOf(selection[idx]) === -1) selection[idx] = values[0];
         }
 
         // Data-driven show/hide: a group with a single effective value (e.g.
@@ -315,18 +336,20 @@
 
         group.querySelectorAll('[data-cl-value]').forEach(function (btn) {
           var value = btn.getAttribute('data-cl-value');
-          var visible = values.indexOf(value) !== -1;
-          btn.style.display = visible ? '' : 'none';
-          btn.classList.toggle('is-selected', value === selection[idx]);
+          var exists = values.indexOf(value) !== -1;
           var anyAvailable = candidates.some(function (v) {
             return v.options[idx] === value && v.available;
           });
-          btn.classList.toggle('is-unavailable', visible && !anyAvailable);
+          // Hide values that don't apply to the current selection OR are sold out.
+          btn.style.display = (exists && anyAvailable) ? '' : 'none';
+          btn.classList.toggle('is-selected', value === selection[idx]);
         });
       });
 
       var variant = resolve();
-      if (!variant) return;
+      // Expose availability so the builder can block adding a sold-out variant.
+      card.setAttribute('data-cl-available', (variant && variant.available) ? 'true' : 'false');
+      if (!variant) { card.dispatchEvent(new CustomEvent('cl:variant-change', { bubbles: true })); return; }
 
       card.setAttribute('data-cl-variant-id', variant.id);
       card.setAttribute('data-cl-price', variant.price);
@@ -614,7 +637,9 @@
     var stateList = document.querySelector('[data-cl-state-options]');
     var sortSelect = document.querySelector('[data-cl-sort]');
 
-    var cards = Array.prototype.slice.call(gridEl.querySelectorAll('[data-cl-card]'));
+    // Drop fully sold-out products from the grid (and hide them in the DOM).
+    Array.prototype.forEach.call(gridEl.querySelectorAll('[data-cl-card][data-cl-soldout]'), function (c) { c.hidden = true; });
+    var cards = Array.prototype.slice.call(gridEl.querySelectorAll('[data-cl-card]:not([data-cl-soldout])'));
     if (!cards.length) return;
 
     // Annotate each card with its state + original (featured) order.
