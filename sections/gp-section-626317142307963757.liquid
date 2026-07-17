@@ -1292,6 +1292,44 @@
   text-align: center;
 }
 
+/* Two labeled reward tracks (discount + gift), replacing the old stacked
+   banner/bold-line/gift-subline that mixed two milestones and confused shoppers. */
+.cl-reward-tracks { margin-top: 14px; }
+/* Aligned column grid: icon | label | count | arrow | reward.
+   display:contents lets each row's cells align across rows. */
+.cl-reward-tracks-grid {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  align-items: center;
+  gap: 11px 12px;
+}
+.cl-reward-track { display: contents; }
+.cl-reward-track-label { font-weight: 700; color: #1a1a1a; font-size: 15px; }
+.cl-reward-track-count { font-weight: 700; color: var(--cl-accent, #00a0ea); font-size: 15px; white-space: nowrap; }
+.cl-reward-track-arrow { color: #c2c2c2; }
+.cl-reward-track-reward { color: #111; font-weight: 700; font-size: 15px; }
+.cl-reward-track.is-done .cl-reward-track-label { grid-column: 1 / -1; color: #0a7d32; }
+
+/* Primary "next action" box — soft on-brand blue tint. */
+.cl-reward-cta {
+  margin-top: 16px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: #e8f6fd;
+  border: 1px solid #b9e4f6;
+  color: #076a94;
+  font-weight: 700;
+  font-size: 14.5px;
+  text-align: center;
+  line-height: 1.35;
+}
+@media (max-width: 767px) {
+  .cl-reward-tracks-grid { gap: 8px 9px; }
+  .cl-reward-track-label,
+  .cl-reward-track-count,
+  .cl-reward-track-reward { font-size: 13.5px; }
+}
+
 .cl-free-gift-preview.is-locked {
   background: #f2f2f2;
 }
@@ -2005,7 +2043,9 @@ document.addEventListener('DOMContentLoaded', () => {
       'Year':           { type: 'text', maxLength: 4,  placeholder: 'YEAR' },
       'Custom Text':    { type: 'text', maxLength: 20, placeholder: 'CUSTOM' },
       'Custom Text One':{ type: 'text', maxLength: 20, placeholder: '' },
-      'Custom Text Two':{ type: 'text', maxLength: 26, placeholder: '' }
+      // Custom Text Two is the optional second line — never required to save,
+      // mirroring the inline card's OPTIONAL_FIELDS (cl-pack-grid.js).
+      'Custom Text Two':{ type: 'text', maxLength: 26, placeholder: '', optional: true }
     };
 
     let modalActiveConfig = null;   // personalization config for the open modal (or null)
@@ -2267,7 +2307,9 @@ document.addEventListener('DOMContentLoaded', () => {
     label.innerHTML = `<strong>${shown}</strong> of ${selectedPackSize} ${capitalize(builderConfig.itemPlural)}`;
   }
 
-    message.textContent = getProgressMessage(totalQty);
+    // Stray progress line retired — the labeled reward tracks + CTA box below
+    // the dots now carry this messaging.
+    message.style.display = 'none';
 }
 
 
@@ -2557,7 +2599,9 @@ document.addEventListener('DOMContentLoaded', () => {
     dot.textContent = qty;
   });
 
-    message.textContent = getProgressMessage(totalQty);
+    // Stray progress line retired — the labeled reward tracks + CTA box below
+    // the dots now carry this messaging.
+    message.style.display = 'none';
 }
 
     function groupSummaryItems(items) {
@@ -2939,18 +2983,10 @@ function renderGiftProgressBanner(totalQty) {
     }
   }
 
-  // Gift subline.
+  // Gift subline retired — the gift now lives in the labeled reward tracks below
+  // (see renderRewardTracks), so we hide the old inline "Free gift:" line.
   const giftEl = document.querySelector('[data-cl-reward-gift]');
-  if (giftEl) {
-    const giftTier =
-      builderConfig.giftTiers.find(t => t.minQty === focus) || getNextGiftTier(totalQty);
-    if (giftTier) {
-      giftEl.textContent = `Free gift: ${giftTier.variants.map(v => v.title).join(' & ')}`;
-      giftEl.style.display = '';
-    } else {
-      giftEl.style.display = 'none';
-    }
-  }
+  if (giftEl) giftEl.style.display = 'none';
 
   // Footer "Free gift: Included" row.
   const giftRow = document.querySelector('[data-cl-gift-row]');
@@ -2959,6 +2995,108 @@ function renderGiftProgressBanner(totalQty) {
   }
 }
 
+    // Two clearly-labeled reward tracks (discount + gift), each self-explanatory
+    // with its own count/reward so shoppers never see two conflicting "N more"
+    // numbers stacked together. Replaces the old banner + bold line + subline.
+    function rewardTrackRow(label, count, reward) {
+      return `
+        <div class="cl-reward-track">
+          <span class="cl-reward-track-label">${label}:</span>
+          <span class="cl-reward-track-count">${count}</span>
+          <span class="cl-reward-track-arrow">&rarr;</span>
+          <span class="cl-reward-track-reward">${reward}</span>
+        </div>`;
+    }
+
+    function rewardTrackDone(text) {
+      return `
+        <div class="cl-reward-track is-done">
+          <span class="cl-reward-track-label">${text} &#10003;</span>
+        </div>`;
+    }
+
+    function renderRewardTracks(totalQty) {
+      const anchor = document.querySelector('.cl-golf-milestones');
+      if (!anchor) return;
+
+      let box = document.querySelector('[data-cl-reward-tracks]');
+      if (!box) {
+        box = document.createElement('div');
+        box.setAttribute('data-cl-reward-tracks', '');
+        box.className = 'cl-reward-tracks';
+        anchor.insertAdjacentElement('afterend', box);
+      }
+
+      // For a SINGLE-milestone builder the two tracks are redundant (both show
+      // the same "N more" count) and read as clutter — so we hide them and let
+      // the callout carry a combined discount + gift message. Multi-tier
+      // builders (e.g. pins) keep the two labeled tracks.
+      const multiTier = packSizes.length > 1;
+      const rows = [];
+
+      if (multiTier) {
+        // Discount track — progress toward the next price milestone.
+        const nextD = packSizes.find(m => totalQty < m);
+        if (nextD) {
+          const remaining = nextD - totalQty;
+          const itemWord = remaining === 1 ? builderConfig.itemSingular : builderConfig.itemPlural;
+          const { price, discounted } = perItemPriceAtQty(nextD);
+          rows.push(rewardTrackRow(
+            'Next discount',
+            `${remaining} more ${itemWord}`,
+            discounted ? `${money(price)}/${builderConfig.itemSingular}` : 'best price'
+          ));
+        } else {
+          rows.push(rewardTrackDone('Best price unlocked'));
+        }
+
+        // Gift track — progress toward the next free gift.
+        const gTier = getNextGiftTier(totalQty);
+        if (gTier) {
+          const remaining = gTier.minQty - totalQty;
+          const itemWord = remaining === 1 ? builderConfig.itemSingular : builderConfig.itemPlural;
+          const giftName = gTier.variants.map(v => v.title).join(' & ');
+          rows.push(rewardTrackRow(
+            'Free gift',
+            `${remaining} more ${itemWord}`,
+            giftName
+          ));
+        } else if (builderConfig.giftTiers.length) {
+          const top = builderConfig.giftTiers[builderConfig.giftTiers.length - 1];
+          const giftName = top.variants.map(v => v.title).join(' & ');
+          rows.push(rewardTrackDone(`Free ${giftName} unlocked`));
+        }
+      }
+
+      // Primary callout. Also mentions the free gift when a gift unlocks by the
+      // next discount milestone (always the case on a single-milestone builder).
+      let ctaMsg = '';
+      const nextDiscount = packSizes.find(m => totalQty < m);
+      if (nextDiscount) {
+        const r = nextDiscount - totalQty;
+        const w = r === 1 ? builderConfig.itemSingular : builderConfig.itemPlural;
+        const giftByThen = builderConfig.giftTiers.some(t => t.minQty > totalQty && t.minQty <= nextDiscount);
+        ctaMsg = giftByThen
+          ? `Add ${r} more ${w} to unlock your discount and get your free gift`
+          : `Add ${r} more ${w} to unlock the next discount`;
+      } else {
+        const g = getNextGiftTier(totalQty);
+        if (g) {
+          const r = g.minQty - totalQty;
+          const w = r === 1 ? builderConfig.itemSingular : builderConfig.itemPlural;
+          const nm = g.variants.map(v => v.title).join(' & ');
+          ctaMsg = `Add ${r} more ${w} to unlock your free ${nm}`;
+        } else {
+          ctaMsg = `🎉 You've unlocked every reward!`;
+        }
+      }
+
+      const gridHtml = rows.length ? `<div class="cl-reward-tracks-grid">${rows.join('')}</div>` : '';
+      const ctaHtml = ctaMsg ? `<div class="cl-reward-cta">${ctaMsg}</div>` : '';
+
+      box.innerHTML = gridHtml + ctaHtml;
+      box.style.display = (rows.length || ctaMsg) ? '' : 'none';
+    }
 
     function renderSummary() {
     const list = document.querySelector('.cl-golf-summary-list');
@@ -2990,7 +3128,7 @@ document.querySelector('.cl-discount-breakdown')?.remove();
     const idx = getDiscountIndex(totalQty);
 
     updateMilestones(totalQty);
-    renderGiftProgressBanner(totalQty);
+    renderRewardTracks(totalQty);
     renderRewardCard(totalQty);
     renderMobileRewardBar(totalQty);
 
@@ -3012,7 +3150,10 @@ document.querySelector('.cl-discount-breakdown')?.remove();
     if (discountEl) discountEl.textContent = totalDiscount > 0 ? `- ${money(totalDiscount)}` : '$ 0.00';
     document.querySelector('[data-cl-save-row]')?.classList.toggle('has-savings', totalDiscount > 0);
     if (estimatedTotalEl) estimatedTotalEl.textContent = money(estimatedTotal);
-    if (discountMessageEl) discountMessageEl.textContent = getDiscountMessage(totalQty, idx);
+    // Old bold "Add N more to unlock the next discount" line retired — the
+    // labeled reward tracks (renderRewardTracks) now carry this, without the
+    // count clashing against the gift's separate count.
+    if (discountMessageEl) discountMessageEl.style.display = 'none';
 
     checkoutBtn.disabled = totalQty < 1;
     checkoutBtn.textContent = totalQty < 1
@@ -3030,10 +3171,9 @@ document.querySelector('.cl-discount-breakdown')?.remove();
         : `Choose ${builderConfig.itemPlural}`;
     }
 
-    if (!items.length) {
-      list.innerHTML = '';
-      return;
-    }
+    // NOTE: no early return when empty — we fall through so the LOCKED gift
+    // cards still render (empty groups → empty list, then gift cards are
+    // inserted below). Emphasizes the free gift before any items are added.
 
 
 
@@ -3646,7 +3786,7 @@ descEl.innerHTML = product.description || '';
         addBtn.disabled = full;
         addBtn.textContent = full
           ? 'Your pack is full'
-          : (total > 0 ? `Add Another (${total})` : 'Personalize & Add');
+          : (total > 0 ? `Add Another (${total})` : `Add this ${String(builderConfig.itemSingular || 'item').toLowerCase()}`);
         addBtn.classList.toggle('is-invalid', !full && !(card.__clPerso && card.__clPerso.valid));
       } else {
         const activeQty = getActiveQty();

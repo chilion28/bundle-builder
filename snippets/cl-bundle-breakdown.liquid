@@ -1,0 +1,41 @@
+{%- comment -%}
+  Cosmetic bundle breakdown for the CART PAGE, styled to match Shopify checkout:
+  parent personalization + a collapsible "Show/Hide N items" accordion revealing
+  the component hats (from custom.bundle_components) as an indented tree.
+  Display-only — the cart line stays a single $60 item; checkout does the real
+  expansion. Usage: {% render 'cl-bundle-breakdown', item: item %}
+{%- endcomment -%}
+
+{%- assign bundle_components = item.product.metafields.custom.bundle_components.value -%}
+{%- if bundle_components and bundle_components.size > 0 -%}
+  {%- assign cl_state = item.properties['Custom Text'] -%}
+  {%- assign cl_text = item.properties['Custom Text Two'] -%}
+  <div class="cl-bd">
+    {%- if cl_state != blank -%}<div class="cl-bd__prop">Custom Text: {{ cl_state }}</div>{%- endif -%}
+    {%- if cl_text != blank -%}<div class="cl-bd__prop">Custom Text Two: {{ cl_text }}</div>{%- endif -%}
+
+    <button type="button" class="cl-bd__toggle" data-cl-bd-toggle aria-expanded="true">
+      <span class="cl-bd__toggle-text">Hide {{ bundle_components.size }} items</span>
+      <svg class="cl-bd__chevron" width="14" height="14" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M5 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <ul class="cl-bd__list" data-cl-bd-list role="list">
+      {%- for v in bundle_components -%}
+        {%- assign img = v.image | default: v.product.featured_image -%}
+        <li class="cl-bd__item">
+          {%- if img -%}
+            <img class="cl-bd__img" src="{{ img | image_url: width: 96 }}" alt="" width="48" height="48" loading="lazy">
+          {%- endif -%}
+          <div class="cl-bd__info">
+            <span class="cl-bd__name">1 &times; {{ v.product.title }}</span>
+            <span class="cl-bd__variant">{{ v.title }}</span>
+            {%- if cl_state != blank -%}<span class="cl-bd__sub">Custom Text: {{ cl_state }}</span>{%- endif -%}
+            {%- if cl_text != blank -%}<span class="cl-bd__sub">Custom Text Two: {{ cl_text }}</span>{%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

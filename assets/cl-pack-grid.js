@@ -247,6 +247,29 @@
     return true;
   };
 
+  // ---- Lazy preview rendering ----
+  // The grid holds up to ~88 cards but paginates 12 at a time, so rendering
+  // every card's plate preview up front (image + web-font + fit measurement)
+  // was the bulk of load-time work — ~76 of those previews were for cards the
+  // pager immediately hides. Instead, each initCard stores its renderer on the
+  // card and registers it here; this shared observer draws the preview once,
+  // when the card actually scrolls into view (pager-hidden/display:none cards
+  // simply don't intersect until shown). rootMargin pre-renders just off-screen
+  // so it's ready before the card is scrolled to.
+  var _clPreviewObserver = ('IntersectionObserver' in window)
+    ? new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          var card = entry.target;
+          _clPreviewObserver.unobserve(card);
+          if (!card._clPreviewDone && typeof card._clRenderPreview === 'function') {
+            card._clPreviewDone = true;
+            card._clRenderPreview();
+          }
+        });
+      }, { rootMargin: '200px' })
+    : null;
+
   function initCard(card) {
     var variants;
     try {
@@ -593,7 +616,14 @@
       }
     };
 
-    renderPreview();
+    // Lazy first render: draw the preview only when this card scrolls into view
+    // (see _clPreviewObserver). Event-driven re-renders above still fire live.
+    card._clRenderPreview = renderPreview;
+    if (_clPreviewObserver) {
+      _clPreviewObserver.observe(card);
+    } else {
+      renderPreview();
+    }
   }
 
   // ---- Filter (by state) + sort + client-side pagination ----

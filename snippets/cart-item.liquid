@@ -59,6 +59,8 @@
         <span class="cart-item--line-item-subscriptions">{{ item.selling_plan_allocation.selling_plan.name }}</span>
       {% endif %}
 
+      {% render 'cl-bundle-breakdown', item: item %}
+
       <div class="cart-item--content-price">
         <span class="cart-item--price-title">
           {{ 'cart.general.price' | t }}

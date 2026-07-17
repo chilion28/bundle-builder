@@ -1,3 +1,55 @@
+<style>
+  .cl-bd{margin:4px 0 2px;display:flex;flex-direction:column;gap:3px}
+  .cl-bd__prop{font-size:14px;color:#6b7280;line-height:1.45}
+  .cl-bd__toggle{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:2px 0;margin:3px 0 0;font-size:14px;font-weight:700;color:#12203a;cursor:pointer;width:fit-content}
+  .cl-bd__toggle:hover{opacity:.85}
+  .cl-bd__chevron{transition:transform .18s ease;flex:none}
+  .cl-bd__toggle[aria-expanded="true"] .cl-bd__chevron{transform:rotate(180deg)}
+  .cl-bd__list{list-style:none;margin:10px 0 2px;padding:0 0 0 2px;display:flex;flex-direction:column;gap:14px}
+  .cl-bd__list[hidden]{display:none}
+  .cl-bd__item{display:flex;gap:12px;align-items:flex-start}
+  .cl-bd__img{width:48px;height:48px;border-radius:8px;object-fit:cover;flex:none;background:#fff;border:1px solid #e6e8ec}
+  .cl-bd__info{display:flex;flex-direction:column;gap:2px;font-size:14px;line-height:1.4;min-width:0}
+  .cl-bd__name{font-weight:700;color:#12203a}
+  .cl-bd__variant{color:#6b7280}
+  .cl-bd__sub{color:#6b7280}
+  /* Prevent the flex collapse: .cart-item--inner is display:flex/space-between
+     on desktop, so a content column holding the breakdown otherwise shrinks to
+     min-content (one word per line). Let it grow, and wrap long unbroken text. */
+  .cart-item--content:has(.cl-bd){flex:1 1 auto;min-width:0}
+  /* Zepto (pplr) injects a .pplr_properties block of float:left;width:100% spans
+     right before our .cl-bd. Those uncleared full-width floats leave no room
+     beside them, squeezing the following .cl-bd into a ~1-char strip. Clear them. */
+  .cl-bd{clear:both;width:100%}
+  .cl-bd,.cl-bd__list,.cl-bd__item,.cl-bd__info{min-width:0;max-width:100%}
+  .cl-bd__info{flex:1 1 auto}
+  .cl-bd__name,.cl-bd__variant,.cl-bd__sub,.cl-bd__prop{overflow-wrap:anywhere;word-break:break-word}
+  /* Hide Zepto's (pplr) injected property list on OUR bundle lines — it's
+     redundant with our own breakdown/details and on the fixed-bundle line it
+     shows stale/mismatched data (an off-by-one in the app's data-line mapping).
+     Scoped to bundle lines only, so normal product lines keep their pplr props. */
+  .cart-item--content.cl-plate-cart-item .pplr_properties,
+  .cart-item--content:has(.cl-bd) .pplr_properties { display: none !important; }
+</style>
+
+<script>
+  (function () {
+    // Delegated toggle so it survives the cart's Vue mount / partial reloads.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-cl-bd-toggle]');
+      if (!btn) return;
+      var wrap = btn.parentNode;
+      var list = wrap && wrap.querySelector('[data-cl-bd-list]');
+      if (!list) return;
+      var opening = list.hasAttribute('hidden');
+      if (opening) { list.removeAttribute('hidden'); } else { list.setAttribute('hidden', ''); }
+      btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+      var txt = btn.querySelector('.cl-bd__toggle-text');
+      if (txt) { txt.textContent = (opening ? 'Hide ' : 'Show ') + list.children.length + ' items'; }
+    });
+  })();
+</script>
+
 <ul class="cartitems--list" data-cart-item-list>
     {% assign is_plate_hat = '' %}
     {% assign productsCheck = "US License Plate Hat, Country Flag Hats, Monogram Hat, Royal Crest, Western" | split: ", " %}

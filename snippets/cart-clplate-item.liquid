@@ -106,10 +106,22 @@
             {% endif %}  
             {% if itemDetail.properties['Custom Text Three'] %}
             <div class="breathe-space">
-                Custom Three: 
+                Custom Three:
                 <span style="font-weight: bold;">{{ itemDetail.properties['Custom Text Three'] }}</span>
             </div>
-            {% endif %}  
+            {% endif %}
+            {% if itemDetail.properties['Month'] != blank %}
+            <div class="breathe-space">
+                Month:
+                <span style="font-weight: bold;">{{ itemDetail.properties['Month'] }}</span>
+            </div>
+            {% endif %}
+            {% if itemDetail.properties['Year'] != blank %}
+            <div class="breathe-space">
+                Year:
+                <span style="font-weight: bold;">{{ itemDetail.properties['Year'] }}</span>
+            </div>
+            {% endif %}
             <div class="breathe-space">
               {%- assign detail_bundle = itemDetail.properties._bundle_collection -%}
               {%- if detail_bundle and detail_bundle != blank -%}
