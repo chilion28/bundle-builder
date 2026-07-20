@@ -183,16 +183,27 @@
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
                   baseScale: 1, maskW: 0, maskH: 0 };
 
-  function isSquareShape() { var s = String(state.shape).toLowerCase(); return s === 'circle' || s === 'hexagon'; }
+  // Each shape's artwork-window size as a fraction of the 1200×1200 frame PNG
+  // (measured from the transparent windows). Drives editor aspect + output dims.
+  var WINDOW = {
+    rectangle: { w: 0.930, h: 0.495 },
+    rounded:   { w: 0.926, h: 0.735 },
+    circle:    { w: 0.923, h: 0.923 },
+    hexagon:   { w: 0.939, h: 0.513 }
+  };
+  function shapeAspect() { var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle; return win.w / win.h; }
 
   function computeMask() {
     var W = edStage.clientWidth, H = edStage.clientHeight;
-    if (isSquareShape()) { edState.maskW = W * 0.70; edState.maskH = edState.maskW; }
-    else { edState.maskW = W * 0.82; edState.maskH = edState.maskW * (CL_AI_HAT.patchHeightIn / CL_AI_HAT.patchWidthIn); }
+    var aspect = shapeAspect();
+    var maskW = Math.min(W * 0.86, H * 0.86 * aspect);
+    var maskH = maskW / aspect;
+    edState.maskW = maskW; edState.maskH = maskH;
+    if (edMask) { edMask.style.width = maskW + 'px'; edMask.style.height = maskH + 'px'; }
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
-    edState.baseScale = Math.max(edState.maskW / iw, edState.maskH / ih); // cover the mask
+    edState.baseScale = Math.max(maskW / iw, maskH / ih); // cover the mask
   }
 
   function clampOffset() {
@@ -269,9 +280,9 @@
 
   // Composite the cropped region to a print-res canvas and apply it everywhere.
   function edConfirm() {
-    var square = isSquareShape();
-    var targetW = square ? 900 : 1200;
-    var targetH = square ? 900 : 675;
+    var aspect = shapeAspect();
+    var targetW = 1200;
+    var targetH = Math.round(targetW / aspect);
     var out = document.createElement('canvas');
     out.width = targetW; out.height = targetH;
     var octx = out.getContext('2d');

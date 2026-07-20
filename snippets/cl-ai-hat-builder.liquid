@@ -25,6 +25,9 @@
   {%- if dn contains 'color' or dn contains 'colour' -%}{%- assign color_opt = opt -%}{%- endif -%}
 {%- endfor -%}
 
+{%- comment -%} Patch shapes → real frame PNGs in assets/ (transparent windows) {%- endcomment -%}
+{%- assign shape_list = 'Rectangle,Rounded,Circle,Hexagon' | split: ',' -%}
+
 <div class="cl-ai-b" data-cl-ai-builder>
 
   {%- comment -%} ===== STEP 2 — UPLOAD ===== {%- endcomment -%}
@@ -52,14 +55,12 @@
     {%- comment -%} Patch-frame preview (after the image is placed) {%- endcomment -%}
     <div class="cl-ai-b__placed" data-cl-ai-placed hidden>
       <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle">
-        <div class="cl-ai-pf__bezel">
-          <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
-          <div class="cl-ai-pf__safe" aria-hidden="true"></div>
-          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--tl"></span>
-          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--tr"></span>
-          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--bl"></span>
-          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--br"></span>
-        </div>
+        <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
+        {%- for sh in shape_list -%}
+          <img class="cl-ai-pf__frame" data-frame="{{ sh | downcase }}"
+               src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+               alt="{{ sh }} patch frame" loading="lazy">
+        {%- endfor -%}
       </div>
       <div class="cl-ai-b__placed-actions">
         <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
@@ -154,12 +155,13 @@
       <div class="cl-ai-b__field">
         <label class="cl-ai-b__label">Patch Shape</label>
         <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
-          {%- assign shapes = 'Rectangle,Rounded,Circle,Hexagon' | split: ',' -%}
-          {%- for sh in shapes -%}
+          {%- for sh in shape_list -%}
             <button type="button" class="cl-ai-b__shape cl-ai-b__shape--{{ sh | downcase }}{% if forloop.first %} is-active{% endif %}"
                     data-cl-ai-shape data-value="{{ sh }}" role="radio" aria-label="{{ sh }}"
                     aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
-              <span class="cl-ai-b__shape-glyph" aria-hidden="true"></span>
+              <img class="cl-ai-b__shape-icon"
+                   src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+                   alt="{{ sh }}" loading="lazy">
             </button>
           {%- endfor -%}
         </div>
