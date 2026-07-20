@@ -483,6 +483,29 @@
     });
   }
 
+  // The product's Colour values are prefixed with the style ("Snapback Black") by
+  // design. Strip that prefix for DISPLAY only — the variant value, cart line and
+  // order still carry the full original string.
+  var STYLE_VALUES = $$('[data-cl-ai-style]').map(function (b) { return b.dataset.value; });
+  function displayColor(val) {
+    var s = String(val || '');
+    for (var i = 0; i < STYLE_VALUES.length; i++) {
+      var pre = STYLE_VALUES[i] + ' ';
+      if (s.indexOf(pre) === 0) return s.slice(pre.length);
+    }
+    return s;
+  }
+  function applyColorLabels() {
+    $$('[data-cl-ai-color]').forEach(function (b) {
+      var d = displayColor(b.dataset.value);
+      b.setAttribute('title', d);
+      b.setAttribute('aria-label', d);
+      var img = b.querySelector('img'); if (img) img.setAttribute('alt', d);
+    });
+    var lbl = $('[data-cl-ai-color-label]');
+    if (lbl && state.color) lbl.textContent = displayColor(state.color);
+  }
+
   // Show only the colours that actually exist for the selected style, and mark
   // sold-out ones. If the current colour isn't offered in the new style, move the
   // selection to the first colour that is.
@@ -508,7 +531,7 @@
       btns.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
       firstValid.classList.add('is-active'); firstValid.setAttribute('aria-checked', 'true');
       state.color = firstValid.dataset.value;
-      var clbl = $('[data-cl-ai-color-label]'); if (clbl) clbl.textContent = state.color;
+      var clbl = $('[data-cl-ai-color-label]'); if (clbl) clbl.textContent = displayColor(state.color);
       if (galMain && firstValid.dataset.swatchImg) galMain.src = firstValid.dataset.swatchImg;
     }
   }
@@ -521,7 +544,7 @@
   });
   bindRadioGroup('[data-cl-ai-color]', function (val, btn) {
     state.color = val;
-    var lbl = $('[data-cl-ai-color-label]'); if (lbl) lbl.textContent = val;
+    var lbl = $('[data-cl-ai-color-label]'); if (lbl) lbl.textContent = displayColor(val);
     // Swap the hero image to this colour's variant image, if we have one.
     if (galMain && btn && btn.dataset.swatchImg) {
       galMain.src = btn.dataset.swatchImg;
@@ -558,6 +581,7 @@
     }
   }
   filterColorsForStyle(); // initial — hide colours not offered in the default style
+  applyColorLabels();     // strip style prefix from swatch tooltips + the label
   resolveVariant();
 
   /* text counter */
