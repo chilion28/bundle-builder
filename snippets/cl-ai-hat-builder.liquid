@@ -34,10 +34,12 @@
       <h2 class="cl-ai__step-title">UPLOAD YOUR AI ARTWORK</h2>
     </div>
 
+    <input type="file" class="cl-ai-b__file" data-cl-ai-file
+           accept="image/png,image/jpeg,image/webp" hidden>
+
+    {%- comment -%} Idle dropzone (before an image is placed) {%- endcomment -%}
     <div class="cl-ai-b__drop" data-cl-ai-drop tabindex="0" role="button"
          aria-label="Upload your artwork — drag and drop or choose a file">
-      <input type="file" class="cl-ai-b__file" data-cl-ai-file
-             accept="image/png,image/jpeg,image/webp" hidden>
       <div class="cl-ai-b__drop-idle" data-cl-ai-drop-idle>
         <span class="cl-ai-b__drop-icon" aria-hidden="true">⤒</span>
         <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
@@ -45,11 +47,25 @@
         <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
         <p class="cl-ai-b__drop-note">JPG, PNG, WEBP up to 25MB</p>
       </div>
-      <div class="cl-ai-b__drop-preview" data-cl-ai-drop-preview hidden>
-        <img data-cl-ai-uploaded alt="Your uploaded artwork">
-        <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
-        <button type="button" class="cl-ai-b__replace" data-cl-ai-replace>Replace image</button>
+    </div>
+
+    {%- comment -%} Patch-frame preview (after the image is placed) {%- endcomment -%}
+    <div class="cl-ai-b__placed" data-cl-ai-placed hidden>
+      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle">
+        <div class="cl-ai-pf__bezel">
+          <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
+          <div class="cl-ai-pf__safe" aria-hidden="true"></div>
+          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--tl"></span>
+          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--tr"></span>
+          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--bl"></span>
+          <span class="cl-ai-pf__rivet cl-ai-pf__rivet--br"></span>
+        </div>
       </div>
+      <div class="cl-ai-b__placed-actions">
+        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
+        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-replace>↻ Replace</button>
+      </div>
+      <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
     </div>
 
     <div class="cl-ai-b__tips">
@@ -203,6 +219,36 @@
       <span class="cl-ai-b__qc-check" aria-hidden="true">✓</span>
       <strong data-cl-ai-qc-verdict-title>READY TO PRINT!</strong>
       <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
+    </div>
+  </div>
+
+  {%- comment -%} ===== CROP / ZOOM / ROTATE EDITOR (modal) ===== {%- endcomment -%}
+  <div class="cl-ai-ed" data-cl-ai-editor hidden role="dialog" aria-modal="true" aria-label="Position your artwork">
+    <div class="cl-ai-ed__backdrop" data-cl-ai-ed-cancel></div>
+    <div class="cl-ai-ed__panel">
+      <p class="cl-ai-ed__title">Position your artwork</p>
+      <p class="cl-ai-ed__hint">Drag to move · scroll or slider to zoom · buttons to rotate. Keep the subject inside the dashed line.</p>
+
+      <div class="cl-ai-ed__stage" data-cl-ai-ed-stage>
+        <canvas class="cl-ai-ed__canvas" data-cl-ai-ed-canvas></canvas>
+        <div class="cl-ai-ed__mask" data-cl-ai-ed-mask data-shape="rectangle" aria-hidden="true">
+          <div class="cl-ai-ed__mask-safe"></div>
+        </div>
+      </div>
+
+      <div class="cl-ai-ed__controls">
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-l aria-label="Rotate left">⟲</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-out aria-label="Zoom out">−</button>
+        <input type="range" class="cl-ai-ed__zoom" data-cl-ai-ed-zoom min="1" max="4" step="0.01" value="1" aria-label="Zoom">
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-in aria-label="Zoom in">+</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-r aria-label="Rotate right">⟳</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-reset aria-label="Reset">Reset</button>
+      </div>
+
+      <div class="cl-ai-ed__actions">
+        <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--ghost" data-cl-ai-ed-cancel>Cancel</button>
+        <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--primary" data-cl-ai-ed-confirm>Use this image</button>
+      </div>
     </div>
   </div>
 

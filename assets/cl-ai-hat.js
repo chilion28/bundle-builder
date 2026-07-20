@@ -109,23 +109,20 @@
    * ===================================================================== */
   var drop = $('[data-cl-ai-drop]');
   var fileInput = $('[data-cl-ai-file]');
-  var idle = $('[data-cl-ai-drop-idle]');
-  var preview = $('[data-cl-ai-drop-preview]');
-  var uploadedImg = $('[data-cl-ai-uploaded]');
+  var placed = $('[data-cl-ai-placed]');
+  var pfArt = $('[data-cl-ai-pf-art]');
+  var patchframe = $('[data-cl-ai-patchframe]');
   var uploadStatus = $('[data-cl-ai-upload-status]');
   var qcPanel = $('[data-cl-ai-qc]');
   var qcThumb = $('[data-cl-ai-qc-thumb]');
+  var patch = $('[data-cl-ai-patch]');        // hero "on the hat" overlay
   var qcVerdict = $('[data-cl-ai-qc-verdict]');
   var propArt = $('[data-cl-ai-prop-art]');
   var propScore = $('[data-cl-ai-prop-score]');
 
-  function openPicker() { if (fileInput) fileInput.click(); }
+  function openPicker() { if (fileInput) { fileInput.value = ''; fileInput.click(); } }
   if (drop) {
-    drop.addEventListener('click', function (e) {
-      if (e.target.closest('[data-cl-ai-replace]')) { openPicker(); return; }
-      if (preview && !preview.hidden) return;      // don't reopen when showing result
-      openPicker();
-    });
+    drop.addEventListener('click', openPicker);
     drop.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPicker(); }
     });
@@ -145,40 +142,190 @@
       if (fileInput.files && fileInput.files[0]) handleFile(fileInput.files[0]);
     });
   }
+  // Edit / Replace buttons on the placed preview.
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-cl-ai-replace]')) { openPicker(); }
+    else if (e.target.closest('[data-cl-ai-edit]')) { if (edState.img) openEditor(false); }
+  });
 
   function handleFile(file) {
-    if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) {
-      setStatus('err', 'Please upload a JPG, PNG or WEBP image.');
-      return;
-    }
-    if (file.size > CL_AI_HAT.maxFileMB * 1024 * 1024) {
-      setStatus('err', 'File is over ' + CL_AI_HAT.maxFileMB + 'MB. Please use a smaller image.');
-      return;
-    }
+    if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) { setStatus('err', 'Please upload a JPG, PNG or WEBP image.'); return; }
+    if (file.size > CL_AI_HAT.maxFileMB * 1024 * 1024) { setStatus('err', 'File is over ' + CL_AI_HAT.maxFileMB + 'MB.'); return; }
     var localUrl = URL.createObjectURL(file);
-    showPreview(localUrl);
-
-    // Read intrinsic pixel size for the quality check.
     var img = new Image();
     img.onload = function () {
-      runQualityCheck(file, img.naturalWidth, img.naturalHeight);
-      uploadFile(file, localUrl);
+      edState.img = img; edState.file = file; edState.natW = img.naturalWidth; edState.natH = img.naturalHeight;
+      edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0;
+      runQualityCheck(file, img.naturalWidth, img.naturalHeight); // quality reflects the SOURCE image
+      openEditor(true);
     };
     img.onerror = function () { setStatus('err', 'Could not read that image. Try another file.'); };
     img.src = localUrl;
   }
 
-  function showPreview(url) {
-    if (idle) idle.hidden = true;
-    if (preview) preview.hidden = false;
-    if (uploadedImg) uploadedImg.src = url;
-    if (qcThumb) qcThumb.src = url;
-    if (qcPanel) qcPanel.hidden = false;
-  }
   function setStatus(kind, msg) {
     if (!uploadStatus) return;
     uploadStatus.className = 'cl-ai-b__drop-status is-' + kind;
     uploadStatus.textContent = msg;
+  }
+
+  /* =====================================================================
+   * CROP / ZOOM / ROTATE EDITOR (self-contained canvas — no library)
+   * ===================================================================== */
+  var editor = $('[data-cl-ai-editor]');
+  // Portal the modal to <body> so position:fixed is measured against the viewport,
+  // not trapped by any ancestor with a transform/filter/contain (theme wrappers).
+  if (editor && editor.parentNode !== document.body) document.body.appendChild(editor);
+  var edCanvas = $('[data-cl-ai-ed-canvas]');
+  var edStage = $('[data-cl-ai-ed-stage]');
+  var edMask = $('[data-cl-ai-ed-mask]');
+  var edZoom = $('[data-cl-ai-ed-zoom]');
+  var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
+                  baseScale: 1, maskW: 0, maskH: 0 };
+
+  function isSquareShape() { var s = String(state.shape).toLowerCase(); return s === 'circle' || s === 'hexagon'; }
+
+  function computeMask() {
+    var W = edStage.clientWidth, H = edStage.clientHeight;
+    if (isSquareShape()) { edState.maskW = W * 0.70; edState.maskH = edState.maskW; }
+    else { edState.maskW = W * 0.82; edState.maskH = edState.maskW * (CL_AI_HAT.patchHeightIn / CL_AI_HAT.patchWidthIn); }
+    var rot = ((edState.rotation % 360) + 360) % 360;
+    var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
+    var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
+    edState.baseScale = Math.max(edState.maskW / iw, edState.maskH / ih); // cover the mask
+  }
+
+  function clampOffset() {
+    var rot = ((edState.rotation % 360) + 360) % 360;
+    var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
+    var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
+    var s = edState.baseScale * edState.scale;
+    var maxX = Math.max(0, (iw * s - edState.maskW) / 2);
+    var maxY = Math.max(0, (ih * s - edState.maskH) / 2);
+    edState.offsetX = Math.max(-maxX, Math.min(maxX, edState.offsetX));
+    edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
+  }
+
+  function edDraw() {
+    if (!edState.img) return;
+    var dpr = window.devicePixelRatio || 1;
+    var W = edStage.clientWidth, H = edStage.clientHeight;
+    edCanvas.width = W * dpr; edCanvas.height = H * dpr;
+    edCanvas.style.width = W + 'px'; edCanvas.style.height = H + 'px';
+    var ctx = edCanvas.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    clampOffset();
+    ctx.save();
+    ctx.translate(W / 2 + edState.offsetX, H / 2 + edState.offsetY);
+    ctx.rotate(edState.rotation * Math.PI / 180);
+    var s = edState.baseScale * edState.scale;
+    ctx.scale(s, s);
+    ctx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
+    ctx.restore();
+  }
+
+  function openEditor(isNew) {
+    if (!editor) return;
+    if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; }
+    if (edMask) edMask.setAttribute('data-shape', String(state.shape).toLowerCase());
+    if (edZoom) edZoom.value = edState.scale;
+    editor.hidden = false;
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(function () { computeMask(); edDraw(); });
+  }
+  function closeEditor() { if (editor) editor.hidden = true; document.body.style.overflow = ''; }
+
+  if (editor) {
+    // Drag to pan.
+    var dragging = false, lastX = 0, lastY = 0;
+    edStage.addEventListener('pointerdown', function (e) { dragging = true; lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId); });
+    edStage.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
+      lastX = e.clientX; lastY = e.clientY; edDraw();
+    });
+    edStage.addEventListener('pointerup', function () { dragging = false; });
+    edStage.addEventListener('pointercancel', function () { dragging = false; });
+    edStage.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      edState.scale = Math.max(1, Math.min(4, edState.scale * (e.deltaY < 0 ? 1.08 : 0.92)));
+      if (edZoom) edZoom.value = edState.scale; edDraw();
+    }, { passive: false });
+
+    if (edZoom) edZoom.addEventListener('input', function () { edState.scale = parseFloat(edZoom.value); edDraw(); });
+    var zoomBy = function (f) { edState.scale = Math.max(1, Math.min(4, edState.scale * f)); if (edZoom) edZoom.value = edState.scale; edDraw(); };
+    on('[data-cl-ai-ed-zoom-in]', function () { zoomBy(1.12); });
+    on('[data-cl-ai-ed-zoom-out]', function () { zoomBy(0.89); });
+    var rotateBy = function (d) { edState.rotation += d; computeMask(); edDraw(); };
+    on('[data-cl-ai-ed-rotate-l]', function () { rotateBy(-90); });
+    on('[data-cl-ai-ed-rotate-r]', function () { rotateBy(90); });
+    on('[data-cl-ai-ed-reset]', function () { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; if (edZoom) edZoom.value = 1; computeMask(); edDraw(); });
+    $$('[data-cl-ai-ed-cancel]').forEach(function (b) { b.addEventListener('click', closeEditor); });
+    on('[data-cl-ai-ed-confirm]', edConfirm);
+    window.addEventListener('resize', function () { if (!editor.hidden) { computeMask(); edDraw(); } });
+  }
+  function on(sel, fn) { var el = $(sel); if (el) el.addEventListener('click', fn); }
+
+  // Composite the cropped region to a print-res canvas and apply it everywhere.
+  function edConfirm() {
+    var square = isSquareShape();
+    var targetW = square ? 900 : 1200;
+    var targetH = square ? 900 : 675;
+    var out = document.createElement('canvas');
+    out.width = targetW; out.height = targetH;
+    var octx = out.getContext('2d');
+    var outScale = targetW / edState.maskW;   // stage px → output px (mask maps to full output)
+    octx.save();
+    octx.translate(targetW / 2 + edState.offsetX * outScale, targetH / 2 + edState.offsetY * outScale);
+    octx.rotate(edState.rotation * Math.PI / 180);
+    var s = edState.baseScale * edState.scale * outScale;
+    octx.scale(s, s);
+    octx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
+    octx.restore();
+
+    var dataUrl = out.toDataURL('image/png');
+    applyArtwork(dataUrl);
+    if (out.toBlob) { out.toBlob(function (blob) { uploadBlob(blob); }, 'image/png'); }
+    else { uploadBlob(null); }
+    closeEditor();
+  }
+
+  // Show the composited artwork in the patch frame, hero overlay and QC thumb.
+  function applyArtwork(url) {
+    if (drop) drop.hidden = true;
+    if (placed) placed.hidden = false;
+    if (pfArt) pfArt.style.backgroundImage = 'url("' + url + '")';
+    if (patch) { patch.style.backgroundImage = 'url("' + url + '")'; patch.hidden = false; }
+    if (qcThumb) qcThumb.src = url;
+    if (qcPanel) qcPanel.hidden = false;
+    state.localArt = url;
+    state.artUrl = url; // provisional until Cloudinary returns a hosted URL
+  }
+
+  /* ---- upload the composited PNG (Cloudinary unsigned, or local fallback) ---- */
+  function uploadBlob(blob) {
+    var name = 'ai-hat-' + Date.now() + '.png';
+    if (!cloudinaryReady() || !blob) {
+      state.artUrl = state.localArt;
+      if (propArt) propArt.value = '[local-preview] ' + ((edState.file && edState.file.name) || name);
+      setStatus('warn', 'Preview only — connect Cloudinary to store the file.');
+      return;
+    }
+    setStatus('ok', 'Uploading…');
+    var fd = new FormData();
+    fd.append('file', blob, name);
+    fd.append('upload_preset', CL_AI_HAT.uploadPreset);
+    fetch('https://api.cloudinary.com/v1_1/' + CL_AI_HAT.cloudName + '/image/upload', { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res && res.secure_url) { state.artUrl = res.secure_url; if (propArt) propArt.value = res.secure_url; setStatus('ok', '✓ Artwork uploaded'); }
+        else { throw new Error('no url'); }
+      }).catch(function () {
+        state.artUrl = state.localArt;
+        if (propArt) propArt.value = '[upload-failed] ' + name;
+        setStatus('err', 'Upload failed — we saved a preview. You can still order; we may email you for the file.');
+      });
   }
 
   /* ---- client-side print-quality scoring ---- */
@@ -239,34 +386,6 @@
     if (val) val.textContent = text;
   }
 
-  /* ---- upload (Cloudinary unsigned, or local fallback) ---- */
-  function uploadFile(file, localUrl) {
-    if (!cloudinaryReady()) {
-      // Fallback: keep the local object URL so the full UX is testable.
-      state.artUrl = localUrl;
-      if (propArt) propArt.value = '[local-preview] ' + file.name;
-      setStatus('warn', 'Preview only — connect Cloudinary to store the file.');
-      return;
-    }
-    setStatus('ok', 'Uploading…');
-    var fd = new FormData();
-    fd.append('file', file);
-    fd.append('upload_preset', CL_AI_HAT.uploadPreset);
-    fetch('https://api.cloudinary.com/v1_1/' + CL_AI_HAT.cloudName + '/image/upload', {
-      method: 'POST', body: fd
-    }).then(function (r) { return r.json(); }).then(function (res) {
-      if (res && res.secure_url) {
-        state.artUrl = res.secure_url;
-        if (propArt) propArt.value = res.secure_url;
-        setStatus('ok', '✓ Artwork uploaded');
-      } else { throw new Error('no url'); }
-    }).catch(function () {
-      state.artUrl = localUrl;
-      if (propArt) propArt.value = '[upload-failed] ' + file.name;
-      setStatus('err', 'Upload failed — we saved a preview. You can still order; we may email you for the file.');
-    });
-  }
-
   /* =====================================================================
    * STEP 3 — options
    * ===================================================================== */
@@ -297,7 +416,11 @@
   });
   bindRadioGroup('[data-cl-ai-shape]', function (val) {
     state.shape = val;
+    var sl = String(val).toLowerCase();
     var prop = $('[data-cl-ai-prop-shape]'); if (prop) prop.value = val;
+    if (patch) patch.setAttribute('data-shape', sl);            // hero overlay
+    if (patchframe) patchframe.setAttribute('data-shape', sl);  // Step-2 patch frame
+    if (editor && !editor.hidden) { edMask.setAttribute('data-shape', sl); computeMask(); edDraw(); }
   });
 
   // Map Style/Color selection to a Shopify variant id.
