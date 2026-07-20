@@ -1,0 +1,232 @@
+{%- comment -%}
+  cl-ai-hat-builder — Steps 2–4 of the Create-Your-AI-Hat flow.
+  Reusable: rendered by sections/cl-ai-hat.liquid, and safe to drop into a
+  GemPages custom-code block (it loads its own CSS/JS).
+
+  Params:
+    cta_label     — add-to-cart button label
+    price_display — product price in cents (for the button)
+
+  Options model (see memory [[pack-builder-project]] conventions):
+    · Style + Color  → real Shopify variants (option names matched case-insensitively)
+    · Patch Shape / Custom Text / Artwork URL / Quality Score → line-item properties
+  If the product has no matching Style/Color options (e.g. not built yet), we fall
+  back to the mockup defaults and the JS resolves the first available variant.
+{%- endcomment -%}
+
+{{ 'cl-ai-hat.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} Locate Style / Color options on the product {%- endcomment -%}
+{%- assign style_opt = null -%}
+{%- assign color_opt = null -%}
+{%- for opt in product.options_with_values -%}
+  {%- assign dn = opt.name | downcase -%}
+  {%- if dn contains 'style' -%}{%- assign style_opt = opt -%}{%- endif -%}
+  {%- if dn contains 'color' or dn contains 'colour' -%}{%- assign color_opt = opt -%}{%- endif -%}
+{%- endfor -%}
+
+<div class="cl-ai-b" data-cl-ai-builder>
+
+  {%- comment -%} ===== STEP 2 — UPLOAD ===== {%- endcomment -%}
+  <div class="cl-ai__step">
+    <div class="cl-ai__step-head">
+      <span class="cl-ai__step-num">STEP 2</span>
+      <h2 class="cl-ai__step-title">UPLOAD YOUR AI ARTWORK</h2>
+    </div>
+
+    <div class="cl-ai-b__drop" data-cl-ai-drop tabindex="0" role="button"
+         aria-label="Upload your artwork — drag and drop or choose a file">
+      <input type="file" class="cl-ai-b__file" data-cl-ai-file
+             accept="image/png,image/jpeg,image/webp" hidden>
+      <div class="cl-ai-b__drop-idle" data-cl-ai-drop-idle>
+        <span class="cl-ai-b__drop-icon" aria-hidden="true">⤒</span>
+        <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
+        <p class="cl-ai-b__drop-or">or</p>
+        <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
+        <p class="cl-ai-b__drop-note">JPG, PNG, WEBP up to 25MB</p>
+      </div>
+      <div class="cl-ai-b__drop-preview" data-cl-ai-drop-preview hidden>
+        <img data-cl-ai-uploaded alt="Your uploaded artwork">
+        <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
+        <button type="button" class="cl-ai-b__replace" data-cl-ai-replace>Replace image</button>
+      </div>
+    </div>
+
+    <div class="cl-ai-b__tips">
+      <span class="cl-ai-b__tips-title">💡 TIPS FOR BEST RESULTS</span>
+      <ul role="list">
+        <li>Use the prompt above</li>
+        <li>Keep main subject centered</li>
+        <li>Avoid small text</li>
+        <li>High detail works best</li>
+        <li>We'll check it before printing!</li>
+      </ul>
+    </div>
+  </div>
+
+  {%- comment -%} ===== STEP 3 — CUSTOMIZE (form) ===== {%- endcomment -%}
+  {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-cl-ai-variant-id>
+    <input type="hidden" name="properties[Patch Shape]" value="Rectangle" data-cl-ai-prop-shape>
+    <input type="hidden" name="properties[Custom Text]" value="" data-cl-ai-prop-text>
+    <input type="hidden" name="properties[_Artwork URL]" value="" data-cl-ai-prop-art>
+    <input type="hidden" name="properties[_Quality Score]" value="" data-cl-ai-prop-score>
+
+    <div class="cl-ai__step">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP 3</span>
+        <h2 class="cl-ai__step-title">CUSTOMIZE YOUR HAT</h2>
+      </div>
+
+      {%- comment -%} Style {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Style: <span data-cl-ai-style-label>{% if style_opt %}{{ style_opt.selected_value }}{% else %}Trucker{% endif %}</span></label>
+        <div class="cl-ai-b__pills" data-cl-ai-styles role="radiogroup" aria-label="Style">
+          {%- if style_opt -%}
+            {%- for val in style_opt.values -%}
+              <button type="button" class="cl-ai-b__pill{% if val == style_opt.selected_value %} is-active{% endif %}"
+                      data-cl-ai-style data-value="{{ val | escape }}" role="radio"
+                      aria-checked="{% if val == style_opt.selected_value %}true{% else %}false{% endif %}">{{ val }}</button>
+            {%- endfor -%}
+          {%- else -%}
+            {%- assign defaults = 'Snapback,Trucker,Flex Fit' | split: ',' -%}
+            {%- for val in defaults -%}
+              <button type="button" class="cl-ai-b__pill{% if val == 'Trucker' %} is-active{% endif %}"
+                      data-cl-ai-style data-value="{{ val }}" role="radio"
+                      aria-checked="{% if val == 'Trucker' %}true{% else %}false{% endif %}">{{ val }}</button>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Color {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Color: <span data-cl-ai-color-label>{% if color_opt %}{{ color_opt.selected_value }}{% else %}Black{% endif %}</span></label>
+        <div class="cl-ai-b__swatches" data-cl-ai-colors role="radiogroup" aria-label="Color">
+          {%- if color_opt -%}
+            {%- for val in color_opt.values -%}
+              {%- comment -%} Find a representative variant image for this colour (theme's `variant_image` swatch pattern) {%- endcomment -%}
+              {%- assign swatch_img = null -%}
+              {%- for v in product.variants -%}
+                {%- if v.options contains val and v.image -%}{%- assign swatch_img = v.image -%}{%- break -%}{%- endif -%}
+              {%- endfor -%}
+              <button type="button" class="cl-ai-b__swatch{% if swatch_img %} cl-ai-b__swatch--img{% endif %}{% if val == color_opt.selected_value %} is-active{% endif %}"
+                      data-cl-ai-color data-value="{{ val | escape }}" role="radio" title="{{ val | escape }}"
+                      {% if swatch_img %}data-swatch-img="{{ swatch_img | image_url: width: 900 }}"{% endif %}
+                      aria-checked="{% if val == color_opt.selected_value %}true{% else %}false{% endif %}">
+                {%- if swatch_img -%}
+                  <img class="cl-ai-b__swatch-img" src="{{ swatch_img | image_url: width: 120 }}" alt="{{ val | escape }}" width="120" height="120" loading="lazy">
+                {%- else -%}
+                  <span class="cl-ai-b__swatch-chip" data-color-name="{{ val | escape }}"></span>
+                {%- endif -%}
+              </button>
+            {%- endfor -%}
+          {%- else -%}
+            {%- assign defaults = 'Black,White,Brown,Camo,Olive' | split: ',' -%}
+            {%- for val in defaults -%}
+              <button type="button" class="cl-ai-b__swatch{% if forloop.first %} is-active{% endif %}"
+                      data-cl-ai-color data-value="{{ val }}" role="radio" title="{{ val }}"
+                      aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+                <span class="cl-ai-b__swatch-chip" data-color-name="{{ val }}"></span>
+              </button>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Patch shape (line-item property) {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Patch Shape</label>
+        <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
+          {%- assign shapes = 'Rectangle,Rounded,Circle,Hexagon' | split: ',' -%}
+          {%- for sh in shapes -%}
+            <button type="button" class="cl-ai-b__shape cl-ai-b__shape--{{ sh | downcase }}{% if forloop.first %} is-active{% endif %}"
+                    data-cl-ai-shape data-value="{{ sh }}" role="radio" aria-label="{{ sh }}"
+                    aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+              <span class="cl-ai-b__shape-glyph" aria-hidden="true"></span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- comment -%} Optional text (line-item property) {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label" for="cl-ai-text">Add Text to Your Patch (Optional)</label>
+        <div class="cl-ai-b__text-wrap">
+          <input type="text" id="cl-ai-text" class="cl-ai-b__text" maxlength="12"
+                 placeholder="Enter Text (e.g. WEST COAST)" data-cl-ai-text autocomplete="off">
+          <span class="cl-ai-b__count"><span data-cl-ai-count>0</span> / 12</span>
+        </div>
+      </div>
+
+      {%- comment -%} Quantity {%- endcomment -%}
+      <div class="cl-ai-b__field cl-ai-b__field--qty">
+        <label class="cl-ai-b__label">Quantity</label>
+        <div class="cl-ai-b__qty" data-cl-ai-qty>
+          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-qty-minus aria-label="Decrease quantity">−</button>
+          <input type="number" name="quantity" class="cl-ai-b__qty-input" value="1" min="1" max="99"
+                 data-cl-ai-qty-input inputmode="numeric" aria-label="Quantity">
+          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-qty-plus aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+
+      <button type="submit" class="cl-ai-b__cta" data-cl-ai-cta>
+        <span data-cl-ai-cta-label>{{ cta_label | default: 'ADD TO CART' }}</span>
+        <span class="cl-ai-b__cta-price"> · <span data-cl-ai-cta-price>{{ price_display | money }}</span></span>
+      </button>
+
+      <ul class="cl-ai-b__reassure" role="list">
+        <li>↺ 30 Day Returns</li>
+        <li>✓ Satisfaction Guaranteed</li>
+      </ul>
+    </div>
+  {% endform %}
+
+  {%- comment -%} ===== STEP 4 — QUALITY CHECK ===== {%- endcomment -%}
+  <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
+    <div class="cl-ai__step-head">
+      <span class="cl-ai__step-num">STEP 4</span>
+      <h2 class="cl-ai__step-title">PRINT QUALITY CHECK</h2>
+    </div>
+
+    <div class="cl-ai-b__qc-body">
+      <img class="cl-ai-b__qc-thumb" data-cl-ai-qc-thumb alt="Artwork being checked">
+      <ul class="cl-ai-b__qc-list" role="list">
+        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="resolution"></span> Resolution <b data-cl-ai-qc-resolution>—</b></li>
+        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="margins"></span> Safe Margins <b data-cl-ai-qc-margins>—</b></li>
+        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="quality"></span> Print Quality <b data-cl-ai-qc-quality>—</b></li>
+        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="filetype"></span> File Type <b data-cl-ai-qc-filetype>—</b></li>
+      </ul>
+    </div>
+
+    <div class="cl-ai-b__qc-verdict" data-cl-ai-qc-verdict hidden>
+      <span class="cl-ai-b__qc-check" aria-hidden="true">✓</span>
+      <strong data-cl-ai-qc-verdict-title>READY TO PRINT!</strong>
+      <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
+    </div>
+  </div>
+
+  {%- comment -%} Variant data for the JS (Style|Color → variant id) {%- endcomment -%}
+  <script type="application/json" data-cl-ai-hat-data>
+  {
+    "productId": {{ product.id | json }},
+    "styleOptionIndex": {% if style_opt %}{{ style_opt.position }}{% else %}0{% endif %},
+    "colorOptionIndex": {% if color_opt %}{{ color_opt.position }}{% else %}0{% endif %},
+    "moneyFormat": {{ shop.money_format | json }},
+    "variants": [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id }},
+          "available": {{ v.available }},
+          "price": {{ v.price }},
+          "option1": {{ v.option1 | json }},
+          "option2": {{ v.option2 | json }},
+          "option3": {{ v.option3 | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+</div>
+
+<script src="{{ 'cl-ai-hat.js' | asset_url }}" defer></script>

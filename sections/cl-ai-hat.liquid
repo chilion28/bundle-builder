@@ -1,0 +1,254 @@
+{%- comment -%}
+  Create Your AI Hat — guided 4-step customizer (native section).
+  Structure mirrors [[fixed-bundle-cart-transform]]:
+    · This section = branded shell (hero, Step 1 prompt, inspiration, badges).
+    · The interactive builder (Steps 2–4: upload, options, quality check, ATC)
+      lives in the reusable snippet `cl-ai-hat-builder` so it can also be dropped
+      into a GemPages custom-code block.
+    · Styling  → assets/cl-ai-hat.css
+    · Behaviour → assets/cl-ai-hat.js  (Cloudinary config block at top of file)
+{%- endcomment -%}
+
+{{ 'cl-ai-hat.css' | asset_url | stylesheet_tag }}
+
+{%- assign price_display = product.price | default: 3499 -%}
+
+<section class="cl-ai" data-cl-ai-hat data-product-id="{{ product.id }}">
+
+  {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
+  <div class="cl-ai__hero">
+    <div class="cl-ai__hero-copy">
+      {%- if section.settings.hero_badge != blank -%}
+        <span class="cl-ai__hero-badge">{{ section.settings.hero_badge }}</span>
+      {%- endif -%}
+      <h1 class="cl-ai__hero-title">
+        {{ section.settings.hero_title | default: 'CREATE YOUR' }}
+        <span class="cl-ai__hero-accent">{{ section.settings.hero_accent | default: 'AI HAT' }}</span>
+      </h1>
+      <p class="cl-ai__hero-tagline">{{ section.settings.hero_tagline | default: 'Turn your imagination into wearable art.' }}</p>
+      <p class="cl-ai__hero-sub">{{ section.settings.hero_sub | default: "Generate your artwork in ChatGPT in minutes—then we'll professionally print it on a premium patch." }}</p>
+
+      <div class="cl-ai__hero-reviews">
+        <span class="cl-ai__stars" aria-hidden="true">★★★★★</span>
+        <span>{{ section.settings.reviews_text | default: '2,500+ Verified Reviews' }}</span>
+      </div>
+
+      <ul class="cl-ai__hero-usps" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'usp' -%}
+            <li {{ block.shopify_attributes }}>
+              <span class="cl-ai__usp-icon">{{ block.settings.icon | default: '✔' }}</span>
+              <strong>{{ block.settings.title }}</strong>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    <div class="cl-ai__hero-media">
+      {%- if product.images.size > 0 -%}
+        <div class="cl-ai__gallery" data-cl-ai-gallery>
+          <img class="cl-ai__gallery-main" data-cl-ai-gallery-main
+               src="{{ product.featured_image | image_url: width: 900 }}"
+               alt="{{ product.title | escape }}" width="900" height="900">
+          {%- if product.images.size > 1 -%}
+            <ul class="cl-ai__gallery-thumbs" role="list">
+              {%- for img in product.images limit: 5 -%}
+                <li>
+                  <button type="button" class="cl-ai__thumb{% if forloop.first %} is-active{% endif %}"
+                          data-cl-ai-thumb data-full="{{ img | image_url: width: 900 }}"
+                          aria-label="View image {{ forloop.index }}">
+                    <img src="{{ img | image_url: width: 160 }}" alt="" width="160" height="160" loading="lazy">
+                  </button>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </div>
+      {%- else -%}
+        <div class="cl-ai__gallery cl-ai__gallery--placeholder" data-cl-ai-gallery>
+          <div class="cl-ai__gallery-main cl-ai__gallery-main--empty" data-cl-ai-gallery-main>
+            Hat preview
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} ---------- STEPS GRID ---------- {%- endcomment -%}
+  <div class="cl-ai__grid">
+
+    {%- comment -%} STEP 1 — prompt {%- endcomment -%}
+    <div class="cl-ai__col cl-ai__col--left">
+      <div class="cl-ai__step">
+        <div class="cl-ai__step-head">
+          <span class="cl-ai__step-num">STEP 1</span>
+          <h2 class="cl-ai__step-title">{{ section.settings.step1_title | default: 'GENERATE YOUR AI ARTWORK' }}</h2>
+        </div>
+
+        <div class="cl-ai__prompt-head">
+          <span class="cl-ai__prompt-label">
+            <span class="cl-ai__gpt-mark" aria-hidden="true">◍</span>
+            Copy this prompt into ChatGPT
+          </span>
+          <button type="button" class="cl-ai__copy-btn" data-cl-ai-copy>
+            <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
+          </button>
+        </div>
+
+        <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ section.settings.prompt_text | default: 'Create artwork designed for a 4″ × 2.25″ landscape hat patch.
+This is artwork only, NOT a patch mockup.
+The artwork should completely fill the canvas.
+DO NOT include:
+- Stitching
+- Embroidery texture
+- Leather texture
+- Borders
+- Mockups
+- Shadows
+
+Keep the artwork centered.
+Leave a 10% safe margin.
+Use bold shapes and strong contrast.
+Avoid tiny details.
+Now create:' }}</pre>
+
+        <p class="cl-ai__prompt-hint">↳ {{ section.settings.prompt_hint | default: 'Add your idea after “Now create:”' }}</p>
+        {%- if section.settings.prompt_example != blank -%}
+          <div class="cl-ai__prompt-example">
+            <span class="cl-ai__example-tag">EXAMPLE</span>
+            <em>{{ section.settings.prompt_example }}</em>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} STEPS 2–4 — interactive builder (reusable snippet) {%- endcomment -%}
+    <div class="cl-ai__col cl-ai__col--right">
+      {% render 'cl-ai-hat-builder',
+         cta_label: section.settings.cta_label,
+         price_display: price_display %}
+    </div>
+  </div>
+
+  {%- comment -%} ---------- INSPIRATION GALLERY ---------- {%- endcomment -%}
+  {%- assign has_gallery = false -%}
+  {%- for block in section.blocks -%}{%- if block.type == 'inspiration' -%}{%- assign has_gallery = true -%}{%- endif -%}{%- endfor -%}
+  {%- if has_gallery -%}
+    <div class="cl-ai__inspo">
+      <div class="cl-ai__inspo-head">
+        <h2>{{ section.settings.inspo_title | default: 'AI ART INSPIRATION' }}</h2>
+        {%- if section.settings.gallery_url != blank -%}
+          <a href="{{ section.settings.gallery_url }}" class="cl-ai__inspo-link">VIEW ALL GALLERY →</a>
+        {%- endif -%}
+      </div>
+      <ul class="cl-ai__inspo-grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'inspiration' -%}
+            <li {{ block.shopify_attributes }}>
+              {%- if block.settings.image -%}
+                <img src="{{ block.settings.image | image_url: width: 360 }}"
+                     alt="{{ block.settings.label | escape }}" width="360" height="220" loading="lazy">
+              {%- else -%}
+                <div class="cl-ai__inspo-empty">{{ block.settings.label }}</div>
+              {%- endif -%}
+              <span class="cl-ai__inspo-label">{{ block.settings.label }}</span>
+            </li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} ---------- FOOTER VALUE PROPS ---------- {%- endcomment -%}
+  <ul class="cl-ai__valueprops" role="list">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'valueprop' -%}
+        <li {{ block.shopify_attributes }}>
+          <span class="cl-ai__vp-icon" aria-hidden="true">{{ block.settings.icon | default: '◈' }}</span>
+          <div>
+            <strong>{{ block.settings.title }}</strong>
+            <span>{{ block.settings.text }}</span>
+          </div>
+        </li>
+      {%- endif -%}
+    {%- endfor -%}
+  </ul>
+
+</section>
+
+{% schema %}
+{
+  "name": "Create Your AI Hat",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_badge", "label": "Hero badge", "default": "NEW" },
+    { "type": "text", "id": "hero_title", "label": "Hero title (line 1)", "default": "CREATE YOUR" },
+    { "type": "text", "id": "hero_accent", "label": "Hero accent (line 2)", "default": "AI HAT" },
+    { "type": "text", "id": "hero_tagline", "label": "Tagline", "default": "Turn your imagination into wearable art." },
+    { "type": "textarea", "id": "hero_sub", "label": "Hero subtext", "default": "Generate your artwork in ChatGPT in minutes—then we'll professionally print it on a premium patch." },
+    { "type": "text", "id": "reviews_text", "label": "Reviews text", "default": "2,500+ Verified Reviews" },
+
+    { "type": "header", "content": "Step 1 — Prompt" },
+    { "type": "text", "id": "step1_title", "label": "Step 1 title", "default": "GENERATE YOUR AI ARTWORK" },
+    { "type": "textarea", "id": "prompt_text", "label": "ChatGPT prompt", "info": "Shown in the copy box." },
+    { "type": "text", "id": "prompt_hint", "label": "Prompt hint", "default": "Add your idea after “Now create:”" },
+    { "type": "textarea", "id": "prompt_example", "label": "Prompt example", "default": "A Baja race truck kicking up dust in the desert at sunset, vintage poster style." },
+
+    { "type": "header", "content": "Builder" },
+    { "type": "text", "id": "cta_label", "label": "Add-to-cart label", "default": "ADD TO CART" },
+
+    { "type": "header", "content": "Inspiration gallery" },
+    { "type": "text", "id": "inspo_title", "label": "Inspiration title", "default": "AI ART INSPIRATION" },
+    { "type": "url", "id": "gallery_url", "label": "View-all gallery link" }
+  ],
+  "blocks": [
+    {
+      "type": "usp",
+      "name": "Hero USP",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji/char)", "default": "✔" },
+        { "type": "text", "id": "title", "label": "Title", "default": "PREMIUM QUALITY" }
+      ]
+    },
+    {
+      "type": "inspiration",
+      "name": "Inspiration item",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Artwork" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Vintage Bear" }
+      ]
+    },
+    {
+      "type": "valueprop",
+      "name": "Footer value prop",
+      "settings": [
+        { "type": "text", "id": "icon", "label": "Icon (emoji/char)", "default": "◈" },
+        { "type": "text", "id": "title", "label": "Title", "default": "DESIGNED BY YOU" },
+        { "type": "text", "id": "text", "label": "Text", "default": "Use AI to create something 100% original." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Create Your AI Hat",
+      "blocks": [
+        { "type": "usp", "settings": { "icon": "🛡", "title": "PREMIUM QUALITY" } },
+        { "type": "usp", "settings": { "icon": "💧", "title": "WATER RESISTANT" } },
+        { "type": "usp", "settings": { "icon": "✳", "title": "LASER ENGRAVED" } },
+        { "type": "usp", "settings": { "icon": "🚚", "title": "FAST SHIPPING" } },
+        { "type": "inspiration", "settings": { "label": "Vintage Bear" } },
+        { "type": "inspiration", "settings": { "label": "Baja Racer" } },
+        { "type": "inspiration", "settings": { "label": "Golden Retriever" } },
+        { "type": "inspiration", "settings": { "label": "Bass Fishing" } },
+        { "type": "inspiration", "settings": { "label": "Desert Skull" } },
+        { "type": "inspiration", "settings": { "label": "Eagle & Flag" } },
+        { "type": "valueprop", "settings": { "icon": "✅", "title": "DESIGNED BY YOU", "text": "Use AI to create something 100% original." } },
+        { "type": "valueprop", "settings": { "icon": "⚙", "title": "PROFESSIONALLY MADE", "text": "We laser engrave your art for a premium look." } },
+        { "type": "valueprop", "settings": { "icon": "🛡", "title": "BUILT TO LAST", "text": "Water resistant & made for everyday wear." } },
+        { "type": "valueprop", "settings": { "icon": "❤", "title": "MADE FOR YOU", "text": "Every hat is custom printed just for you." } }
+      ]
+    }
+  ]
+}
+{% endschema %}
