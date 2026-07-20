@@ -48,14 +48,9 @@
     <div class="cl-ai__hero-media">
       {%- if product.images.size > 0 -%}
         <div class="cl-ai__gallery" data-cl-ai-gallery>
-          {%- comment -%} Live preview stage: base hat photo + artwork patch overlay {%- endcomment -%}
-          <div class="cl-ai__stage" data-cl-ai-stage
-               style="--patch-left:{{ section.settings.patch_left | default: 50 }}%;--patch-top:{{ section.settings.patch_top | default: 56 }}%;--patch-width:{{ section.settings.patch_width | default: 40 }}%;">
-            <img class="cl-ai__gallery-main" data-cl-ai-gallery-main
-                 src="{{ product.featured_image | image_url: width: 900 }}"
-                 alt="{{ product.title | escape }}" width="900" height="900">
-            <div class="cl-ai__patch" data-cl-ai-patch data-shape="rectangle" hidden aria-hidden="true"></div>
-          </div>
+          <img class="cl-ai__gallery-main" data-cl-ai-gallery-main
+               src="{{ product.featured_image | image_url: width: 900 }}"
+               alt="{{ product.title | escape }}" width="900" height="900">
           {%- if product.images.size > 1 -%}
             <ul class="cl-ai__gallery-thumbs" role="list">
               {%- for img in product.images limit: 5 -%}
@@ -147,10 +142,6 @@
     { "type": "textarea", "id": "hero_sub", "label": "Hero subtext", "default": "Generate your artwork in ChatGPT in minutes—then we'll professionally print it on a premium patch." },
     { "type": "text", "id": "reviews_text", "label": "Reviews text", "default": "2,500+ Verified Reviews" },
 
-    { "type": "header", "content": "Live patch preview", "info": "Position the artwork overlay to line up with the patch in your hat photo." },
-    { "type": "range", "id": "patch_left", "label": "Patch centre — horizontal (%)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 50 },
-    { "type": "range", "id": "patch_top", "label": "Patch centre — vertical (%)", "min": 0, "max": 100, "step": 1, "unit": "%", "default": 56 },
-    { "type": "range", "id": "patch_width", "label": "Patch width (% of image)", "min": 10, "max": 90, "step": 1, "unit": "%", "default": 40 },
 
     { "type": "header", "content": "Step 1 — Prompt" },
     { "type": "text", "id": "step1_title", "label": "Step 1 title", "default": "GENERATE YOUR AI ARTWORK" },
