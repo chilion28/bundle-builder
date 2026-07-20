@@ -187,16 +187,28 @@
     var f = document.querySelector('.cl-ai-pf__frame[data-frame="' + String(state.shape).toLowerCase() + '"]');
     return f ? f.getAttribute('src') : '';
   }
+  // Pixel-perfect window masks (derived from the frames): apply to the preview art
+  // and preload for the editor's canvas clip.
+  var maskUrl = function (shape) { return patchframe ? patchframe.getAttribute('data-mask-' + shape) : null; };
+  function setPatchMask() {
+    if (!pfArt) return;
+    var url = maskUrl(String(state.shape).toLowerCase());
+    if (url) { pfArt.style.webkitMaskImage = 'url("' + url + '")'; pfArt.style.maskImage = 'url("' + url + '")'; }
+  }
+  var edMasks = {};
+  ['rectangle', 'rounded', 'circle', 'hexagon'].forEach(function (s) {
+    var u = maskUrl(s); if (u) { var im = new Image(); im.src = u; edMasks[s] = im; }
+  });
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
                   baseScale: 1, maskW: 0, maskH: 0 };
 
   // Each shape's artwork-window size as a fraction of the 1200×1200 frame PNG
   // (measured from the transparent windows). Drives editor aspect + output dims.
   var WINDOW = {
-    rectangle: { w: 0.930, h: 0.495 },
-    rounded:   { w: 0.926, h: 0.735 },
-    circle:    { w: 0.923, h: 0.923 },
-    hexagon:   { w: 0.939, h: 0.513 }
+    rectangle: { w: 0.9317, h: 0.4958 },
+    rounded:   { w: 0.9267, h: 0.7358 },
+    circle:    { w: 0.9233, h: 0.9233 },
+    hexagon:   { w: 0.9400, h: 0.5133 }
   };
   function shapeAspect() { var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle; return win.w / win.h; }
 
@@ -280,9 +292,21 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     clampOffset();
-    // Dimmed full image (shows what's cropped out), then bright inside the shape window.
+    // Dimmed full image (shows what's cropped out), then bright inside the window.
     ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore();
-    ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
+    var mimg = edMasks[String(state.shape).toLowerCase()];
+    if (mimg && mimg.complete && mimg.naturalWidth) {
+      // Pixel-perfect: paint bright image on an offscreen, keep only the window via the mask.
+      var off = document.createElement('canvas'); off.width = edCanvas.width; off.height = edCanvas.height;
+      var octx = off.getContext('2d'); octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      paintImage(octx, W, H);
+      octx.globalCompositeOperation = 'destination-in';
+      octx.drawImage(mimg, W / 2 - edState.maskW / 2, H / 2 - edState.maskH / 2, edState.maskW, edState.maskH);
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(off, 0, 0); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    } else {
+      // Fallback (mask not loaded yet): clip via traced shape path.
+      ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
+    }
   }
 
   function openEditor(isNew) {
@@ -480,8 +504,10 @@
     var prop = $('[data-cl-ai-prop-shape]'); if (prop) prop.value = val;
     if (patch) patch.setAttribute('data-shape', sl);            // hero overlay
     if (patchframe) patchframe.setAttribute('data-shape', sl);  // Step-2 patch frame
+    setPatchMask();
     if (editor && !editor.hidden) { edMask.setAttribute('data-shape', sl); computeMask(); edDraw(); }
   });
+  setPatchMask(); // initial
 
   // Map Style/Color selection to a Shopify variant id.
   var variantIdInput = $('[data-cl-ai-variant-id]');

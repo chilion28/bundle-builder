@@ -125,13 +125,14 @@
 .cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__frame[data-frame="rounded"],
 .cl-ai-pf[data-shape="circle"]    .cl-ai-pf__frame[data-frame="circle"],
 .cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"]{display:block}
-.cl-ai-pf__art{position:absolute;z-index:1;background:#f3f4f6 center/cover no-repeat}
-/* Per-shape artwork window (position + clip), measured from each frame PNG */
-.cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__art{left:3.4%;top:25.9%;width:93.1%;height:49.5%;border-radius:4%/8%}
-.cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__art{left:3.7%;top:13.2%;width:92.6%;height:73.5%;border-radius:46%/20%}
-.cl-ai-pf[data-shape="circle"]    .cl-ai-pf__art{left:3.8%;top:3.8%;width:92.3%;height:92.3%;border-radius:50%}
-.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__art{left:3.0%;top:24.1%;width:93.9%;height:51.3%;
-  clip-path:polygon(50% 0%,0% 35%,0% 65%,50% 100%,100% 65%,100% 35%)}
+/* Artwork is clipped by a pixel-perfect mask PNG derived from each frame's window
+   (mask-image set per shape in JS). Positioned to each window's measured bbox. */
+.cl-ai-pf__art{position:absolute;z-index:1;background:#f3f4f6 center/cover no-repeat;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+.cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__art{left:3.42%;top:25.92%;width:93.17%;height:49.58%}
+.cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__art{left:3.67%;top:13.17%;width:92.67%;height:73.58%}
+.cl-ai-pf[data-shape="circle"]    .cl-ai-pf__art{left:3.83%;top:3.83%;width:92.33%;height:92.33%}
+.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__art{left:3.0%;top:24.08%;width:94%;height:51.33%}
 .cl-ai-b__placed-actions{display:flex;gap:10px}
 .cl-ai-b__placed-btn{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;
   font-weight:700;font-size:13px;color:#374151;transition:.15s}

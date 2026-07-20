@@ -116,7 +116,8 @@ Now create:' }}</pre>
         <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
         <h2 class="cl-ai__step-title">YOUR PATCH</h2>
       </div>
-      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle">
+      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle"
+           {%- for sh in shape_list %} data-mask-{{ sh | downcase }}="{{ 'cl-patch-mask-' | append: sh | downcase | append: '.png' | asset_url }}"{% endfor %}>
         <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
         <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
         {%- for sh in shape_list -%}
