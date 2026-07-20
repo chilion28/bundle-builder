@@ -141,8 +141,13 @@
 .cl-ai-ed__stage:active{cursor:grabbing}
 .cl-ai-ed__canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .cl-ai-ed__mask{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:82%;aspect-ratio:4/2.25;box-shadow:0 0 0 9999px rgba(20,24,30,.55);border:2px solid rgba(255,255,255,.9);
+  width:82%;aspect-ratio:4/2.25;box-shadow:0 0 0 9999px rgba(20,24,30,.5);border:0;
   border-radius:6px;pointer-events:none}
+/* Real patch frame overlaid in the editor, sized so its window matches the mask */
+.cl-ai-ed__frame{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:4;pointer-events:none;display:none}
+.cl-ai-ed__frame[src]{display:block}
+.cl-ai-ed__mask-safe{display:none}
 .cl-ai-ed__mask[data-shape="rounded"]{border-radius:18px}
 .cl-ai-ed__mask[data-shape="circle"]{aspect-ratio:1/1;width:70%;border-radius:50%}
 .cl-ai-ed__mask[data-shape="hexagon"]{aspect-ratio:1/1;width:72%;border-radius:0;

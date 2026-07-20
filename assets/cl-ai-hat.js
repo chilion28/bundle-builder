@@ -179,7 +179,13 @@
   var edCanvas = $('[data-cl-ai-ed-canvas]');
   var edStage = $('[data-cl-ai-ed-stage]');
   var edMask = $('[data-cl-ai-ed-mask]');
+  var edFrame = $('[data-cl-ai-ed-frame]');
   var edZoom = $('[data-cl-ai-ed-zoom]');
+  // Reuse the Step-2 preview's frame PNG URLs (already rendered with asset_url).
+  function currentFrameSrc() {
+    var f = document.querySelector('.cl-ai-pf__frame[data-frame="' + String(state.shape).toLowerCase() + '"]');
+    return f ? f.getAttribute('src') : '';
+  }
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
                   baseScale: 1, maskW: 0, maskH: 0 };
 
@@ -200,6 +206,14 @@
     var maskH = maskW / aspect;
     edState.maskW = maskW; edState.maskH = maskH;
     if (edMask) { edMask.style.width = maskW + 'px'; edMask.style.height = maskH + 'px'; }
+    // Size the real frame PNG so its transparent window lines up with the mask.
+    if (edFrame) {
+      var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle;
+      var fw = maskW / win.w;                 // frame width whose window == maskW
+      edFrame.style.width = fw + 'px'; edFrame.style.height = fw + 'px';
+      var src = currentFrameSrc();
+      if (src && edFrame.getAttribute('src') !== src) edFrame.setAttribute('src', src);
+    }
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
