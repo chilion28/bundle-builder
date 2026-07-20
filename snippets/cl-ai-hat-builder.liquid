@@ -30,56 +30,107 @@
 
 <div class="cl-ai-b" data-cl-ai-builder>
 
-  {%- comment -%} ===== STEP 2 — UPLOAD ===== {%- endcomment -%}
-  <div class="cl-ai__step">
-    <div class="cl-ai__step-head">
-      <span class="cl-ai__step-num">STEP 2</span>
-      <h2 class="cl-ai__step-title">UPLOAD YOUR AI ARTWORK</h2>
+  {%- comment -%} ========== LEFT COLUMN — Step 1 prompt + Step 2 upload ========== {%- endcomment -%}
+  <div class="cl-ai-b__left">
+
+    {%- comment -%} ===== STEP 1 — PROMPT ===== {%- endcomment -%}
+    <div class="cl-ai__step">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP 1</span>
+        <h2 class="cl-ai__step-title">{{ step1_title | default: 'GENERATE YOUR AI ARTWORK' }}</h2>
+      </div>
+      <div class="cl-ai__prompt-head">
+        <span class="cl-ai__prompt-label">
+          <span class="cl-ai__gpt-mark" aria-hidden="true">◍</span>
+          Copy this prompt into ChatGPT
+        </span>
+        <button type="button" class="cl-ai__copy-btn" data-cl-ai-copy>
+          <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
+        </button>
+      </div>
+      <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork designed for a 4″ × 2.25″ landscape hat patch.
+This is artwork only, NOT a patch mockup.
+The artwork should completely fill the canvas.
+DO NOT include:
+- Stitching
+- Embroidery texture
+- Leather texture
+- Borders
+- Mockups
+- Shadows
+
+Keep the artwork centered.
+Leave a 10% safe margin.
+Use bold shapes and strong contrast.
+Avoid tiny details.
+Now create:' }}</pre>
+      <p class="cl-ai__prompt-hint">↳ {{ prompt_hint | default: 'Add your idea after “Now create:”' }}</p>
+      {%- if prompt_example != blank -%}
+        <div class="cl-ai__prompt-example">
+          <span class="cl-ai__example-tag">EXAMPLE</span>
+          <em>{{ prompt_example }}</em>
+        </div>
+      {%- endif -%}
     </div>
 
-    <input type="file" class="cl-ai-b__file" data-cl-ai-file
-           accept="image/png,image/jpeg,image/webp" hidden>
+    {%- comment -%} ===== STEP 2 — UPLOAD ===== {%- endcomment -%}
+    <div class="cl-ai__step">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP 2</span>
+        <h2 class="cl-ai__step-title">UPLOAD YOUR AI ARTWORK</h2>
+      </div>
 
-    {%- comment -%} Idle dropzone (before an image is placed) {%- endcomment -%}
-    <div class="cl-ai-b__drop" data-cl-ai-drop tabindex="0" role="button"
-         aria-label="Upload your artwork — drag and drop or choose a file">
-      <div class="cl-ai-b__drop-idle" data-cl-ai-drop-idle>
-        <span class="cl-ai-b__drop-icon" aria-hidden="true">⤒</span>
-        <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
-        <p class="cl-ai-b__drop-or">or</p>
-        <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
-        <p class="cl-ai-b__drop-note">JPG, PNG, WEBP up to 25MB</p>
+      <input type="file" class="cl-ai-b__file" data-cl-ai-file
+             accept="image/png,image/jpeg,image/webp" hidden>
+
+      <div class="cl-ai-b__drop" data-cl-ai-drop tabindex="0" role="button"
+           aria-label="Upload your artwork — drag and drop or choose a file">
+        <div class="cl-ai-b__drop-idle" data-cl-ai-drop-idle>
+          <span class="cl-ai-b__drop-icon" aria-hidden="true">⤒</span>
+          <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
+          <p class="cl-ai-b__drop-or">or</p>
+          <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
+          <p class="cl-ai-b__drop-note">JPG, PNG, WEBP up to 25MB</p>
+        </div>
+      </div>
+
+      <div class="cl-ai-b__tips">
+        <span class="cl-ai-b__tips-title">💡 TIPS FOR BEST RESULTS</span>
+        <ul role="list">
+          <li>Use the prompt above</li>
+          <li>Keep main subject centered</li>
+          <li>Avoid small text</li>
+          <li>High detail works best</li>
+          <li>We'll check it before printing!</li>
+        </ul>
       </div>
     </div>
+  </div>
 
-    {%- comment -%} Patch-frame preview (after the image is placed) {%- endcomment -%}
-    <div class="cl-ai-b__placed" data-cl-ai-placed hidden>
+  {%- comment -%} ========== RIGHT COLUMN — Live preview + Steps 3–4 ========== {%- endcomment -%}
+  <div class="cl-ai-b__right">
+
+    {%- comment -%} ===== LIVE PREVIEW (patch frame, always visible) ===== {%- endcomment -%}
+    <div class="cl-ai__step cl-ai-b__preview">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
+        <h2 class="cl-ai__step-title">YOUR PATCH</h2>
+      </div>
       <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle">
         <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
+        <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
         {%- for sh in shape_list -%}
           <img class="cl-ai-pf__frame" data-frame="{{ sh | downcase }}"
                src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
                alt="{{ sh }} patch frame" loading="lazy">
         {%- endfor -%}
       </div>
-      <div class="cl-ai-b__placed-actions">
+      <div class="cl-ai-b__placed-actions" data-cl-ai-actions hidden>
         <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
         <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-replace>↻ Replace</button>
       </div>
       <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
     </div>
-
-    <div class="cl-ai-b__tips">
-      <span class="cl-ai-b__tips-title">💡 TIPS FOR BEST RESULTS</span>
-      <ul role="list">
-        <li>Use the prompt above</li>
-        <li>Keep main subject centered</li>
-        <li>Avoid small text</li>
-        <li>High detail works best</li>
-        <li>We'll check it before printing!</li>
-      </ul>
-    </div>
-  </div>
 
   {%- comment -%} ===== STEP 3 — CUSTOMIZE (form) ===== {%- endcomment -%}
   {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
@@ -223,6 +274,7 @@
       <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
     </div>
   </div>
+  </div>{%- comment -%} /.cl-ai-b__right {%- endcomment -%}
 
   {%- comment -%} ===== CROP / ZOOM / ROTATE EDITOR (modal) ===== {%- endcomment -%}
   <div class="cl-ai-ed" data-cl-ai-editor hidden role="dialog" aria-modal="true" aria-label="Position your artwork">

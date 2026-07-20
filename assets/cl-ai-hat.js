@@ -109,7 +109,8 @@
    * ===================================================================== */
   var drop = $('[data-cl-ai-drop]');
   var fileInput = $('[data-cl-ai-file]');
-  var placed = $('[data-cl-ai-placed]');
+  var actions = $('[data-cl-ai-actions]');
+  var pfHint = $('[data-cl-ai-pf-hint]');
   var pfArt = $('[data-cl-ai-pf-art]');
   var patchframe = $('[data-cl-ai-patchframe]');
   var uploadStatus = $('[data-cl-ai-upload-status]');
@@ -318,8 +319,8 @@
 
   // Show the composited artwork in the patch frame, hero overlay and QC thumb.
   function applyArtwork(url) {
-    if (drop) drop.hidden = true;
-    if (placed) placed.hidden = false;
+    if (actions) actions.hidden = false;      // reveal Edit / Replace
+    if (pfHint) pfHint.style.display = 'none'; // hide the empty-frame hint
     if (pfArt) pfArt.style.backgroundImage = 'url("' + url + '")';
     if (patch) { patch.style.backgroundImage = 'url("' + url + '")'; patch.hidden = false; }
     if (qcThumb) qcThumb.src = url;

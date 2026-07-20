@@ -80,61 +80,14 @@
     </div>
   </div>
 
-  {%- comment -%} ---------- STEPS GRID ---------- {%- endcomment -%}
-  <div class="cl-ai__grid">
-
-    {%- comment -%} STEP 1 — prompt {%- endcomment -%}
-    <div class="cl-ai__col cl-ai__col--left">
-      <div class="cl-ai__step">
-        <div class="cl-ai__step-head">
-          <span class="cl-ai__step-num">STEP 1</span>
-          <h2 class="cl-ai__step-title">{{ section.settings.step1_title | default: 'GENERATE YOUR AI ARTWORK' }}</h2>
-        </div>
-
-        <div class="cl-ai__prompt-head">
-          <span class="cl-ai__prompt-label">
-            <span class="cl-ai__gpt-mark" aria-hidden="true">◍</span>
-            Copy this prompt into ChatGPT
-          </span>
-          <button type="button" class="cl-ai__copy-btn" data-cl-ai-copy>
-            <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
-          </button>
-        </div>
-
-        <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ section.settings.prompt_text | default: 'Create artwork designed for a 4″ × 2.25″ landscape hat patch.
-This is artwork only, NOT a patch mockup.
-The artwork should completely fill the canvas.
-DO NOT include:
-- Stitching
-- Embroidery texture
-- Leather texture
-- Borders
-- Mockups
-- Shadows
-
-Keep the artwork centered.
-Leave a 10% safe margin.
-Use bold shapes and strong contrast.
-Avoid tiny details.
-Now create:' }}</pre>
-
-        <p class="cl-ai__prompt-hint">↳ {{ section.settings.prompt_hint | default: 'Add your idea after “Now create:”' }}</p>
-        {%- if section.settings.prompt_example != blank -%}
-          <div class="cl-ai__prompt-example">
-            <span class="cl-ai__example-tag">EXAMPLE</span>
-            <em>{{ section.settings.prompt_example }}</em>
-          </div>
-        {%- endif -%}
-      </div>
-    </div>
-
-    {%- comment -%} STEPS 2–4 — interactive builder (reusable snippet) {%- endcomment -%}
-    <div class="cl-ai__col cl-ai__col--right">
-      {% render 'cl-ai-hat-builder',
-         cta_label: section.settings.cta_label,
-         price_display: price_display %}
-    </div>
-  </div>
+  {%- comment -%} ---------- STEPS 1–4 — interactive builder (owns the 2-col layout) ---------- {%- endcomment -%}
+  {% render 'cl-ai-hat-builder',
+     cta_label: section.settings.cta_label,
+     price_display: price_display,
+     step1_title: section.settings.step1_title,
+     prompt_text: section.settings.prompt_text,
+     prompt_hint: section.settings.prompt_hint,
+     prompt_example: section.settings.prompt_example %}
 
   {%- comment -%} ---------- INSPIRATION GALLERY ---------- {%- endcomment -%}
   {%- assign has_gallery = false -%}
