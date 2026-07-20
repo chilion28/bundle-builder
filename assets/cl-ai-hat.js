@@ -157,6 +157,8 @@
   var patch = $('[data-cl-ai-patch]');        // hero "on the hat" overlay
   var qcVerdict = $('[data-cl-ai-qc-verdict]');
   var propArt = $('[data-cl-ai-prop-art]');
+  var propOrig = $('[data-cl-ai-prop-orig]');
+  var propPdf = $('[data-cl-ai-prop-pdf]');
   var propScore = $('[data-cl-ai-prop-score]');
 
   function openPicker() { if (fileInput) { fileInput.value = ''; fileInput.click(); } }
@@ -392,7 +394,8 @@
   // Composite the cropped region to a print-res canvas and apply it everywhere.
   function edConfirm() {
     var aspect = shapeAspect();
-    var targetW = 1200;
+    // 2400px across a 4" patch = 600 DPI, giving production headroom in Photoshop.
+    var targetW = 2400;
     var targetH = Math.round(targetW / aspect);
     var out = document.createElement('canvas');
     out.width = targetW; out.height = targetH;
@@ -406,10 +409,14 @@
     octx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
     octx.restore();
 
-    var dataUrl = out.toDataURL('image/png');
-    applyArtwork(dataUrl);
-    if (out.toBlob) { out.toBlob(function (blob) { uploadBlob(blob); }, 'image/png'); }
-    else { uploadBlob(null); }
+    // Preview off a downscaled copy so we don't hold a ~2400px data URL in the DOM.
+    var small = document.createElement('canvas');
+    small.width = 900; small.height = Math.round(900 / aspect);
+    small.getContext('2d').drawImage(out, 0, 0, small.width, small.height);
+    applyArtwork(small.toDataURL('image/png'));
+
+    if (out.toBlob) { out.toBlob(function (blob) { uploadArtwork(blob); }, 'image/png'); }
+    else { uploadArtwork(null); }
     closeEditor();
   }
 
@@ -425,29 +432,45 @@
     state.artUrl = url; // provisional until Cloudinary returns a hosted URL
   }
 
-  /* ---- upload the composited PNG (Cloudinary unsigned, or local fallback) ---- */
-  function uploadBlob(blob) {
-    var name = 'ai-hat-' + Date.now() + '.png';
-    if (!cloudinaryReady() || !blob) {
+  /* ---- upload artwork (Cloudinary unsigned, or local fallback) ----
+   * Production needs BOTH: the composite (the customer's exact crop, print-res)
+   * and the untouched original (what the team opens in Photoshop). The PDF link
+   * is the same composite asset — Cloudinary converts on the fly via extension. */
+  function cloudinaryUpload(fileOrBlob, name) {
+    var fd = new FormData();
+    fd.append('file', fileOrBlob, name);
+    fd.append('upload_preset', CL_AI_HAT.uploadPreset);
+    return fetch('https://api.cloudinary.com/v1_1/' + CL_AI_HAT.cloudName + '/image/upload', { method: 'POST', body: fd })
+      .then(function (r) { return r.json(); })
+      .then(function (res) { if (res && res.secure_url) return res.secure_url; throw new Error('no url'); });
+  }
+
+  function uploadArtwork(printBlob) {
+    var stamp = Date.now();
+    var origName = (edState.file && edState.file.name) || 'artwork';
+    if (!cloudinaryReady() || !printBlob) {
       state.artUrl = state.localArt;
-      if (propArt) propArt.value = '[local-preview] ' + ((edState.file && edState.file.name) || name);
+      if (propArt) propArt.value = '[local-preview] ' + origName;
       setStatus('warn', 'Preview only — connect Cloudinary to store the file.');
       return;
     }
     setStatus('ok', 'Uploading…');
-    var fd = new FormData();
-    fd.append('file', blob, name);
-    fd.append('upload_preset', CL_AI_HAT.uploadPreset);
-    fetch('https://api.cloudinary.com/v1_1/' + CL_AI_HAT.cloudName + '/image/upload', { method: 'POST', body: fd })
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
-        if (res && res.secure_url) { state.artUrl = res.secure_url; if (propArt) propArt.value = res.secure_url; setStatus('ok', '✓ Artwork uploaded'); }
-        else { throw new Error('no url'); }
-      }).catch(function () {
-        state.artUrl = state.localArt;
-        if (propArt) propArt.value = '[upload-failed] ' + name;
-        setStatus('err', 'Upload failed — we saved a preview. You can still order; we may email you for the file.');
-      });
+    var jobs = [cloudinaryUpload(printBlob, 'ai-hat-print-' + stamp + '.png')];
+    if (edState.file) jobs.push(cloudinaryUpload(edState.file, 'ai-hat-original-' + stamp + '-' + origName));
+
+    Promise.all(jobs).then(function (urls) {
+      var printUrl = urls[0], origUrl = urls[1] || '';
+      state.artUrl = printUrl;
+      if (propArt) propArt.value = printUrl;
+      if (propOrig) propOrig.value = origUrl;
+      // Same asset delivered as PDF — Cloudinary converts by swapping the extension.
+      if (propPdf) propPdf.value = printUrl.replace(/\.(png|jpe?g|webp)$/i, '.pdf');
+      setStatus('ok', '✓ Artwork uploaded');
+    }).catch(function () {
+      state.artUrl = state.localArt;
+      if (propArt) propArt.value = '[upload-failed] ' + origName;
+      setStatus('err', 'Upload failed — we saved a preview. You can still order; we may email you for the file.');
+    });
   }
 
   /* ---- client-side print-quality scoring ---- */
@@ -666,10 +689,12 @@
 
     var qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
     var props = {
-      'Patch Shape': state.shape,
-      '_Artwork URL': (propArt && propArt.value) || state.artUrl,
+      'Patch Shape': state.shape,                                   // which InDesign template
+      '_Artwork Print': (propArt && propArt.value) || state.artUrl, // customer's exact crop, 600 DPI
       '_Quality Score': state.score || ''
     };
+    if (propOrig && propOrig.value) props['_Artwork Original'] = propOrig.value; // for Photoshop
+    if (propPdf && propPdf.value) props['_Artwork PDF'] = propPdf.value;
     var txt = textInput ? textInput.value.trim() : '';
     if (txt) props['Custom Text'] = txt;
 

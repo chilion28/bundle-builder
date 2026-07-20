@@ -161,7 +161,11 @@ Now create:' }}</pre>
   {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-cl-ai-variant-id>
     <input type="hidden" name="properties[Patch Shape]" value="Rectangle" data-cl-ai-prop-shape>
-    <input type="hidden" name="properties[_Artwork URL]" value="" data-cl-ai-prop-art>
+    {%- comment -%} Fulfilment needs: the print-ready composite (customer's exact
+      crop), the untouched original for Photoshop, and a PDF of the composite. {%- endcomment -%}
+    <input type="hidden" name="properties[_Artwork Print]" value="" data-cl-ai-prop-art>
+    <input type="hidden" name="properties[_Artwork Original]" value="" data-cl-ai-prop-orig>
+    <input type="hidden" name="properties[_Artwork PDF]" value="" data-cl-ai-prop-pdf>
     <input type="hidden" name="properties[_Quality Score]" value="" data-cl-ai-prop-score>
 
     <div class="cl-ai__step">
