@@ -232,6 +232,44 @@
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
 
+  // Trace the current shape's window path, centred at (cx,cy), size mw×mh.
+  // Geometry measured from the frame PNGs' transparent windows.
+  function edShapePath(ctx, cx, cy, mw, mh) {
+    var shape = String(state.shape).toLowerCase();
+    var x = cx - mw / 2, y = cy - mh / 2;
+    ctx.beginPath();
+    if (shape === 'circle') { ctx.ellipse(cx, cy, mw / 2, mh / 2, 0, 0, Math.PI * 2); return; }
+    if (shape === 'hexagon') {
+      var P = [[0.5, 0], [0, 0.35], [0, 0.65], [0.5, 1], [1, 0.65], [1, 0.35]];
+      P.forEach(function (p, i) { var X = x + p[0] * mw, Y = y + p[1] * mh; if (i) ctx.lineTo(X, Y); else ctx.moveTo(X, Y); });
+      ctx.closePath(); return;
+    }
+    // rectangle / rounded → elliptical-corner rounded rect
+    var rx = (shape === 'rounded' ? 0.46 : 0.05) * mw;
+    var ry = (shape === 'rounded' ? 0.20 : 0.08) * mh;
+    rx = Math.min(rx, mw / 2); ry = Math.min(ry, mh / 2);
+    ctx.moveTo(x + rx, y);
+    ctx.lineTo(x + mw - rx, y);
+    ctx.ellipse(x + mw - rx, y + ry, rx, ry, 0, -Math.PI / 2, 0);
+    ctx.lineTo(x + mw, y + mh - ry);
+    ctx.ellipse(x + mw - rx, y + mh - ry, rx, ry, 0, 0, Math.PI / 2);
+    ctx.lineTo(x + rx, y + mh);
+    ctx.ellipse(x + rx, y + mh - ry, rx, ry, 0, Math.PI / 2, Math.PI);
+    ctx.lineTo(x, y + ry);
+    ctx.ellipse(x + rx, y + ry, rx, ry, 0, Math.PI, Math.PI * 1.5);
+    ctx.closePath();
+  }
+
+  function paintImage(ctx, W, H) {
+    ctx.save();
+    ctx.translate(W / 2 + edState.offsetX, H / 2 + edState.offsetY);
+    ctx.rotate(edState.rotation * Math.PI / 180);
+    var s = edState.baseScale * edState.scale;
+    ctx.scale(s, s);
+    ctx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
+    ctx.restore();
+  }
+
   function edDraw() {
     if (!edState.img) return;
     var dpr = window.devicePixelRatio || 1;
@@ -242,13 +280,9 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     clampOffset();
-    ctx.save();
-    ctx.translate(W / 2 + edState.offsetX, H / 2 + edState.offsetY);
-    ctx.rotate(edState.rotation * Math.PI / 180);
-    var s = edState.baseScale * edState.scale;
-    ctx.scale(s, s);
-    ctx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
-    ctx.restore();
+    // Dimmed full image (shows what's cropped out), then bright inside the shape window.
+    ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore();
+    ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
   }
 
   function openEditor(isNew) {
