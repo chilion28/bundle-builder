@@ -186,12 +186,16 @@ body~.cl-ai-b__label, .cl-ai .cl-ai__prompt-hint, .cl-ai .cl-ai__inspo-label
         {%- for block in section.blocks -%}
           {%- if block.type == 'inspiration' -%}
             <li {{ block.shopify_attributes }}>
-              {%- if block.settings.image -%}
-                <img src="{{ block.settings.image | image_url: width: 360 }}"
-                     alt="{{ block.settings.label | escape }}" width="360" height="220" loading="lazy">
-              {%- else -%}
-                <div class="cl-ai__inspo-empty">{{ block.settings.label }}</div>
-              {%- endif -%}
+              {%- comment -%} Fixed-ratio wrapper so the thumb stays landscape
+                regardless of the theme's global img rules. {%- endcomment -%}
+              <div class="cl-ai__inspo-media">
+                {%- if block.settings.image -%}
+                  <img src="{{ block.settings.image | image_url: width: 480 }}"
+                       alt="{{ block.settings.label | escape }}" loading="lazy">
+                {%- else -%}
+                  <span class="cl-ai__inspo-empty">{{ block.settings.label }}</span>
+                {%- endif -%}
+              </div>
               <span class="cl-ai__inspo-label">{{ block.settings.label }}</span>
             </li>
           {%- endif -%}
