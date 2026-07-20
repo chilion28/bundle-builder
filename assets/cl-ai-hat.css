@@ -131,11 +131,11 @@
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
 .cl-ai-ed[hidden]{display:none}
 .cl-ai-ed__backdrop{position:absolute;inset:0;background:rgba(15,20,26,.7)}
-.cl-ai-ed__panel{position:relative;background:#fff;border-radius:16px;padding:20px;width:100%;max-width:420px;
+.cl-ai-ed__panel{position:relative;background:#fff;border-radius:16px;padding:24px;width:100%;max-width:640px;
   box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:92vh;overflow:auto}
 .cl-ai-ed__title{margin:0;font-size:18px;font-weight:800}
 .cl-ai-ed__hint{margin:6px 0 14px;font-size:12.5px;color:var(--muted);line-height:1.4}
-.cl-ai-ed__stage{position:relative;width:100%;aspect-ratio:1/1;background:
+.cl-ai-ed__stage{position:relative;width:100%;aspect-ratio:1/1;max-height:min(58vh,520px);background:
   conic-gradient(#e9ebef 90deg,#f6f7f9 0 180deg,#e9ebef 0 270deg,#f6f7f9 0) 0 0/24px 24px;
   border-radius:10px;overflow:hidden;touch-action:none;user-select:none;cursor:grab}
 .cl-ai-ed__stage:active{cursor:grabbing}
