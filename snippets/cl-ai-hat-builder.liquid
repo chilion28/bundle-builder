@@ -77,7 +77,7 @@ Now create:' }}</pre>
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
         <span class="cl-ai__step-num">STEP 2</span>
-        <h2 class="cl-ai__step-title">UPLOAD YOUR AI ARTWORK</h2>
+        <h2 class="cl-ai__step-title">{{ upload_title | default: 'UPLOAD YOUR AI ARTWORK' }}</h2>
       </div>
 
       <input type="file" class="cl-ai-b__file" data-cl-ai-file
@@ -90,7 +90,7 @@ Now create:' }}</pre>
           <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
           <p class="cl-ai-b__drop-or">or</p>
           <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
-          <p class="cl-ai-b__drop-note">JPG, PNG, WEBP up to 25MB</p>
+          <p class="cl-ai-b__drop-note">{{ upload_note | default: 'JPG, PNG, WEBP up to 25MB' }}</p>
         </div>
       </div>
 
@@ -110,7 +110,7 @@ Now create:' }}</pre>
     <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
       <div class="cl-ai__step-head">
         <span class="cl-ai__step-num">STEP 3</span>
-        <h2 class="cl-ai__step-title">PRINT QUALITY CHECK</h2>
+        <h2 class="cl-ai__step-title">{{ qc_title | default: 'PRINT QUALITY CHECK' }}</h2>
       </div>
 
       <div class="cl-ai-b__qc-body">
@@ -138,7 +138,7 @@ Now create:' }}</pre>
     <div class="cl-ai__step cl-ai-b__preview">
       <div class="cl-ai__step-head">
         <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
-        <h2 class="cl-ai__step-title">YOUR PATCH</h2>
+        <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>
       </div>
       <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle"
            {%- for sh in shape_list %} data-mask-{{ sh | downcase }}="{{ 'cl-patch-mask-' | append: sh | downcase | append: '.png' | asset_url }}"{% endfor %}>
@@ -168,7 +168,7 @@ Now create:' }}</pre>
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
         <span class="cl-ai__step-num">STEP 4</span>
-        <h2 class="cl-ai__step-title">CUSTOMIZE YOUR HAT</h2>
+        <h2 class="cl-ai__step-title">{{ customize_title | default: 'CUSTOMIZE YOUR HAT' }}</h2>
       </div>
 
       {%- comment -%} Style {%- endcomment -%}

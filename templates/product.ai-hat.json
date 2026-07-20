@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "main": {
+      "type": "cl-ai-hat",
+      "blocks": {
+        "usp_1": { "type": "usp", "settings": { "icon": "🛡", "title": "PREMIUM QUALITY" } },
+        "usp_2": { "type": "usp", "settings": { "icon": "💧", "title": "WATER RESISTANT" } },
+        "usp_3": { "type": "usp", "settings": { "icon": "✳", "title": "LASER ENGRAVED" } },
+        "usp_4": { "type": "usp", "settings": { "icon": "🚚", "title": "FAST SHIPPING" } },
+        "insp_1": { "type": "inspiration", "settings": { "label": "Vintage Bear" } },
+        "insp_2": { "type": "inspiration", "settings": { "label": "Baja Racer" } },
+        "insp_3": { "type": "inspiration", "settings": { "label": "Golden Retriever" } },
+        "insp_4": { "type": "inspiration", "settings": { "label": "Bass Fishing" } },
+        "insp_5": { "type": "inspiration", "settings": { "label": "Desert Skull" } },
+        "insp_6": { "type": "inspiration", "settings": { "label": "Eagle & Flag" } },
+        "vp_1": { "type": "valueprop", "settings": { "icon": "✅", "title": "DESIGNED BY YOU", "text": "Use AI to create something 100% original." } },
+        "vp_2": { "type": "valueprop", "settings": { "icon": "⚙", "title": "PROFESSIONALLY MADE", "text": "We laser engrave your art for a premium look." } },
+        "vp_3": { "type": "valueprop", "settings": { "icon": "🛡", "title": "BUILT TO LAST", "text": "Water resistant & made for everyday wear." } },
+        "vp_4": { "type": "valueprop", "settings": { "icon": "❤", "title": "MADE FOR YOU", "text": "Every hat is custom printed just for you." } }
+      },
+      "block_order": ["usp_1","usp_2","usp_3","usp_4","insp_1","insp_2","insp_3","insp_4","insp_5","insp_6","vp_1","vp_2","vp_3","vp_4"],
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

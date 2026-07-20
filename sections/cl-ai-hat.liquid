@@ -12,8 +12,10 @@
 {{ 'cl-ai-hat.css' | asset_url | stylesheet_tag }}
 
 {%- assign price_display = product.price | default: 3499 -%}
+{%- assign accent = section.settings.accent_color | default: '#00a0ea' -%}
 
-<section class="cl-ai" data-cl-ai-hat data-product-id="{{ product.id }}">
+<section class="cl-ai" data-cl-ai-hat data-product-id="{{ product.id }}"
+  style="--green:{{ accent }};--green-dk:color-mix(in srgb, {{ accent }}, #000 14%);">
 
   {%- comment -%} ---------- HERO ---------- {%- endcomment -%}
   <div class="cl-ai__hero">
@@ -82,7 +84,12 @@
      step1_title: section.settings.step1_title,
      prompt_text: section.settings.prompt_text,
      prompt_hint: section.settings.prompt_hint,
-     prompt_example: section.settings.prompt_example %}
+     prompt_example: section.settings.prompt_example,
+     upload_title: section.settings.upload_title,
+     upload_note: section.settings.upload_note,
+     qc_title: section.settings.qc_title,
+     preview_title: section.settings.preview_title,
+     customize_title: section.settings.customize_title %}
 
   {%- comment -%} ---------- INSPIRATION GALLERY ---------- {%- endcomment -%}
   {%- assign has_gallery = false -%}
@@ -134,6 +141,9 @@
 {
   "name": "Create Your AI Hat",
   "settings": [
+    { "type": "header", "content": "Theme" },
+    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#00a0ea", "info": "CTAs, step chips, selected states (main page)." },
+
     { "type": "header", "content": "Hero" },
     { "type": "text", "id": "hero_badge", "label": "Hero badge", "default": "NEW" },
     { "type": "text", "id": "hero_title", "label": "Hero title (line 1)", "default": "CREATE YOUR" },
@@ -149,7 +159,18 @@
     { "type": "text", "id": "prompt_hint", "label": "Prompt hint", "default": "Add your idea after “Now create:”" },
     { "type": "textarea", "id": "prompt_example", "label": "Prompt example", "default": "A Baja race truck kicking up dust in the desert at sunset, vintage poster style." },
 
-    { "type": "header", "content": "Builder" },
+    { "type": "header", "content": "Step 2 — Upload" },
+    { "type": "text", "id": "upload_title", "label": "Upload title", "default": "UPLOAD YOUR AI ARTWORK" },
+    { "type": "text", "id": "upload_note", "label": "File-type note", "default": "JPG, PNG, WEBP up to 25MB" },
+
+    { "type": "header", "content": "Step 3 — Quality check" },
+    { "type": "text", "id": "qc_title", "label": "Quality-check title", "default": "PRINT QUALITY CHECK" },
+
+    { "type": "header", "content": "Preview" },
+    { "type": "text", "id": "preview_title", "label": "Preview title", "default": "YOUR PATCH" },
+
+    { "type": "header", "content": "Step 4 — Customize" },
+    { "type": "text", "id": "customize_title", "label": "Customize title", "default": "CUSTOMIZE YOUR HAT" },
     { "type": "text", "id": "cta_label", "label": "Add-to-cart label", "default": "ADD TO CART" },
 
     { "type": "header", "content": "Inspiration gallery" },
