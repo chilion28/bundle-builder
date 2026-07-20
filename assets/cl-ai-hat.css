@@ -84,7 +84,7 @@
   max-width:60%;text-align:center;color:var(--muted);font-size:13px;line-height:1.35;pointer-events:none}
 
 /* ---------- STEP 2 — UPLOAD ---------- */
-.cl-ai-b__drop{position:relative;border:2px dashed #c9d1bb;border-radius:var(--radius);background:#fafbf7;
+.cl-ai-b__drop{position:relative;border:2px dashed #b6dcf4;border-radius:var(--radius);background:#f7fbfe;
   padding:34px 18px;text-align:center;transition:border-color .15s,background .15s;outline:none}
 .cl-ai-b__drop:focus-visible,.cl-ai-b__drop.is-drag{border-color:var(--green);background:#e4f4fd}
 .cl-ai-b__drop-icon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;
@@ -165,7 +165,7 @@
 .cl-ai-ed__btn--primary{background:var(--green);border-color:var(--green);color:#fff}
 .cl-ai-ed__btn--primary:hover{background:var(--green-dk)}
 
-.cl-ai-b__tips{background:var(--panel);border-radius:var(--radius);padding:14px 16px;border:1px solid #d3e9f7}
+.cl-ai-b__tips{margin-top:20px;background:var(--panel);border-radius:var(--radius);padding:14px 16px;border:1px solid #d3e9f7}
 .cl-ai-b__tips-title{font-weight:800;font-size:12px;letter-spacing:.03em;display:block;margin-bottom:8px}
 .cl-ai-b__tips ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
 .cl-ai-b__tips li{position:relative;padding-left:18px;font-size:12.5px;color:#4b5563}
