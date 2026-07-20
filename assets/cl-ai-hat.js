@@ -96,12 +96,50 @@
    * HERO gallery thumbs
    * ===================================================================== */
   var galMain = $('[data-cl-ai-gallery-main]');
-  $$('[data-cl-ai-thumb]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (galMain && btn.dataset.full) galMain.src = btn.dataset.full;
-      $$('[data-cl-ai-thumb]').forEach(function (b) { b.classList.remove('is-active'); });
-      btn.classList.add('is-active');
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+  // The thumb rail mirrors the colours available for the CURRENT style, so it can
+  // never drift out of sync with the option selector. Rebuilt on init + style change.
+  function renderThumbs() {
+    var gallery = $('[data-cl-ai-gallery]');
+    if (!gallery) return;
+    var rail = gallery.querySelector('.cl-ai__gallery-thumbs');
+    var swatches = $$('[data-cl-ai-color]').filter(function (b) { return !b.hidden && b.dataset.swatchImg; });
+    if (!swatches.length) { if (rail) rail.hidden = true; return; }
+    if (!rail) {
+      rail = document.createElement('ul');
+      rail.className = 'cl-ai__gallery-thumbs';
+      rail.setAttribute('role', 'list');
+      gallery.appendChild(rail);
+    }
+    rail.hidden = false;
+    rail.innerHTML = swatches.map(function (b) {
+      var label = b.getAttribute('title') || b.dataset.value;
+      return '<li><button type="button" class="cl-ai__thumb' + (b.classList.contains('is-active') ? ' is-active' : '') +
+             '" data-cl-ai-thumb data-color="' + esc(b.dataset.value) + '" data-full="' + esc(b.dataset.swatchImg) +
+             '" aria-label="' + esc(label) + '"><img src="' + esc(b.dataset.swatchImg) + '" alt="' + esc(label) +
+             '" loading="lazy"></button></li>';
+    }).join('');
+  }
+  function syncActiveThumb() {
+    $$('[data-cl-ai-thumb]').forEach(function (t) {
+      t.classList.toggle('is-active', t.dataset.color === state.color);
+    });
+  }
+  // Delegated: thumbs are re-rendered, so don't bind them individually.
+  document.addEventListener('click', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-cl-ai-thumb]') : null;
+    if (!t) return;
+    var color = t.dataset.color;
+    if (color) {
+      var sw = $$('[data-cl-ai-color]').filter(function (b) { return b.dataset.value === color; })[0];
+      if (sw) { sw.click(); return; }   // reuse the swatch handler (label, hero image, variant)
+    }
+    if (galMain && t.dataset.full) galMain.src = t.dataset.full;
+    syncActiveThumb();
   });
 
   /* =====================================================================
@@ -540,16 +578,17 @@
     state.style = val;
     var lbl = $('[data-cl-ai-style-label]'); if (lbl) lbl.textContent = val;
     filterColorsForStyle();
+    applyColorLabels();
+    renderThumbs();      // rail follows the style's colours
+    syncActiveThumb();
     resolveVariant();
   });
   bindRadioGroup('[data-cl-ai-color]', function (val, btn) {
     state.color = val;
     var lbl = $('[data-cl-ai-color-label]'); if (lbl) lbl.textContent = displayColor(val);
     // Swap the hero image to this colour's variant image, if we have one.
-    if (galMain && btn && btn.dataset.swatchImg) {
-      galMain.src = btn.dataset.swatchImg;
-      $$('[data-cl-ai-thumb]').forEach(function (b) { b.classList.remove('is-active'); });
-    }
+    if (galMain && btn && btn.dataset.swatchImg) galMain.src = btn.dataset.swatchImg;
+    syncActiveThumb();
     resolveVariant();
   });
   bindRadioGroup('[data-cl-ai-shape]', function (val) {
@@ -582,6 +621,8 @@
   }
   filterColorsForStyle(); // initial — hide colours not offered in the default style
   applyColorLabels();     // strip style prefix from swatch tooltips + the label
+  renderThumbs();         // build the rail from the current style's colours
+  syncActiveThumb();
   resolveVariant();
 
   /* text counter */

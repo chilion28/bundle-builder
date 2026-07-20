@@ -161,7 +161,6 @@ Now create:' }}</pre>
   {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-cl-ai-variant-id>
     <input type="hidden" name="properties[Patch Shape]" value="Rectangle" data-cl-ai-prop-shape>
-    <input type="hidden" name="properties[Custom Text]" value="" data-cl-ai-prop-text>
     <input type="hidden" name="properties[_Artwork URL]" value="" data-cl-ai-prop-art>
     <input type="hidden" name="properties[_Quality Score]" value="" data-cl-ai-prop-score>
 
@@ -240,16 +239,6 @@ Now create:' }}</pre>
                    alt="{{ sh }}" loading="lazy">
             </button>
           {%- endfor -%}
-        </div>
-      </div>
-
-      {%- comment -%} Optional text (line-item property) {%- endcomment -%}
-      <div class="cl-ai-b__field">
-        <label class="cl-ai-b__label" for="cl-ai-text">Add Text to Your Patch (Optional)</label>
-        <div class="cl-ai-b__text-wrap">
-          <input type="text" id="cl-ai-text" class="cl-ai-b__text" maxlength="12"
-                 placeholder="Enter Text (e.g. WEST COAST)" data-cl-ai-text autocomplete="off">
-          <span class="cl-ai-b__count"><span data-cl-ai-count>0</span> / 12</span>
         </div>
       </div>
 
