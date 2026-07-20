@@ -483,9 +483,40 @@
     });
   }
 
+  // Show only the colours that actually exist for the selected style, and mark
+  // sold-out ones. If the current colour isn't offered in the new style, move the
+  // selection to the first colour that is.
+  function filterColorsForStyle() {
+    var si = data.styleOptionIndex, ci = data.colorOptionIndex;
+    if (!variants.length || !si || !ci) return;
+    var btns = $$('[data-cl-ai-color]');
+    var firstValid = null, currentValid = false;
+    btns.forEach(function (b) {
+      var color = b.dataset.value;
+      var match = variants.filter(function (v) {
+        return v['option' + si] === state.style && v['option' + ci] === color;
+      });
+      var exists = match.length > 0;
+      b.hidden = !exists;
+      if (!exists) return;
+      var avail = match.some(function (v) { return v.available; });
+      b.classList.toggle('is-unavailable', !avail);
+      if (!firstValid) firstValid = b;
+      if (color === state.color) currentValid = true;
+    });
+    if (!currentValid && firstValid) {
+      btns.forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
+      firstValid.classList.add('is-active'); firstValid.setAttribute('aria-checked', 'true');
+      state.color = firstValid.dataset.value;
+      var clbl = $('[data-cl-ai-color-label]'); if (clbl) clbl.textContent = state.color;
+      if (galMain && firstValid.dataset.swatchImg) galMain.src = firstValid.dataset.swatchImg;
+    }
+  }
+
   bindRadioGroup('[data-cl-ai-style]', function (val) {
     state.style = val;
     var lbl = $('[data-cl-ai-style-label]'); if (lbl) lbl.textContent = val;
+    filterColorsForStyle();
     resolveVariant();
   });
   bindRadioGroup('[data-cl-ai-color]', function (val, btn) {
@@ -526,6 +557,7 @@
       if (ctaPrice) ctaPrice.textContent = formatMoney(chosen.price);
     }
   }
+  filterColorsForStyle(); // initial — hide colours not offered in the default style
   resolveVariant();
 
   /* text counter */

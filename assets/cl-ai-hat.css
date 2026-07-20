@@ -186,6 +186,9 @@
 .cl-ai-b__swatch{width:60px;height:60px;padding:0;border:2px solid var(--line);border-radius:12px;
   background:#fff;display:flex;align-items:center;justify-content:center;transition:.15s}
 .cl-ai-b__swatch.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
+/* display:flex above beats the [hidden] attribute, so hide explicitly */
+.cl-ai-b__swatch[hidden]{display:none}
+.cl-ai-b__swatch.is-unavailable{opacity:.35;filter:grayscale(1)}
 .cl-ai-b__swatch--img{overflow:hidden;padding:0}
 .cl-ai-b__swatch-img{width:100%;height:100%;object-fit:cover;display:block}
 .cl-ai-b__swatch-chip{width:34px;height:34px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:#333}
