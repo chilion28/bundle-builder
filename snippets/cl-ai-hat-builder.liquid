@@ -105,9 +105,33 @@ Now create:' }}</pre>
         </ul>
       </div>
     </div>
+
+    {%- comment -%} ===== STEP 4 — QUALITY CHECK (grouped with the upload) ===== {%- endcomment -%}
+    <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP 3</span>
+        <h2 class="cl-ai__step-title">PRINT QUALITY CHECK</h2>
+      </div>
+
+      <div class="cl-ai-b__qc-body">
+        <img class="cl-ai-b__qc-thumb" data-cl-ai-qc-thumb alt="Artwork being checked">
+        <ul class="cl-ai-b__qc-list" role="list">
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="resolution"></span> Resolution <b data-cl-ai-qc-resolution>—</b></li>
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="margins"></span> Safe Margins <b data-cl-ai-qc-margins>—</b></li>
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="quality"></span> Print Quality <b data-cl-ai-qc-quality>—</b></li>
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="filetype"></span> File Type <b data-cl-ai-qc-filetype>—</b></li>
+        </ul>
+      </div>
+
+      <div class="cl-ai-b__qc-verdict" data-cl-ai-qc-verdict hidden>
+        <span class="cl-ai-b__qc-check" aria-hidden="true">✓</span>
+        <strong data-cl-ai-qc-verdict-title>READY TO PRINT!</strong>
+        <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
+      </div>
+    </div>
   </div>
 
-  {%- comment -%} ========== RIGHT COLUMN — Live preview + Steps 3–4 ========== {%- endcomment -%}
+  {%- comment -%} ========== RIGHT COLUMN — Live preview + Step 3 ========== {%- endcomment -%}
   <div class="cl-ai-b__right">
 
     {%- comment -%} ===== LIVE PREVIEW (patch frame, always visible) ===== {%- endcomment -%}
@@ -143,7 +167,7 @@ Now create:' }}</pre>
 
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
-        <span class="cl-ai__step-num">STEP 3</span>
+        <span class="cl-ai__step-num">STEP 4</span>
         <h2 class="cl-ai__step-title">CUSTOMIZE YOUR HAT</h2>
       </div>
 
@@ -252,29 +276,6 @@ Now create:' }}</pre>
     </div>
   {% endform %}
 
-  {%- comment -%} ===== STEP 4 — QUALITY CHECK ===== {%- endcomment -%}
-  <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
-    <div class="cl-ai__step-head">
-      <span class="cl-ai__step-num">STEP 4</span>
-      <h2 class="cl-ai__step-title">PRINT QUALITY CHECK</h2>
-    </div>
-
-    <div class="cl-ai-b__qc-body">
-      <img class="cl-ai-b__qc-thumb" data-cl-ai-qc-thumb alt="Artwork being checked">
-      <ul class="cl-ai-b__qc-list" role="list">
-        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="resolution"></span> Resolution <b data-cl-ai-qc-resolution>—</b></li>
-        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="margins"></span> Safe Margins <b data-cl-ai-qc-margins>—</b></li>
-        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="quality"></span> Print Quality <b data-cl-ai-qc-quality>—</b></li>
-        <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="filetype"></span> File Type <b data-cl-ai-qc-filetype>—</b></li>
-      </ul>
-    </div>
-
-    <div class="cl-ai-b__qc-verdict" data-cl-ai-qc-verdict hidden>
-      <span class="cl-ai-b__qc-check" aria-hidden="true">✓</span>
-      <strong data-cl-ai-qc-verdict-title>READY TO PRINT!</strong>
-      <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
-    </div>
-  </div>
   </div>{%- comment -%} /.cl-ai-b__right {%- endcomment -%}
 
   {%- comment -%} ===== CROP / ZOOM / ROTATE EDITOR (modal) ===== {%- endcomment -%}
