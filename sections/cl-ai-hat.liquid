@@ -14,6 +14,86 @@
 {%- assign price_display = product.price | default: 3499 -%}
 {%- assign accent = section.settings.accent_color | default: '#00a0ea' -%}
 
+{%- comment -%}
+  Typography roles → selectors. Each role only emits CSS when its
+  "<role>_enable" checkbox is on, so the default design is untouched.
+  Settings ids follow: <role>_size / _ls / _lh / _tt / _ta / _color / _mb / _pad
+  (and the same with a _m suffix for mobile).
+{%- endcomment -%}
+{%- capture cl_ai_role_map -%}
+h1~.cl-ai__hero-title
+tag~.cl-ai__hero-tagline
+sub~.cl-ai__hero-sub
+h2~.cl-ai__step-title, .cl-ai .cl-ai__inspo-head h2
+body~.cl-ai-b__label, .cl-ai .cl-ai__prompt-hint, .cl-ai .cl-ai__inspo-label
+{%- endcapture -%}
+{%- assign cl_ai_roles = cl_ai_role_map | strip | newline_to_br | strip_newlines | split: '<br />' -%}
+
+{%- comment -%} NOTE: Liquid does NOT allow filters inside [] — each key must be
+  assigned to a variable first, otherwise the lookup silently returns nil. {%- endcomment -%}
+<style>
+{%- for line in cl_ai_roles -%}
+  {%- assign parts = line | strip | split: '~' -%}
+  {%- assign p = parts[0] -%}
+  {%- assign sel = parts[1] -%}
+  {%- assign k_on = p | append: '_enable' -%}
+  {%- if section.settings[k_on] -%}
+    {%- assign k_fon = p | append: '_font_enable' -%}
+    {%- assign k_font = p | append: '_font' -%}
+    {%- assign k_size = p | append: '_size' -%}
+    {%- assign k_ls = p | append: '_ls' -%}
+    {%- assign k_lh = p | append: '_lh' -%}
+    {%- assign k_tt = p | append: '_tt' -%}
+    {%- assign k_ta = p | append: '_ta' -%}
+    {%- assign k_col = p | append: '_color' -%}
+    {%- assign k_mb = p | append: '_mb' -%}
+    {%- assign k_pad = p | append: '_pad' -%}
+    {%- assign use_font = section.settings[k_fon] -%}
+    {%- assign fnt = section.settings[k_font] -%}
+    {%- if use_font and fnt %}{{ fnt | font_face: font_display: 'swap' }}{% endif -%}
+    .cl-ai {{ sel }}{
+      {%- if use_font and fnt %}font-family:{{ fnt.family }},{{ fnt.fallback_families }};{% endif -%}
+      font-size:{{ section.settings[k_size] }}px;
+      letter-spacing:{{ section.settings[k_ls] | divided_by: 10.0 }}px;
+      line-height:{{ section.settings[k_lh] | divided_by: 100.0 }};
+      text-transform:{{ section.settings[k_tt] }};
+      text-align:{{ section.settings[k_ta] }};
+      color:{{ section.settings[k_col] }};
+      margin-bottom:{{ section.settings[k_mb] }}px;
+      padding:{{ section.settings[k_pad] }}px;
+    }
+  {%- endif -%}
+{%- endfor -%}
+@media (max-width:749px){
+{%- for line in cl_ai_roles -%}
+  {%- assign parts = line | strip | split: '~' -%}
+  {%- assign p = parts[0] -%}
+  {%- assign sel = parts[1] -%}
+  {%- assign k_on = p | append: '_enable' -%}
+  {%- if section.settings[k_on] -%}
+    {%- assign k_size = p | append: '_size_m' -%}
+    {%- assign k_ls = p | append: '_ls_m' -%}
+    {%- assign k_lh = p | append: '_lh_m' -%}
+    {%- assign k_tt = p | append: '_tt_m' -%}
+    {%- assign k_ta = p | append: '_ta_m' -%}
+    {%- assign k_col = p | append: '_color_m' -%}
+    {%- assign k_mb = p | append: '_mb_m' -%}
+    {%- assign k_pad = p | append: '_pad_m' -%}
+    .cl-ai {{ sel }}{
+      font-size:{{ section.settings[k_size] }}px;
+      letter-spacing:{{ section.settings[k_ls] | divided_by: 10.0 }}px;
+      line-height:{{ section.settings[k_lh] | divided_by: 100.0 }};
+      text-transform:{{ section.settings[k_tt] }};
+      text-align:{{ section.settings[k_ta] }};
+      color:{{ section.settings[k_col] }};
+      margin-bottom:{{ section.settings[k_mb] }}px;
+      padding:{{ section.settings[k_pad] }}px;
+    }
+  {%- endif -%}
+{%- endfor -%}
+}
+</style>
+
 <section class="cl-ai" data-cl-ai-hat data-product-id="{{ product.id }}"
   style="--green:{{ accent }};--green-dk:color-mix(in srgb, {{ accent }}, #000 14%);">
 
@@ -141,66 +221,1356 @@
 {
   "name": "Create Your AI Hat",
   "settings": [
-    { "type": "header", "content": "Theme" },
-    { "type": "color", "id": "accent_color", "label": "Accent color", "default": "#00a0ea", "info": "CTAs, step chips, selected states (main page)." },
-
-    { "type": "header", "content": "Hero" },
-    { "type": "text", "id": "hero_badge", "label": "Hero badge", "default": "NEW" },
-    { "type": "text", "id": "hero_title", "label": "Hero title (line 1)", "default": "CREATE YOUR" },
-    { "type": "text", "id": "hero_accent", "label": "Hero accent (line 2)", "default": "AI HAT" },
-    { "type": "text", "id": "hero_tagline", "label": "Tagline", "default": "Turn your imagination into wearable art." },
-    { "type": "textarea", "id": "hero_sub", "label": "Hero subtext", "default": "Generate your artwork in ChatGPT in minutes—then we'll professionally print it on a premium patch." },
-    { "type": "text", "id": "reviews_text", "label": "Reviews text", "default": "2,500+ Verified Reviews" },
-
-
-    { "type": "header", "content": "Step 1 — Prompt" },
-    { "type": "text", "id": "step1_title", "label": "Step 1 title", "default": "GENERATE YOUR AI ARTWORK" },
-    { "type": "textarea", "id": "prompt_text", "label": "ChatGPT prompt", "info": "Shown in the copy box." },
-    { "type": "text", "id": "prompt_hint", "label": "Prompt hint", "default": "Add your idea after “Now create:”" },
-    { "type": "textarea", "id": "prompt_example", "label": "Prompt example", "default": "A Baja race truck kicking up dust in the desert at sunset, vintage poster style." },
-
-    { "type": "header", "content": "Step 2 — Upload" },
-    { "type": "text", "id": "upload_title", "label": "Upload title", "default": "UPLOAD YOUR AI ARTWORK" },
-    { "type": "text", "id": "upload_note", "label": "File-type note", "default": "JPG, PNG, WEBP up to 25MB" },
-
-    { "type": "header", "content": "Step 3 — Quality check" },
-    { "type": "text", "id": "qc_title", "label": "Quality-check title", "default": "PRINT QUALITY CHECK" },
-
-    { "type": "header", "content": "Preview" },
-    { "type": "text", "id": "preview_title", "label": "Preview title", "default": "YOUR PATCH" },
-
-    { "type": "header", "content": "Step 4 — Customize" },
-    { "type": "text", "id": "customize_title", "label": "Customize title", "default": "CUSTOMIZE YOUR HAT" },
-    { "type": "text", "id": "cta_label", "label": "Add-to-cart label", "default": "ADD TO CART" },
-
-    { "type": "header", "content": "Inspiration gallery" },
-    { "type": "text", "id": "inspo_title", "label": "Inspiration title", "default": "AI ART INSPIRATION" },
-    { "type": "url", "id": "gallery_url", "label": "View-all gallery link" }
+    {
+      "type": "header",
+      "content": "Theme"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent color",
+      "default": "#00a0ea",
+      "info": "CTAs, step chips, selected states (main page)."
+    },
+    {
+      "type": "header",
+      "content": "Hero"
+    },
+    {
+      "type": "text",
+      "id": "hero_badge",
+      "label": "Hero badge",
+      "default": "NEW"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero title (line 1)",
+      "default": "CREATE YOUR"
+    },
+    {
+      "type": "text",
+      "id": "hero_accent",
+      "label": "Hero accent (line 2)",
+      "default": "AI HAT"
+    },
+    {
+      "type": "text",
+      "id": "hero_tagline",
+      "label": "Tagline",
+      "default": "Turn your imagination into wearable art."
+    },
+    {
+      "type": "textarea",
+      "id": "hero_sub",
+      "label": "Hero subtext",
+      "default": "Generate your artwork in ChatGPT in minutes—then we'll professionally print it on a premium patch."
+    },
+    {
+      "type": "text",
+      "id": "reviews_text",
+      "label": "Reviews text",
+      "default": "2,500+ Verified Reviews"
+    },
+    {
+      "type": "header",
+      "content": "Step 1 — Prompt"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Step 1 title",
+      "default": "GENERATE YOUR AI ARTWORK"
+    },
+    {
+      "type": "textarea",
+      "id": "prompt_text",
+      "label": "ChatGPT prompt",
+      "info": "Shown in the copy box."
+    },
+    {
+      "type": "text",
+      "id": "prompt_hint",
+      "label": "Prompt hint",
+      "default": "Add your idea after “Now create:”"
+    },
+    {
+      "type": "textarea",
+      "id": "prompt_example",
+      "label": "Prompt example",
+      "default": "A Baja race truck kicking up dust in the desert at sunset, vintage poster style."
+    },
+    {
+      "type": "header",
+      "content": "Step 2 — Upload"
+    },
+    {
+      "type": "text",
+      "id": "upload_title",
+      "label": "Upload title",
+      "default": "UPLOAD YOUR AI ARTWORK"
+    },
+    {
+      "type": "text",
+      "id": "upload_note",
+      "label": "File-type note",
+      "default": "JPG, PNG, WEBP up to 25MB"
+    },
+    {
+      "type": "header",
+      "content": "Step 3 — Quality check"
+    },
+    {
+      "type": "text",
+      "id": "qc_title",
+      "label": "Quality-check title",
+      "default": "PRINT QUALITY CHECK"
+    },
+    {
+      "type": "header",
+      "content": "Preview"
+    },
+    {
+      "type": "text",
+      "id": "preview_title",
+      "label": "Preview title",
+      "default": "YOUR PATCH"
+    },
+    {
+      "type": "header",
+      "content": "Step 4 — Customize"
+    },
+    {
+      "type": "text",
+      "id": "customize_title",
+      "label": "Customize title",
+      "default": "CUSTOMIZE YOUR HAT"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Add-to-cart label",
+      "default": "ADD TO CART"
+    },
+    {
+      "type": "header",
+      "content": "Inspiration gallery"
+    },
+    {
+      "type": "text",
+      "id": "inspo_title",
+      "label": "Inspiration title",
+      "default": "AI ART INSPIRATION"
+    },
+    {
+      "type": "url",
+      "id": "gallery_url",
+      "label": "View-all gallery link"
+    },
+    {
+      "type": "header",
+      "content": "Typography",
+      "info": "Turn on a role to override its text styling. Off = current design."
+    },
+    {
+      "type": "header",
+      "content": "— Hero headline"
+    },
+    {
+      "type": "checkbox",
+      "id": "h1_enable",
+      "label": "Enable custom typography",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "h1_font_enable",
+      "label": "Use custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "h1_font",
+      "label": "Font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "header",
+      "content": "Hero headline — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "h1_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "h1_ls",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": -14
+    },
+    {
+      "type": "range",
+      "id": "h1_lh",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 95
+    },
+    {
+      "type": "select",
+      "id": "h1_tt",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "h1_ta",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "h1_color",
+      "label": "Text color",
+      "default": "#1a1f26"
+    },
+    {
+      "type": "range",
+      "id": "h1_mb",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "h1_pad",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Hero headline — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "h1_size_m",
+      "label": "Font size",
+      "min": 8,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "h1_ls_m",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": -10
+    },
+    {
+      "type": "range",
+      "id": "h1_lh_m",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "h1_tt_m",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "h1_ta_m",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "h1_color_m",
+      "label": "Text color",
+      "default": "#1a1f26"
+    },
+    {
+      "type": "range",
+      "id": "h1_mb_m",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "h1_pad_m",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "— Hero tagline"
+    },
+    {
+      "type": "checkbox",
+      "id": "tag_enable",
+      "label": "Enable custom typography",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "tag_font_enable",
+      "label": "Use custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "tag_font",
+      "label": "Font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "header",
+      "content": "Hero tagline — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "tag_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "tag_ls",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "tag_lh",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 115
+    },
+    {
+      "type": "select",
+      "id": "tag_tt",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "tag_ta",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "tag_color",
+      "label": "Text color",
+      "default": "#00a0ea"
+    },
+    {
+      "type": "range",
+      "id": "tag_mb",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "tag_pad",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Hero tagline — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "tag_size_m",
+      "label": "Font size",
+      "min": 8,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "tag_ls_m",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "tag_lh_m",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 120
+    },
+    {
+      "type": "select",
+      "id": "tag_tt_m",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "tag_ta_m",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "tag_color_m",
+      "label": "Text color",
+      "default": "#00a0ea"
+    },
+    {
+      "type": "range",
+      "id": "tag_mb_m",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "tag_pad_m",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "— Hero subtext"
+    },
+    {
+      "type": "checkbox",
+      "id": "sub_enable",
+      "label": "Enable custom typography",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sub_font_enable",
+      "label": "Use custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "sub_font",
+      "label": "Font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "header",
+      "content": "Hero subtext — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "sub_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "sub_ls",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "sub_lh",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 150
+    },
+    {
+      "type": "select",
+      "id": "sub_tt",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "sub_ta",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "sub_color",
+      "label": "Text color",
+      "default": "#374151"
+    },
+    {
+      "type": "range",
+      "id": "sub_mb",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "sub_pad",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Hero subtext — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "sub_size_m",
+      "label": "Font size",
+      "min": 8,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "sub_ls_m",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "sub_lh_m",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 150
+    },
+    {
+      "type": "select",
+      "id": "sub_tt_m",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "sub_ta_m",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "sub_color_m",
+      "label": "Text color",
+      "default": "#374151"
+    },
+    {
+      "type": "range",
+      "id": "sub_mb_m",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "sub_pad_m",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "— Section headings"
+    },
+    {
+      "type": "checkbox",
+      "id": "h2_enable",
+      "label": "Enable custom typography",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "h2_font_enable",
+      "label": "Use custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "h2_font",
+      "label": "Font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "header",
+      "content": "Section headings — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "h2_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 19
+    },
+    {
+      "type": "range",
+      "id": "h2_ls",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "h2_lh",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 120
+    },
+    {
+      "type": "select",
+      "id": "h2_tt",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "h2_ta",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "h2_color",
+      "label": "Text color",
+      "default": "#1a1f26"
+    },
+    {
+      "type": "range",
+      "id": "h2_mb",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "h2_pad",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Section headings — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "h2_size_m",
+      "label": "Font size",
+      "min": 8,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "h2_ls_m",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "h2_lh_m",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 120
+    },
+    {
+      "type": "select",
+      "id": "h2_tt_m",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "h2_ta_m",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "h2_color_m",
+      "label": "Text color",
+      "default": "#1a1f26"
+    },
+    {
+      "type": "range",
+      "id": "h2_mb_m",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "h2_pad_m",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "— Body text"
+    },
+    {
+      "type": "checkbox",
+      "id": "body_enable",
+      "label": "Enable custom typography",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "body_font_enable",
+      "label": "Use custom font",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Font",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "header",
+      "content": "Body text — Desktop"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Font size",
+      "min": 8,
+      "max": 96,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "body_ls",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_lh",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 145
+    },
+    {
+      "type": "select",
+      "id": "body_tt",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "body_ta",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Text color",
+      "default": "#374151"
+    },
+    {
+      "type": "range",
+      "id": "body_mb",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_pad",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Body text — Mobile"
+    },
+    {
+      "type": "range",
+      "id": "body_size_m",
+      "label": "Font size",
+      "min": 8,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "body_ls_m",
+      "label": "Letter spacing (×0.1px)",
+      "min": -30,
+      "max": 60,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_lh_m",
+      "label": "Line height (%)",
+      "min": 80,
+      "max": 250,
+      "step": 5,
+      "unit": "%",
+      "default": 145
+    },
+    {
+      "type": "select",
+      "id": "body_tt_m",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "UPPERCASE"
+        },
+        {
+          "value": "lowercase",
+          "label": "lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "select",
+      "id": "body_ta_m",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "color",
+      "id": "body_color_m",
+      "label": "Text color",
+      "default": "#374151"
+    },
+    {
+      "type": "range",
+      "id": "body_mb_m",
+      "label": "Margin bottom",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "body_pad_m",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
   ],
   "blocks": [
     {
       "type": "usp",
       "name": "Trust badge",
       "settings": [
-        { "type": "text", "id": "icon", "label": "Icon (emoji/char)", "default": "✔" },
-        { "type": "text", "id": "title", "label": "Title", "default": "PREMIUM QUALITY" }
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji/char)",
+          "default": "✔"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "PREMIUM QUALITY"
+        }
       ]
     },
     {
       "type": "inspiration",
       "name": "Inspiration item",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Artwork" },
-        { "type": "text", "id": "label", "label": "Label", "default": "Vintage Bear" }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Artwork"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Vintage Bear"
+        }
       ]
     },
     {
       "type": "valueprop",
       "name": "Footer value prop",
       "settings": [
-        { "type": "text", "id": "icon", "label": "Icon (emoji/char)", "default": "◈" },
-        { "type": "text", "id": "title", "label": "Title", "default": "DESIGNED BY YOU" },
-        { "type": "text", "id": "text", "label": "Text", "default": "Use AI to create something 100% original." }
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (emoji/char)",
+          "default": "◈"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "DESIGNED BY YOU"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Use AI to create something 100% original."
+        }
       ]
     }
   ],
@@ -208,20 +1578,102 @@
     {
       "name": "Create Your AI Hat",
       "blocks": [
-        { "type": "usp", "settings": { "icon": "🛡", "title": "PREMIUM QUALITY" } },
-        { "type": "usp", "settings": { "icon": "💧", "title": "WATER RESISTANT" } },
-        { "type": "usp", "settings": { "icon": "✳", "title": "LASER ENGRAVED" } },
-        { "type": "usp", "settings": { "icon": "🚚", "title": "FAST SHIPPING" } },
-        { "type": "inspiration", "settings": { "label": "Vintage Bear" } },
-        { "type": "inspiration", "settings": { "label": "Baja Racer" } },
-        { "type": "inspiration", "settings": { "label": "Golden Retriever" } },
-        { "type": "inspiration", "settings": { "label": "Bass Fishing" } },
-        { "type": "inspiration", "settings": { "label": "Desert Skull" } },
-        { "type": "inspiration", "settings": { "label": "Eagle & Flag" } },
-        { "type": "valueprop", "settings": { "icon": "✅", "title": "DESIGNED BY YOU", "text": "Use AI to create something 100% original." } },
-        { "type": "valueprop", "settings": { "icon": "⚙", "title": "PROFESSIONALLY MADE", "text": "We laser engrave your art for a premium look." } },
-        { "type": "valueprop", "settings": { "icon": "🛡", "title": "BUILT TO LAST", "text": "Water resistant & made for everyday wear." } },
-        { "type": "valueprop", "settings": { "icon": "❤", "title": "MADE FOR YOU", "text": "Every hat is custom printed just for you." } }
+        {
+          "type": "usp",
+          "settings": {
+            "icon": "🛡",
+            "title": "PREMIUM QUALITY"
+          }
+        },
+        {
+          "type": "usp",
+          "settings": {
+            "icon": "💧",
+            "title": "WATER RESISTANT"
+          }
+        },
+        {
+          "type": "usp",
+          "settings": {
+            "icon": "✳",
+            "title": "LASER ENGRAVED"
+          }
+        },
+        {
+          "type": "usp",
+          "settings": {
+            "icon": "🚚",
+            "title": "FAST SHIPPING"
+          }
+        },
+        {
+          "type": "inspiration",
+          "settings": {
+            "label": "Vintage Bear"
+          }
+        },
+        {
+          "type": "inspiration",
+          "settings": {
+            "label": "Baja Racer"
+          }
+        },
+        {
+          "type": "inspiration",
+          "settings": {
+            "label": "Golden Retriever"
+          }
+        },
+        {
+          "type": "inspiration",
+          "settings": {
+            "label": "Bass Fishing"
+          }
+        },
+        {
+          "type": "inspiration",
+          "settings": {
+            "label": "Desert Skull"
+          }
+        },
+        {
+          "type": "inspiration",
+          "settings": {
+            "label": "Eagle & Flag"
+          }
+        },
+        {
+          "type": "valueprop",
+          "settings": {
+            "icon": "✅",
+            "title": "DESIGNED BY YOU",
+            "text": "Use AI to create something 100% original."
+          }
+        },
+        {
+          "type": "valueprop",
+          "settings": {
+            "icon": "⚙",
+            "title": "PROFESSIONALLY MADE",
+            "text": "We laser engrave your art for a premium look."
+          }
+        },
+        {
+          "type": "valueprop",
+          "settings": {
+            "icon": "🛡",
+            "title": "BUILT TO LAST",
+            "text": "Water resistant & made for everyday wear."
+          }
+        },
+        {
+          "type": "valueprop",
+          "settings": {
+            "icon": "❤",
+            "title": "MADE FOR YOU",
+            "text": "Every hat is custom printed just for you."
+          }
+        }
       ]
     }
   ]
