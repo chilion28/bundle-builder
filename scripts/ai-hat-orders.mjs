@@ -201,13 +201,29 @@ function attachmentUrl(url, kind, job) {
   return url.replace('/upload/', `/upload/fl_attachment:${name}/`);
 }
 
+/* A small, optimised rendition for on-screen preview — the real files are
+   3-9 MB each, far too heavy to inline. PDFs render page 1 as a JPEG. */
+function previewUrl(url, w = 700) {
+  if (!url || !url.includes('/upload/')) return url;
+  const t = /\.pdf$/i.test(url) ? `pg_1,w_${w},q_auto,f_jpg` : `w_${w},q_auto,f_auto`;
+  return url.replace('/upload/', `/upload/${t}/`);
+}
+
 function renderHtml(jobs, { store, days }) {
   const handle = store.replace('.myshopify.com', '');
   const rows = jobs.map((j) => {
     const adminUrl = `https://admin.shopify.com/store/${handle}/orders/${j.orderId}`;
+    // <details> gives a no-JS accordion, and its contents aren't fetched until
+    // the user opens it — so a page of jobs stays light.
     const link = (href, label, kind) => (href
-      ? `<a class="dl" href="${esc(attachmentUrl(href, kind, j))}" download>${label}</a>`
-      : `<span class="dl dl--off" title="not supplied">${label}</span>`);
+      ? `<details class="fa">
+           <summary>⬇ ${label}</summary>
+           <div class="fa__body">
+             <img class="fa__img" src="${esc(previewUrl(href))}" alt="${esc(label)} preview" loading="lazy">
+             <a class="fa__dl" href="${esc(attachmentUrl(href, kind, j))}" download>⬇ Download ${label.toLowerCase()}</a>
+           </div>
+         </details>`
+      : `<div class="fa fa--off" title="not supplied">⬇ ${label}</div>`);
     const date = new Date(j.createdAt).toLocaleString();
     return `<tr data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
       <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="patch preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
@@ -226,10 +242,10 @@ function renderHtml(jobs, { store, days }) {
         : '<span class="none">—</span>'}</td>
       <td class="meta score">${esc(j.score || '—')}</td>
       <td class="links">
-        ${link(j.original, '⬇ Original', 'original')}
-        ${link(j.print, '⬇ Print 600dpi', 'print')}
-        ${link(j.pdf, '⬇ PDF', 'print')}
-        ${link(j.preview, '⬇ Preview', 'preview')}
+        ${link(j.original, 'Original', 'original')}
+        ${link(j.print, 'Print 600dpi', 'print')}
+        ${link(j.pdf, 'PDF', 'print')}
+        ${link(j.preview, 'Preview', 'preview')}
       </td>
     </tr>`;
   }).join('\n');
@@ -259,11 +275,21 @@ function renderHtml(jobs, { store, days }) {
   .meta{color:var(--muted);font-size:12.5px}
   .strong{font-weight:700}
   .score{max-width:230px}
-  .links{white-space:nowrap}
-  .dl{display:block;margin-bottom:6px;padding:7px 11px;border:1.5px solid var(--line);border-radius:8px;
-      text-decoration:none;color:var(--ink);font-size:13px;font-weight:600;background:#fff}
-  .dl:hover{border-color:var(--blue);color:var(--blue)}
-  .dl--off{color:#c2c8d0;border-style:dashed;font-weight:500}
+  .links{width:300px;min-width:300px}
+  .fa{margin-bottom:6px;border:1.5px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+  .fa > summary{padding:7px 11px;font-size:13px;font-weight:600;cursor:pointer;list-style:none;user-select:none}
+  .fa > summary::-webkit-details-marker{display:none}
+  .fa > summary:hover{color:var(--blue)}
+  .fa[open]{border-color:var(--blue)}
+  .fa[open] > summary{border-bottom:1px solid var(--line);color:var(--blue)}
+  .fa__body{padding:10px}
+  /* checkerboard shows transparency in the artwork */
+  .fa__img{display:block;width:100%;border-radius:6px;background:
+    conic-gradient(#eceff3 90deg,#fff 0 180deg,#eceff3 0 270deg,#fff 0) 0 0/18px 18px}
+  .fa__dl{display:block;margin-top:9px;padding:9px;text-align:center;background:var(--blue);color:#fff;
+    border-radius:8px;text-decoration:none;font-size:13px;font-weight:700}
+  .fa__dl:hover{filter:brightness(.93)}
+  .fa--off{padding:7px 11px;font-size:13px;color:#c2c8d0;border-style:dashed;font-weight:500}
   .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2f6;font-size:11px;font-weight:700;color:#475569}
   .pill--fulfilled{background:#e6f6ec;color:#1a7f45}
   .pill--unfulfilled{background:#fdf3d7;color:#8a6100}
