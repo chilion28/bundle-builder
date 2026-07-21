@@ -38,6 +38,8 @@ const P = {
   pdf: ['_Artwork PDF'],
   preview: ['_Artwork Preview'],
   score: ['_Quality Score'],
+  text: ['Custom Text'],
+  textColor: ['Text Color'],
 };
 
 /* ------------------------------------------------------------------ args --- */
@@ -170,6 +172,8 @@ async function collectJobs(graphql, { days, scanLimit }) {
           pdf: pick(attrs, P.pdf),
           preview: pick(attrs, P.preview),
           score: pick(attrs, P.score),
+          text: pick(attrs, P.text),
+          textColor: pick(attrs, P.textColor),
         });
       }
     }
@@ -192,7 +196,7 @@ function renderHtml(jobs, { store, days }) {
       ? `<a class="dl" href="${esc(href)}" target="_blank" rel="noopener">${label}</a>`
       : `<span class="dl dl--off" title="not supplied">${label}</span>`);
     const date = new Date(j.createdAt).toLocaleString();
-    return `<tr data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title).toLowerCase())}">
+    return `<tr data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
       <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="patch preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
       <td>
         <a class="order" href="${esc(adminUrl)}" target="_blank" rel="noopener">${esc(j.order)}</a>
@@ -204,6 +208,9 @@ function renderHtml(jobs, { store, days }) {
         <div class="meta">${esc(j.variant)}</div>
         <div class="meta">Qty ${esc(j.qty)}</div>
       </td>
+      <td class="txt">${j.text
+        ? `<div class="strong">${esc(j.text)}</div><div class="meta"><span class="chip chip--${esc(String(j.textColor || '').toLowerCase())}"></span>${esc(j.textColor || '')}</div>`
+        : '<span class="none">—</span>'}</td>
       <td class="meta score">${esc(j.score || '—')}</td>
       <td class="links">
         ${link(j.original, '⬇ Original')}
@@ -248,6 +255,10 @@ function renderHtml(jobs, { store, days }) {
   .pill--fulfilled{background:#e6f6ec;color:#1a7f45}
   .pill--unfulfilled{background:#fdf3d7;color:#8a6100}
   .none{color:#c2c8d0}
+  .txt{max-width:190px}
+  .chip{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid #c2c8d0;margin-right:6px;vertical-align:-1px}
+  .chip--black{background:#000}
+  .chip--white{background:#fff}
   .empty{padding:40px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px}
 </style>
 <h1>AI Hat production queue</h1>
@@ -258,7 +269,7 @@ ${jobs.length ? `
   <span class="count" id="count"></span>
 </div>
 <table>
-  <thead><tr><th>Preview</th><th>Order</th><th>Patch</th><th>Quality</th><th>Files</th></tr></thead>
+  <thead><tr><th>Preview</th><th>Order</th><th>Patch</th><th>Text</th><th>Quality</th><th>Files</th></tr></thead>
   <tbody id="rows">
 ${rows}
   </tbody>
@@ -277,10 +288,10 @@ ${rows}
 
 function renderCsv(jobs) {
   const cell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const head = ['Order', 'Date', 'Fulfillment', 'Product', 'Variant', 'Qty', 'Shape', 'Quality', 'Original', 'Print', 'PDF', 'Preview'];
+  const head = ['Order', 'Date', 'Fulfillment', 'Product', 'Variant', 'Qty', 'Shape', 'Text', 'Text Color', 'Quality', 'Original', 'Print', 'PDF', 'Preview'];
   const lines = [head.map(cell).join(',')];
   for (const j of jobs) {
-    lines.push([j.order, j.createdAt, j.fulfillment, j.title, j.variant, j.qty, j.shape, j.score, j.original, j.print, j.pdf, j.preview].map(cell).join(','));
+    lines.push([j.order, j.createdAt, j.fulfillment, j.title, j.variant, j.qty, j.shape, j.text, j.textColor, j.score, j.original, j.print, j.pdf, j.preview].map(cell).join(','));
   }
   return lines.join('\n');
 }
@@ -291,7 +302,7 @@ const DEMO_JOBS = [
   {
     order: '#403461', orderId: '0', createdAt: new Date().toISOString(), fulfillment: 'UNFULFILLED',
     title: 'Image Hat', variant: 'Snapback / Snapback Maroon', qty: 1, shape: 'Hexagon',
-    score: 'Resolution 100/100 · 600 DPI · margins ok',
+    score: 'Resolution 100/100 · 600 DPI · margins ok', text: 'WEST COAST', textColor: 'Black',
     print: 'https://res.cloudinary.com/ycnncucq/image/upload/v1784593419/ez9jppk7wl4wbwikkprx.png',
     original: 'https://res.cloudinary.com/ycnncucq/image/upload/v1784593419/jfle72yzhrikzdle6fhn.jpg',
     pdf: 'https://res.cloudinary.com/ycnncucq/image/upload/v1784593419/ez9jppk7wl4wbwikkprx.pdf',
@@ -300,7 +311,7 @@ const DEMO_JOBS = [
   {
     order: '#403460', orderId: '0', createdAt: new Date(Date.now() - 864e5).toISOString(), fulfillment: 'FULFILLED',
     title: 'Image Hat', variant: 'Trucker / Trucker Black', qty: 2, shape: 'Rectangle',
-    score: 'Resolution 98/100 · 588 DPI · margins ok',
+    score: 'Resolution 98/100 · 588 DPI · margins ok', text: '', textColor: '',
     print: 'https://res.cloudinary.com/ycnncucq/image/upload/v1784590060/vlrmu2nuvdivglzgj4oi.png',
     original: 'https://res.cloudinary.com/ycnncucq/image/upload/v1784590059/borngpu0agimjkht8xuv.jpg',
     pdf: 'https://res.cloudinary.com/ycnncucq/image/upload/v1784590060/vlrmu2nuvdivglzgj4oi.pdf',
