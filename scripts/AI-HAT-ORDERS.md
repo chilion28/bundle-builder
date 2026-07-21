@@ -88,6 +88,29 @@ Two macOS gotchas hit while setting this up — keep them in mind if it ever bre
 It only runs while this Mac is on and the share is mounted. Once the workflow
 settles, a hosted or Shopify-embedded version removes that dependency.
 
+## Verifying print files
+
+```bash
+node scripts/ai-hat-verify.mjs --days 2
+```
+
+Checks every order's print file is the right shape. Each patch has its own
+window aspect, so a Hexagon order must not carry a Rectangle-shaped crop —
+this catches artwork composited at the wrong aspect before it reaches print.
+
+Expected output at 2400px wide:
+
+| Shape     | Print size  |
+|-----------|-------------|
+| Rectangle | 2400 x 1277 |
+| Rounded   | 2400 x 1906 |
+| Circle    | 2400 x 2400 |
+| Hexagon   | 2400 x 1311 |
+
+Only the PNG header (34 bytes) is read, so it's fast despite the multi-MB files.
+Exits non-zero if anything fails. The `WINDOW` table in the script mirrors the
+one in `assets/cl-ai-hat.js` — keep them in step if the frames ever change.
+
 ## Notes
 
 - **Order data never leaves the machine.** The report is a local file; nothing is
