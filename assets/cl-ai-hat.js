@@ -499,24 +499,53 @@
            '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif';
   }
 
+  /* How wide the patch window is at a given height, as a fraction of full width.
+   * Circles and hexagons narrow towards the bottom, so text placed there has far
+   * less room than the canvas width suggests — sizing against W alone overflows
+   * the patch. yFrac is 0 (top) to 1 (bottom). */
+  function windowWidthAt(shape, yFrac) {
+    if (shape === 'circle') {
+      var dy = Math.abs(yFrac - 0.5) * 2;                 // 0 centre → 1 edge
+      return Math.sqrt(Math.max(0, 1 - dy * dy));         // chord of the ellipse
+    }
+    if (shape === 'hexagon') {                            // apex top & bottom
+      if (yFrac <= 0.35) return yFrac / 0.35;
+      if (yFrac >= 0.65) return (1 - yFrac) / 0.35;
+      return 1;
+    }
+    if (shape === 'rounded') {                            // big elliptical corners
+      var edge = yFrac < 0.2 ? yFrac / 0.2 : yFrac > 0.8 ? (1 - yFrac) / 0.2 : 1;
+      return edge >= 1 ? 1 : 0.08 + 0.92 * Math.sqrt(Math.max(0, 1 - (1 - edge) * (1 - edge)));
+    }
+    return 1;                                             // rectangle
+  }
+
+  /* Where the text baseline sits per shape — pushed up on the shapes that taper
+   * so there's usable width for it. */
+  var TEXT_Y = { rectangle: 0.90, rounded: 0.88, circle: 0.80, hexagon: 0.62 };
+
   // Bottom-centred, auto-shrunk to fit, with a contrasting outline so it stays
   // legible over any artwork.
   function drawPatchText(ctx, W, H) {
     var txt = (state.text || '').trim();
     if (!txt) return;
+    var shape = String(state.shape).toLowerCase();
     var fill = state.textColor === 'White' ? '#ffffff' : '#000000';
     var stroke = state.textColor === 'White' ? '#000000' : '#ffffff';
-    var maxW = W * 0.82;
-    var size = Math.round(H * 0.17);
+
+    var yFrac = TEXT_Y[shape] || 0.90;
+    // Fit to the width actually available at that height, not the whole canvas.
+    var maxW = W * windowWidthAt(shape, yFrac) * 0.86;
+    var size = Math.round(Math.min(W * 0.11, H * 0.20));
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
-    for (var i = 0; i < 40; i += 1) {                 // shrink until it fits
+    for (var i = 0; i < 60; i += 1) {                 // shrink until it fits
       ctx.font = fontStack(size);
       if (ctx.measureText(txt).width <= maxW || size <= 8) break;
       size -= Math.max(1, Math.round(size * 0.06));
     }
     var x = W / 2;
-    var y = H - Math.round(H * 0.09);                 // sits inside the safe margin
+    var y = Math.round(H * yFrac);
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.miterLimit = 2;
