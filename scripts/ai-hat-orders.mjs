@@ -191,12 +191,22 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
 ));
 
+/* Cloudinary serves inline by default, and the HTML `download` attribute is
+   ignored cross-origin — so force a download with fl_attachment, which also
+   lets us replace the random public ID with a name production can file. */
+function attachmentUrl(url, kind, job) {
+  if (!url || !url.includes('/upload/')) return url;
+  const safe = (s) => String(s || '').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
+  const name = [safe(job.order), safe(job.shape) || 'patch', kind].filter(Boolean).join('-');
+  return url.replace('/upload/', `/upload/fl_attachment:${name}/`);
+}
+
 function renderHtml(jobs, { store, days }) {
   const handle = store.replace('.myshopify.com', '');
   const rows = jobs.map((j) => {
     const adminUrl = `https://admin.shopify.com/store/${handle}/orders/${j.orderId}`;
-    const link = (href, label) => (href
-      ? `<a class="dl" href="${esc(href)}" target="_blank" rel="noopener">${label}</a>`
+    const link = (href, label, kind) => (href
+      ? `<a class="dl" href="${esc(attachmentUrl(href, kind, j))}" download>${label}</a>`
       : `<span class="dl dl--off" title="not supplied">${label}</span>`);
     const date = new Date(j.createdAt).toLocaleString();
     return `<tr data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
@@ -216,10 +226,10 @@ function renderHtml(jobs, { store, days }) {
         : '<span class="none">—</span>'}</td>
       <td class="meta score">${esc(j.score || '—')}</td>
       <td class="links">
-        ${link(j.original, '⬇ Original')}
-        ${link(j.print, '⬇ Print 600dpi')}
-        ${link(j.pdf, '⬇ PDF')}
-        ${link(j.preview, '⬇ Preview')}
+        ${link(j.original, '⬇ Original', 'original')}
+        ${link(j.print, '⬇ Print 600dpi', 'print')}
+        ${link(j.pdf, '⬇ PDF', 'print')}
+        ${link(j.preview, '⬇ Preview', 'preview')}
       </td>
     </tr>`;
   }).join('\n');
