@@ -50,8 +50,13 @@
         </button>
       </div>
       <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork designed for a 4″ × 2.25″ landscape hat patch.
+
+IMPORTANT — image shape:
+Generate the image in a WIDE LANDSCAPE format (3:2, roughly 1536 x 1024).
+Do NOT generate a square image.
+
 This is artwork only, NOT a patch mockup.
-The artwork should completely fill the canvas.
+The artwork should completely fill the canvas, edge to edge.
 DO NOT include:
 - Stitching
 - Embroidery texture
@@ -59,8 +64,9 @@ DO NOT include:
 - Borders
 - Mockups
 - Shadows
+- White frames or empty margins
 
-Keep the artwork centered.
+Keep the main subject centered.
 Leave a 10% safe margin.
 Use bold shapes and strong contrast.
 Avoid tiny details.
@@ -314,6 +320,18 @@ Now create:' }}</pre>
           <div class="cl-ai-ed__mask-safe"></div>
         </div>
         <img class="cl-ai-ed__frame" data-cl-ai-ed-frame alt="" aria-hidden="true">
+      </div>
+
+      {%- comment -%} Fill crops to the patch; Fit keeps the whole image and pads
+        with its own background colour — so square artwork doesn't lose anything
+        and production doesn't have to rebuild the background by hand. {%- endcomment -%}
+      <div class="cl-ai-ed__modes">
+        <button type="button" class="cl-ai-ed__mode is-active" data-cl-ai-ed-mode="fill">Fill patch</button>
+        <button type="button" class="cl-ai-ed__mode" data-cl-ai-ed-mode="fit">Fit whole image</button>
+        <label class="cl-ai-ed__bg" data-cl-ai-ed-bgwrap hidden>
+          Background
+          <input type="color" data-cl-ai-ed-bg value="#ffffff" aria-label="Background colour">
+        </label>
       </div>
 
       <div class="cl-ai-ed__controls">

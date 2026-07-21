@@ -200,6 +200,13 @@
     img.onload = function () {
       edState.img = img; edState.file = file; edState.natW = img.naturalWidth; edState.natH = img.naturalHeight;
       edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0;
+      edState.bg = detectBgColor(img);
+      if (edBg) edBg.value = edState.bg;
+      // Square-ish art on a wide patch loses a lot to cropping — start those in
+      // Fit so nothing is lost and production doesn't rebuild the background.
+      var srcAspect = img.naturalWidth / img.naturalHeight;
+      edState.fit = Math.abs(srcAspect - shapeAspect()) / shapeAspect() > 0.25;
+      syncModeButtons();
       runQualityCheck(file, img.naturalWidth, img.naturalHeight); // quality reflects the SOURCE image
       openEditor(true);
     };
@@ -225,6 +232,8 @@
   var edMask = $('[data-cl-ai-ed-mask]');
   var edFrame = $('[data-cl-ai-ed-frame]');
   var edZoom = $('[data-cl-ai-ed-zoom]');
+  var edBgWrap = $('[data-cl-ai-ed-bgwrap]');
+  var edBg = $('[data-cl-ai-ed-bg]');
   // Reuse the Step-2 preview's frame PNG URLs (already rendered with asset_url).
   function currentFrameSrc() {
     var f = document.querySelector('.cl-ai-pf__frame[data-frame="' + String(state.shape).toLowerCase() + '"]');
@@ -281,7 +290,33 @@
     catch (e) { cb(null); }   // tainted canvas — skip rather than block the order
   }
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
-                  baseScale: 1, maskW: 0, maskH: 0 };
+                  baseScale: 1, maskW: 0, maskH: 0,
+                  fit: false,          // false = fill/crop, true = contain + padded background
+                  bg: '#ffffff' };
+
+  /* Most AI patch art sits on a flat background, so sampling the border pixels
+     gives us the colour to pad with — the same thing a designer would pick when
+     extending the artwork by hand. */
+  function detectBgColor(img) {
+    try {
+      var S = 48, c = document.createElement('canvas');
+      c.width = S; c.height = S;
+      var cx = c.getContext('2d', { willReadFrequently: true });
+      cx.drawImage(img, 0, 0, S, S);
+      var d = cx.getImageData(0, 0, S, S).data, counts = {}, best = null, bestN = 0;
+      var add = function (x, y) {
+        var i = (y * S + x) * 4;
+        var k = [d[i], d[i + 1], d[i + 2]].map(function (v) { return Math.round(v / 16) * 16; }).join(',');
+        counts[k] = (counts[k] || 0) + 1;
+        if (counts[k] > bestN) { bestN = counts[k]; best = k; }
+      };
+      for (var x = 0; x < S; x++) { add(x, 0); add(x, S - 1); }
+      for (var y = 0; y < S; y++) { add(0, y); add(S - 1, y); }
+      if (!best) return '#ffffff';
+      var p = best.split(',').map(Number);
+      return '#' + p.map(function (v) { return ('0' + Math.min(255, v).toString(16)).slice(-2); }).join('');
+    } catch (e) { return '#ffffff'; }
+  }
 
   // Each shape's artwork-window size as a fraction of the 1200×1200 frame PNG
   // (measured from the transparent windows). Drives editor aspect + output dims.
@@ -311,7 +346,10 @@
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
-    edState.baseScale = Math.max(maskW / iw, maskH / ih); // cover the mask
+    // Fill = cover (crops); Fit = contain (keeps everything, pads the remainder).
+    edState.baseScale = edState.fit
+      ? Math.min(maskW / iw, maskH / ih)
+      : Math.max(maskW / iw, maskH / ih);
   }
 
   function clampOffset() {
@@ -380,6 +418,10 @@
       // Pixel-perfect: paint bright image on an offscreen, keep only the window via the mask.
       var off = document.createElement('canvas'); off.width = edCanvas.width; off.height = edCanvas.height;
       var octx = off.getContext('2d'); octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      if (edState.fit) {   // show the padding colour exactly as it will print
+        octx.fillStyle = edState.bg;
+        octx.fillRect(W / 2 - edState.maskW / 2, H / 2 - edState.maskH / 2, edState.maskW, edState.maskH);
+      }
       paintImage(octx, W, H);
       octx.globalCompositeOperation = 'destination-in';
       octx.drawImage(mimg, W / 2 - edState.maskW / 2, H / 2 - edState.maskH / 2, edState.maskW, edState.maskH);
@@ -395,6 +437,7 @@
     if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; }
     if (edMask) edMask.setAttribute('data-shape', String(state.shape).toLowerCase());
     if (edZoom) edZoom.value = edState.scale;
+    syncModeButtons();
     editor.hidden = false;
     document.body.style.overflow = 'hidden';
     requestAnimationFrame(function () { computeMask(); edDraw(); });
@@ -432,6 +475,22 @@
   }
   function on(sel, fn) { var el = $(sel); if (el) el.addEventListener('click', fn); }
 
+  function syncModeButtons() {
+    $$('[data-cl-ai-ed-mode]').forEach(function (b) {
+      b.classList.toggle('is-active', (b.dataset.clAiEdMode || b.getAttribute('data-cl-ai-ed-mode')) === (edState.fit ? 'fit' : 'fill'));
+    });
+    if (edBgWrap) edBgWrap.hidden = !edState.fit;
+  }
+  $$('[data-cl-ai-ed-mode]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      edState.fit = b.getAttribute('data-cl-ai-ed-mode') === 'fit';
+      edState.offsetX = 0; edState.offsetY = 0; edState.scale = 1;
+      if (edZoom) edZoom.value = 1;
+      syncModeButtons(); computeMask(); edDraw();
+    });
+  });
+  if (edBg) edBg.addEventListener('input', function () { edState.bg = edBg.value; edDraw(); });
+
   /* Composite the crop at print resolution, working purely in OUTPUT space. The
    * pan is stored normalised (fraction of the window) rather than in editor-stage
    * pixels, so this never depends on the stage being measured — and a later patch
@@ -445,10 +504,15 @@
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
-    var base = Math.max(targetW / iw, targetH / ih);      // cover the output
+    var base = edState.fit
+      ? Math.min(targetW / iw, targetH / ih)               // contain — nothing lost
+      : Math.max(targetW / iw, targetH / ih);              // cover — crops to fill
     var out = document.createElement('canvas');
     out.width = targetW; out.height = targetH;
     var octx = out.getContext('2d');
+    // Pad with the artwork's own background so the file is full-bleed and
+    // production doesn't have to rebuild the background.
+    if (edState.fit) { octx.fillStyle = edState.bg; octx.fillRect(0, 0, targetW, targetH); }
     octx.save();
     octx.translate(targetW / 2 + (edState.normX || 0) * targetW,
                    targetH / 2 + (edState.normY || 0) * targetH);

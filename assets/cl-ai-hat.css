@@ -154,6 +154,15 @@
   clip-path:polygon(25% 4%,75% 4%,100% 50%,75% 96%,25% 96%,0 50%)}
 .cl-ai-ed__mask-safe{position:absolute;inset:8px;border:1.5px dashed rgba(255,255,255,.85);border-radius:inherit}
 .cl-ai-ed__mask[data-shape="hexagon"] .cl-ai-ed__mask-safe{display:none}
+.cl-ai-ed__modes{display:flex;align-items:center;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.cl-ai-ed__mode{flex:1;min-width:120px;padding:9px 12px;border:1.5px solid var(--line);background:#fff;
+  border-radius:9px;font-size:13px;font-weight:600;color:#374151}
+.cl-ai-ed__mode:hover{border-color:var(--green);color:var(--green)}
+.cl-ai-ed__mode.is-active{border-color:var(--green);background:#e4f4fd;color:var(--green-dk)}
+.cl-ai-ed__bg{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.cl-ai-ed__bg[hidden]{display:none}
+.cl-ai-ed__bg input{width:38px;height:32px;padding:0;border:1.5px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+
 .cl-ai-ed__controls{display:flex;align-items:center;gap:8px;margin:16px 0 4px}
 .cl-ai-ed__ctl{flex:none;min-width:40px;height:40px;padding:0 10px;border:1.5px solid var(--line);background:#fff;
   border-radius:9px;font-size:17px;font-weight:700;color:#374151}
