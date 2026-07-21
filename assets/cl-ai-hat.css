@@ -209,6 +209,20 @@
 .cl-ai-b__shape.is-active{border-color:var(--green);background:#e4f4fd}
 .cl-ai-b__shape-icon{max-width:100%;max-height:100%;object-fit:contain;display:block}
 
+/* ---- optional patch text ---- */
+.cl-ai-b__check{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;cursor:pointer}
+.cl-ai-b__check input{width:17px;height:17px;accent-color:var(--green);cursor:pointer}
+.cl-ai-b__check em{font-style:normal;font-weight:500;color:var(--muted)}
+.cl-ai-b__text-group{margin-top:12px}
+.cl-ai-b__text-group[hidden]{display:none}
+.cl-ai-b__tc-row{display:flex;align-items:center;gap:12px;margin-top:10px}
+.cl-ai-b__tc-label{font-size:13px;color:var(--muted)}
+.cl-ai-b__tcs{display:flex;gap:8px}
+.cl-ai-b__tc{width:34px;height:34px;border-radius:8px;border:2px solid var(--line);padding:0;cursor:pointer;transition:.15s}
+.cl-ai-b__tc--black{background:#000}
+.cl-ai-b__tc--white{background:#fff}
+.cl-ai-b__tc.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
+
 .cl-ai-b__text-wrap{position:relative}
 .cl-ai-b__text{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 70px 13px 14px;
   font-size:15px;transition:border-color .15s}

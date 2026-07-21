@@ -57,6 +57,8 @@
     style: (($('[data-cl-ai-style].is-active') || {}).dataset || {}).value || null,
     color: (($('[data-cl-ai-color].is-active') || {}).dataset || {}).value || null,
     shape: 'Rectangle',
+    text: '',
+    textColor: 'Black',
     artUrl: '',
     score: ''
   };
@@ -430,40 +432,144 @@
   }
   function on(sel, fn) { var el = $(sel); if (el) el.addEventListener('click', fn); }
 
-  // Composite the cropped region to a print-res canvas and apply it everywhere.
-  function edConfirm() {
-    // computeMask() normally runs in a rAF on open; if that hasn't fired yet
-    // (throttled/background tab) maskW is 0 and outScale below would be garbage.
-    if (!edState.maskW || !edState.maskH) computeMask();
-    if (!edState.maskW || !edState.maskH) return;   // still unmeasurable — bail rather than ship a broken file
+  /* Composite the crop at print resolution, working purely in OUTPUT space. The
+   * pan is stored normalised (fraction of the window) rather than in editor-stage
+   * pixels, so this never depends on the stage being measured — and a later patch
+   * SHAPE change can rebuild the file at the new aspect without re-opening the
+   * editor. 2400px across a 4" patch = 600 DPI. */
+  function buildPrintCanvas() {
+    if (!edState.img) return null;
     var aspect = shapeAspect();
-    // 2400px across a 4" patch = 600 DPI, giving production headroom in Photoshop.
     var targetW = 2400;
     var targetH = Math.round(targetW / aspect);
+    var rot = ((edState.rotation % 360) + 360) % 360;
+    var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
+    var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
+    var base = Math.max(targetW / iw, targetH / ih);      // cover the output
     var out = document.createElement('canvas');
     out.width = targetW; out.height = targetH;
     var octx = out.getContext('2d');
-    var outScale = targetW / edState.maskW;   // stage px → output px (mask maps to full output)
     octx.save();
-    octx.translate(targetW / 2 + edState.offsetX * outScale, targetH / 2 + edState.offsetY * outScale);
+    octx.translate(targetW / 2 + (edState.normX || 0) * targetW,
+                   targetH / 2 + (edState.normY || 0) * targetH);
     octx.rotate(edState.rotation * Math.PI / 180);
-    var s = edState.baseScale * edState.scale * outScale;
+    var s = base * edState.scale;
     octx.scale(s, s);
     octx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
     octx.restore();
+    return out;
+  }
 
-    // Preview off a downscaled copy so we don't hold a ~2400px data URL in the DOM.
-    var small = document.createElement('canvas');
-    small.width = 900; small.height = Math.round(900 / aspect);
-    small.getContext('2d').drawImage(out, 0, 0, small.width, small.height);
-    applyArtwork(small.toDataURL('image/png'));
-
-    var previewCanvas = buildPreviewCanvas(out);
-    safeToBlob(out, function (printBlob) {
-      if (previewCanvas) safeToBlob(previewCanvas, function (pvBlob) { uploadArtwork(printBlob, pvBlob); });
-      else uploadArtwork(printBlob, null);
-    });
+  function edConfirm() {
+    if (!edState.img) return;
+    // Normalise the pan against the window so the crop is aspect-independent.
+    if (edState.maskW && edState.maskH) {
+      edState.normX = edState.offsetX / edState.maskW;
+      edState.normY = edState.offsetY / edState.maskH;
+    }
+    baseCanvas = buildPrintCanvas();   // text-free crop; text is layered on later
+    if (!baseCanvas) return;
+    refreshArtwork(true);
     closeEditor();
+  }
+
+  /* =====================================================================
+   * OPTIONAL PATCH TEXT
+   * Rendered INTO the print composite, so it flows through to the PDF and the
+   * framed preview automatically. baseCanvas holds the crop without text.
+   * ===================================================================== */
+  var baseCanvas = null;
+  var PATCH_FONT = 'CLPatchFont';
+  var fontReady = false;
+  (function loadPatchFont() {
+    var url = root.getAttribute('data-patch-font');
+    if (!url || typeof FontFace === 'undefined') return;
+    try {
+      var ff = new FontFace(PATCH_FONT, 'url(' + url + ')', { weight: '900' });
+      ff.load().then(function (loaded) {
+        document.fonts.add(loaded);
+        fontReady = true;
+        if (baseCanvas && state.text) refreshArtwork(true); // re-render with the real face
+      }).catch(function () { /* fall back to a system bold */ });
+    } catch (e) { /* ignore */ }
+  })();
+
+  function fontStack(px) {
+    return '900 ' + px + 'px ' + (fontReady ? '"' + PATCH_FONT + '", ' : '') +
+           '-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif';
+  }
+
+  // Bottom-centred, auto-shrunk to fit, with a contrasting outline so it stays
+  // legible over any artwork.
+  function drawPatchText(ctx, W, H) {
+    var txt = (state.text || '').trim();
+    if (!txt) return;
+    var fill = state.textColor === 'White' ? '#ffffff' : '#000000';
+    var stroke = state.textColor === 'White' ? '#000000' : '#ffffff';
+    var maxW = W * 0.82;
+    var size = Math.round(H * 0.17);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    for (var i = 0; i < 40; i += 1) {                 // shrink until it fits
+      ctx.font = fontStack(size);
+      if (ctx.measureText(txt).width <= maxW || size <= 8) break;
+      size -= Math.max(1, Math.round(size * 0.06));
+    }
+    var x = W / 2;
+    var y = H - Math.round(H * 0.09);                 // sits inside the safe margin
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.miterLimit = 2;
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = Math.max(2, size * 0.16);
+    ctx.strokeText(txt, x, y);
+    ctx.fillStyle = fill;
+    ctx.fillText(txt, x, y);
+    ctx.restore();
+  }
+
+  // Re-draw the crop at `width` with the current text baked in.
+  function composeWithText(width) {
+    if (!baseCanvas) return null;
+    var h = Math.round(width * baseCanvas.height / baseCanvas.width);
+    var c = document.createElement('canvas');
+    c.width = width; c.height = h;
+    var ctx = c.getContext('2d');
+    ctx.drawImage(baseCanvas, 0, 0, width, h);
+    drawPatchText(ctx, width, h);
+    return c;
+  }
+
+  var uploadTimer = null, uploadInFlight = null;
+
+  /* Updates the on-page preview immediately, then (debounced) rebuilds the
+     print-res files and re-uploads. Typing stays responsive; the stored files
+     always match what's on screen. */
+  function refreshArtwork(immediate) {
+    if (!baseCanvas) return;
+    var shown = composeWithText(900);
+    if (shown) applyArtwork(shown.toDataURL('image/png'));
+
+    if (uploadTimer) { clearTimeout(uploadTimer); uploadTimer = null; }
+    var run = function () {
+      uploadTimer = null;
+      var print = composeWithText(2400);
+      if (!print) return;
+      var framed = buildPreviewCanvas(print);
+      uploadInFlight = new Promise(function (resolve) {
+        safeToBlob(print, function (printBlob) {
+          if (framed) safeToBlob(framed, function (pv) { uploadArtwork(printBlob, pv, resolve); });
+          else uploadArtwork(printBlob, null, resolve);
+        });
+      });
+    };
+    if (immediate) run(); else uploadTimer = setTimeout(run, 900);
+  }
+
+  // Anything queued must finish before the item can be added to the cart.
+  function settleArtwork() {
+    if (uploadTimer) { clearTimeout(uploadTimer); uploadTimer = null; refreshArtwork(true); }
+    return uploadInFlight || Promise.resolve();
   }
 
   // Show the composited artwork in the patch frame, hero overlay and QC thumb.
@@ -491,13 +597,15 @@
       .then(function (res) { if (res && res.secure_url) return res.secure_url; throw new Error('no url'); });
   }
 
-  function uploadArtwork(printBlob, previewBlob) {
+  function uploadArtwork(printBlob, previewBlob, done) {
+    var finish = function () { if (typeof done === 'function') done(); };
     var stamp = Date.now();
     var origName = (edState.file && edState.file.name) || 'artwork';
     if (!cloudinaryReady() || !printBlob) {
       state.artUrl = state.localArt;
       if (propArt) propArt.value = '[local-preview] ' + origName;
       setStatus('warn', 'Preview only — connect Cloudinary to store the file.');
+      finish();
       return;
     }
     setStatus('ok', 'Uploading…');
@@ -519,10 +627,12 @@
       // Same asset delivered as PDF — Cloudinary converts by swapping the extension.
       if (propPdf) propPdf.value = printUrl.replace(/\.(png|jpe?g|webp)$/i, '.pdf');
       setStatus('ok', '✓ Artwork uploaded');
+      finish();
     }).catch(function () {
       state.artUrl = state.localArt;
       if (propArt) propArt.value = '[upload-failed] ' + origName;
       setStatus('err', 'Upload failed — we saved a preview. You can still order; we may email you for the file.');
+      finish();
     });
   }
 
@@ -675,6 +785,9 @@
     if (patchframe) patchframe.setAttribute('data-shape', sl);  // Step-2 patch frame
     setPatchMask();
     if (editor && !editor.hidden) { edMask.setAttribute('data-shape', sl); computeMask(); edDraw(); }
+    // A different shape means a different window aspect — rebuild the print file
+    // so the stored artwork always matches the selected patch.
+    if (baseCanvas && edState.img) { baseCanvas = buildPrintCanvas(); refreshArtwork(true); }
   });
   setPatchMask(); // initial
 
@@ -701,16 +814,41 @@
   syncActiveThumb();
   resolveVariant();
 
-  /* text counter */
+  /* optional patch text — typing re-renders the preview instantly and (debounced)
+     rebuilds + re-uploads the print files so the stored artwork always matches. */
+  var textToggle = $('[data-cl-ai-text-toggle]');
+  var textGroup = $('[data-cl-ai-text-group]');
   var textInput = $('[data-cl-ai-text]');
   var countEl = $('[data-cl-ai-count]');
   var propText = $('[data-cl-ai-prop-text]');
-  if (textInput) {
-    textInput.addEventListener('input', function () {
-      if (countEl) countEl.textContent = String(textInput.value.length);
-      if (propText) propText.value = textInput.value.trim();
+  var propTextColor = $('[data-cl-ai-prop-textcolor]');
+
+  function syncText() {
+    var on = textToggle ? textToggle.checked : false;
+    state.text = on && textInput ? textInput.value.trim() : '';
+    if (propText) propText.value = state.text;
+    if (propTextColor) propTextColor.value = state.text ? state.textColor : '';
+    if (countEl && textInput) countEl.textContent = String(textInput.value.length);
+    refreshArtwork();          // debounced re-upload; preview updates immediately
+  }
+
+  if (textToggle && textGroup) {
+    textToggle.addEventListener('change', function () {
+      textGroup.hidden = !textToggle.checked;
+      if (textToggle.checked && textInput) textInput.focus();
+      syncText();
     });
   }
+  if (textInput) textInput.addEventListener('input', syncText);
+
+  $$('[data-cl-ai-textcolor]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      $$('[data-cl-ai-textcolor]').forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
+      btn.classList.add('is-active'); btn.setAttribute('aria-checked', 'true');
+      state.textColor = btn.dataset.value;
+      syncText();
+    });
+  });
 
   /* quantity */
   var qtyInput = $('[data-cl-ai-qty-input]');
@@ -741,24 +879,30 @@
     }
 
     var qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
-    var props = {
-      'Patch Shape': state.shape,                                   // which InDesign template
-      '_Artwork Print': (propArt && propArt.value) || state.artUrl, // customer's exact crop, 600 DPI
-      '_Quality Score': state.score || ''
-    };
-    if (propOrig && propOrig.value) props['_Artwork Original'] = propOrig.value; // for Photoshop
-    if (propPdf && propPdf.value) props['_Artwork PDF'] = propPdf.value;
-    if (propPreview && propPreview.value) props['_Artwork Preview'] = propPreview.value; // framed patch visual
-    var txt = textInput ? textInput.value.trim() : '';
-    if (txt) props['Custom Text'] = txt;
-
     var original = cta ? cta.innerHTML : '';
-    if (cta) { cta.disabled = true; var l = $('[data-cl-ai-cta-label]', cta); if (l) l.textContent = 'Adding…'; }
+    if (cta) { cta.disabled = true; var l = $('[data-cl-ai-cta-label]', cta); if (l) l.textContent = 'Preparing…'; }
 
-    fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: vId, quantity: qty, properties: props })
+    // A debounced text re-render may still be queued/in-flight — the cart must
+    // carry the finished files, never a stale pre-text version.
+    settleArtwork().then(function () {
+      var props = {
+        'Patch Shape': state.shape,                                   // which InDesign template
+        '_Artwork Print': (propArt && propArt.value) || state.artUrl, // customer's exact crop, 600 DPI
+        '_Quality Score': state.score || ''
+      };
+      if (propOrig && propOrig.value) props['_Artwork Original'] = propOrig.value; // for Photoshop
+      if (propPdf && propPdf.value) props['_Artwork PDF'] = propPdf.value;
+      if (propPreview && propPreview.value) props['_Artwork Preview'] = propPreview.value; // framed patch visual
+      if (state.text) {                       // ~90% of orders have no patch text
+        props['Custom Text'] = state.text;
+        props['Text Color'] = state.textColor;
+      }
+      if (cta) { var l2 = $('[data-cl-ai-cta-label]', cta); if (l2) l2.textContent = 'Adding…'; }
+      return fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: vId, quantity: qty, properties: props })
+      });
     }).then(function (r) {
       if (!r.ok) throw new Error('add failed');
       if (cta) { cta.disabled = false; cta.innerHTML = original; }

@@ -28,7 +28,8 @@
 {%- comment -%} Patch shapes → real frame PNGs in assets/ (transparent windows) {%- endcomment -%}
 {%- assign shape_list = 'Rectangle,Rounded,Circle,Hexagon' | split: ',' -%}
 
-<div class="cl-ai-b" data-cl-ai-builder>
+<div class="cl-ai-b" data-cl-ai-builder
+     data-patch-font="{{ 'AkzidenzGrotesk-Black.woff2' | asset_url }}">
 
   {%- comment -%} ========== LEFT COLUMN — Step 1 prompt + Step 2 upload ========== {%- endcomment -%}
   <div class="cl-ai-b__left">
@@ -167,6 +168,8 @@ Now create:' }}</pre>
     <input type="hidden" name="properties[_Artwork Original]" value="" data-cl-ai-prop-orig>
     <input type="hidden" name="properties[_Artwork PDF]" value="" data-cl-ai-prop-pdf>
     <input type="hidden" name="properties[_Artwork Preview]" value="" data-cl-ai-prop-preview>
+    <input type="hidden" name="properties[Custom Text]" value="" data-cl-ai-prop-text>
+    <input type="hidden" name="properties[Text Color]" value="" data-cl-ai-prop-textcolor>
     <input type="hidden" name="properties[_Quality Score]" value="" data-cl-ai-prop-score>
 
     <div class="cl-ai__step">
@@ -244,6 +247,32 @@ Now create:' }}</pre>
                    alt="{{ sh }}" loading="lazy">
             </button>
           {%- endfor -%}
+        </div>
+      </div>
+
+      {%- comment -%} Optional patch text — baked into the print file, so it also
+        appears in the PDF and the framed preview. ~90% of orders have none. {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__check">
+          <input type="checkbox" data-cl-ai-text-toggle>
+          <span>Add text to your patch <em>(optional)</em></span>
+        </label>
+
+        <div class="cl-ai-b__text-group" data-cl-ai-text-group hidden>
+          <div class="cl-ai-b__text-wrap">
+            <input type="text" id="cl-ai-text" class="cl-ai-b__text" maxlength="30"
+                   placeholder="Enter Text (e.g. WEST COAST)" data-cl-ai-text autocomplete="off">
+            <span class="cl-ai-b__count"><span data-cl-ai-count>0</span> / 30</span>
+          </div>
+          <div class="cl-ai-b__tc-row">
+            <span class="cl-ai-b__tc-label">Text colour</span>
+            <div class="cl-ai-b__tcs" data-cl-ai-textcolors role="radiogroup" aria-label="Text colour">
+              <button type="button" class="cl-ai-b__tc cl-ai-b__tc--black is-active"
+                      data-cl-ai-textcolor data-value="Black" role="radio" aria-checked="true" aria-label="Black text"></button>
+              <button type="button" class="cl-ai-b__tc cl-ai-b__tc--white"
+                      data-cl-ai-textcolor data-value="White" role="radio" aria-checked="false" aria-label="White text"></button>
+            </div>
+          </div>
         </div>
       </div>
 
