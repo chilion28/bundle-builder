@@ -7,22 +7,39 @@ For each job it lists: order # (links straight to the Shopify admin order), date
 fulfilment status, patch shape, variant, quantity, the print-quality score, and
 download buttons for **Original / Print 600dpi / PDF / Preview**.
 
-## One-time setup
+## Setup — already done (2026-07-21)
 
-The script needs Admin API access, which is **not** configured yet.
+Admin API access is configured and working. Recorded here in case it ever needs
+redoing.
 
-1. Shopify admin → **Settings → Apps and sales channels → Develop apps → Create an app**
-2. **Configure Admin API scopes** → enable **`read_orders`**
-3. **Install app**, then reveal the **Admin API access token**
-4. Add it to `.env.admin-api` (git-ignored) in the repo root:
+The app is **CityLocs Order Tools**, a UI-less app defined in
+`Custom App/citylocs-order-tools/` (scope: `read_orders`, custom distribution).
 
-   ```
-   SHOPIFY_STORE=citylocs.myshopify.com
-   SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_...
-   ```
+**Legacy custom apps can no longer be created** (Shopify removed that on
+2026-01-01), so it lives in the Dev Dashboard.
 
-`SHOPIFY_CLIENT_ID` + `SHOPIFY_CLIENT_SECRET` also work (client-credentials
-exchange) if the app is owned by the same Shopify organisation.
+### Getting a token
+
+`client_credentials` does **not** work here — it returns
+`Oauth error shop_not_permitted`, because that grant requires the app's
+organisation to *own* the store. The app is in the **CityLocs** org while the
+store belongs to **Carving Image LLC**; custom distribution allows the install
+but not org-level API access. (`citylocs-functions` is in the same org and works
+fine — but it's a Shopify Function using direct API access, so it never performs
+this exchange. It isn't a counter-example.)
+
+Use the standard OAuth flow instead, which ignores org ownership:
+
+```bash
+node scripts/shopify-get-token.mjs
+```
+
+Open the URL it prints in a browser logged into the CityLocs admin, approve, and
+it writes `SHOPIFY_ADMIN_ACCESS_TOKEN` into `.env.admin-api` (git-ignored). The
+token is offline/long-lived — this is a one-time step.
+
+Requires `http://localhost:3456/auth/callback` to stay registered under
+`[auth] redirect_urls` in the app's `shopify.app.toml`.
 
 ## Usage
 
