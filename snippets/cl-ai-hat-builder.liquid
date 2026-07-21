@@ -49,11 +49,12 @@
           <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
         </button>
       </div>
-      <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork designed for a 4″ × 2.25″ landscape hat patch.
+      {%- comment -%} [[SIZE]] is swapped by cl-ai-hat.js for guidance matching the
+        selected patch shape, so the generated image needs no cropping. {%- endcomment -%}
+      <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork for a custom hat patch.
 
-IMPORTANT — image shape:
-Generate the image in a WIDE LANDSCAPE format (3:2, roughly 1536 x 1024).
-Do NOT generate a square image.
+IMPORTANT — image size:
+[[SIZE]]
 
 This is artwork only, NOT a patch mockup.
 The artwork should completely fill the canvas, edge to edge.

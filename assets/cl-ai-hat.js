@@ -65,7 +65,37 @@
 
   /* =====================================================================
    * STEP 1 — copy prompt
+   * The prompt carries a [[SIZE]] token replaced with guidance for the chosen
+   * patch, so what ChatGPT produces already matches the window and needs no
+   * cropping. Sizes are the closest ChatGPT offers to each window aspect.
    * ===================================================================== */
+  var PROMPT_SIZE = {
+    // window 1.88 — widest patch
+    rectangle: 'Your patch is a RECTANGLE (wide).\n' +
+               'Generate a WIDE LANDSCAPE image, about 1792 x 1024 pixels.\n' +
+               'Do NOT generate a square image.',
+    // window 1.83 — wide, but tapers to points left and right
+    hexagon:   'Your patch is a HEXAGON (wide, with points at the left and right).\n' +
+               'Generate a WIDE LANDSCAPE image, about 1792 x 1024 pixels.\n' +
+               'Do NOT generate a square image.\n' +
+               'Keep the subject centred — the left and right edges taper to points.',
+    // window 1.26 — only slightly wider than tall
+    rounded:   'Your patch is a ROUNDED RECTANGLE (slightly wider than tall).\n' +
+               'Generate a LANDSCAPE image, about 1536 x 1024 pixels (3:2).\n' +
+               'Do NOT generate a square image.',
+    // window 1.0 — exact square
+    circle:    'Your patch is a CIRCLE.\n' +
+               'Generate a SQUARE image, 1024 x 1024 pixels.\n' +
+               'Keep the subject centred — the corners will be cut off by the circle.'
+  };
+
+  var promptEl = $('[data-cl-ai-prompt]');
+  var promptTemplate = promptEl ? promptEl.textContent : '';
+  function syncPrompt() {
+    if (!promptEl || promptTemplate.indexOf('[[SIZE]]') === -1) return;
+    var guide = PROMPT_SIZE[String(state.shape).toLowerCase()] || PROMPT_SIZE.rectangle;
+    promptEl.textContent = promptTemplate.replace(/\[\[SIZE\]\]/g, guide);
+  }
   var copyBtn = $('[data-cl-ai-copy]');
   if (copyBtn) {
     copyBtn.addEventListener('click', function () {
@@ -876,6 +906,7 @@
     var prop = $('[data-cl-ai-prop-shape]'); if (prop) prop.value = val;
     if (patch) patch.setAttribute('data-shape', sl);            // hero overlay
     if (patchframe) patchframe.setAttribute('data-shape', sl);  // Step-2 patch frame
+    syncPrompt();                                               // Step-1 size guidance
     setPatchMask();
     if (editor && !editor.hidden) { edMask.setAttribute('data-shape', sl); computeMask(); edDraw(); }
     // A different shape means a different window aspect — rebuild the print file
@@ -901,6 +932,7 @@
       if (ctaPrice) ctaPrice.textContent = formatMoney(chosen.price);
     }
   }
+  syncPrompt();           // initial — size guidance for the default shape
   filterColorsForStyle(); // initial — hide colours not offered in the default style
   applyColorLabels();     // strip style prefix from swatch tooltips + the label
   renderThumbs();         // build the rail from the current style's colours
