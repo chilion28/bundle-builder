@@ -356,6 +356,17 @@
     circle:    { l: 0.0383, t: 0.0383, w: 0.9233, h: 0.9233 },
     hexagon:   { l: 0.0300, t: 0.2408, w: 0.9400, h: 0.5133 }
   };
+  /* The dashed guide on each frame is the safe area: production needs artwork —
+     especially text and logos — to sit inside it, or they have to nudge it by
+     hand. Measured from the frames, as a fraction of the window. */
+  var SAFE = {
+    rectangle: { w: 0.972, h: 0.949 },
+    rounded:   { w: 0.968, h: 0.960 },
+    circle:    { w: 0.959, h: 0.959 },
+    hexagon:   { w: 0.978, h: 0.959 }
+  };
+  function safeFor(shape) { return SAFE[String(shape).toLowerCase()] || SAFE.rectangle; }
+
   function shapeAspect() { var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle; return win.w / win.h; }
 
   function computeMask() {
@@ -376,9 +387,11 @@
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
-    // Fill = cover (crops); Fit = contain (keeps everything, pads the remainder).
+    // Fill = cover (crops). Fit = contain within the SAFE area so nothing
+    // important lands outside the dashed guide; the background pads the rest.
+    var sf = safeFor(state.shape);
     edState.baseScale = edState.fit
-      ? Math.min(maskW / iw, maskH / ih)
+      ? Math.min(maskW * sf.w / iw, maskH * sf.h / ih)
       : Math.max(maskW / iw, maskH / ih);
   }
 
@@ -534,8 +547,9 @@
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
+    var sf = safeFor(state.shape);
     var base = edState.fit
-      ? Math.min(targetW / iw, targetH / ih)               // contain — nothing lost
+      ? Math.min(targetW * sf.w / iw, targetH * sf.h / ih) // contain inside the safe area
       : Math.max(targetW / iw, targetH / ih);              // cover — crops to fill
     var out = document.createElement('canvas');
     out.width = targetW; out.height = targetH;
@@ -670,6 +684,9 @@
      always match what's on screen. */
   function refreshArtwork(immediate) {
     if (!baseCanvas) return;
+    // Reflect reality rather than the aspect-only guess made at upload time.
+    if (edState.fit) setResult('margins', 'pass', 'Inside safe area');
+    else setResult('margins', 'warn', 'Edges may crop');
     var shown = composeWithText(900);
     if (shown) applyArtwork(shown.toDataURL('image/png'));
 
