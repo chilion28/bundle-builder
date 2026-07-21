@@ -13,6 +13,7 @@
  *   node scripts/ai-hat-orders.mjs --days 14
  *   node scripts/ai-hat-orders.mjs --days 90 --out ~/Desktop/ai-hats.html
  *   node scripts/ai-hat-orders.mjs --csv           # also write a .csv alongside
+ *   node scripts/ai-hat-orders.mjs --open          # open the report when it's built
  *
  * Credentials come from .env.admin-api (git-ignored):
  *   SHOPIFY_STORE=citylocs.myshopify.com
@@ -23,6 +24,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFile } from 'node:child_process';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
@@ -52,6 +54,7 @@ function parseArgs(argv) {
     else if (a === '--limit') out.scanLimit = Number(argv[++i]);
     else if (a === '--csv') out.csv = true;
     else if (a === '--demo') out.demo = true;      // render sample rows, no API call
+    else if (a === '--open') out.open = true;      // open the report when done
     else if (a === '--help' || a === '-h') out.help = true;
   }
   return out;
@@ -323,7 +326,7 @@ const DEMO_JOBS = [
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) {
-    console.log('Usage: node scripts/ai-hat-orders.mjs [--days 60] [--limit 1000] [--out file.html] [--csv]');
+    console.log('Usage: node scripts/ai-hat-orders.mjs [--days 60] [--limit 1000] [--out file.html] [--csv] [--open] [--demo]');
     return;
   }
 
@@ -346,6 +349,11 @@ async function main() {
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, renderHtml(jobs, { store, days: args.days }), 'utf8');
   console.log(`✓ ${jobs.length} AI Hat item(s) → ${outPath}`);
+
+  if (args.open) {
+    const opener = process.platform === 'darwin' ? 'open' : process.platform === 'win32' ? 'start' : 'xdg-open';
+    execFile(opener, [outPath], () => {});
+  }
 
   if (args.csv) {
     const csvPath = outPath.replace(/\.html?$/i, '') + '.csv';
