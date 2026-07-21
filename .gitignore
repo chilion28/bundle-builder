@@ -1,1 +1,5 @@
 .DS_Store
+.env.admin-api
+
+# Generated AI Hat order reports — contain live order data, never commit
+scripts/out/
