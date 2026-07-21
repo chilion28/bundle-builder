@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.citylocs.aihat-orders</string>
+
+  <!-- node is invoked directly rather than through a bash wrapper, so only ONE
+       binary (/usr/local/bin/node) needs Full Disk Access to reach the share. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/Volumes/CL Media Server/WEB/Shopify/Live Site/scripts/ai-hat-orders.mjs</string>
+    <string>--days</string>
+    <string>60</string>
+    <string>--csv</string>
+    <string>--out</string>
+    <string>/Volumes/CL Media Server/WEB/AI Hat Orders/ai-hat-orders.html</string>
+  </array>
+
+  <!-- Every 10 minutes, plus once at login so it's current after a restart. -->
+  <key>StartInterval</key>
+  <integer>600</integer>
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>WorkingDirectory</key>
+  <string>/Volumes/CL Media Server/WEB/Shopify/Live Site</string>
+
+  <!-- Logs stay on the LOCAL disk: pointing them at the network volume makes
+       launchd fail with EX_CONFIG (78) when it can't open them. -->
+  <key>StandardOutPath</key>
+  <string>/Users/webstation/Library/Logs/citylocs-aihat-orders.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/webstation/Library/Logs/citylocs-aihat-orders.err.log</string>
+</dict>
+</plist>

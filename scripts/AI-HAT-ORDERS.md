@@ -54,6 +54,40 @@ node scripts/ai-hat-orders.mjs --demo          # sample rows, no API call
 Report is written to `scripts/out/ai-hat-orders.html` — open it in any browser.
 There's a live filter box for order #, shape or colour.
 
+## Always-on copy for the team (scheduled)
+
+A launchd agent regenerates the report every 10 minutes (and at login) and
+publishes it to the shared server, so the team never runs anything:
+
+    /Volumes/CL Media Server/WEB/AI Hat Orders/ai-hat-orders.html
+                                              /ai-hat-orders.csv
+
+Agent: `~/Library/LaunchAgents/com.citylocs.aihat-orders.plist`
+(a copy is kept in `scripts/` for reference). Manage it with:
+
+```bash
+launchctl unload ~/Library/LaunchAgents/com.citylocs.aihat-orders.plist
+launchctl load   ~/Library/LaunchAgents/com.citylocs.aihat-orders.plist
+launchctl list | grep aihat        # col 2 = last exit code, 0 = healthy
+tail ~/Library/Logs/citylocs-aihat-orders.err.log
+```
+
+Two macOS gotchas hit while setting this up — keep them in mind if it ever breaks:
+
+1. **launchd log paths must be on the LOCAL disk.** Pointing `StandardOutPath`
+   / `StandardErrorPath` at the network volume makes launchd fail with
+   `EX_CONFIG` (exit 78) before the job even starts.
+2. **Invoke `node` directly, not through a bash wrapper.** Running
+   `/bin/bash wrapper.sh` from launchd was blocked by macOS privacy protection
+   (`Operation not permitted`, exit 126) because the script lives on a network
+   volume. Calling `/usr/local/bin/node` with the script path works, and means
+   only one binary would ever need Full Disk Access.
+
+`scripts/ai-hat-orders-sync.sh` still exists for manual/ad-hoc refreshes.
+
+It only runs while this Mac is on and the share is mounted. Once the workflow
+settles, a hosted or Shopify-embedded version removes that dependency.
+
 ## Notes
 
 - **Order data never leaves the machine.** The report is a local file; nothing is
