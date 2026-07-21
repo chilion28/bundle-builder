@@ -159,6 +159,7 @@
   var propArt = $('[data-cl-ai-prop-art]');
   var propOrig = $('[data-cl-ai-prop-orig]');
   var propPdf = $('[data-cl-ai-prop-pdf]');
+  var propPreview = $('[data-cl-ai-prop-preview]');
   var propScore = $('[data-cl-ai-prop-score]');
 
   function openPicker() { if (fileInput) { fileInput.value = ''; fileInput.click(); } }
@@ -239,16 +240,54 @@
   ['rectangle', 'rounded', 'circle', 'hexagon'].forEach(function (s) {
     var u = maskUrl(s); if (u) { var im = new Image(); im.src = u; edMasks[s] = im; }
   });
+
+  // Separate CORS-enabled copies used only for EXPORT — drawing a non-CORS image
+  // onto a canvas taints it and toBlob() then throws. Kept apart from the display
+  // copies above so a missing CORS header can never break the editor itself.
+  var exportMasks = {}, exportFrames = {};
+  ['rectangle', 'rounded', 'circle', 'hexagon'].forEach(function (s) {
+    var mu = maskUrl(s);
+    if (mu) { var mi = new Image(); mi.crossOrigin = 'anonymous'; mi.src = mu; exportMasks[s] = mi; }
+    var fEl = document.querySelector('.cl-ai-pf__frame[data-frame="' + s + '"]');
+    if (fEl) { var fi = new Image(); fi.crossOrigin = 'anonymous'; fi.src = fEl.getAttribute('src'); exportFrames[s] = fi; }
+  });
+
+  // Artwork composited inside the real patch frame — the visual reference of the
+  // finished patch for production/CS. Null if the frame isn't usable for export.
+  function buildPreviewCanvas(printCanvas) {
+    var shape = String(state.shape).toLowerCase();
+    var win = WINDOW[shape] || WINDOW.rectangle;
+    var frame = exportFrames[shape], mask = exportMasks[shape];
+    if (!frame || !frame.complete || !frame.naturalWidth) return null;
+    var S = 1200;
+    var dx = win.l * S, dy = win.t * S, dw = win.w * S, dh = win.h * S;
+    var art = document.createElement('canvas'); art.width = S; art.height = S;
+    var actx = art.getContext('2d');
+    actx.drawImage(printCanvas, dx, dy, dw, dh);
+    if (mask && mask.complete && mask.naturalWidth) {
+      actx.globalCompositeOperation = 'destination-in';
+      actx.drawImage(mask, dx, dy, dw, dh);
+    }
+    var pv = document.createElement('canvas'); pv.width = S; pv.height = S;
+    var pctx = pv.getContext('2d');
+    pctx.drawImage(art, 0, 0);
+    pctx.drawImage(frame, 0, 0, S, S);
+    return pv;
+  }
+  function safeToBlob(canvas, cb) {
+    try { canvas.toBlob(function (b) { cb(b); }, 'image/png'); }
+    catch (e) { cb(null); }   // tainted canvas — skip rather than block the order
+  }
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
                   baseScale: 1, maskW: 0, maskH: 0 };
 
   // Each shape's artwork-window size as a fraction of the 1200×1200 frame PNG
   // (measured from the transparent windows). Drives editor aspect + output dims.
   var WINDOW = {
-    rectangle: { w: 0.9317, h: 0.4958 },
-    rounded:   { w: 0.9267, h: 0.7358 },
-    circle:    { w: 0.9233, h: 0.9233 },
-    hexagon:   { w: 0.9400, h: 0.5133 }
+    rectangle: { l: 0.0342, t: 0.2592, w: 0.9317, h: 0.4958 },
+    rounded:   { l: 0.0367, t: 0.1317, w: 0.9267, h: 0.7358 },
+    circle:    { l: 0.0383, t: 0.0383, w: 0.9233, h: 0.9233 },
+    hexagon:   { l: 0.0300, t: 0.2408, w: 0.9400, h: 0.5133 }
   };
   function shapeAspect() { var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle; return win.w / win.h; }
 
@@ -393,6 +432,10 @@
 
   // Composite the cropped region to a print-res canvas and apply it everywhere.
   function edConfirm() {
+    // computeMask() normally runs in a rAF on open; if that hasn't fired yet
+    // (throttled/background tab) maskW is 0 and outScale below would be garbage.
+    if (!edState.maskW || !edState.maskH) computeMask();
+    if (!edState.maskW || !edState.maskH) return;   // still unmeasurable — bail rather than ship a broken file
     var aspect = shapeAspect();
     // 2400px across a 4" patch = 600 DPI, giving production headroom in Photoshop.
     var targetW = 2400;
@@ -415,8 +458,11 @@
     small.getContext('2d').drawImage(out, 0, 0, small.width, small.height);
     applyArtwork(small.toDataURL('image/png'));
 
-    if (out.toBlob) { out.toBlob(function (blob) { uploadArtwork(blob); }, 'image/png'); }
-    else { uploadArtwork(null); }
+    var previewCanvas = buildPreviewCanvas(out);
+    safeToBlob(out, function (printBlob) {
+      if (previewCanvas) safeToBlob(previewCanvas, function (pvBlob) { uploadArtwork(printBlob, pvBlob); });
+      else uploadArtwork(printBlob, null);
+    });
     closeEditor();
   }
 
@@ -445,7 +491,7 @@
       .then(function (res) { if (res && res.secure_url) return res.secure_url; throw new Error('no url'); });
   }
 
-  function uploadArtwork(printBlob) {
+  function uploadArtwork(printBlob, previewBlob) {
     var stamp = Date.now();
     var origName = (edState.file && edState.file.name) || 'artwork';
     if (!cloudinaryReady() || !printBlob) {
@@ -455,14 +501,21 @@
       return;
     }
     setStatus('ok', 'Uploading…');
-    var jobs = [cloudinaryUpload(printBlob, 'ai-hat-print-' + stamp + '.png')];
-    if (edState.file) jobs.push(cloudinaryUpload(edState.file, 'ai-hat-original-' + stamp + '-' + origName));
+    // Only the print file is critical; the extras fail soft so a hiccup on them
+    // can't stop the customer ordering.
+    var soft = function (p) { return p.catch(function () { return ''; }); };
+    var jobs = [
+      cloudinaryUpload(printBlob, 'ai-hat-print-' + stamp + '.png'),
+      soft(edState.file ? cloudinaryUpload(edState.file, 'ai-hat-original-' + stamp + '-' + origName) : Promise.resolve('')),
+      soft(previewBlob ? cloudinaryUpload(previewBlob, 'ai-hat-preview-' + stamp + '.png') : Promise.resolve(''))
+    ];
 
     Promise.all(jobs).then(function (urls) {
-      var printUrl = urls[0], origUrl = urls[1] || '';
+      var printUrl = urls[0], origUrl = urls[1] || '', prevUrl = urls[2] || '';
       state.artUrl = printUrl;
       if (propArt) propArt.value = printUrl;
       if (propOrig) propOrig.value = origUrl;
+      if (propPreview) propPreview.value = prevUrl;
       // Same asset delivered as PDF — Cloudinary converts by swapping the extension.
       if (propPdf) propPdf.value = printUrl.replace(/\.(png|jpe?g|webp)$/i, '.pdf');
       setStatus('ok', '✓ Artwork uploaded');
@@ -695,6 +748,7 @@
     };
     if (propOrig && propOrig.value) props['_Artwork Original'] = propOrig.value; // for Photoshop
     if (propPdf && propPdf.value) props['_Artwork PDF'] = propPdf.value;
+    if (propPreview && propPreview.value) props['_Artwork Preview'] = propPreview.value; // framed patch visual
     var txt = textInput ? textInput.value.trim() : '';
     if (txt) props['Custom Text'] = txt;
 
