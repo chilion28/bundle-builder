@@ -74,7 +74,7 @@ function page() {
     return `<tr data-order="${esc(j.order)}" data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + (j.text || '')).toLowerCase())}">
       <td class="status">
         <button type="button" class="st" data-state="${state}">${LABEL[state]}</button>
-        <textarea class="note" rows="2" placeholder="Add a note (e.g. why it's pending, image issue…)">${esc(st.note || '')}</textarea>
+        <textarea class="note" rows="2" placeholder="Add note">${esc(st.note || '')}</textarea>
         <div class="by">${st.by || st.at ? esc((st.by ? st.by + ' · ' : '') + (st.at ? new Date(st.at).toLocaleString() : '')) : ''}</div>
       </td>
       <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
