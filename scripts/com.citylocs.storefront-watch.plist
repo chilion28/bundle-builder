@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.citylocs.storefront-watch</string>
+  <!-- node invoked directly: launchd is blocked from running scripts off the
+       network volume via a shell wrapper (Operation not permitted / exit 126) -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/Volumes/CL Media Server/WEB/Shopify/Live Site/scripts/cl-storefront-watch.mjs</string>
+  </array>
+  <key>WorkingDirectory</key><string>/Volumes/CL Media Server/WEB/Shopify/Live Site</string>
+  <key>StartInterval</key><integer>300</integer>
+  <key>RunAtLoad</key><true/>
+  <!-- logs must live on the LOCAL disk or launchd fails EX_CONFIG (78) -->
+  <key>StandardOutPath</key><string>/Users/webstation/Library/Logs/citylocs-storefront-watch.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/webstation/Library/Logs/citylocs-storefront-watch.err.log</string>
+</dict>
+</plist>
