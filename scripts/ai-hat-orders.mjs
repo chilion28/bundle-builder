@@ -252,7 +252,7 @@ function renderHtml(jobs, { store, days }) {
 
   return `<!doctype html>
 <meta charset="utf-8">
-<title>AI Hat production queue</title>
+<title>Image Hat production queue</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   :root{--blue:#00a0ea;--ink:#1a1f26;--muted:#6b7280;--line:#e5e7eb}
@@ -300,7 +300,7 @@ function renderHtml(jobs, { store, days }) {
   .chip--white{background:#fff}
   .empty{padding:40px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:12px}
 </style>
-<h1>AI Hat production queue</h1>
+<h1>Image Hat production queue</h1>
 <div class="sub">${jobs.length} item${jobs.length === 1 ? '' : 's'} from the last ${days} days · generated ${esc(new Date().toLocaleString())} · ${esc(store)}</div>
 ${jobs.length ? `
 <div class="bar">
