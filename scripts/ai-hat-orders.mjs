@@ -123,12 +123,13 @@ function createApi({ store, token }) {
 /* ----------------------------------------------------------------- fetch --- */
 const ORDERS_QUERY = `
   query AiHatOrders($cursor: String) {
-    orders(first: 50, after: $cursor, reverse: true, sortKey: CREATED_AT) {
+    orders(first: 50, after: $cursor, reverse: true, sortKey: CREATED_AT, query: "status:any") {
       pageInfo { hasNextPage endCursor }
       edges { node {
         id
         name
         createdAt
+        closed
         displayFulfillmentStatus
         lineItems(first: 25) { edges { node {
           title
@@ -166,6 +167,7 @@ async function collectJobs(graphql, { days, scanLimit }) {
           orderId: order.id.split('/').pop(),
           createdAt: order.createdAt,
           fulfillment: order.displayFulfillmentStatus,
+          archived: order.closed,
           title: li.title,
           variant: li.variantTitle || '',
           qty: li.quantity,
@@ -225,12 +227,12 @@ function renderHtml(jobs, { store, days }) {
          </details>`
       : `<div class="fa fa--off" title="not supplied">⬇ ${label}</div>`);
     const date = new Date(j.createdAt).toLocaleString();
-    return `<tr data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
+    return `<tr class="${j.archived ? 'is-archived' : ''}" data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
       <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="patch preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
       <td>
         <a class="order" href="${esc(adminUrl)}" target="_blank" rel="noopener">${esc(j.order)}</a>
         <div class="meta">${esc(date)}</div>
-        <div class="meta"><span class="pill pill--${esc(String(j.fulfillment).toLowerCase())}">${esc(j.fulfillment)}</span></div>
+        <div class="meta"><span class="pill pill--${esc(String(j.fulfillment).toLowerCase())}">${esc(j.fulfillment)}</span>${j.archived ? ' <span class="pill pill--archived">ARCHIVED</span>' : ''}</div>
       </td>
       <td>
         <div class="strong">${esc(j.shape || '—')}</div>
@@ -293,6 +295,8 @@ function renderHtml(jobs, { store, days }) {
   .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2f6;font-size:11px;font-weight:700;color:#475569}
   .pill--fulfilled{background:#e6f6ec;color:#1a7f45}
   .pill--unfulfilled{background:#fdf3d7;color:#8a6100}
+  .pill--archived{background:#e6e8eb;color:#586374}
+  tr.is-archived{opacity:.62}
   .none{color:#c2c8d0}
   .txt{max-width:190px}
   .chip{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid #c2c8d0;margin-right:6px;vertical-align:-1px}
