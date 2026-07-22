@@ -72,6 +72,33 @@ function extractPayload(html) {
   return { hash: sha(b64), bytes: code.length, domains, version };
 }
 
+/* The payload is delivered as an ESCAPED string inside the app's config JSON —
+   inert until the app's client-side renderer writes it into the page as real
+   HTML. That rendering is gated on the menu's publish/active state, so publish
+   state is effectively the arming switch. Capture it, plus the smoking gun:
+   the payload appearing anywhere OUTSIDE the config blob = rendered as live
+   markup = armed. */
+function qikifySnapshot(html) {
+  const m = html.match(/<script id="qikify-smartmenu-config">([\s\S]*?)<\/script>/);
+  const cfg = m ? m[1] : '';
+  const out = {
+    configPresent: !!cfg,
+    newEntries: /_SM\.newEntries\s*=\s*\{/.test(cfg) ? 'populated'
+      : /_SM\.newEntries\s*=\s*null/.test(cfg) ? 'null' : 'absent',
+    entries: [],
+    payloadOutsideConfig: false,
+  };
+  const oe = cfg.match(/_SM\.oldEntries\s*=\s*(\[[\s\S]*?\]);/);
+  if (oe) {
+    try {
+      out.entries = JSON.parse(oe[1]).map((e) =>
+        `id:${e.id} status:${e.status} published_at:${e.published_at ?? 'null'} updated:${e.updated_at}`);
+    } catch { /* leave empty */ }
+  }
+  if (cfg) out.payloadOutsideConfig = MARKERS.some((k) => html.replace(cfg, '').includes(k));
+  return out;
+}
+
 function snapshotPage(html) {
   const scriptDomains = uniq([...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)]
     .map((m) => { try { return new URL(m[1], BASE).hostname.toLowerCase(); } catch { return ''; } })
@@ -83,6 +110,7 @@ function snapshotPage(html) {
     onerrorEval: /onerror=["'][^"']*(eval|atob)/i.test(html),
     scriptDomains,
     payload: extractPayload(html),
+    qikify: qikifySnapshot(html),
     // Any app/menu record timestamps — a moving value means someone wrote again.
     entryUpdatedAt: uniq([...html.matchAll(/"updated_at":"(20\d\d[-\d :T.Z]+)"/g)].map((m) => m[1])),
   };
@@ -123,6 +151,21 @@ function diff(prev, now) {
   const newScripts = now.scriptDomains.filter((d) => !prev.scriptDomains.includes(d));
   if (newScripts.length) alerts.push(`NEW SCRIPT DOMAIN on storefront — ${newScripts.join(', ')}`);
 
+  // ---- arming signals (publish/render state, not payload content) ----
+  const pq = prev.qikify || {}, nq = now.qikify || {};
+  if (!pq.payloadOutsideConfig && nq.payloadOutsideConfig) {
+    alerts.push('*** ARMED *** payload now appears OUTSIDE the config blob — it is being rendered as live markup, not inert data.');
+  }
+  if (pq.newEntries && nq.newEntries && pq.newEntries !== nq.newEntries) {
+    alerts.push(`MENU DATA DELIVERY CHANGED — newEntries ${pq.newEntries} -> ${nq.newEntries}`);
+  }
+  const pe = pq.entries || [], ne = nq.entries || [];
+  const changedRows = ne.filter((r) => !pe.includes(r));
+  if (changedRows.length) {
+    const published = changedRows.some((r) => !/published_at:null/.test(r));
+    alerts.push(`${published ? 'MENU PUBLISHED (LIKELY RE-ARMS THE PAYLOAD)' : 'MENU PUBLISH STATE CHANGED'} — ${changedRows.join(' | ')}`);
+  }
+
   return alerts;
 }
 
@@ -141,6 +184,17 @@ async function main() {
     payload: pages.map((p) => p.payload).find(Boolean) || null,
     scriptDomains: uniq(pages.flatMap((p) => p.scriptDomains || [])),
     entryUpdatedAt: uniq(pages.flatMap((p) => p.entryUpdatedAt || [])),
+    qikify: (() => {
+      const qs = pages.map((p) => p.qikify).filter((q) => q && q.configPresent);
+      if (!qs.length) return { configPresent: false, newEntries: 'absent', entries: [], payloadOutsideConfig: false };
+      return {
+        configPresent: true,
+        newEntries: qs[0].newEntries,
+        entries: uniq(qs.flatMap((q) => q.entries)),
+        // armed if ANY page renders it outside the config blob
+        payloadOutsideConfig: qs.some((q) => q.payloadOutsideConfig),
+      };
+    })(),
   };
 
   let prev = null;
