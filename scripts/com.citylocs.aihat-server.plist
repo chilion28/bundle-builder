@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.citylocs.aihat-server</string>
+  <!-- node invoked directly (not via a shell) so only one binary needs disk access -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/usr/local/bin/node</string>
+    <string>/Volumes/CL Media Server/WEB/Shopify/Live Site/scripts/ai-hat-server.mjs</string>
+  </array>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PORT</key><string>4321</string>
+    <key>DAYS</key><string>60</string>
+    <key>HOST_HINT</key><string>Webs-iMac.local</string>
+  </dict>
+  <key>WorkingDirectory</key><string>/Volumes/CL Media Server/WEB/Shopify/Live Site</string>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <!-- logs on LOCAL disk (network paths make launchd fail EX_CONFIG) -->
+  <key>StandardOutPath</key><string>/Users/webstation/Library/Logs/citylocs-aihat-server.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/webstation/Library/Logs/citylocs-aihat-server.err.log</string>
+</dict>
+</plist>
