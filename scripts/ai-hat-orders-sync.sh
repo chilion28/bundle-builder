@@ -33,10 +33,14 @@ cd "$REPO" || { echo "$(stamp)  FAIL — repo not reachable" >> "$LOG"; exit 1; 
 
 # Write to a temp file first, then move into place, so the team never opens a
 # half-written report.
-TMP="$REPO/scripts/out/ai-hat-orders.html"
-if OUTPUT=$("$NODE" scripts/ai-hat-orders.mjs --days "$DAYS" --out "$TMP" --csv 2>&1); then
-  mv -f "$TMP" "$SHARE_DIR/ai-hat-orders.html"
-  [ -f "${TMP%.html}.csv" ] && mv -f "${TMP%.html}.csv" "$SHARE_DIR/ai-hat-orders.csv"
+# Generate straight into the share; the team's file is the canonical one. A
+# temp-then-rename inside the share dir keeps the swap atomic (no half-written
+# file), and we no longer touch scripts/out — so a locally-opened copy there
+# can't be yanked out from under an open browser tab.
+STAGE="$SHARE_DIR/.ai-hat-orders.tmp.html"
+if OUTPUT=$("$NODE" scripts/ai-hat-orders.mjs --days "$DAYS" --out "$STAGE" --csv 2>&1); then
+  mv -f "$STAGE" "$SHARE_DIR/ai-hat-orders.html"
+  [ -f "${STAGE%.html}.csv" ] && mv -f "${STAGE%.html}.csv" "$SHARE_DIR/ai-hat-orders.csv"
   echo "$(stamp)  OK — $(echo "$OUTPUT" | grep -o '[0-9]\+ AI Hat item' | head -1)" >> "$LOG"
 else
   echo "$(stamp)  FAIL — $(echo "$OUTPUT" | tr '\n' ' ' | cut -c1-200)" >> "$LOG"

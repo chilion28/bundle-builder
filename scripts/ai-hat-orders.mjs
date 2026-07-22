@@ -424,7 +424,11 @@ async function main() {
     jobs = await collectJobs(graphql, args);
   }
 
-  const outPath = path.resolve(args.out || path.join(ROOT, 'scripts', 'out', 'ai-hat-orders.html'));
+  // Default output is the shared dashboard the team actually uses, so `--open`
+  // always lands on the canonical file rather than a scratch copy.
+  const SHARE = '/Volumes/CL Media Server/WEB/AI Hat Orders/ai-hat-orders.html';
+  const defaultOut = fs.existsSync(path.dirname(SHARE)) ? SHARE : path.join(ROOT, 'scripts', 'out', 'ai-hat-orders.html');
+  const outPath = path.resolve(args.out || defaultOut);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, renderHtml(jobs, { store, days: args.days }), 'utf8');
   console.log(`✓ ${jobs.length} AI Hat item(s) → ${outPath}`);
