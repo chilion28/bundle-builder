@@ -227,7 +227,8 @@ function renderHtml(jobs, { store, days }) {
          </details>`
       : `<div class="fa fa--off" title="not supplied">⬇ ${label}</div>`);
     const date = new Date(j.createdAt).toLocaleString();
-    return `<tr class="${j.archived ? 'is-archived' : ''}" data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
+    return `<tr class="${j.archived ? 'is-archived' : ''}" data-order="${esc(j.order)}" data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + j.title + ' ' + (j.text || '')).toLowerCase())}">
+      <td class="status"><button type="button" class="st" data-order="${esc(j.order)}" title="Click to change status">To do</button></td>
       <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="patch preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
       <td>
         <a class="order" href="${esc(adminUrl)}" target="_blank" rel="noopener">${esc(j.order)}</a>
@@ -297,6 +298,14 @@ function renderHtml(jobs, { store, days }) {
   .pill--unfulfilled{background:#fdf3d7;color:#8a6100}
   .pill--archived{background:#e6e8eb;color:#586374}
   tr.is-archived{opacity:.62}
+  .hidedone{display:flex;align-items:center;gap:6px;font-size:13px;color:#475569;white-space:nowrap;cursor:pointer}
+  .status{width:104px}
+  .st{width:96px;padding:7px 6px;border:1.5px solid var(--line);border-radius:8px;background:#fff;
+      font-size:12.5px;font-weight:700;cursor:pointer;color:#475569}
+  .st[data-state="progress"]{background:#fef3d6;border-color:#f0d38a;color:#8a6100}
+  .st[data-state="done"]{background:#e3f6ea;border-color:#a6dcbb;color:#1a7f45}
+  tr.row-done{background:#fbfefc}
+  tr.row-done td:not(.status){opacity:.5}
   .none{color:#c2c8d0}
   .txt{max-width:190px}
   .chip{display:inline-block;width:11px;height:11px;border-radius:3px;border:1px solid #c2c8d0;margin-right:6px;vertical-align:-1px}
@@ -309,22 +318,52 @@ function renderHtml(jobs, { store, days }) {
 ${jobs.length ? `
 <div class="bar">
   <input type="search" id="q" placeholder="Filter by order #, shape, colour…" autocomplete="off">
+  <label class="hidedone"><input type="checkbox" id="hidedone"> Hide done</label>
   <span class="count" id="count"></span>
 </div>
 <table>
-  <thead><tr><th>Preview</th><th>Order</th><th>Patch</th><th>Text</th><th>Quality</th><th>Files</th></tr></thead>
+  <thead><tr><th>Status</th><th>Preview</th><th>Order</th><th>Patch</th><th>Text</th><th>Quality</th><th>Files</th></tr></thead>
   <tbody id="rows">
 ${rows}
   </tbody>
 </table>
 <script>
-  var q=document.getElementById('q'), rows=[].slice.call(document.querySelectorAll('#rows tr')), count=document.getElementById('count');
-  function apply(){
-    var t=q.value.trim().toLowerCase(), n=0;
-    rows.forEach(function(r){ var hit=!t||r.dataset.search.indexOf(t)>-1; r.style.display=hit?'':'none'; if(hit)n++; });
-    count.textContent=n+' shown';
+  var q=document.getElementById('q'), rows=[].slice.call(document.querySelectorAll('#rows tr')),
+      count=document.getElementById('count'), hideDone=document.getElementById('hidedone');
+
+  /* Status lives in this browser's localStorage, keyed by order number, so it
+     survives the 10-minute regenerations (the file is overwritten, the origin
+     isn't). It is per-machine — intended for one shared production computer. */
+  var KEY='clImageHatStatus', LABEL={todo:'To do',progress:'In progress',done:'Done'}, CYCLE=['todo','progress','done'];
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
+  function save(m){ try{ localStorage.setItem(KEY, JSON.stringify(m)); }catch(e){} }
+  var status=load();
+
+  function paint(btn){
+    var st=status[btn.dataset.order]||'todo';
+    btn.dataset.state=st; btn.textContent=LABEL[st];
+    var tr=btn.closest('tr'); if(tr) tr.classList.toggle('row-done', st==='done');
   }
-  q.addEventListener('input',apply); apply();
+  [].forEach.call(document.querySelectorAll('.st'), function(btn){
+    paint(btn);
+    btn.addEventListener('click', function(){
+      var cur=status[btn.dataset.order]||'todo';
+      var next=CYCLE[(CYCLE.indexOf(cur)+1)%CYCLE.length];
+      if(next==='todo') delete status[btn.dataset.order]; else status[btn.dataset.order]=next;
+      save(status); paint(btn); apply();
+    });
+  });
+
+  function apply(){
+    var t=q.value.trim().toLowerCase(), hd=hideDone.checked, n=0, done=0;
+    rows.forEach(function(r){
+      var isDone=(status[r.dataset.order]||'todo')==='done'; if(isDone)done++;
+      var hit=(!t||r.dataset.search.indexOf(t)>-1) && !(hd&&isDone);
+      r.style.display=hit?'':'none'; if(hit)n++;
+    });
+    count.textContent=n+' shown · '+done+'/'+rows.length+' done';
+  }
+  q.addEventListener('input',apply); hideDone.addEventListener('change',apply); apply();
 </script>` : '<div class="empty">No AI Hat orders found in this window.</div>'}
 `;
 }
