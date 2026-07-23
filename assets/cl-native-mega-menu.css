@@ -305,11 +305,15 @@
   font-size: 13px !important;
   font-weight: 400 !important;
   gap: 8px;
-  grid-template-columns: 42px minmax(0, 1fr) auto;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
   line-height: 1.2;
   min-height: 50px;
   padding: 4px 9px;
   text-decoration: none;
+}
+
+.cl-native-mega__flyout-title {
+  margin-left: 1.4em;
 }
 
 .cl-native-mega__flyout-item + .cl-native-mega__flyout-item {
@@ -328,10 +332,10 @@
   background: #f4f4f4;
   border-radius: 3px;
   display: flex;
-  height: 42px;
+  height: 56px;
   justify-content: center;
   overflow: hidden;
-  width: 42px;
+  width: 56px;
 }
 
 .cl-native-mega__thumb img {

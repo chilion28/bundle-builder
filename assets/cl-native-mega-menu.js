@@ -32,6 +32,25 @@
     nested.style.maxHeight = Math.max(180, window.innerHeight - nestedTop - viewportGap) + 'px';
   }
 
+  function forceCloseStuckMobileSearch() {
+    if (!document.body.classList.contains('mobile-search-takeover-active')) return;
+
+    var search = document.querySelector('[data-live-search].live-search--takeover');
+    if (!search) return;
+
+    document.body.classList.remove('mobile-search-takeover-active', 'search-takeover-active');
+    document.documentElement.classList.remove('scroll-locked');
+    document.body.style.top = '';
+    search.classList.remove('live-search--takeover', 'allow-scroll-while-locked');
+    search.setAttribute('data-animation-state', 'closed');
+
+    var dimmer = document.querySelector('[data-site-main-dimmer]');
+    if (dimmer) {
+      dimmer.setAttribute('data-animation-state', 'closed');
+      dimmer.removeAttribute('data-animation');
+    }
+  }
+
   document.addEventListener('toggle', function (event) {
     var details = event.target;
     if (!(details instanceof HTMLDetailsElement) || !details.matches('.cl-native-mega__details')) return;
@@ -57,6 +76,12 @@
   });
 
   document.addEventListener('click', function (event) {
+    if (event.target.closest('[data-live-search-takeover-cancel]')) {
+      // Empire normally closes the takeover. Recover only if its animation or
+      // event handler leaves the mobile panel stuck open.
+      window.setTimeout(forceCloseStuckMobileSearch, 450);
+    }
+
     if (event.target.closest('[data-cl-native-mega]')) return;
     document.querySelectorAll('.cl-native-mega__details[open]').forEach(function (item) {
       item.removeAttribute('open');
