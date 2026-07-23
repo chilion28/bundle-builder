@@ -180,11 +180,16 @@ const output = `{% comment %}
   class="cl-native-mega cl-native-mega--{{ mode | default: 'desktop' }}"
   aria-label="{% if mode == 'mobile' %}Mobile navigation{% else %}Main navigation{% endif %}"
   data-cl-native-mega
+  {% unless mode == 'mobile' %}data-navmenu{% endunless %}
 >
   {% if mode == 'mobile' %}
     <ul class="cl-native-mega__top" role="list">${sourceMenu.map(renderMobileTop).join('')}</ul>
   {% else %}
-    <ul class="cl-native-mega__top" role="list">${sourceMenu.map(renderDesktopTop).join('')}</ul>
+    {% comment %}
+      Preserve Empire's desktop-navigation hooks. StaticHeader initializes the
+      live-search component only after NavDesktopMenu receives this element.
+    {% endcomment %}
+    <ul class="cl-native-mega__top navmenu-depth-1" role="list">${sourceMenu.map(renderDesktopTop).join('')}</ul>
   {% endif %}
 </nav>
 `;
