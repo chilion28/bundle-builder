@@ -436,7 +436,7 @@
     padding: 12px;
     border: none;
     border-radius: 999px;
-    background: #111 !important;
+    background: #00a0ea !important;
     color: #fff;
     font-size: 14px;
     font-weight: 700;
@@ -445,8 +445,10 @@
   }
   button.cl-grid-add:hover:not(:disabled) { opacity: .85; }
   button.cl-grid-add:disabled { cursor: default; opacity: .55; }
-  button.cl-grid-add.is-added { background: #00a0ea; }
-  button.cl-grid-add.is-invalid { background: #888; }
+  button.cl-grid-add.is-added { background: #0076ad !important; }
+  /* Not disabled — clicking with empty text opens the form + shows a notice, so
+     keep it blue/clickable rather than grey (which reads as disabled). */
+  button.cl-grid-add.is-invalid { background: #00a0ea !important; }
   .cl-grid-card .cl-pack-check {
     position: absolute;
     top: 10px;

@@ -1319,6 +1319,24 @@
   text-align: center;
   line-height: 1.35;
 }
+/* Low-stock / sold-out signalling on the product cards. */
+.cl-stock-hint {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: #b45309;
+}
+.cl-stock-hint.is-maxed { color: #b42318; }
+.cl-card-soldout { opacity: .72; }
+.cl-card-soldout .cl-stock-hint { display: none; }
+button.is-sold-out,
+.cl-card-soldout button {
+  opacity: .55 !important;
+  cursor: not-allowed !important;
+}
+
 @media (max-width: 767px) {
   .cl-reward-tracks-grid { gap: 8px 9px; }
   .cl-reward-track-label,
@@ -2210,6 +2228,59 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 }
 
+    // ---- Inventory guard ----
+    // GemPages exposes the SELECTED variant's inventory on the card's
+    // gp-context / gp-data blob. Shopify's rules: if inventory_management is
+    // empty the variant isn't tracked (unlimited); if policy is "continue"
+    // overselling is allowed (unlimited); otherwise inventory_quantity is a
+    // hard cap and <= 0 means sold out. Never block on a parse failure —
+    // fall back to unlimited so a data hiccup can't stop the whole builder.
+    function getCardStock(card) {
+      try {
+        const raw = card.getAttribute('gp-data') || card.getAttribute('gp-context');
+        if (!raw) return Infinity;
+        const d = JSON.parse(raw);
+        const v = d.variantSelected || {};
+        const mgmt = v.inventory_management != null ? v.inventory_management : d.inventory_management;
+        const policy = v.inventory_policy != null ? v.inventory_policy : d.inventory_policy;
+        if (!mgmt) return Infinity;
+        if (policy === 'continue') return Infinity;
+        const qty = Number(v.inventory_quantity != null ? v.inventory_quantity : d.inventoryQuantity);
+        return isNaN(qty) ? Infinity : Math.max(0, qty);
+      } catch (e) {
+        return Infinity;
+      }
+    }
+
+    // Stock cap carried on a selected item (Infinity when untracked).
+    function stockOf(item) {
+      const s = item && item.stock;
+      return (typeof s === 'number' && isFinite(s)) ? s : Infinity;
+    }
+
+    // Inline "Only N left" note above the add button, so a low cap is visible
+    // BEFORE the customer hits it (only for tracked, low, in-stock variants).
+    function renderStockHint(addBtn, stock, activeQty) {
+      if (!addBtn) return;
+      const LOW_STOCK_AT = 10;
+      const show = isFinite(stock) && stock > 0 && stock <= LOW_STOCK_AT;
+      let hint = addBtn.parentNode
+        ? addBtn.parentNode.querySelector('[data-cl-stock-hint]')
+        : null;
+
+      if (!show) { if (hint) hint.remove(); return; }
+
+      if (!hint) {
+        hint = document.createElement('div');
+        hint.setAttribute('data-cl-stock-hint', '');
+        hint.className = 'cl-stock-hint';
+        addBtn.insertAdjacentElement('beforebegin', hint);
+      }
+
+      hint.textContent = `Only ${stock} left in stock!`;
+      hint.classList.toggle('is-maxed', activeQty >= stock);
+    }
+
     function getCardData(card) {
     const form = card.querySelector('form[action="/cart/add"]');
     const variantInput = form?.querySelector('input[name="id"]');
@@ -2239,7 +2310,8 @@ document.addEventListener('DOMContentLoaded', () => {
       image,
       handle,
       discountKey: discountRule.key,
-      discountRule
+      discountRule,
+      stock: getCardStock(card)
     };
   }
 
@@ -2985,6 +3057,18 @@ if (giftCardsHtml) {
     const item = selected.get(key);
     if (!item) return;
 
+    // Clamp to available stock (summary +/- and any other caller), with a
+    // specific message instead of a generic checkout failure.
+    const stock = stockOf(item);
+    if (newQty > stock) {
+      newQty = stock;
+      showPackNotice(
+        stock === 0
+          ? `${item.title} is sold out.`
+          : `Only ${stock} left in stock!`
+      );
+    }
+
     if (newQty <= 0) {
       selected.delete(key);
     } else {
@@ -3370,6 +3454,23 @@ descEl.innerHTML = product.description || '';
     function updateCardUI() {
       const activeQty = getActiveQty();
       const full = isPackFull();
+      const stock = getCardStock(card);
+
+      // Sold out beats every other state — nothing can be added.
+      if (stock <= 0) {
+        addBtn.disabled = true;
+        addBtn.classList.remove('is-added', 'is-pack-full');
+        addBtn.classList.add('is-sold-out');
+        addBtn.textContent = 'Sold out';
+        card.classList.add('cl-card-soldout');
+        updateSwatchBadges(card, getCardData(card).title);
+        return;
+      }
+      card.classList.remove('cl-card-soldout');
+      addBtn.classList.remove('is-sold-out');
+
+      // Surface a low-stock hint so the limit isn't a surprise at checkout.
+      renderStockHint(addBtn, stock, activeQty);
 
       // Button reflects the CURRENTLY SHOWN colour (toggle).
       if (activeQty > 0) {
@@ -3410,7 +3511,19 @@ descEl.innerHTML = product.description || '';
     // Writes go to the active variant only.
     function setActiveQty(newQty) {
       const data = getCardData(card);
-      const finalQty = Math.max(0, newQty);
+      const stock = stockOf(data);
+      let finalQty = Math.max(0, newQty);
+
+      // Never let the pack hold more than we can actually ship — explain why
+      // here rather than letting checkout fail with a generic error.
+      if (finalQty > stock) {
+        finalQty = stock;
+        showPackNotice(
+          stock === 0
+            ? `${data.title} is sold out.`
+            : `Only ${stock} left in stock!`
+        );
+      }
 
       if (finalQty > 0) {
         selected.set(data.key, refreshItemDiscountRule({ ...data, qty: finalQty }));
