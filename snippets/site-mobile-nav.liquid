@@ -12,11 +12,7 @@
     </a>
 
     <div class="mobile-nav-content" data-mobile-nav-content>
-      {%
-        render 'mobile-nav-list',
-        menu: section.settings.menu,
-        blocks: blocks,
-      %}
+      {% render 'cl-native-mega-menu', mode: 'mobile' %}
 
       {% if section.settings.secondary_menu != blank %}
         <span class="mobile-nav-content__border"></span>

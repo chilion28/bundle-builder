@@ -240,11 +240,7 @@
     class="site-navigation"
     aria-label="{{ 'general.accessibility.nav_main' | t }}"
   >
-    {%
-      render 'navmenu',
-      menu: section.settings.menu,
-      blocks: section.blocks,
-    %}
+    {% render 'cl-native-mega-menu', mode: 'desktop' %}
 
     {% if section.settings.secondary_menu != blank %}
       {%
