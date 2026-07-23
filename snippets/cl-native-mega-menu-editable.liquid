@@ -1,0 +1,126 @@
+{% comment %}
+  Team-editable native mega menu.
+
+  Structure, titles, links, and ordering come from Shopify Navigation. The
+  renderer supports three menu levels for desktop flyouts and mobile accordions.
+
+  @param mode String: desktop or mobile
+  @param menu LinklistDrop or menu handle
+  @param show_images Boolean
+{% endcomment %}
+
+{% assign editable_menu = menu %}
+
+{% unless mode == 'mobile' %}
+  {{ 'cl-native-mega-menu.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'cl-native-mega-menu.js' | asset_url }}" defer="defer"></script>
+{% endunless %}
+
+<nav
+  class="cl-native-mega cl-native-mega--{{ mode | default: 'desktop' }}"
+  aria-label="{% if mode == 'mobile' %}Mobile navigation{% else %}Main navigation{% endif %}"
+  data-cl-native-mega
+  data-cl-native-mega-editable
+  {% unless mode == 'mobile' %}data-navmenu{% endunless %}
+>
+  {% if mode == 'mobile' %}
+    <ul class="cl-native-mega__top" role="list">
+      {% for top_link in editable_menu.links %}
+        {% assign top_title = top_link.object.metafields.custom.mega_menu_short_title.value | default: top_link.title %}
+        <li>
+          {% if top_link.links != blank %}
+            <details class="cl-native-mega__details">
+              <summary class="cl-native-mega__summary">
+                <span>{{ top_title | escape }}</span>
+                <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+              </summary>
+              <ul class="cl-native-mega__mobile-list" role="list">
+                {% for child_link in top_link.links %}
+                  {% assign child_title = child_link.object.metafields.custom.mega_menu_short_title.value | default: child_link.title %}
+                  <li>
+                    {% if child_link.links != blank %}
+                      <details class="cl-native-mega__mobile-details">
+                        <summary class="cl-native-mega__mobile-summary">
+                          {% render 'cl-mega-menu-thumbnail', menu_link: child_link, show_image: show_images %}
+                          <span>{{ child_title | escape }}</span>
+                          <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+                        </summary>
+                        <ul class="cl-native-mega__mobile-children" role="list">
+                          {% for grandchild_link in child_link.links %}
+                            {% assign grandchild_title = grandchild_link.object.metafields.custom.mega_menu_short_title.value | default: grandchild_link.title %}
+                            <li>
+                              <a class="cl-native-mega__mobile-link" href="{{ grandchild_link.url }}">
+                                {% render 'cl-mega-menu-thumbnail', menu_link: grandchild_link, show_image: show_images %}
+                                <span>{{ grandchild_title | escape }}</span>
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </details>
+                    {% else %}
+                      <a class="cl-native-mega__mobile-link" href="{{ child_link.url }}">
+                        {% render 'cl-mega-menu-thumbnail', menu_link: child_link, show_image: show_images %}
+                        <span>{{ child_title | escape }}</span>
+                      </a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </details>
+          {% else %}
+            <a class="cl-native-mega__top-link" href="{{ top_link.url }}">{{ top_title | escape }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <ul class="cl-native-mega__top navmenu-depth-1" role="list">
+      {% for top_link in editable_menu.links %}
+        {% assign top_title = top_link.object.metafields.custom.mega_menu_short_title.value | default: top_link.title %}
+        <li class="cl-native-mega__top-item{% if top_link.links != blank %} cl-native-mega__top-item--parent{% else %} cl-native-mega__top-item--link{% endif %}">
+          {% if top_link.links != blank %}
+            <details class="cl-native-mega__details">
+              <summary class="cl-native-mega__summary">
+                <span>{{ top_title | escape }}</span>
+                <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+              </summary>
+              <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+                <ul class="cl-native-mega__flyout-list" role="list">
+                  {% for child_link in top_link.links %}
+                    {% assign child_title = child_link.object.metafields.custom.mega_menu_short_title.value | default: child_link.title %}
+                    <li class="cl-native-mega__flyout-item{% if child_link.links != blank %} cl-native-mega__flyout-item--parent{% endif %}">
+                      <a class="cl-native-mega__flyout-link" href="{{ child_link.url }}">
+                        {% render 'cl-mega-menu-thumbnail', menu_link: child_link, show_image: show_images %}
+                        <span class="cl-native-mega__flyout-title">{{ child_title | escape }}</span>
+                        {% if child_link.links != blank %}
+                          <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                        {% endif %}
+                      </a>
+                      {% if child_link.links != blank %}
+                        <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                          <ul class="cl-native-mega__flyout-list" role="list">
+                            {% for grandchild_link in child_link.links %}
+                              {% assign grandchild_title = grandchild_link.object.metafields.custom.mega_menu_short_title.value | default: grandchild_link.title %}
+                              <li class="cl-native-mega__flyout-item">
+                                <a class="cl-native-mega__flyout-link" href="{{ grandchild_link.url }}">
+                                  {% render 'cl-mega-menu-thumbnail', menu_link: grandchild_link, show_image: show_images %}
+                                  <span class="cl-native-mega__flyout-title">{{ grandchild_title | escape }}</span>
+                                </a>
+                              </li>
+                            {% endfor %}
+                          </ul>
+                        </div>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </details>
+          {% else %}
+            <a class="cl-native-mega__top-link" href="{{ top_link.url }}">{{ top_title | escape }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+</nav>

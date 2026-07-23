@@ -240,7 +240,11 @@
     class="site-navigation"
     aria-label="{{ 'general.accessibility.nav_main' | t }}"
   >
-    {% render 'cl-native-mega-menu', mode: 'desktop' %}
+    {% if section.settings.cl_use_editable_mega_menu %}
+      {% render 'cl-native-mega-menu-editable', mode: 'desktop', menu: section.settings.cl_editable_mega_menu, show_images: section.settings.cl_mega_menu_show_images %}
+    {% else %}
+      {% render 'cl-native-mega-menu', mode: 'desktop' %}
+    {% endif %}
 
     {% if section.settings.secondary_menu != blank %}
       {%
@@ -368,6 +372,26 @@
       "id": "menu",
       "label": "t:sections.header.menu.label",
       "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "cl_use_editable_mega_menu",
+      "label": "Use editable native mega menu",
+      "info": "Uses the editable menu selected below. Keep disabled to use the generated fallback menu.",
+      "default": false
+    },
+    {
+      "type": "link_list",
+      "id": "cl_editable_mega_menu",
+      "label": "Editable mega menu",
+      "info": "Choose CityLocs Editable Mega Menu. This is separate from the legacy main menu."
+    },
+    {
+      "type": "checkbox",
+      "id": "cl_mega_menu_show_images",
+      "label": "Show editable mega menu images",
+      "info": "Uses the linked resource's Mega menu image metafield, then its collection or product image.",
+      "default": true
     },
     {
       "type": "link_list",

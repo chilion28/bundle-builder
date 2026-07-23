@@ -12,7 +12,11 @@
     </a>
 
     <div class="mobile-nav-content" data-mobile-nav-content>
-      {% render 'cl-native-mega-menu', mode: 'mobile' %}
+      {% if section.settings.cl_use_editable_mega_menu %}
+        {% render 'cl-native-mega-menu-editable', mode: 'mobile', menu: section.settings.cl_editable_mega_menu, show_images: section.settings.cl_mega_menu_show_images %}
+      {% else %}
+        {% render 'cl-native-mega-menu', mode: 'mobile' %}
+      {% endif %}
 
       {% if section.settings.secondary_menu != blank %}
         <span class="mobile-nav-content__border"></span>

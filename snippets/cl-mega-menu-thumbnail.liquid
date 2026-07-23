@@ -1,0 +1,40 @@
+{% comment %}
+  Renders an optional image for a Shopify Navigation link.
+
+  Image priority:
+  1. custom.mega_menu_image metafield on the linked resource
+  2. linked collection/article image or product featured image
+  3. the existing CSS fallback tile
+
+  @param menu_link LinkDrop
+  @param show_image Boolean
+{% endcomment %}
+
+{% if show_image %}
+  {% liquid
+    assign menu_image = menu_link.object.metafields.custom.mega_menu_image.value
+
+    if menu_image == blank
+      case menu_link.type
+        when 'collection_link'
+          assign menu_image = menu_link.object.image
+        when 'product_link'
+          assign menu_image = menu_link.object.featured_image
+        when 'article_link'
+          assign menu_image = menu_link.object.image
+      endcase
+    endif
+  %}
+
+  <span class="cl-native-mega__thumb{% if menu_image == blank %} cl-native-mega__thumb--empty{% endif %}">
+    {% if menu_image != blank %}
+      <img
+        src="{{ menu_image | image_url: width: 112 }}"
+        alt=""
+        width="56"
+        height="56"
+        loading="lazy"
+      >
+    {% endif %}
+  </span>
+{% endif %}
