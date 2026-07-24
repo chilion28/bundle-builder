@@ -173,11 +173,35 @@ function itemUrl(node) {
   return url;
 }
 
+function itemResource(node) {
+  const value = node?.setting?.url || {};
+  const candidates = [
+    ['product', 'PRODUCT', 'Product'],
+    ['collection', 'COLLECTION', 'Collection'],
+    ['page', 'PAGE', 'Page'],
+    ['blog', 'BLOG', 'Blog'],
+    ['article', 'ARTICLE', 'Article'],
+  ];
+
+  for (const [key, type, gidType] of candidates) {
+    const resource = value[key];
+    if (resource?.id && /^\d+$/.test(String(resource.id))) {
+      return {
+        type,
+        resourceId: `gid://shopify/${gidType}/${resource.id}`,
+      };
+    }
+  }
+
+  return null;
+}
+
 function toNativeItem(node) {
+  const resource = itemResource(node);
   return {
     title: cleanTitle(node?.setting?.title),
-    type: 'HTTP',
-    url: itemUrl(node),
+    type: resource?.type || 'HTTP',
+    ...(resource ? { resourceId: resource.resourceId } : { url: itemUrl(node) }),
     items: (node.menus || []).map(toNativeItem),
   };
 }

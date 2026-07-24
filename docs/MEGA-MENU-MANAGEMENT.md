@@ -23,9 +23,27 @@ For each second- or third-level link, the menu uses this order:
 
 1. `custom.mega_menu_image`
 2. The linked collection, product, or article image
-3. A neutral empty thumbnail
+3. The matching legacy thumbnail while the old menu is being retired
+4. A neutral empty thumbnail
 
-Link to Shopify resources instead of pasting URLs whenever possible. Resource links are what allow automatic images and metafields to work.
+Link to Shopify resources instead of pasting URLs whenever possible. In the
+menu editor, choose the collection, product, page, or article from Shopify's
+link picker. Do not paste its storefront URL into **Web address**. Resource
+links are what allow automatic images and metafields to work.
+
+The initial Qikify import keeps legacy thumbnails as a transition fallback.
+New links that do not point to a Shopify resource will show the neutral tile.
+
+## Routine team workflow
+
+1. Open **Shopify Admin → Content → Menus → CityLocs Editable Mega Menu**.
+2. Add, remove, rename, reorder, or nest links there.
+3. Keep the structure to three levels: header category → flyout item → nested item.
+4. For a new internal link, select the Shopify resource rather than entering a web address.
+5. Preview the staging theme on desktop and mobile before enabling the editable menu on live.
+
+Changing navigation links does not require Shopify CLI, Git, or editing Liquid.
+Code is only needed when changing the component's layout or behavior.
 
 ## Safe publishing and rollback
 
