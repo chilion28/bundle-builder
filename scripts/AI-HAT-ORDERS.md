@@ -123,3 +123,23 @@ one in `assets/cl-ai-hat.js` — keep them in step if the frames ever change.
 - Files live in **Cloudinary** (`ai_hat_unsigned` folder), not Shopify. The PDF is
   the same asset as the print PNG, converted on the fly — it needs
   *Settings ▸ Security ▸ Allow delivery of PDF and ZIP files* enabled.
+
+## Token app change (2026-07-23)
+
+The original app **CityLocs Order Tools** (`e8849449…`) got uninstalled during the
+phishing investigation and **could not be reinstalled** — "installation link is
+invalid." Root cause: that app lives in the **CityLocs dev org (223326541)** while
+the store is owned by a **different org (Carving Image LLC)**, and Shopify blocks
+cross-org custom-distribution *re*installs. (It only worked originally because it
+was already installed from an earlier grant.)
+
+Fix: a fresh app, **CityLocs Order Reader** (`fcd9d7a8bd45285126944ea838df094f`),
+installs cleanly. Local project: `Custom App/citylocs-order-reader/` (copy of the
+old one with the client_id + name swapped). Steps used:
+1. `cd "Custom App/citylocs-order-reader" && shopify app deploy --force`
+   — pushes `read_orders` + the `localhost:3456/auth/callback` redirect URL.
+2. Put the new app's client_id + secret in `.env.admin-api`, blank the token.
+3. `node scripts/shopify-get-token.mjs` → approve in browser → token written.
+
+`client_credentials` still returns `shop_not_permitted` (same cross-org reason),
+so the browser OAuth flow above remains the only way to mint the token.
