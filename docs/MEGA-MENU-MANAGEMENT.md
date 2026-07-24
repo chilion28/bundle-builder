@@ -22,8 +22,8 @@ Keep the menu to three levels. Deeper links are intentionally not rendered.
 For each second- or third-level link, the menu uses this order:
 
 1. `custom.mega_menu_image`
-2. The linked collection, product, or article image
-3. The matching legacy thumbnail while the old menu is being retired
+2. The matching original Qikify thumbnail
+3. The linked collection, product, or article image
 4. A neutral empty thumbnail
 
 Link to Shopify resources instead of pasting URLs whenever possible. In the
@@ -36,8 +36,10 @@ internal `/collections/`, `/products/`, `/pages/`, and top-level `/blogs/`
 paths. Their resource image and supported metafields continue to work while
 the team gradually replaces imported web addresses with native resource links.
 
-The initial Qikify import keeps legacy thumbnails as a transition fallback.
-New links that do not point to a Shopify resource will show the neutral tile.
+The initial Qikify import uses its legacy thumbnails by default so the rebuilt
+menu matches the former menu. A metafield image overrides the Qikify thumbnail.
+New items without a legacy match use their linked Shopify resource image, then
+the neutral tile if no image is available.
 
 ## Routine team workflow
 
