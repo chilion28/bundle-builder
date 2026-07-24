@@ -693,7 +693,11 @@
     if (uploadTimer) { clearTimeout(uploadTimer); uploadTimer = null; }
     var run = function () {
       uploadTimer = null;
-      var print = composeWithText(2400);
+      // Output at the target print DPI (300 × 4" patch = 1200px). buildPrintCanvas
+      // supersamples at 2400px, so this is a high-quality downscale — and it keeps
+      // the PNG under Cloudinary's 10 MB delivery cap so the PDF (same asset served
+      // as .pdf) can be generated. 600 DPI (2400px) pushed circle PDFs over 10 MB.
+      var print = composeWithText(CL_AI_HAT.targetDpi * CL_AI_HAT.patchWidthIn);
       if (!print) return;
       var framed = buildPreviewCanvas(print);
       uploadInFlight = new Promise(function (resolve) {
@@ -1029,7 +1033,7 @@
     settleArtwork().then(function () {
       var props = {
         'Patch Shape': state.shape,                                   // which InDesign template
-        '_Artwork Print': (propArt && propArt.value) || state.artUrl, // customer's exact crop, 600 DPI
+        '_Artwork Print': (propArt && propArt.value) || state.artUrl, // customer's exact crop, 300 DPI (1200px)
         '_Quality Score': state.score || ''
       };
       if (propOrig && propOrig.value) props['_Artwork Original'] = propOrig.value; // for Photoshop
