@@ -630,7 +630,7 @@
 
   /* Where the text baseline sits per shape — pushed up on the shapes that taper
    * so there's usable width for it. */
-  var TEXT_Y = { rectangle: 0.90, rounded: 0.88, circle: 0.80, hexagon: 0.75 };
+  var TEXT_Y = { rectangle: 0.90, rounded: 0.80, circle: 0.80, hexagon: 0.75 };
 
   // Bottom-centred, auto-shrunk to fit, with a contrasting outline so it stays
   // legible over any artwork.
