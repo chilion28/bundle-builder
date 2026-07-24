@@ -31,6 +31,11 @@ menu editor, choose the collection, product, page, or article from Shopify's
 link picker. Do not paste its storefront URL into **Web address**. Resource
 links are what allow automatic images and metafields to work.
 
+For links imported from the former Qikify menu, the theme also recognizes
+internal `/collections/`, `/products/`, `/pages/`, and top-level `/blogs/`
+paths. Their resource image and supported metafields continue to work while
+the team gradually replaces imported web addresses with native resource links.
+
 The initial Qikify import keeps legacy thumbnails as a transition fallback.
 New links that do not point to a Shopify resource will show the neutral tile.
 

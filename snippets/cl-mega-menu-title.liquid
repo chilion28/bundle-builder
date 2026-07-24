@@ -1,0 +1,34 @@
+{% comment %}
+  Returns the editable display title for a Shopify Navigation link.
+
+  Native Shopify resource links expose menu_link.object directly. The original
+  Qikify import used internal HTTP paths, so resolve those paths as a transition
+  fallback and allow the same custom.mega_menu_short_title metafield to work.
+{% endcomment %}
+
+{% liquid
+  assign menu_object = menu_link.object
+
+  if menu_object == blank
+    assign clean_url = menu_link.url | split: '?' | first | split: '#' | first
+    assign url_parts = clean_url | split: '/'
+    assign resource_kind = url_parts[1]
+    assign resource_handle = url_parts[2]
+
+    case resource_kind
+      when 'collections'
+        assign menu_object = collections[resource_handle]
+      when 'products'
+        assign menu_object = all_products[resource_handle]
+      when 'pages'
+        assign menu_object = pages[resource_handle]
+      when 'blogs'
+        if url_parts.size == 3
+          assign menu_object = blogs[resource_handle]
+        endif
+    endcase
+  endif
+
+  assign display_title = menu_object.metafields.custom.mega_menu_short_title.value | default: menu_link.title
+  echo display_title
+%}

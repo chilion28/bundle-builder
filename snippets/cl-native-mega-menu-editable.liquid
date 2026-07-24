@@ -26,7 +26,7 @@
   {% if mode == 'mobile' %}
     <ul class="cl-native-mega__top" role="list">
       {% for top_link in editable_menu.links %}
-        {% assign top_title = top_link.object.metafields.custom.mega_menu_short_title.value | default: top_link.title %}
+        {% capture top_title %}{% render 'cl-mega-menu-title', menu_link: top_link %}{% endcapture %}
         <li>
           {% if top_link.links != blank %}
             <details class="cl-native-mega__details">
@@ -36,7 +36,7 @@
               </summary>
               <ul class="cl-native-mega__mobile-list" role="list">
                 {% for child_link in top_link.links %}
-                  {% assign child_title = child_link.object.metafields.custom.mega_menu_short_title.value | default: child_link.title %}
+                  {% capture child_title %}{% render 'cl-mega-menu-title', menu_link: child_link %}{% endcapture %}
                   <li>
                     {% if child_link.links != blank %}
                       <details class="cl-native-mega__mobile-details">
@@ -47,7 +47,7 @@
                         </summary>
                         <ul class="cl-native-mega__mobile-children" role="list">
                           {% for grandchild_link in child_link.links %}
-                            {% assign grandchild_title = grandchild_link.object.metafields.custom.mega_menu_short_title.value | default: grandchild_link.title %}
+                            {% capture grandchild_title %}{% render 'cl-mega-menu-title', menu_link: grandchild_link %}{% endcapture %}
                             <li>
                               <a class="cl-native-mega__mobile-link" href="{{ grandchild_link.url }}">
                                 {% render 'cl-mega-menu-thumbnail', menu_link: grandchild_link, show_image: show_images %}
@@ -76,7 +76,7 @@
   {% else %}
     <ul class="cl-native-mega__top navmenu-depth-1" role="list">
       {% for top_link in editable_menu.links %}
-        {% assign top_title = top_link.object.metafields.custom.mega_menu_short_title.value | default: top_link.title %}
+        {% capture top_title %}{% render 'cl-mega-menu-title', menu_link: top_link %}{% endcapture %}
         <li class="cl-native-mega__top-item{% if top_link.links != blank %} cl-native-mega__top-item--parent{% else %} cl-native-mega__top-item--link{% endif %}">
           {% if top_link.links != blank %}
             <details class="cl-native-mega__details">
@@ -87,7 +87,7 @@
               <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
                 <ul class="cl-native-mega__flyout-list" role="list">
                   {% for child_link in top_link.links %}
-                    {% assign child_title = child_link.object.metafields.custom.mega_menu_short_title.value | default: child_link.title %}
+                    {% capture child_title %}{% render 'cl-mega-menu-title', menu_link: child_link %}{% endcapture %}
                     <li class="cl-native-mega__flyout-item{% if child_link.links != blank %} cl-native-mega__flyout-item--parent{% endif %}">
                       <a class="cl-native-mega__flyout-link" href="{{ child_link.url }}">
                         {% render 'cl-mega-menu-thumbnail', menu_link: child_link, show_image: show_images %}
@@ -100,7 +100,7 @@
                         <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
                           <ul class="cl-native-mega__flyout-list" role="list">
                             {% for grandchild_link in child_link.links %}
-                              {% assign grandchild_title = grandchild_link.object.metafields.custom.mega_menu_short_title.value | default: grandchild_link.title %}
+                              {% capture grandchild_title %}{% render 'cl-mega-menu-title', menu_link: grandchild_link %}{% endcapture %}
                               <li class="cl-native-mega__flyout-item">
                                 <a class="cl-native-mega__flyout-link" href="{{ grandchild_link.url }}">
                                   {% render 'cl-mega-menu-thumbnail', menu_link: grandchild_link, show_image: show_images %}

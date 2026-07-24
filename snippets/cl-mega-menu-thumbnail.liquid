@@ -13,17 +13,36 @@
 
 {% if show_image %}
   {% liquid
-    assign menu_image = menu_link.object.metafields.custom.mega_menu_image.value
+    assign menu_object = menu_link.object
+
+    if menu_object == blank
+      assign clean_url = menu_link.url | split: '?' | first | split: '#' | first
+      assign url_parts = clean_url | split: '/'
+      assign resource_kind = url_parts[1]
+      assign resource_handle = url_parts[2]
+
+      case resource_kind
+        when 'collections'
+          assign menu_object = collections[resource_handle]
+        when 'products'
+          assign menu_object = all_products[resource_handle]
+        when 'pages'
+          assign menu_object = pages[resource_handle]
+        when 'blogs'
+          if url_parts.size == 3
+            assign menu_object = blogs[resource_handle]
+          endif
+      endcase
+    endif
+
+    assign menu_image = menu_object.metafields.custom.mega_menu_image.value
 
     if menu_image == blank
-      case menu_link.type
-        when 'collection_link'
-          assign menu_image = menu_link.object.image
-        when 'product_link'
-          assign menu_image = menu_link.object.featured_image
-        when 'article_link'
-          assign menu_image = menu_link.object.image
-      endcase
+      assign menu_image = menu_object.image
+    endif
+
+    if menu_image == blank
+      assign menu_image = menu_object.featured_image
     endif
   %}
 

@@ -216,6 +216,14 @@ function countItems(items) {
   return items.reduce((total, item) => total + 1 + countItems(item.items || []), 0);
 }
 
+function countItemTypes(items, counts = {}) {
+  for (const item of items) {
+    counts[item.type] = (counts[item.type] || 0) + 1;
+    countItemTypes(item.items || [], counts);
+  }
+  return counts;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (args.help) return printHelp();
@@ -227,6 +235,7 @@ async function main() {
     title: args.title,
     topLevelItems: items.length,
     totalItems: countItems(items),
+    itemTypes: countItemTypes(items),
     topLevelTitles: items.map(item => item.title),
   };
   console.log(JSON.stringify(summary, null, 2));
