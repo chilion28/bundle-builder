@@ -49,4 +49,9 @@ Code is only needed when changing the component's layout or behavior.
 
 The Header setting **Use editable native mega menu** controls the new renderer. When it is off, the current generated mega menu remains the fallback. Build and review changes on the staging theme before enabling this setting on live.
 
+If the editable-menu setting is enabled but the selected Shopify menu is empty,
+missing, or deleted, the theme automatically uses the generated fallback. This
+prevents an accidental menu-editor change from leaving the storefront without
+navigation.
+
 Never paste HTML, JavaScript, or script tags into navigation labels.

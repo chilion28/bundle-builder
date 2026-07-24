@@ -240,7 +240,8 @@
     class="site-navigation"
     aria-label="{{ 'general.accessibility.nav_main' | t }}"
   >
-    {% if section.settings.cl_use_editable_mega_menu %}
+    {% assign cl_editable_menu = section.settings.cl_editable_mega_menu %}
+    {% if section.settings.cl_use_editable_mega_menu and cl_editable_menu != blank and cl_editable_menu.links != blank %}
       {% render 'cl-native-mega-menu-editable', mode: 'desktop', menu: section.settings.cl_editable_mega_menu, show_images: section.settings.cl_mega_menu_show_images %}
     {% else %}
       {% render 'cl-native-mega-menu', mode: 'desktop' %}
