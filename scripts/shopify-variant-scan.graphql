@@ -1,0 +1,38 @@
+query FindVariantsBySku($first: Int!, $after: String, $query: String!) {
+  productVariants(first: $first, after: $after, query: $query, sortKey: SKU) {
+    nodes {
+      id
+      title
+      sku
+      inventoryPolicy
+      product {
+        id
+        title
+        handle
+      }
+      inventoryItem {
+        id
+        tracked
+        inventoryLevels(first: 100) {
+          nodes {
+            id
+            location {
+              id
+            }
+            quantities(names: ["available"]) {
+              name
+              quantity
+            }
+          }
+          pageInfo {
+            hasNextPage
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}

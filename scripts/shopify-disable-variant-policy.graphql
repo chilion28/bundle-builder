@@ -1,0 +1,24 @@
+mutation DisableVariantSales(
+  $productId: ID!
+  $variants: [ProductVariantsBulkInput!]!
+) {
+  productVariantsBulkUpdate(
+    productId: $productId
+    variants: $variants
+    allowPartialUpdates: false
+  ) {
+    productVariants {
+      id
+      inventoryPolicy
+      inventoryItem {
+        id
+        tracked
+      }
+    }
+    userErrors {
+      code
+      field
+      message
+    }
+  }
+}
