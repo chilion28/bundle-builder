@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.citylocs.selfheal</string>
+  <!-- Script lives on the LOCAL disk so it can run even when the share is down.
+       bash off the local disk is fine (the TCC block only hit network-volume scripts). -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/webstation/Library/Scripts/cl-selfheal.sh</string>
+  </array>
+  <!-- Runs at login (after wake, the loginwindow session re-runs agents) and
+       every 5 minutes as a safety net. -->
+  <key>RunAtLoad</key><true/>
+  <key>StartInterval</key><integer>300</integer>
+  <key>StandardOutPath</key><string>/Users/webstation/Library/Logs/citylocs-selfheal.out.log</string>
+  <key>StandardErrorPath</key><string>/Users/webstation/Library/Logs/citylocs-selfheal.err.log</string>
+</dict>
+</plist>
