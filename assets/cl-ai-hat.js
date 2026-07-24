@@ -69,24 +69,24 @@
    * patch, so what ChatGPT produces already matches the window and needs no
    * cropping. Sizes are the closest ChatGPT offers to each window aspect.
    * ===================================================================== */
+  /* Only the ASPECT RATIO differs per shape — never the shape itself. The builder
+     crops the finished rectangle into the patch shape, so the AI must be told to
+     make a normal full-bleed rectangular/square image. Describing the patch shape
+     (e.g. "your patch is a HEXAGON, edges taper to points") made ChatGPT literally
+     draw a hexagon-shaped picture. Rectangle and hexagon share the same wide crop. */
   var PROMPT_SIZE = {
-    // window 1.88 — widest patch
-    rectangle: 'Your patch is a RECTANGLE (wide).\n' +
-               'Generate a WIDE LANDSCAPE image, about 1792 x 1024 pixels.\n' +
-               'Do NOT generate a square image.',
-    // window 1.83 — wide, but tapers to points left and right
-    hexagon:   'Your patch is a HEXAGON (wide, with points at the left and right).\n' +
-               'Generate a WIDE LANDSCAPE image, about 1792 x 1024 pixels.\n' +
-               'Do NOT generate a square image.\n' +
-               'Keep the subject centred — the left and right edges taper to points.',
+    // window 1.88 — widest
+    rectangle: 'Make a WIDE LANDSCAPE image, about 1792 x 1024 pixels (roughly 16:9).\n' +
+               'Fill the ENTIRE rectangle, edge to edge. Do NOT make a square image.',
+    // window 1.83 — same wide crop as rectangle
+    hexagon:   'Make a WIDE LANDSCAPE image, about 1792 x 1024 pixels (roughly 16:9).\n' +
+               'Fill the ENTIRE rectangle, edge to edge. Do NOT make a square image.',
     // window 1.26 — only slightly wider than tall
-    rounded:   'Your patch is a ROUNDED RECTANGLE (slightly wider than tall).\n' +
-               'Generate a LANDSCAPE image, about 1536 x 1024 pixels (3:2).\n' +
-               'Do NOT generate a square image.',
+    rounded:   'Make a LANDSCAPE image, about 1536 x 1024 pixels (3:2).\n' +
+               'Fill the ENTIRE rectangle, edge to edge. Do NOT make a square image.',
     // window 1.0 — exact square
-    circle:    'Your patch is a CIRCLE.\n' +
-               'Generate a SQUARE image, 1024 x 1024 pixels.\n' +
-               'Keep the subject centred — the corners will be cut off by the circle.'
+    circle:    'Make a SQUARE image, 1024 x 1024 pixels.\n' +
+               'Fill the ENTIRE square, edge to edge. Keep the main subject centred.'
   };
 
   var promptEl = $('[data-cl-ai-prompt]');

@@ -49,16 +49,20 @@
           <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
         </button>
       </div>
-      {%- comment -%} [[SIZE]] is swapped by cl-ai-hat.js for guidance matching the
-        selected patch shape, so the generated image needs no cropping. {%- endcomment -%}
+      {%- comment -%} [[SIZE]] is swapped by cl-ai-hat.js for the ASPECT RATIO matching
+        the selected shape. The AI always makes a plain rectangle; the builder crops it
+        into the patch shape (so the prompt never describes the shape itself). {%- endcomment -%}
       <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork for a custom hat patch.
 
 IMPORTANT — image size:
 [[SIZE]]
 
-This is artwork only, NOT a patch mockup.
-The artwork should completely fill the canvas, edge to edge.
+Make a normal, full-bleed RECTANGULAR image (like a poster or photo).
+It is NOT a badge, sticker, or shaped patch — do not draw the patch outline.
+The artwork must completely fill the whole rectangle, edge to edge.
 DO NOT include:
+- Any text, words, letters, numbers, titles, or captions
+- A hexagon, circle, oval, or any patch/badge shape or outline
 - Stitching
 - Embroidery texture
 - Leather texture
