@@ -630,7 +630,10 @@
 
   /* Where the text baseline sits per shape — pushed up on the shapes that taper
    * so there's usable width for it. */
-  var TEXT_Y = { rectangle: 0.90, rounded: 0.80, circle: 0.80, hexagon: 0.75 };
+  var TEXT_Y = { rectangle: 0.86, rounded: 0.80, circle: 0.80, hexagon: 0.75 };
+  // How much of the available width the text may use, per shape. Rounded is
+  // pulled in so the caption clears the corner rivets.
+  var TEXT_MAXW = { rectangle: 0.86, rounded: 0.62, circle: 0.86, hexagon: 0.86 };
 
   // Bottom-centred, auto-shrunk to fit, with a contrasting outline so it stays
   // legible over any artwork.
@@ -643,7 +646,7 @@
 
     var yFrac = TEXT_Y[shape] || 0.90;
     // Fit to the width actually available at that height, not the whole canvas.
-    var maxW = W * windowWidthAt(shape, yFrac) * 0.86;
+    var maxW = W * windowWidthAt(shape, yFrac) * (TEXT_MAXW[shape] || 0.86);
     var size = Math.round(Math.min(W * 0.11, H * 0.20));
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
