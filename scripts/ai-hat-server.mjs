@@ -83,7 +83,7 @@ function page() {
     const doneCount = g.items.filter((x) => patches[x.lineId]).length;
 
     const statusCell = `<td class="status" rowspan="${n}">
-        <button type="button" class="st" data-state="${state}">${LABEL[state]}</button>
+        <button type="button" class="st" data-state="${state}"${n > 1 ? ' disabled title="Set automatically from the patch checkboxes"' : ''}>${LABEL[state]}</button>
         ${n > 1 ? `<div class="prog">${doneCount} of ${n} done</div>` : ''}
         <textarea class="note" rows="2" placeholder="Add note">${esc(st.note || '')}</textarea>
         <div class="by">${st.by || st.at ? esc((st.by ? st.by + ' · ' : '') + (st.at ? new Date(st.at).toLocaleString() : '')) : ''}</div>
@@ -146,6 +146,7 @@ function page() {
   .st{width:100%;padding:8px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font-size:13px;font-weight:700;cursor:pointer;color:#475569}
   .st[data-state=progress]{background:#fef3d6;border-color:#f0d38a;color:#8a6100}
   .st[data-state=done]{background:#e3f6ea;border-color:#a6dcbb;color:#1a7f45}
+  .st:disabled{cursor:default;opacity:1}/* multi-patch: status is a read-only badge driven by the checkboxes */
   .note{width:100%;margin-top:7px;padding:7px 9px;border:1.5px solid var(--line);border-radius:8px;font:13px inherit;resize:vertical}
   .note:focus{outline:none;border-color:var(--blue)}
   .by{font-size:11px;color:var(--muted);margin-top:3px;min-height:12px}
@@ -218,7 +219,8 @@ ${cache.jobs.length ? `
   }
   heads.forEach(function(head){
     var order=head.dataset.order, btn=head.querySelector('.st');
-    btn.addEventListener('click',function(){
+    // Multi-patch orders: the button is disabled; the checkboxes drive status.
+    if(btn&&!btn.disabled) btn.addEventListener('click',function(){
       var cur=btn.dataset.state||'todo';
       var next=CYCLE[(CYCLE.indexOf(cur)+1)%CYCLE.length];
       post(order,{status:next}).then(function(rec){paint(order,rec);apply();});
