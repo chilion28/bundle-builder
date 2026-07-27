@@ -554,7 +554,36 @@
       // Fallback (mask not loaded yet): clip via traced shape path.
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
+    drawTransformBox(ctx, W, H);
     updateWarn();
+  }
+
+  /* Photoshop-style transform box around the artwork — a rotated outline + corner
+   * and edge handles hugging the SUBJECT (visible content), so the customer can
+   * see the size and boundary of their artwork against the patch. Visual only. */
+  function drawTransformBox(ctx, W, H) {
+    if (!edState.img || !edState.maskW) return;
+    var s = edState.baseScale * edState.scale;
+    var cb = edState.contentBox || { l: 0, t: 0, r: 1, b: 1 };
+    var lX = (cb.l - 0.5) * edState.natW * s, rX = (cb.r - 0.5) * edState.natW * s;
+    var tY = (cb.t - 0.5) * edState.natH * s, bY = (cb.b - 0.5) * edState.natH * s;
+    var mX = (lX + rX) / 2, mY = (tY + bY) / 2;
+    var cx = W / 2 + edState.offsetX, cy = H / 2 + edState.offsetY;
+    var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
+    function P(ox, oy) { return [cx + ox * c - oy * sn, cy + ox * sn + oy * c]; }
+    var corners = [P(lX, tY), P(rX, tY), P(rX, bY), P(lX, bY)];
+    var handles = corners.concat([P(mX, tY), P(rX, mY), P(mX, bY), P(lX, mY)]);
+    ctx.save();
+    ctx.strokeStyle = '#00a0ea'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(corners[0][0], corners[0][1]);
+    for (var i = 1; i < 4; i += 1) ctx.lineTo(corners[i][0], corners[i][1]);
+    ctx.closePath(); ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    handles.forEach(function (p) {
+      ctx.beginPath(); ctx.rect(p[0] - 4, p[1] - 4, 8, 8); ctx.fill(); ctx.stroke();
+    });
+    ctx.restore();
   }
 
   /* Flag when the SUBJECT extends past the dashed safe area — nudges a customer
