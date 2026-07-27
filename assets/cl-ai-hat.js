@@ -262,6 +262,7 @@
   var edMask = $('[data-cl-ai-ed-mask]');
   var edFrame = $('[data-cl-ai-ed-frame]');
   var edZoom = $('[data-cl-ai-ed-zoom]');
+  var edWarn = $('[data-cl-ai-ed-warn]');
   var edBgWrap = $('[data-cl-ai-ed-bgwrap]');
   var edBg = $('[data-cl-ai-ed-bg]');
   // Reuse the Step-2 preview's frame PNG URLs (already rendered with asset_url).
@@ -400,11 +401,19 @@
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
     var s = edState.baseScale * edState.scale;
-    var maxX = Math.max(0, (iw * s - edState.maskW) / 2);
-    var maxY = Math.max(0, (ih * s - edState.maskH) / 2);
+    // Pan within the slack in BOTH directions: a larger-than-window image pans
+    // the crop (fill); a smaller-than-window image (fit / zoomed out) can be
+    // nudged around inside the padding. Old code zeroed the range when the image
+    // was smaller than the window, which killed dragging in Fit mode.
+    var maxX = Math.abs(iw * s - edState.maskW) / 2;
+    var maxY = Math.abs(ih * s - edState.maskH) / 2;
     edState.offsetX = Math.max(-maxX, Math.min(maxX, edState.offsetX));
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
+
+  // Minimum zoom depends on mode: Fill stays at cover (1×, no gaps); Fit can
+  // shrink well below so the whole image fits inside a tapered shape (hexagon).
+  function minZoom() { return edState.fit ? 0.4 : 1; }
 
   // Trace the current shape's window path, centred at (cx,cy), size mw×mh.
   // Geometry measured from the frame PNGs' transparent windows.
@@ -473,6 +482,31 @@
       // Fallback (mask not loaded yet): clip via traced shape path.
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
+    updateWarn(ctx, W, H);
+  }
+
+  /* Flag when the artwork's edges fall outside the dashed SAFE outline — so a
+   * customer who doesn't bother positioning gets nudged, and production gets
+   * fewer files to hand-fix. Tests the four rotated image corners against the
+   * safe-inset shape path. */
+  function updateWarn(ctx, W, H) {
+    if (!edWarn) return;
+    var outside = false;
+    if (edState.img && edState.maskW) {
+      var s = edState.baseScale * edState.scale;
+      var hw = edState.natW * s / 2, hh = edState.natH * s / 2;
+      var cx = W / 2 + edState.offsetX, cy = H / 2 + edState.offsetY;
+      var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
+      var sf = safeFor(state.shape);
+      edShapePath(ctx, W / 2, H / 2, edState.maskW * sf.w, edState.maskH * sf.h);
+      var corners = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]];
+      for (var i = 0; i < 4; i += 1) {
+        var x = cx + corners[i][0] * c - corners[i][1] * sn;
+        var y = cy + corners[i][0] * sn + corners[i][1] * c;
+        if (!ctx.isPointInPath(x, y)) { outside = true; break; }
+      }
+    }
+    edWarn.hidden = !outside;
   }
 
   function openEditor(isNew) {
@@ -500,12 +534,12 @@
     edStage.addEventListener('pointercancel', function () { dragging = false; });
     edStage.addEventListener('wheel', function (e) {
       e.preventDefault();
-      edState.scale = Math.max(1, Math.min(4, edState.scale * (e.deltaY < 0 ? 1.08 : 0.92)));
+      edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * (e.deltaY < 0 ? 1.08 : 0.92)));
       if (edZoom) edZoom.value = edState.scale; edDraw();
     }, { passive: false });
 
     if (edZoom) edZoom.addEventListener('input', function () { edState.scale = parseFloat(edZoom.value); edDraw(); });
-    var zoomBy = function (f) { edState.scale = Math.max(1, Math.min(4, edState.scale * f)); if (edZoom) edZoom.value = edState.scale; edDraw(); };
+    var zoomBy = function (f) { edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * f)); if (edZoom) edZoom.value = edState.scale; edDraw(); };
     on('[data-cl-ai-ed-zoom-in]', function () { zoomBy(1.12); });
     on('[data-cl-ai-ed-zoom-out]', function () { zoomBy(0.89); });
     var rotateBy = function (d) { edState.rotation += d; computeMask(); edDraw(); };
@@ -523,6 +557,7 @@
       b.classList.toggle('is-active', (b.dataset.clAiEdMode || b.getAttribute('data-cl-ai-ed-mode')) === (edState.fit ? 'fit' : 'fill'));
     });
     if (edBgWrap) edBgWrap.hidden = !edState.fit;
+    if (edZoom) edZoom.min = minZoom();   // Fit unlocks shrinking below cover
   }
   $$('[data-cl-ai-ed-mode]').forEach(function (b) {
     b.addEventListener('click', function () {

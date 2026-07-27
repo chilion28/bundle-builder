@@ -315,3 +315,15 @@
   .cl-ai-b__tips ul{grid-template-columns:1fr}
   .cl-ai-b__reassure{gap:16px}
 }
+
+/* Editor: "artwork outside the dashed line" warning */
+.cl-ai-ed__warn{
+  margin:10px 0 0;
+  padding:9px 12px;
+  background:#fff4e5;
+  border:1px solid #f0c67d;
+  border-radius:8px;
+  color:#8a5300;
+  font-size:13px;
+  line-height:1.4;
+}
