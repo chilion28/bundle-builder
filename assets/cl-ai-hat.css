@@ -316,14 +316,22 @@
   .cl-ai-b__reassure{gap:16px}
 }
 
-/* Editor: "artwork outside the dashed line" warning */
+/* Editor: "artwork outside the dashed line" warning — overlaid on the stage so
+   showing/hiding it never reflows the modal (no layout "glitch" while resizing). */
 .cl-ai-ed__warn{
-  margin:10px 0 0;
+  position:absolute;
+  left:10px; right:10px; bottom:10px;
+  margin:0;
   padding:9px 12px;
-  background:#fff4e5;
+  background:rgba(255,244,229,0.96);
   border:1px solid #f0c67d;
   border-radius:8px;
   color:#8a5300;
   font-size:13px;
   line-height:1.4;
+  pointer-events:none;   /* never block dragging/resizing under it */
+  z-index:3;
 }
+.cl-ai-ed__warn[hidden]{display:none}
+/* Reserve the background picker's space so toggling it doesn't shift the row. */
+.cl-ai-ed__bg[hidden]{display:flex;visibility:hidden}
