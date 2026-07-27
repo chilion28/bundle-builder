@@ -529,35 +529,38 @@
       // Fallback (mask not loaded yet): clip via traced shape path.
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
-    updateWarn(ctx, W, H);
+    updateWarn();
   }
 
-  /* Flag when the artwork's edges fall outside the dashed SAFE outline — so a
-   * customer who doesn't bother positioning gets nudged, and production gets
-   * fewer files to hand-fix. Tests the four rotated image corners against the
-   * safe-inset shape path. */
-  function updateWarn(ctx, W, H) {
+  /* Flag when the SUBJECT extends past the dashed safe area — nudges a customer
+   * who doesn't position, so production hand-fixes fewer files. Pure arithmetic
+   * (the subject's rotated bounding box vs the safe rectangle, all relative to
+   * the window centre) — no canvas/isPointInPath/DPR, which was unreliable and
+   * left the warning stuck on. Uses the safe bounding rect (slightly lenient on
+   * circle/hexagon corners, i.e. it errs toward NOT nagging). */
+  function updateWarn() {
     if (!edWarn) return;
     var outside = false;
     if (edState.img && edState.maskW) {
       var s = edState.baseScale * edState.scale;
       var cb = edState.contentBox || { l: 0, t: 0, r: 1, b: 1 };
-      // Subject-box edges relative to the image centre, scaled to stage px.
+      // Subject-box edges relative to the image centre (stage px).
       var lX = (cb.l - 0.5) * edState.natW * s, rX = (cb.r - 0.5) * edState.natW * s;
       var tY = (cb.t - 0.5) * edState.natH * s, bY = (cb.b - 0.5) * edState.natH * s;
-      var cx = W / 2 + edState.offsetX, cy = H / 2 + edState.offsetY;
       var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
-      var sf = safeFor(state.shape);
-      edShapePath(ctx, W / 2, H / 2, edState.maskW * sf.w, edState.maskH * sf.h);
-      var corners = [[lX, tY], [rX, tY], [rX, bY], [lX, bY]];
-      var TOL = 5;   // px tolerance so a corner sitting exactly ON the safe line
-      for (var i = 0; i < 4; i += 1) {   // (as Fit produces) doesn't false-trigger
-        var x = cx + corners[i][0] * c - corners[i][1] * sn;
-        var y = cy + corners[i][0] * sn + corners[i][1] * c;
-        var dx = cx - x, dy = cy - y, d = Math.sqrt(dx * dx + dy * dy) || 1;
-        x += dx / d * TOL; y += dy / d * TOL;   // nudge inward before testing
-        if (!ctx.isPointInPath(x, y)) { outside = true; break; }
+      var pts = [[lX, tY], [rX, tY], [rX, bY], [lX, bY]];
+      var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
+      for (var i = 0; i < 4; i += 1) {
+        var x = pts[i][0] * c - pts[i][1] * sn, y = pts[i][0] * sn + pts[i][1] * c;
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
       }
+      var ox = edState.offsetX, oy = edState.offsetY;   // subject offset from window centre
+      var safeHW = edState.maskW * safeFor(state.shape).w / 2;
+      var safeHH = edState.maskH * safeFor(state.shape).h / 2;
+      var TOL = 4;
+      outside = (ox + minX < -safeHW - TOL) || (ox + maxX > safeHW + TOL) ||
+                (oy + minY < -safeHH - TOL) || (oy + maxY > safeHH + TOL);
     }
     edWarn.hidden = !outside;
   }
