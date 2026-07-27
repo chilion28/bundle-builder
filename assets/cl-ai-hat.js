@@ -463,6 +463,10 @@
   var USABLE = { rectangle: 0.92, rounded: 0.86, circle: 0.68, hexagon: 0.74 };
   function autoFrameSubject() {
     if (!edState.img || !edState.maskW || !edState.contentBox || !edState.baseScale) return;
+    // Only reframe TRANSPARENT logos (crop to their content). Opaque designs
+    // have an intentional background/composition — leave them at the default
+    // fit/fill so we don't zoom a designed badge past the patch edge.
+    if (!edState.hasAlpha) return;
     var cb = edState.contentBox;
     var subjW = (cb.r - cb.l) * edState.natW, subjH = (cb.b - cb.t) * edState.natH;
     if (subjW <= 1 || subjH <= 1) return;
