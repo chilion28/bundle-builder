@@ -411,9 +411,21 @@
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
 
-  // Minimum zoom depends on mode: Fill stays at cover (1×, no gaps); Fit can
-  // shrink well below so the whole image fits inside a tapered shape (hexagon).
-  function minZoom() { return edState.fit ? 0.4 : 1; }
+  // Both modes can shrink below cover: a customer who instinctively uses the
+  // slider in the default Fill mode can zoom the whole image inside the dashed
+  // line without discovering the Fit toggle. Gaps auto-pad — see imgCovers().
+  function minZoom() { return 0.4; }
+
+  // Does the image fully cover the window at the current scale/rotation? When it
+  // doesn't, the background colour pads the gap (identically in preview + print).
+  function imgCovers() {
+    if (!edState.img || !edState.maskW) return true;
+    var rot = ((edState.rotation % 360) + 360) % 360;
+    var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
+    var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
+    var s = edState.baseScale * edState.scale;
+    return iw * s >= edState.maskW - 0.5 && ih * s >= edState.maskH - 0.5;
+  }
 
   // Trace the current shape's window path, centred at (cx,cy), size mw×mh.
   // Geometry measured from the frame PNGs' transparent windows.
@@ -463,6 +475,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     clampOffset();
+    if (edBgWrap) edBgWrap.hidden = imgCovers();   // background picker only when padding shows
     // Dimmed full image (shows what's cropped out), then bright inside the window.
     ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore();
     var mimg = edMasks[String(state.shape).toLowerCase()];
@@ -470,7 +483,7 @@
       // Pixel-perfect: paint bright image on an offscreen, keep only the window via the mask.
       var off = document.createElement('canvas'); off.width = edCanvas.width; off.height = edCanvas.height;
       var octx = off.getContext('2d'); octx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (edState.fit) {   // show the padding colour exactly as it will print
+      if (!imgCovers()) {   // pad the gap with the background, exactly as it will print
         octx.fillStyle = edState.bg;
         octx.fillRect(W / 2 - edState.maskW / 2, H / 2 - edState.maskH / 2, edState.maskW, edState.maskH);
       }
@@ -500,9 +513,12 @@
       var sf = safeFor(state.shape);
       edShapePath(ctx, W / 2, H / 2, edState.maskW * sf.w, edState.maskH * sf.h);
       var corners = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]];
-      for (var i = 0; i < 4; i += 1) {
+      var TOL = 5;   // px tolerance so a corner sitting exactly ON the safe line
+      for (var i = 0; i < 4; i += 1) {   // (as Fit produces) doesn't false-trigger
         var x = cx + corners[i][0] * c - corners[i][1] * sn;
         var y = cy + corners[i][0] * sn + corners[i][1] * c;
+        var dx = cx - x, dy = cy - y, d = Math.sqrt(dx * dx + dy * dy) || 1;
+        x += dx / d * TOL; y += dy / d * TOL;   // nudge inward before testing
         if (!ctx.isPointInPath(x, y)) { outside = true; break; }
       }
     }
@@ -545,6 +561,7 @@
     var rotateBy = function (d) { edState.rotation += d; computeMask(); edDraw(); };
     on('[data-cl-ai-ed-rotate-l]', function () { rotateBy(-90); });
     on('[data-cl-ai-ed-rotate-r]', function () { rotateBy(90); });
+    on('[data-cl-ai-ed-center]', function () { edState.offsetX = 0; edState.offsetY = 0; edDraw(); });
     on('[data-cl-ai-ed-reset]', function () { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; if (edZoom) edZoom.value = 1; computeMask(); edDraw(); });
     $$('[data-cl-ai-ed-cancel]').forEach(function (b) { b.addEventListener('click', closeEditor); });
     on('[data-cl-ai-ed-confirm]', edConfirm);
@@ -591,7 +608,8 @@
     var octx = out.getContext('2d');
     // Pad with the artwork's own background so the file is full-bleed and
     // production doesn't have to rebuild the background.
-    if (edState.fit) { octx.fillStyle = edState.bg; octx.fillRect(0, 0, targetW, targetH); }
+    var covers = iw * base * edState.scale >= targetW - 0.5 && ih * base * edState.scale >= targetH - 0.5;
+    if (!covers) { octx.fillStyle = edState.bg; octx.fillRect(0, 0, targetW, targetH); }
     octx.save();
     octx.translate(targetW / 2 + (edState.normX || 0) * targetW,
                    targetH / 2 + (edState.normY || 0) * targetH);
