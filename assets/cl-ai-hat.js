@@ -27,7 +27,7 @@
     patchHeightIn: 2.25,
     targetDpi: 300,
     maxFileMB: 25,
-    patchBg: '#f2ede1'   // real leather patch colour — default pad for transparent art
+    patchBg: '#ffffff'   // default pad for transparent art
   };
   function cloudinaryReady() {
     return CL_AI_HAT.cloudName && CL_AI_HAT.cloudName !== 'YOUR_CLOUD_NAME' &&
