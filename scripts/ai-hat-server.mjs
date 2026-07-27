@@ -79,9 +79,12 @@ function page() {
     const state = STATES.includes(st.status) ? st.status : 'todo';
     const adminUrl = `https://admin.shopify.com/store/${handle}/orders/${j0.orderId}`;
     const search = esc(g.items.map((x) => (g.order + ' ' + x.shape + ' ' + x.variant + ' ' + (x.text || ''))).join(' ').toLowerCase());
+    const patches = st.patches || {};
+    const doneCount = g.items.filter((x) => patches[x.lineId]).length;
 
     const statusCell = `<td class="status" rowspan="${n}">
         <button type="button" class="st" data-state="${state}">${LABEL[state]}</button>
+        ${n > 1 ? `<div class="prog">${doneCount} of ${n} done</div>` : ''}
         <textarea class="note" rows="2" placeholder="Add note">${esc(st.note || '')}</textarea>
         <div class="by">${st.by || st.at ? esc((st.by ? st.by + ' · ' : '') + (st.at ? new Date(st.at).toLocaleString() : '')) : ''}</div>
       </td>`;
@@ -101,7 +104,8 @@ function page() {
       const head = i === 0;
       return `<tr data-order="${esc(g.order)}" data-search="${search}"${head ? ' class="grp-head"' : ''}>
         ${head ? statusCell : ''}
-        <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
+        <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="preview" loading="lazy"></a>` : '<span class="none">—</span>'}
+          <label class="pdone"><input type="checkbox" data-patch="${esc(j.lineId || j.print || '')}"${patches[j.lineId] ? ' checked' : ''}> Patch done</label></td>
         ${head ? orderCell : ''}
         <td><div class="strong">${esc(j.shape || '—')}</div><div class="meta">${esc(j.variant)}</div><div class="meta">Qty ${esc(j.qty)}</div></td>
         <td class="txt">${j.text ? `<div class="strong">${esc(j.text)}</div><div class="meta"><span class="chip chip--${esc(String(j.textColor || '').toLowerCase())}"></span>${esc(j.textColor || '')}</div>` : '<span class="none">—</span>'}</td>
@@ -145,8 +149,11 @@ function page() {
   .note{width:100%;margin-top:7px;padding:7px 9px;border:1.5px solid var(--line);border-radius:8px;font:13px inherit;resize:vertical}
   .note:focus{outline:none;border-color:var(--blue)}
   .by{font-size:11px;color:var(--muted);margin-top:3px;min-height:12px}
+  .prog{margin-top:6px;font-size:12px;font-weight:700;color:#8a6100}
   tr.row-done td:not(.status){opacity:.5}
   .thumb{width:120px}.thumb img{width:104px;height:104px;object-fit:contain;background:#fbfbfb;border:1px solid var(--line);border-radius:8px;display:block}
+  .pdone{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:600;color:#475569;cursor:pointer}
+  .pdone input{width:16px;height:16px;cursor:pointer;accent-color:#1a7f45}
   .order{font-weight:700;color:var(--blue);text-decoration:none;font-size:16px}.order:hover{text-decoration:underline}
   .meta{color:var(--muted);font-size:12.5px}.strong{font-weight:700}
   .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef2f6;font-size:11px;font-weight:700;color:#475569}
@@ -192,12 +199,20 @@ ${cache.jobs.length ? `
     return fetch('/api/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({order:order},patch))})
       .then(function(r){return r.json();});
   }
-  // Paint the whole order group: status/note on the head row, dimming on all.
+  // Paint the whole order group: status/note on the head row, patch checkboxes
+  // and "X of N done" progress, dimming on all.
   function paint(order,rec){
-    var st=(rec&&rec.status)||'todo', head=null, list=groups[order]||[];
-    list.forEach(function(tr){ if(tr.classList.contains('grp-head'))head=tr; tr.classList.toggle('row-done',st==='done'); });
+    var st=(rec&&rec.status)||'todo', patches=(rec&&rec.patches)||{}, head=null, list=groups[order]||[];
+    var total=0, done=0;
+    list.forEach(function(tr){
+      if(tr.classList.contains('grp-head'))head=tr;
+      tr.classList.toggle('row-done',st==='done');
+      var cb=tr.querySelector('.pdone input');
+      if(cb){ total++; var d=!!patches[cb.dataset.patch]; if(document.activeElement!==cb)cb.checked=d; if(d)done++; }
+    });
     if(!head)return;
     var btn=head.querySelector('.st'); if(btn){btn.dataset.state=st;btn.textContent=LABEL[st];}
+    var prog=head.querySelector('.prog'); if(prog) prog.textContent=done+' of '+total+' done';
     var note=head.querySelector('.note'); if(note&&document.activeElement!==note) note.value=(rec&&rec.note)||'';
     var by=head.querySelector('.by'); if(by) by.textContent=(rec&&(rec.by||rec.at))?((rec.by?rec.by+' · ':'')+(rec.at?new Date(rec.at).toLocaleString():'')):'';
   }
@@ -211,6 +226,13 @@ ${cache.jobs.length ? `
     var note=head.querySelector('.note'), timer;
     note.addEventListener('input',function(){ clearTimeout(timer); timer=setTimeout(function(){ post(order,{note:note.value}).then(function(rec){paint(order,rec);}); },600); });
     note.addEventListener('blur',function(){ clearTimeout(timer); post(order,{note:note.value}).then(function(rec){paint(order,rec);}); });
+  });
+  // Per-patch "done" checkboxes — roll up to the order status server-side.
+  allRows.forEach(function(tr){
+    var cb=tr.querySelector('.pdone input'); if(!cb)return;
+    cb.addEventListener('change',function(){
+      post(tr.dataset.order,{patch:cb.dataset.patch,done:cb.checked}).then(function(rec){paint(tr.dataset.order,rec);apply();});
+    });
   });
 
   function apply(){
@@ -250,7 +272,25 @@ const server = http.createServer((req, res) => {
       let d; try { d = JSON.parse(body); } catch { return send(res, 400, 'application/json', '{"error":"bad json"}'); }
       if (!d.order) return send(res, 400, 'application/json', '{"error":"no order"}');
       const rec = status[d.order] || {};
-      if (typeof d.status === 'string') rec.status = d.status;
+      const items = cache.jobs.filter((j) => j.order === d.order);
+      // Per-patch "done" tick — roll up into the order's status.
+      if (typeof d.patch === 'string') {
+        rec.patches = rec.patches || {};
+        if (d.done) rec.patches[d.patch] = true; else delete rec.patches[d.patch];
+        if (items.length) {
+          const done = items.filter((j) => rec.patches[j.lineId]).length;
+          rec.status = done === 0 ? 'todo' : (done >= items.length ? 'done' : 'progress');
+        }
+      }
+      // Manual status click stays a shortcut: Done ticks every patch, To do clears them.
+      if (typeof d.status === 'string') {
+        rec.status = d.status;
+        if (items.length) {
+          rec.patches = rec.patches || {};
+          if (d.status === 'done') items.forEach((j) => { rec.patches[j.lineId] = true; });
+          else if (d.status === 'todo') items.forEach((j) => { delete rec.patches[j.lineId]; });
+        }
+      }
       if (typeof d.note === 'string') rec.note = d.note;
       rec.by = d.by || rec.by || '';
       rec.at = new Date().toISOString();

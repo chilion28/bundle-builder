@@ -78,7 +78,7 @@ const ORDERS_QUERY = `
       pageInfo { hasNextPage endCursor }
       edges { node {
         id name createdAt closed displayFulfillmentStatus
-        lineItems(first: 25) { edges { node { title quantity variantTitle customAttributes { key value } } } }
+        lineItems(first: 25) { edges { node { id title quantity variantTitle customAttributes { key value } } } }
       } }
     }
   }`;
@@ -103,7 +103,7 @@ export async function getJobs({ days = 60, scanLimit = 1000 } = {}) {
         const print = pick(a, P.print);
         if (!print) continue;
         jobs.push({
-          order: o.name, orderId: o.id.split('/').pop(), createdAt: o.createdAt,
+          order: o.name, orderId: o.id.split('/').pop(), lineId: (li.id || '').split('/').pop(), createdAt: o.createdAt,
           fulfillment: o.displayFulfillmentStatus, archived: o.closed,
           title: li.title, variant: li.variantTitle || '', qty: li.quantity,
           shape: a[P.shape] || '', print,
