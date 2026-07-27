@@ -559,20 +559,21 @@
   }
 
   /* Photoshop-style transform box around the artwork — a rotated outline + corner
-   * and edge handles hugging the SUBJECT (visible content), so the customer can
-   * see the size and boundary of their artwork against the patch. Visual only. */
+   * and edge handles around the FULL uploaded file, so the customer sees the size
+   * and boundary of their file against the patch, and can drag a handle to resize.
+   * Handle geometry is stored in edBox (stage px) for pointer hit-testing. */
+  var edBox = { cx: 0, cy: 0, handles: null };
   function drawTransformBox(ctx, W, H) {
-    if (!edState.img || !edState.maskW) return;
+    if (!edState.img || !edState.maskW) { edBox.handles = null; return; }
     var s = edState.baseScale * edState.scale;
-    var cb = edState.contentBox || { l: 0, t: 0, r: 1, b: 1 };
-    var lX = (cb.l - 0.5) * edState.natW * s, rX = (cb.r - 0.5) * edState.natW * s;
-    var tY = (cb.t - 0.5) * edState.natH * s, bY = (cb.b - 0.5) * edState.natH * s;
-    var mX = (lX + rX) / 2, mY = (tY + bY) / 2;
+    var lX = -edState.natW * s / 2, rX = edState.natW * s / 2;   // full uploaded-file edges
+    var tY = -edState.natH * s / 2, bY = edState.natH * s / 2;
     var cx = W / 2 + edState.offsetX, cy = H / 2 + edState.offsetY;
     var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
     function P(ox, oy) { return [cx + ox * c - oy * sn, cy + ox * sn + oy * c]; }
     var corners = [P(lX, tY), P(rX, tY), P(rX, bY), P(lX, bY)];
-    var handles = corners.concat([P(mX, tY), P(rX, mY), P(mX, bY), P(lX, mY)]);
+    var handles = corners.concat([P(0, tY), P(rX, 0), P(0, bY), P(lX, 0)]);
+    edBox = { cx: cx, cy: cy, handles: handles };
     ctx.save();
     ctx.strokeStyle = '#00a0ea'; ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -632,16 +633,42 @@
   function closeEditor() { if (editor) editor.hidden = true; document.body.style.overflow = ''; }
 
   if (editor) {
-    // Drag to pan.
-    var dragging = false, lastX = 0, lastY = 0;
-    edStage.addEventListener('pointerdown', function (e) { dragging = true; lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId); });
+    // Drag to pan; drag a transform-box handle to resize (scale around centre).
+    var dragging = false, resizing = false, lastX = 0, lastY = 0, rzDist0 = 1, rzScale0 = 1;
+    function stageXY(e) { var r = edStage.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    function handleHit(px, py) {
+      if (!edBox.handles) return -1;
+      for (var i = 0; i < edBox.handles.length; i += 1) {
+        if (Math.abs(px - edBox.handles[i][0]) <= 12 && Math.abs(py - edBox.handles[i][1]) <= 12) return i;
+      }
+      return -1;
+    }
+    edStage.addEventListener('pointerdown', function (e) {
+      var p = stageXY(e);
+      if (handleHit(p[0], p[1]) >= 0) {
+        resizing = true;
+        rzDist0 = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy) || 1;
+        rzScale0 = edState.scale;
+      } else { dragging = true; }
+      lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId);
+    });
     edStage.addEventListener('pointermove', function (e) {
-      if (!dragging) return;
+      if (resizing) {
+        var p = stageXY(e);
+        var d = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy);
+        edState.scale = Math.max(minZoom(), Math.min(4, rzScale0 * (d / rzDist0)));
+        if (edZoom) edZoom.value = edState.scale; edDraw();
+        return;
+      }
+      if (!dragging) {   // hover cursor hint over handles
+        var h = stageXY(e); edStage.style.cursor = handleHit(h[0], h[1]) >= 0 ? 'nwse-resize' : 'grab';
+        return;
+      }
       edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
       lastX = e.clientX; lastY = e.clientY; edDraw();
     });
-    edStage.addEventListener('pointerup', function () { dragging = false; });
-    edStage.addEventListener('pointercancel', function () { dragging = false; });
+    edStage.addEventListener('pointerup', function () { dragging = false; resizing = false; });
+    edStage.addEventListener('pointercancel', function () { dragging = false; resizing = false; });
     edStage.addEventListener('wheel', function (e) {
       e.preventDefault();
       edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * (e.deltaY < 0 ? 1.08 : 0.92)));
