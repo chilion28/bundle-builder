@@ -26,7 +26,8 @@
     patchWidthIn: 4,
     patchHeightIn: 2.25,
     targetDpi: 300,
-    maxFileMB: 25
+    maxFileMB: 25,
+    patchBg: '#f2ede1'   // real leather patch colour — default pad for transparent art
   };
   function cloudinaryReady() {
     return CL_AI_HAT.cloudName && CL_AI_HAT.cloudName !== 'YOUR_CLOUD_NAME' &&
@@ -230,9 +231,11 @@
     img.onload = function () {
       edState.img = img; edState.file = file; edState.natW = img.naturalWidth; edState.natH = img.naturalHeight;
       edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0;
-      edState.bg = detectBgColor(img);
       edState.contentBox = computeContentBox(img);   // subject bounds for the off-safe-area warning
       edState.hasAlpha = !!edState.contentBox.hasAlpha;   // transparent file → always pad the background
+      // Transparent art → pad with the real leather patch colour (cream), not the
+      // black that a transparent border samples to. Opaque art → match its own edge.
+      edState.bg = edState.hasAlpha ? CL_AI_HAT.patchBg : detectBgColor(img);
       if (edBg) edBg.value = edState.bg;
       // Square-ish art on a wide patch loses a lot to cropping — start those in
       // Fit so nothing is lost and production doesn't rebuild the background.
