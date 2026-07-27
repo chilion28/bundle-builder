@@ -268,6 +268,8 @@
   var edFrame = $('[data-cl-ai-ed-frame]');
   var edZoom = $('[data-cl-ai-ed-zoom]');
   var edWarn = $('[data-cl-ai-ed-warn]');
+  var edBoxToggle = $('[data-cl-ai-ed-box]');
+  if (edBoxToggle) edBoxToggle.addEventListener('change', function () { edState.showBox = edBoxToggle.checked; edDraw(); });
   var edBgWrap = $('[data-cl-ai-ed-bgwrap]');
   var edBg = $('[data-cl-ai-ed-bg]');
   // Reuse the Step-2 preview's frame PNG URLs (already rendered with asset_url).
@@ -328,6 +330,7 @@
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
                   baseScale: 1, maskW: 0, maskH: 0,
                   fit: false,          // false = fill/crop, true = contain + padded background
+                  showBox: true,       // transform box overlay on/off
                   bg: '#ffffff' };
 
   /* Most AI patch art sits on a flat background, so sampling the border pixels
@@ -566,7 +569,7 @@
       // Fallback (mask not loaded yet): clip via traced shape path.
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
-    drawTransformBox(ctx, W, H);
+    if (edState.showBox) drawTransformBox(ctx, W, H); else edBox.handles = null;
     updateWarn();
   }
 
@@ -657,7 +660,7 @@
     }
     edStage.addEventListener('pointerdown', function (e) {
       var p = stageXY(e);
-      if (handleHit(p[0], p[1]) >= 0) {
+      if (edState.showBox && handleHit(p[0], p[1]) >= 0) {
         resizing = true;
         rzDist0 = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy) || 1;
         rzScale0 = edState.scale;
@@ -673,7 +676,7 @@
         return;
       }
       if (!dragging) {   // hover cursor hint over handles
-        var h = stageXY(e); edStage.style.cursor = handleHit(h[0], h[1]) >= 0 ? 'nwse-resize' : 'grab';
+        var h = stageXY(e); edStage.style.cursor = (edState.showBox && handleHit(h[0], h[1]) >= 0) ? 'nwse-resize' : 'grab';
         return;
       }
       edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
