@@ -61,32 +61,57 @@ async function refresh() {
 /* ---- page ---- */
 function page() {
   const handle = (cache.store || '').replace('.myshopify.com', '');
-  const rows = cache.jobs.map((j) => {
-    const st = (status[j.order] || {});
+  // Group line items by order so each order is one block: the shipping team
+  // sees the whole order together and can't ship it half-done. Status & note
+  // are per-order (that's how they're stored), so they span the group's rows.
+  const groups = [];
+  const byOrder = new Map();
+  for (const j of cache.jobs) {
+    let g = byOrder.get(j.order);
+    if (!g) { g = { order: j.order, items: [] }; byOrder.set(j.order, g); groups.push(g); }
+    g.items.push(j);
+  }
+
+  const rows = groups.map((g) => {
+    const j0 = g.items[0];
+    const n = g.items.length;
+    const st = (status[g.order] || {});
     const state = STATES.includes(st.status) ? st.status : 'todo';
-    const adminUrl = `https://admin.shopify.com/store/${handle}/orders/${j.orderId}`;
-    const fa = (href, label, kind) => (href
-      ? `<details class="fa"><summary>⬇ ${label}</summary><div class="fa__body">
-           <img class="fa__img" src="${esc(previewUrl(href))}" alt="${esc(label)} preview" loading="lazy">
-           <a class="fa__dl" href="${esc(attachmentUrl(href, kind, j))}" download>⬇ Download ${label.toLowerCase()}</a>
-         </div></details>`
-      : `<div class="fa fa--off">⬇ ${label}</div>`);
-    return `<tr data-order="${esc(j.order)}" data-search="${esc((j.order + ' ' + j.shape + ' ' + j.variant + ' ' + (j.text || '')).toLowerCase())}">
-      <td class="status">
+    const adminUrl = `https://admin.shopify.com/store/${handle}/orders/${j0.orderId}`;
+    const search = esc(g.items.map((x) => (g.order + ' ' + x.shape + ' ' + x.variant + ' ' + (x.text || ''))).join(' ').toLowerCase());
+
+    const statusCell = `<td class="status" rowspan="${n}">
         <button type="button" class="st" data-state="${state}">${LABEL[state]}</button>
         <textarea class="note" rows="2" placeholder="Add note">${esc(st.note || '')}</textarea>
         <div class="by">${st.by || st.at ? esc((st.by ? st.by + ' · ' : '') + (st.at ? new Date(st.at).toLocaleString() : '')) : ''}</div>
-      </td>
-      <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
-      <td><a class="order" href="${esc(adminUrl)}" target="_blank" rel="noopener">${esc(j.order)}</a>
-        <div class="meta">${esc(new Date(j.createdAt).toLocaleString())}</div>
-        <div class="meta"><span class="pill pill--${esc(String(j.fulfillment).toLowerCase())}">${esc(j.fulfillment)}</span>${j.archived ? ' <span class="pill pill--archived">ARCHIVED</span>' : ''}</div></td>
-      <td><div class="strong">${esc(j.shape || '—')}</div><div class="meta">${esc(j.variant)}</div><div class="meta">Qty ${esc(j.qty)}</div></td>
-      <td class="txt">${j.text ? `<div class="strong">${esc(j.text)}</div><div class="meta"><span class="chip chip--${esc(String(j.textColor || '').toLowerCase())}"></span>${esc(j.textColor || '')}</div>` : '<span class="none">—</span>'}</td>
-      <td class="meta">${esc(j.score || '—')}</td>
-      <td class="links">${fa(j.original, 'Original', 'original')}${fa(j.print, 'Print 600dpi', 'print')}${fa(j.pdf, 'PDF', 'print')}${fa(j.preview, 'Preview', 'preview')}</td>
-    </tr>`;
+      </td>`;
+
+    const orderCell = `<td class="ordercell" rowspan="${n}"><a class="order" href="${esc(adminUrl)}" target="_blank" rel="noopener">${esc(g.order)}</a>
+        <div class="meta">${esc(new Date(j0.createdAt).toLocaleString())}</div>
+        <div class="meta"><span class="pill pill--${esc(String(j0.fulfillment).toLowerCase())}">${esc(j0.fulfillment)}</span>${j0.archived ? ' <span class="pill pill--archived">ARCHIVED</span>' : ''}</div>
+        <div class="meta cnt">${n} patch${n > 1 ? 'es' : ''}</div></td>`;
+
+    return g.items.map((j, i) => {
+      const fa = (href, label, kind) => (href
+        ? `<details class="fa"><summary>⬇ ${label}</summary><div class="fa__body">
+             <img class="fa__img" src="${esc(previewUrl(href))}" alt="${esc(label)} preview" loading="lazy">
+             <a class="fa__dl" href="${esc(attachmentUrl(href, kind, j))}" download>⬇ Download ${label.toLowerCase()}</a>
+           </div></details>`
+        : `<div class="fa fa--off">⬇ ${label}</div>`);
+      const head = i === 0;
+      return `<tr data-order="${esc(g.order)}" data-search="${search}"${head ? ' class="grp-head"' : ''}>
+        ${head ? statusCell : ''}
+        <td class="thumb">${j.preview ? `<a href="${esc(j.preview)}" target="_blank" rel="noopener"><img src="${esc(j.preview)}" alt="preview" loading="lazy"></a>` : '<span class="none">—</span>'}</td>
+        ${head ? orderCell : ''}
+        <td><div class="strong">${esc(j.shape || '—')}</div><div class="meta">${esc(j.variant)}</div><div class="meta">Qty ${esc(j.qty)}</div></td>
+        <td class="txt">${j.text ? `<div class="strong">${esc(j.text)}</div><div class="meta"><span class="chip chip--${esc(String(j.textColor || '').toLowerCase())}"></span>${esc(j.textColor || '')}</div>` : '<span class="none">—</span>'}</td>
+        <td class="meta">${esc(j.score || '—')}</td>
+        <td class="links">${fa(j.original, 'Original', 'original')}${fa(j.print, 'Print 600dpi', 'print')}${fa(j.pdf, 'PDF', 'print')}${fa(j.preview, 'Preview', 'preview')}</td>
+      </tr>`;
+    }).join('\n');
   }).join('\n');
+
+  const orderCount = groups.length;
 
   const stamp = cache.at ? new Date(cache.at).toLocaleString() : 'never';
   return `<!doctype html><meta charset="utf-8"><title>Image Hat production queue</title>
@@ -107,6 +132,12 @@ function page() {
   th,td{padding:11px 13px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
   th{background:#f2f6f9;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#475569}
   tr:last-child td{border-bottom:0}
+  /* Group separator: a strong rule at the top of each order block, faint lines
+     between patches within the same order, so an order reads as one unit. */
+  td{border-bottom:1px solid #eef1f4}
+  tr.grp-head>td{border-top:2px solid #cbd3dc}
+  tbody tr:first-child.grp-head>td{border-top:0}
+  .ordercell .cnt{margin-top:5px;font-weight:700;color:#475569}
   .status{width:230px}
   .st{width:100%;padding:8px;border:1.5px solid var(--line);border-radius:8px;background:#fff;font-size:13px;font-weight:700;cursor:pointer;color:#475569}
   .st[data-state=progress]{background:#fef3d6;border-color:#f0d38a;color:#8a6100}
@@ -134,7 +165,7 @@ function page() {
   .err{background:#fdecec;border:1px solid #f3b9b9;color:#a11;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px}
 </style>
 <h1>Image Hat production queue</h1>
-<div class="sub">${cache.jobs.length} order(s) · last ${DAYS} days · data refreshed ${esc(stamp)} · live shared status</div>
+<div class="sub">${orderCount} order(s) · ${cache.jobs.length} patch(es) · last ${DAYS} days · data refreshed ${esc(stamp)} · live shared status</div>
 ${cache.error ? `<div class="err">Couldn't refresh from Shopify: ${esc(cache.error)} — showing the last good data.</div>` : ''}
 ${cache.jobs.length ? `
 <div class="bar">
@@ -148,7 +179,11 @@ ${cache.jobs.length ? `
 <script>
   var CYCLE=['todo','progress','done'], LABEL=${JSON.stringify(LABEL)};
   var q=document.getElementById('q'), hd=document.getElementById('hidedone'), count=document.getElementById('count'),
-      me=document.getElementById('me'), rows=[].slice.call(document.querySelectorAll('#rows tr'));
+      me=document.getElementById('me'), allRows=[].slice.call(document.querySelectorAll('#rows tr'));
+  // Rows are grouped by order; only the group-head row carries the status/note.
+  var heads=allRows.filter(function(tr){return tr.classList.contains('grp-head');});
+  var groups={};
+  allRows.forEach(function(tr){ (groups[tr.dataset.order]=groups[tr.dataset.order]||[]).push(tr); });
   me.value=localStorage.getItem('clImageHatMe')||'';
   me.addEventListener('input',function(){localStorage.setItem('clImageHatMe',me.value);});
 
@@ -157,34 +192,36 @@ ${cache.jobs.length ? `
     return fetch('/api/status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({order:order},patch))})
       .then(function(r){return r.json();});
   }
-  function paintRow(tr,rec){
-    var st=(rec&&rec.status)||'todo', btn=tr.querySelector('.st');
-    btn.dataset.state=st; btn.textContent=LABEL[st];
-    tr.classList.toggle('row-done',st==='done');
-    var note=tr.querySelector('.note');
-    if(document.activeElement!==note) note.value=(rec&&rec.note)||'';
-    tr.querySelector('.by').textContent=(rec&&(rec.by||rec.at))?((rec.by?rec.by+' · ':'')+(rec.at?new Date(rec.at).toLocaleString():'')):'';
+  // Paint the whole order group: status/note on the head row, dimming on all.
+  function paint(order,rec){
+    var st=(rec&&rec.status)||'todo', head=null, list=groups[order]||[];
+    list.forEach(function(tr){ if(tr.classList.contains('grp-head'))head=tr; tr.classList.toggle('row-done',st==='done'); });
+    if(!head)return;
+    var btn=head.querySelector('.st'); if(btn){btn.dataset.state=st;btn.textContent=LABEL[st];}
+    var note=head.querySelector('.note'); if(note&&document.activeElement!==note) note.value=(rec&&rec.note)||'';
+    var by=head.querySelector('.by'); if(by) by.textContent=(rec&&(rec.by||rec.at))?((rec.by?rec.by+' · ':'')+(rec.at?new Date(rec.at).toLocaleString():'')):'';
   }
-  rows.forEach(function(tr){
-    var order=tr.dataset.order;
-    tr.querySelector('.st').addEventListener('click',function(){
-      var cur=tr.querySelector('.st').dataset.state||'todo';
+  heads.forEach(function(head){
+    var order=head.dataset.order, btn=head.querySelector('.st');
+    btn.addEventListener('click',function(){
+      var cur=btn.dataset.state||'todo';
       var next=CYCLE[(CYCLE.indexOf(cur)+1)%CYCLE.length];
-      post(order,{status:next}).then(function(rec){paintRow(tr,rec);apply();});
+      post(order,{status:next}).then(function(rec){paint(order,rec);apply();});
     });
-    var note=tr.querySelector('.note'), timer;
-    note.addEventListener('input',function(){ clearTimeout(timer); timer=setTimeout(function(){ post(order,{note:note.value}).then(function(rec){paintRow(tr,rec);}); },600); });
-    note.addEventListener('blur',function(){ clearTimeout(timer); post(order,{note:note.value}).then(function(rec){paintRow(tr,rec);}); });
+    var note=head.querySelector('.note'), timer;
+    note.addEventListener('input',function(){ clearTimeout(timer); timer=setTimeout(function(){ post(order,{note:note.value}).then(function(rec){paint(order,rec);}); },600); });
+    note.addEventListener('blur',function(){ clearTimeout(timer); post(order,{note:note.value}).then(function(rec){paint(order,rec);}); });
   });
 
   function apply(){
-    var t=q.value.trim().toLowerCase(), hide=hd.checked, n=0, done=0;
-    rows.forEach(function(r){
-      var isDone=r.querySelector('.st').dataset.state==='done'; if(isDone)done++;
-      var hit=(!t||r.dataset.search.indexOf(t)>-1)&&!(hide&&isDone);
-      r.style.display=hit?'':'none'; if(hit)n++;
+    var t=q.value.trim().toLowerCase(), hide=hd.checked, shown=0, done=0;
+    heads.forEach(function(head){
+      var btn=head.querySelector('.st'), isDone=btn&&btn.dataset.state==='done'; if(isDone)done++;
+      var hit=(!t||head.dataset.search.indexOf(t)>-1)&&!(hide&&isDone);
+      (groups[head.dataset.order]||[]).forEach(function(tr){tr.style.display=hit?'':'none';});
+      if(hit)shown++;
     });
-    count.textContent=n+' shown · '+done+'/'+rows.length+' done';
+    count.textContent=shown+' order(s) shown · '+done+'/'+heads.length+' done';
   }
   q.addEventListener('input',apply); hd.addEventListener('change',apply); apply();
 
@@ -192,7 +229,7 @@ ${cache.jobs.length ? `
      you're currently typing in). */
   setInterval(function(){
     fetch('/api/state').then(function(r){return r.json();}).then(function(state){
-      rows.forEach(function(tr){ paintRow(tr,state[tr.dataset.order]); }); apply();
+      heads.forEach(function(head){ paint(head.dataset.order,state[head.dataset.order]); }); apply();
     }).catch(function(){});
   }, 15000);
 </script>` : '<p style="color:#6b7280">No Image Hat orders in this window.</p>'}
