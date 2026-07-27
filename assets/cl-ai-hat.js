@@ -445,6 +445,31 @@
     } catch (e) { return full; }   // cross-origin taint etc. → treat whole image as subject
   }
 
+  /* On a fresh upload, frame the SUBJECT nicely inside the dashed area — centred
+   * and filling a safe fraction of the shape — so our default is "good enough"
+   * even if the customer never touches it (fewer files for production to fix).
+   * Only zooms IN (logos that have transparent margins); full-bleed art, which
+   * already fills the frame, is left alone. Per-shape usable fractions keep the
+   * subject inside the tapered shapes (circle/hexagon). */
+  var USABLE = { rectangle: 0.92, rounded: 0.86, circle: 0.68, hexagon: 0.74 };
+  function autoFrameSubject() {
+    if (!edState.img || !edState.maskW || !edState.contentBox || !edState.baseScale) return;
+    var cb = edState.contentBox;
+    var subjW = (cb.r - cb.l) * edState.natW, subjH = (cb.b - cb.t) * edState.natH;
+    if (subjW <= 1 || subjH <= 1) return;
+    var u = USABLE[String(state.shape).toLowerCase()] || 0.9;
+    var absScale = Math.min(edState.maskW * u / subjW, edState.maskH * u / subjH);
+    var rel = absScale / edState.baseScale;
+    if (rel <= 1.05) return;   // subject already fills the frame — leave it
+    rel = Math.min(rel, 4);
+    edState.scale = rel;
+    if (edZoom) edZoom.value = rel;
+    var s = edState.baseScale * rel;
+    edState.offsetX = -((cb.l + cb.r) / 2 - 0.5) * edState.natW * s;   // centre the subject
+    edState.offsetY = -((cb.t + cb.b) / 2 - 0.5) * edState.natH * s;
+    clampOffset();
+  }
+
   // Both modes can shrink below cover: a customer who instinctively uses the
   // slider in the default Fill mode can zoom the whole image inside the dashed
   // line without discovering the Fit toggle. Gaps auto-pad — see imgCovers().
@@ -573,7 +598,7 @@
     syncModeButtons();
     editor.hidden = false;
     document.body.style.overflow = 'hidden';
-    requestAnimationFrame(function () { computeMask(); edDraw(); });
+    requestAnimationFrame(function () { computeMask(); if (isNew) autoFrameSubject(); edDraw(); });
   }
   function closeEditor() { if (editor) editor.hidden = true; document.body.style.overflow = ''; }
 
