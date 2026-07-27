@@ -232,6 +232,7 @@
       edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0;
       edState.bg = detectBgColor(img);
       edState.contentBox = computeContentBox(img);   // subject bounds for the off-safe-area warning
+      edState.hasAlpha = !!edState.contentBox.hasAlpha;   // transparent file → always pad the background
       if (edBg) edBg.value = edState.bg;
       // Square-ish art on a wide patch loses a lot to cropping — start those in
       // Fit so nothing is lost and production doesn't rebuild the background.
@@ -431,17 +432,19 @@
       var br = 0, bgc = 0, bb = 0, ba = 0;
       corners.forEach(function (i) { br += d[i]; bgc += d[i + 1]; bb += d[i + 2]; ba += d[i + 3]; });
       br /= 4; bgc /= 4; bb /= 4; ba /= 4;
-      var minX = w, minY = h, maxX = -1, maxY = -1;
+      var minX = w, minY = h, maxX = -1, maxY = -1, transp = 0;
       for (var y = 0; y < h; y += 1) {
         for (var x = 0; x < w; x += 1) {
           var i = (y * w + x) * 4, a = d[i + 3];
+          if (a < 128) transp += 1;
           var diff = Math.abs(d[i] - br) + Math.abs(d[i + 1] - bgc) + Math.abs(d[i + 2] - bb);
           var subject = a > 40 && (ba < 40 || diff > 60);   // transparent bg → any opaque; solid bg → differs from it
           if (subject) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
         }
       }
-      if (maxX < 0) return full;
-      return { l: minX / w, t: minY / h, r: (maxX + 1) / w, b: (maxY + 1) / h };
+      var hasAlpha = transp > w * h * 0.01;   // >1% transparent → treat as a transparent file
+      if (maxX < 0) return { l: 0, t: 0, r: 1, b: 1, hasAlpha: hasAlpha };
+      return { l: minX / w, t: minY / h, r: (maxX + 1) / w, b: (maxY + 1) / h, hasAlpha: hasAlpha };
     } catch (e) { return full; }   // cross-origin taint etc. → treat whole image as subject
   }
 
@@ -485,6 +488,12 @@
     var s = edState.baseScale * edState.scale;
     return iw * s >= edState.maskW - 0.5 && ih * s >= edState.maskH - 0.5;
   }
+
+  // Pad (and show the background picker) whenever the patch would otherwise have
+  // transparent areas: a transparent file always needs it (its see-through parts
+  // show inside the window even when its box covers), and any image that doesn't
+  // fully cover the window needs it for the edge gaps.
+  function needsPad() { return edState.hasAlpha || !imgCovers(); }
 
   // Trace the current shape's window path, centred at (cx,cy), size mw×mh.
   // Geometry measured from the frame PNGs' transparent windows.
@@ -534,7 +543,7 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, W, H);
     clampOffset();
-    if (edBgWrap) edBgWrap.hidden = imgCovers();   // background picker only when padding shows
+    if (edBgWrap) edBgWrap.hidden = !needsPad();   // show whenever the background is padding something
     // Dimmed full image (shows what's cropped out), then bright inside the window.
     ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore();
     var mimg = edMasks[String(state.shape).toLowerCase()];
@@ -542,7 +551,7 @@
       // Pixel-perfect: paint bright image on an offscreen, keep only the window via the mask.
       var off = document.createElement('canvas'); off.width = edCanvas.width; off.height = edCanvas.height;
       var octx = off.getContext('2d'); octx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (!imgCovers()) {   // pad the gap with the background, exactly as it will print
+      if (needsPad()) {   // pad the gap / transparency with the background, exactly as it will print
         octx.fillStyle = edState.bg;
         octx.fillRect(W / 2 - edState.maskW / 2, H / 2 - edState.maskH / 2, edState.maskW, edState.maskH);
       }
@@ -730,7 +739,7 @@
     // Pad with the artwork's own background so the file is full-bleed and
     // production doesn't have to rebuild the background.
     var covers = iw * base * edState.scale >= targetW - 0.5 && ih * base * edState.scale >= targetH - 0.5;
-    if (!covers) { octx.fillStyle = edState.bg; octx.fillRect(0, 0, targetW, targetH); }
+    if (edState.hasAlpha || !covers) { octx.fillStyle = edState.bg; octx.fillRect(0, 0, targetW, targetH); }
     octx.save();
     octx.translate(targetW / 2 + (edState.normX || 0) * targetW,
                    targetH / 2 + (edState.normY || 0) * targetH);
