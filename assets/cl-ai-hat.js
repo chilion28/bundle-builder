@@ -231,6 +231,7 @@
       edState.img = img; edState.file = file; edState.natW = img.naturalWidth; edState.natH = img.naturalHeight;
       edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0;
       edState.bg = detectBgColor(img);
+      edState.contentBox = computeContentBox(img);   // subject bounds for the off-safe-area warning
       if (edBg) edBg.value = edState.bg;
       // Square-ish art on a wide patch loses a lot to cropping — start those in
       // Fit so nothing is lost and production doesn't rebuild the background.
@@ -411,6 +412,39 @@
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
 
+  /* Bounding box of the actual SUBJECT (non-transparent, non-background pixels)
+   * as fractions of the image, so the off-safe-area warning tests the visible art
+   * — not the full rectangle, which for logos includes big transparent margins
+   * and made the warning stick on forever. Handles transparent AND solid-colour
+   * backgrounds (compares against the average corner colour). */
+  function computeContentBox(img) {
+    var full = { l: 0, t: 0, r: 1, b: 1 };
+    try {
+      var MAX = 220;
+      var sc = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+      var w = Math.max(1, Math.round(img.naturalWidth * sc));
+      var h = Math.max(1, Math.round(img.naturalHeight * sc));
+      var cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      var cx = cv.getContext('2d'); cx.drawImage(img, 0, 0, w, h);
+      var d = cx.getImageData(0, 0, w, h).data;
+      var corners = [0, (w - 1) * 4, (h - 1) * w * 4, ((h - 1) * w + (w - 1)) * 4];
+      var br = 0, bgc = 0, bb = 0, ba = 0;
+      corners.forEach(function (i) { br += d[i]; bgc += d[i + 1]; bb += d[i + 2]; ba += d[i + 3]; });
+      br /= 4; bgc /= 4; bb /= 4; ba /= 4;
+      var minX = w, minY = h, maxX = -1, maxY = -1;
+      for (var y = 0; y < h; y += 1) {
+        for (var x = 0; x < w; x += 1) {
+          var i = (y * w + x) * 4, a = d[i + 3];
+          var diff = Math.abs(d[i] - br) + Math.abs(d[i + 1] - bgc) + Math.abs(d[i + 2] - bb);
+          var subject = a > 40 && (ba < 40 || diff > 60);   // transparent bg → any opaque; solid bg → differs from it
+          if (subject) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+        }
+      }
+      if (maxX < 0) return full;
+      return { l: minX / w, t: minY / h, r: (maxX + 1) / w, b: (maxY + 1) / h };
+    } catch (e) { return full; }   // cross-origin taint etc. → treat whole image as subject
+  }
+
   // Both modes can shrink below cover: a customer who instinctively uses the
   // slider in the default Fill mode can zoom the whole image inside the dashed
   // line without discovering the Fit toggle. Gaps auto-pad — see imgCovers().
@@ -507,12 +541,15 @@
     var outside = false;
     if (edState.img && edState.maskW) {
       var s = edState.baseScale * edState.scale;
-      var hw = edState.natW * s / 2, hh = edState.natH * s / 2;
+      var cb = edState.contentBox || { l: 0, t: 0, r: 1, b: 1 };
+      // Subject-box edges relative to the image centre, scaled to stage px.
+      var lX = (cb.l - 0.5) * edState.natW * s, rX = (cb.r - 0.5) * edState.natW * s;
+      var tY = (cb.t - 0.5) * edState.natH * s, bY = (cb.b - 0.5) * edState.natH * s;
       var cx = W / 2 + edState.offsetX, cy = H / 2 + edState.offsetY;
       var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
       var sf = safeFor(state.shape);
       edShapePath(ctx, W / 2, H / 2, edState.maskW * sf.w, edState.maskH * sf.h);
-      var corners = [[-hw, -hh], [hw, -hh], [hw, hh], [-hw, hh]];
+      var corners = [[lX, tY], [rX, tY], [rX, bY], [lX, bY]];
       var TOL = 5;   // px tolerance so a corner sitting exactly ON the safe line
       for (var i = 0; i < 4; i += 1) {   // (as Fit produces) doesn't false-trigger
         var x = cx + corners[i][0] * c - corners[i][1] * sn;
