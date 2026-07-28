@@ -329,6 +329,8 @@
                   baseScale: 1, maskW: 0, maskH: 0,
                   fit: false,          // false = fill/crop, true = contain + padded background
                   showBox: true,       // transform box overlay on/off
+                  textNorm: null,      // caption position {x,y} normalized to the window (0,0 = centre)
+                  textScale: 1,        // caption font-size multiplier (drag a handle to resize)
                   bg: '#ffffff' };
 
   /* Most AI patch art sits on a flat background, so sampling the border pixels
@@ -585,7 +587,29 @@
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
     if (edState.showBox) drawTransformBox(ctx, W, H); else edBox.handles = null;
+    drawEditorText(ctx, W, H);
     updateWarn();
+  }
+
+  /* The draggable/resizable caption inside the editor — drawn at the window
+   * centre + textNorm, with a dashed selection box + corner handles (filled
+   * blue, to tell them apart from the image's white handles). Geometry stored
+   * in edTextBox for pointer hit-testing. */
+  var edTextBox = { handles: null, cx: 0, cy: 0, hw: 0, hh: 0 };
+  function drawEditorText(ctx, W, H) {
+    if (!state.text) { edTextBox.handles = null; return; }
+    var g = drawText(ctx, W / 2, H / 2, edState.maskW, edState.maskH);
+    if (!g) { edTextBox.handles = null; return; }
+    var padX = 8, padY = 6;
+    var hw = g.hw + padX, hh = g.hh + padY;
+    var lX = g.x - hw, rX = g.x + hw, tY = g.y - hh, bY = g.y + hh;
+    edTextBox = { cx: g.x, cy: g.y, hw: hw, hh: hh, handles: [[lX, tY], [rX, tY], [rX, bY], [lX, bY]] };
+    ctx.save();
+    ctx.strokeStyle = '#00a0ea'; ctx.setLineDash([4, 3]); ctx.lineWidth = 1;
+    ctx.strokeRect(lX, tY, rX - lX, bY - tY);
+    ctx.setLineDash([]); ctx.fillStyle = '#00a0ea';
+    edTextBox.handles.forEach(function (p) { ctx.beginPath(); ctx.rect(p[0] - 4, p[1] - 4, 8, 8); ctx.fill(); });
+    ctx.restore();
   }
 
   /* Photoshop-style transform box around the artwork — a rotated outline + corner
@@ -655,6 +679,10 @@
     if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; }
     if (edMask) edMask.setAttribute('data-shape', String(state.shape).toLowerCase());
     if (edZoom) edZoom.value = edState.scale;
+    // Reflect any existing caption in the modal's text controls.
+    if (textToggle) textToggle.checked = !!state.text;
+    if (textGroup) textGroup.hidden = !state.text;
+    if (textInput && state.text) textInput.value = state.text;
     syncModeButtons();
     editor.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -665,6 +693,7 @@
   if (editor) {
     // Drag to pan; drag a transform-box handle to resize (scale around centre).
     var dragging = false, resizing = false, lastX = 0, lastY = 0, rzDist0 = 1, rzScale0 = 1;
+    var txtDragging = false, txtResizing = false, txtDist0 = 1, txtScale0 = 1;
     function stageXY(e) { var r = edStage.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
     function handleHit(px, py) {
       if (!edBox.handles) return -1;
@@ -673,9 +702,27 @@
       }
       return -1;
     }
+    function textHandleHit(px, py) {
+      if (!state.text || !edTextBox.handles) return -1;
+      for (var i = 0; i < edTextBox.handles.length; i += 1) {
+        if (Math.abs(px - edTextBox.handles[i][0]) <= 12 && Math.abs(py - edTextBox.handles[i][1]) <= 12) return i;
+      }
+      return -1;
+    }
+    function textBodyHit(px, py) {
+      if (!state.text || !edTextBox.handles) return false;
+      return Math.abs(px - edTextBox.cx) <= edTextBox.hw && Math.abs(py - edTextBox.cy) <= edTextBox.hh;
+    }
     edStage.addEventListener('pointerdown', function (e) {
       var p = stageXY(e);
-      if (edState.showBox && handleHit(p[0], p[1]) >= 0) {
+      // Priority: text resize → text drag → image resize → image pan.
+      if (textHandleHit(p[0], p[1]) >= 0) {
+        txtResizing = true;
+        txtDist0 = Math.hypot(p[0] - edTextBox.cx, p[1] - edTextBox.cy) || 1;
+        txtScale0 = edState.textScale || 1;
+      } else if (textBodyHit(p[0], p[1])) {
+        txtDragging = true;
+      } else if (edState.showBox && handleHit(p[0], p[1]) >= 0) {
         resizing = true;
         rzDist0 = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy) || 1;
         rzScale0 = edState.scale;
@@ -683,6 +730,20 @@
       lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId);
     });
     edStage.addEventListener('pointermove', function (e) {
+      if (txtResizing) {
+        var pt = stageXY(e);
+        var dt = Math.hypot(pt[0] - edTextBox.cx, pt[1] - edTextBox.cy);
+        edState.textScale = Math.max(0.3, Math.min(3, txtScale0 * (dt / txtDist0)));
+        edDraw();
+        return;
+      }
+      if (txtDragging) {
+        if (!edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
+        edState.textNorm.x = Math.max(-0.5, Math.min(0.5, edState.textNorm.x + (e.clientX - lastX) / edState.maskW));
+        edState.textNorm.y = Math.max(-0.5, Math.min(0.5, edState.textNorm.y + (e.clientY - lastY) / edState.maskH));
+        lastX = e.clientX; lastY = e.clientY; edDraw();
+        return;
+      }
       if (resizing) {
         var p = stageXY(e);
         var d = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy);
@@ -690,15 +751,18 @@
         if (edZoom) edZoom.value = edState.scale; edDraw();
         return;
       }
-      if (!dragging) {   // hover cursor hint over handles
-        var h = stageXY(e); edStage.style.cursor = (edState.showBox && handleHit(h[0], h[1]) >= 0) ? 'nwse-resize' : 'grab';
+      if (!dragging) {   // hover cursor hint over the various handles
+        var h = stageXY(e);
+        edStage.style.cursor = textHandleHit(h[0], h[1]) >= 0 ? 'nwse-resize'
+          : textBodyHit(h[0], h[1]) ? 'move'
+          : (edState.showBox && handleHit(h[0], h[1]) >= 0) ? 'nwse-resize' : 'grab';
         return;
       }
       edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
       lastX = e.clientX; lastY = e.clientY; edDraw();
     });
-    edStage.addEventListener('pointerup', function () { dragging = false; resizing = false; });
-    edStage.addEventListener('pointercancel', function () { dragging = false; resizing = false; });
+    edStage.addEventListener('pointerup', function () { dragging = resizing = txtDragging = txtResizing = false; });
+    edStage.addEventListener('pointercancel', function () { dragging = resizing = txtDragging = txtResizing = false; });
     edStage.addEventListener('wheel', function (e) {
       e.preventDefault();
       edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * (e.deltaY < 0 ? 1.08 : 0.92)));
@@ -839,28 +903,28 @@
   // pulled in so the caption clears the corner rivets.
   var TEXT_MAXW = { rectangle: 0.86, rounded: 0.62, circle: 0.86, hexagon: 0.86 };
 
-  // Bottom-centred, auto-shrunk to fit, with a contrasting outline so it stays
-  // legible over any artwork.
-  function drawPatchText(ctx, W, H) {
+  // The caption's default anchor when text is first added (before the customer
+  // drags it) — bottom-ish per shape, normalized to the window centre.
+  function defaultTextNorm(shape) { return { x: 0, y: (TEXT_Y[shape] || 0.86) - 0.5 }; }
+
+  /* Draw the caption at its stored normalized position + font scale, with a
+   * contrasting outline so it stays legible over any artwork. Works in any px
+   * space (editor stage or print canvas) — caller passes the window centre and
+   * size. Returns geometry (centre + half-extents) for hit-testing / handles. */
+  function drawText(ctx, cx, cy, winW, winH) {
     var txt = (state.text || '').trim();
-    if (!txt) return;
+    if (!txt) return null;
     var shape = String(state.shape).toLowerCase();
     var fill = state.textColor === 'White' ? '#ffffff' : '#000000';
     var stroke = state.textColor === 'White' ? '#000000' : '#ffffff';
-
-    var yFrac = TEXT_Y[shape] || 0.90;
-    // Fit to the width actually available at that height, not the whole canvas.
-    var maxW = W * windowWidthAt(shape, yFrac) * (TEXT_MAXW[shape] || 0.86);
-    var size = Math.round(Math.min(W * 0.11, H * 0.20));
+    if (!edState.textNorm) edState.textNorm = defaultTextNorm(shape);
+    var size = Math.max(6, winH * 0.14 * (edState.textScale || 1));
+    ctx.font = fontStack(size);
     ctx.textAlign = 'center';
-    ctx.textBaseline = 'alphabetic';
-    for (var i = 0; i < 60; i += 1) {                 // shrink until it fits
-      ctx.font = fontStack(size);
-      if (ctx.measureText(txt).width <= maxW || size <= 8) break;
-      size -= Math.max(1, Math.round(size * 0.06));
-    }
-    var x = W / 2;
-    var y = Math.round(H * yFrac);
+    ctx.textBaseline = 'middle';
+    var x = cx + edState.textNorm.x * winW;
+    var y = cy + edState.textNorm.y * winH;
+    var w = ctx.measureText(txt).width;
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.miterLimit = 2;
@@ -870,7 +934,11 @@
     ctx.fillStyle = fill;
     ctx.fillText(txt, x, y);
     ctx.restore();
+    return { x: x, y: y, hw: w / 2, hh: size / 2 };
   }
+
+  // Bake the caption into a print/preview canvas (whole canvas == the window).
+  function drawPatchText(ctx, W, H) { drawText(ctx, W / 2, H / 2, W, H); }
 
   // Re-draw the crop at `width` with the current text baked in.
   function composeWithText(width) {
@@ -1269,7 +1337,12 @@
     if (propText) propText.value = state.text;
     if (propTextColor) propTextColor.value = state.text ? state.textColor : '';
     if (countEl && textInput) countEl.textContent = String(textInput.value.length);
-    refreshArtwork();          // debounced re-upload; preview updates immediately
+    // First time text is added, drop it at the shape's default spot so it's visible.
+    if (state.text && !edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
+    // Editing happens INSIDE the modal: redraw live there (cheap, no upload).
+    // The finished text is baked on "Use this image" (edConfirm → refreshArtwork).
+    if (editor && !editor.hidden) edDraw();
+    else refreshArtwork();     // fallback (editor closed): debounced re-upload
   }
 
   if (textToggle && textGroup) {

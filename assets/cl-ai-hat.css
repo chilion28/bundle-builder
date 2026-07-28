@@ -354,3 +354,14 @@
 /* Editor: show/hide transform-box toggle */
 .cl-ai-ed__boxtoggle{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;margin-left:auto}
 .cl-ai-ed__boxtoggle input{width:15px;height:15px;cursor:pointer}
+
+/* In-modal caption controls — type here, then drag + resize the text on the patch. */
+.cl-ai-ed__textrow{display:flex;align-items:center;gap:12px;margin:10px 0 0;flex-wrap:wrap}
+.cl-ai-ed__textcheck{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink,#1a1f26);cursor:pointer;white-space:nowrap}
+.cl-ai-ed__textcheck input{width:16px;height:16px;cursor:pointer}
+.cl-ai-ed__text-group{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}
+.cl-ai-ed__text-group[hidden]{display:none}
+.cl-ai-ed__textinput{flex:1;min-width:140px;height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:9px;font-size:15px}
+.cl-ai-ed__textinput:focus{outline:none;border-color:var(--blue,#00a0ea)}
+.cl-ai-ed__tcs{display:flex;gap:8px;flex:0 0 auto}
+.cl-ai-ed__tcs .cl-ai-b__tc{width:30px;height:30px}

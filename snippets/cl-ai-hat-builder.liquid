@@ -271,31 +271,8 @@ Now create:' }}</pre>
         <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
       </div>
 
-      {%- comment -%} Optional patch text — baked into the print file, so it also
-        appears in the PDF and the framed preview. ~90% of orders have none. {%- endcomment -%}
-      <div class="cl-ai-b__field">
-        <label class="cl-ai-b__check">
-          <input type="checkbox" data-cl-ai-text-toggle>
-          <span>Add text to your patch <em>(optional)</em></span>
-        </label>
-
-        <div class="cl-ai-b__text-group" data-cl-ai-text-group hidden>
-          <div class="cl-ai-b__text-wrap">
-            <input type="text" id="cl-ai-text" class="cl-ai-b__text" maxlength="30"
-                   placeholder="Enter Text (e.g. WEST COAST)" data-cl-ai-text autocomplete="off">
-            <span class="cl-ai-b__count"><span data-cl-ai-count>0</span> / 30</span>
-          </div>
-          <div class="cl-ai-b__tc-row">
-            <span class="cl-ai-b__tc-label">Text colour</span>
-            <div class="cl-ai-b__tcs" data-cl-ai-textcolors role="radiogroup" aria-label="Text colour">
-              <button type="button" class="cl-ai-b__tc cl-ai-b__tc--black is-active"
-                      data-cl-ai-textcolor data-value="Black" role="radio" aria-checked="true" aria-label="Black text"></button>
-              <button type="button" class="cl-ai-b__tc cl-ai-b__tc--white"
-                      data-cl-ai-textcolor data-value="White" role="radio" aria-checked="false" aria-label="White text"></button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {%- comment -%} Patch text now lives INSIDE the artwork editor modal, where the
+        customer can drag + resize it on the patch. See the modal below. {%- endcomment -%}
 
       <button type="submit" class="cl-ai-b__cta" data-cl-ai-cta>
         <span data-cl-ai-cta-label>{{ cta_label | default: 'ADD TO CART' }}</span>
@@ -338,6 +315,22 @@ Now create:' }}</pre>
           <input type="color" data-cl-ai-ed-bg value="#ffffff" aria-label="Background colour">
         </label>
         <label class="cl-ai-ed__boxtoggle"><input type="checkbox" data-cl-ai-ed-box checked> Show box</label>
+      </div>
+
+      {%- comment -%} Optional patch text — typed here, then dragged + resized on the
+        patch. Baked into the print file / PDF / preview at the placed position. {%- endcomment -%}
+      <div class="cl-ai-ed__textrow">
+        <label class="cl-ai-ed__textcheck"><input type="checkbox" data-cl-ai-text-toggle> Add text</label>
+        <div class="cl-ai-ed__text-group" data-cl-ai-text-group hidden>
+          <input type="text" class="cl-ai-ed__textinput" maxlength="30"
+                 placeholder="Type text, then drag &amp; resize it on the patch" data-cl-ai-text autocomplete="off">
+          <div class="cl-ai-ed__tcs" data-cl-ai-textcolors role="radiogroup" aria-label="Text colour">
+            <button type="button" class="cl-ai-b__tc cl-ai-b__tc--black is-active"
+                    data-cl-ai-textcolor data-value="Black" role="radio" aria-checked="true" aria-label="Black text"></button>
+            <button type="button" class="cl-ai-b__tc cl-ai-b__tc--white"
+                    data-cl-ai-textcolor data-value="White" role="radio" aria-checked="false" aria-label="White text"></button>
+          </div>
+        </div>
       </div>
 
       <div class="cl-ai-ed__controls">
