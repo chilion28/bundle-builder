@@ -1121,6 +1121,7 @@
     renderThumbs();      // rail follows the style's colours
     syncActiveThumb();
     resolveVariant();
+    renderGrid();        // rebuild the quantity grid for this style (qtySel persists)
   });
   bindRadioGroup('[data-cl-ai-color]', function (val, btn) {
     state.color = val;
@@ -1162,12 +1163,96 @@
       if (ctaPrice) ctaPrice.textContent = formatMoney(chosen.price);
     }
   }
+  /* =====================================================================
+   * Colour × quantity grid — one line item per colour, all sharing the same
+   * artwork. Mirrors the Custom Hat's "choose colours & quantities" selector.
+   * qtySel (variantId → qty) persists across style tabs so a single order can
+   * mix styles + colours. Rows are built from the style-filtered swatch buttons.
+   * ===================================================================== */
+  var qtySel = {};
+  var gridEl = $('[data-cl-ai-grid]');
+  var ctaLabelEl = $('[data-cl-ai-cta-label]');
+  var ctaDefaultLabel = ctaLabelEl ? ctaLabelEl.textContent : 'ADD TO CART';
+
+  function variantFor(style, color) {
+    var si = data.styleOptionIndex, ci = data.colorOptionIndex;
+    var match = variants.filter(function (v) {
+      return (!si || v['option' + si] === style) && (!ci || v['option' + ci] === color);
+    });
+    return match.filter(function (v) { return v.available; })[0] || match[0] || null;
+  }
+  function basePrice() {
+    var p = null;
+    variants.forEach(function (v) { if (p == null || v.price < p) p = v.price; });
+    return p || 0;
+  }
+  function totalQty() { var t = 0; Object.keys(qtySel).forEach(function (k) { t += qtySel[k]; }); return t; }
+
+  function updateTotals() {
+    var q = 0, total = 0;
+    variants.forEach(function (v) { var n = qtySel[v.id] || 0; if (n) { q += n; total += n * v.price; } });
+    if (ctaPrice) ctaPrice.textContent = formatMoney(q ? total : basePrice());
+    var lbl = $('[data-cl-ai-cta-label]');
+    if (lbl) lbl.textContent = q ? (ctaDefaultLabel + ' · ' + q + ' hat' + (q === 1 ? '' : 's')) : ctaDefaultLabel;
+  }
+
+  function setRowQty(vid, n) {
+    n = Math.max(0, Math.min(999, parseInt(n, 10) || 0));
+    if (n) qtySel[vid] = n; else delete qtySel[vid];
+    var row = gridEl && gridEl.querySelector('[data-vid="' + vid + '"]');
+    if (row) { var inp = row.querySelector('[data-cl-ai-grid-qty]'); if (inp && document.activeElement !== inp) inp.value = n; }
+    updateTotals();
+  }
+
+  function renderGrid() {
+    if (!gridEl) return;
+    // One row per colour offered in the current style — reuse the style-filtered
+    // swatch buttons (they already carry the per-colour image + availability).
+    var swatches = $$('[data-cl-ai-color]').filter(function (b) { return !b.hidden; });
+    var html = swatches.map(function (b) {
+      var v = variantFor(state.style, b.dataset.value);
+      if (!v) return '';
+      var disp = displayColor(b.dataset.value);
+      var img = b.dataset.swatchImg;
+      var soldout = !v.available;
+      var qv = qtySel[v.id] || 0;
+      var dis = soldout ? ' disabled' : '';
+      return '<div class="cl-ai-b__row' + (soldout ? ' is-soldout' : '') + '" data-cl-ai-row data-vid="' + v.id + '">' +
+        '<div class="cl-ai-b__row-hat">' + (img ? '<img src="' + esc(img) + '" alt="' + esc(disp) + '" loading="lazy">' : '') + '</div>' +
+        '<div class="cl-ai-b__row-name">' + esc(disp) + (soldout ? ' <span class="cl-ai-b__soldout">Sold out</span>' : '') + '</div>' +
+        '<div class="cl-ai-b__row-qty">' +
+          '<button type="button" class="cl-ai-b__qty-btn" data-cl-ai-grid-minus aria-label="Decrease ' + esc(disp) + '"' + dis + '>−</button>' +
+          '<input type="text" class="cl-ai-b__qty-input" inputmode="numeric" value="' + qv + '" data-cl-ai-grid-qty aria-label="' + esc(disp) + ' quantity"' + dis + '>' +
+          '<button type="button" class="cl-ai-b__qty-btn" data-cl-ai-grid-plus aria-label="Increase ' + esc(disp) + '"' + dis + '>+</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    gridEl.innerHTML = html;
+    updateTotals();
+  }
+
+  if (gridEl) {
+    gridEl.addEventListener('click', function (e) {
+      var row = e.target.closest ? e.target.closest('[data-cl-ai-row]') : null; if (!row) return;
+      var vid = row.dataset.vid, cur = qtySel[vid] || 0;
+      if (e.target.closest('[data-cl-ai-grid-plus]')) setRowQty(vid, cur + 1);
+      else if (e.target.closest('[data-cl-ai-grid-minus]')) setRowQty(vid, cur - 1);
+    });
+    gridEl.addEventListener('input', function (e) {
+      var inp = e.target.closest ? e.target.closest('[data-cl-ai-grid-qty]') : null; if (!inp) return;
+      var row = inp.closest('[data-cl-ai-row]'); if (!row) return;
+      var digits = inp.value.replace(/[^0-9]/g, ''); if (digits !== inp.value) inp.value = digits;
+      setRowQty(row.dataset.vid, digits);
+    });
+  }
+
   syncPrompt();           // initial — size guidance for the default shape
   filterColorsForStyle(); // initial — hide colours not offered in the default style
   applyColorLabels();     // strip style prefix from swatch tooltips + the label
   renderThumbs();         // build the rail from the current style's colours
   syncActiveThumb();
   resolveVariant();
+  renderGrid();           // build the colour × quantity grid for the default style
 
   /* optional patch text — typing re-renders the preview instantly and (debounced)
      rebuilds + re-uploads the print files so the stored artwork always matches. */
@@ -1205,26 +1290,18 @@
     });
   });
 
-  /* quantity */
-  var qtyInput = $('[data-cl-ai-qty-input]');
-  function clampQty() {
-    var n = parseInt(qtyInput.value, 10);
-    if (isNaN(n) || n < 1) n = 1; if (n > 99) n = 99;
-    qtyInput.value = n;
-  }
-  var minus = $('[data-cl-ai-qty-minus]'), plus = $('[data-cl-ai-qty-plus]');
-  if (minus) minus.addEventListener('click', function () { qtyInput.value = Math.max(1, (parseInt(qtyInput.value, 10) || 1) - 1); });
-  if (plus) plus.addEventListener('click', function () { qtyInput.value = Math.min(99, (parseInt(qtyInput.value, 10) || 1) + 1); });
-  if (qtyInput) qtyInput.addEventListener('change', clampQty);
+  /* Quantity is now per-colour in the grid above (see renderGrid / qtySel). */
 
   /* =====================================================================
    * ADD TO CART  (mirrors cl-fixed-bundle.js: POST /cart/add.js, open drawer)
    * ===================================================================== */
+  function setCta(disabled, labelText) {
+    var cta = $('[data-cl-ai-cta]'); if (!cta) return;
+    cta.disabled = disabled;
+    if (labelText != null) { var l = $('[data-cl-ai-cta-label]', cta); if (l) l.textContent = labelText; }
+  }
   function addToCart(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); if (e.stopImmediatePropagation) e.stopImmediatePropagation(); }
-    var cta = $('[data-cl-ai-cta]');
-    var vId = variantIdInput ? variantIdInput.value : '';
-    if (!vId) return;
 
     // Require artwork before ordering.
     if (!state.artUrl) {
@@ -1232,10 +1309,14 @@
       if (drop) drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
+    // Require at least one colour with a quantity.
+    if (!totalQty()) {
+      setStatus('err', 'Please choose a quantity for at least one colour.');
+      if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
 
-    var qty = qtyInput ? (parseInt(qtyInput.value, 10) || 1) : 1;
-    var original = cta ? cta.innerHTML : '';
-    if (cta) { cta.disabled = true; var l = $('[data-cl-ai-cta-label]', cta); if (l) l.textContent = 'Preparing…'; }
+    setCta(true, 'Preparing…');
 
     // A debounced text re-render may still be queued/in-flight — the cart must
     // carry the finished files, never a stale pre-text version.
@@ -1252,22 +1333,27 @@
         props['Custom Text'] = state.text;
         props['Text Color'] = state.textColor;
       }
-      if (cta) { var l2 = $('[data-cl-ai-cta-label]', cta); if (l2) l2.textContent = 'Adding…'; }
+      // One line item per selected colour — all share the same artwork. The
+      // tag-based bulk discount then applies cart-wide across every line.
+      var items = Object.keys(qtySel).filter(function (vid) { return qtySel[vid] > 0; })
+        .map(function (vid) { return { id: vid, quantity: qtySel[vid], properties: props }; });
+      setCta(true, 'Adding…');
       return fetch('/cart/add.js', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: vId, quantity: qty, properties: props })
+        body: JSON.stringify({ items: items })
       });
     }).then(function (r) {
       if (!r.ok) throw new Error('add failed');
-      if (cta) { cta.disabled = false; cta.innerHTML = original; }
+      qtySel = {}; renderGrid();            // clear the batch so re-clicking can't duplicate it
+      setCta(false);
       if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') {
         window.AMP_API.OPEN_CART();
       } else {
         window.location.href = '/cart';
       }
     }).catch(function () {
-      if (cta) { cta.disabled = false; cta.innerHTML = original; }
+      setCta(false); updateTotals();
       alert('Sorry — we couldn’t add your hat. Please try again.');
     });
   }

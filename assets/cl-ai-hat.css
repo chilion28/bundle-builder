@@ -245,6 +245,24 @@
   text-align:center;font-size:16px;font-weight:600;-moz-appearance:textfield}
 .cl-ai-b__qty-input::-webkit-outer-spin-button,.cl-ai-b__qty-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 
+/* Colour swatches kept only as a data layer for the gallery — the visible
+   picker is the quantity grid. */
+.cl-ai-b__field--colordata{display:none}
+
+/* Choose colours & quantities — one row per colour (thumbnail · name · stepper). */
+.cl-ai-b__grid{display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.cl-ai-b__row{display:flex;align-items:center;gap:14px;padding:10px 12px;border-top:1px solid #eef1f4}
+.cl-ai-b__row:first-child{border-top:0}
+.cl-ai-b__row-hat{flex:0 0 52px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;
+  background:#fbfbfb;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.cl-ai-b__row-hat img{width:100%;height:100%;object-fit:contain}
+.cl-ai-b__row-name{flex:1;font-size:15px;font-weight:600;color:var(--ink,#1a1f26)}
+.cl-ai-b__soldout{color:#b0453b;font-weight:700;font-size:12px;margin-left:6px}
+.cl-ai-b__row.is-soldout{opacity:.5}
+.cl-ai-b__row-qty{flex:0 0 auto;display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.cl-ai-b__row-qty .cl-ai-b__qty-btn{width:38px;height:40px;font-size:18px}
+.cl-ai-b__row-qty .cl-ai-b__qty-input{width:46px;height:40px;font-size:15px}
+
 .cl-ai-b__cta{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:17px;
   font-size:17px;font-weight:800;letter-spacing:.02em;margin-top:6px;transition:background .15s;box-shadow:var(--shadow)}
 .cl-ai-b__cta:hover{background:var(--green-dk)}

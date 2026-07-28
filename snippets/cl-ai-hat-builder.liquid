@@ -210,8 +210,9 @@ Now create:' }}</pre>
         </div>
       </div>
 
-      {%- comment -%} Color {%- endcomment -%}
-      <div class="cl-ai-b__field">
+      {%- comment -%} Colour swatches — kept (hidden) as the data layer for the hero
+        gallery + per-colour images; the visible picker is the quantity grid below. {%- endcomment -%}
+      <div class="cl-ai-b__field cl-ai-b__field--colordata" aria-hidden="true">
         <label class="cl-ai-b__label">Color: <span data-cl-ai-color-label>{% if color_opt %}{{ color_opt.selected_value }}{% else %}Black{% endif %}</span></label>
         <div class="cl-ai-b__swatches" data-cl-ai-colors role="radiogroup" aria-label="Color">
           {%- if color_opt -%}
@@ -243,6 +244,14 @@ Now create:' }}</pre>
             {%- endfor -%}
           {%- endif -%}
         </div>
+      </div>
+
+      {%- comment -%} Choose colours & quantities — one line item per colour, all
+        sharing the same artwork. Rows are built by JS from the colour swatches so
+        the customer can order the design across several colours at once. {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Choose colours &amp; quantities</label>
+        <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
       </div>
 
       {%- comment -%} Patch shape (line-item property) {%- endcomment -%}
@@ -284,17 +293,6 @@ Now create:' }}</pre>
                       data-cl-ai-textcolor data-value="White" role="radio" aria-checked="false" aria-label="White text"></button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {%- comment -%} Quantity {%- endcomment -%}
-      <div class="cl-ai-b__field cl-ai-b__field--qty">
-        <label class="cl-ai-b__label">Quantity</label>
-        <div class="cl-ai-b__qty" data-cl-ai-qty>
-          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-qty-minus aria-label="Decrease quantity">−</button>
-          <input type="number" name="quantity" class="cl-ai-b__qty-input" value="1" min="1" max="99"
-                 data-cl-ai-qty-input inputmode="numeric" aria-label="Quantity">
-          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-qty-plus aria-label="Increase quantity">+</button>
         </div>
       </div>
 
