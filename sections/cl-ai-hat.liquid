@@ -161,6 +161,7 @@ body~.cl-ai-b__label, .cl-ai .cl-ai__prompt-hint, .cl-ai .cl-ai__inspo-label
   {% render 'cl-ai-hat-builder',
      cta_label: section.settings.cta_label,
      price_display: price_display,
+     show_prompt: section.settings.show_prompt,
      step1_title: section.settings.step1_title,
      prompt_text: section.settings.prompt_text,
      prompt_hint: section.settings.prompt_hint,
@@ -279,6 +280,13 @@ body~.cl-ai-b__label, .cl-ai .cl-ai__prompt-hint, .cl-ai .cl-ai__inspo-label
     {
       "type": "header",
       "content": "Step 1 — Prompt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_prompt",
+      "label": "Show the AI prompt step",
+      "info": "Turn OFF for a plain upload-your-own-image hat (removes Step 1 + AI wording).",
+      "default": true
     },
     {
       "type": "text",

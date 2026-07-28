@@ -33,8 +33,13 @@
 
   {%- comment -%} ========== LEFT COLUMN — Step 1 prompt + Step 2 upload ========== {%- endcomment -%}
   <div class="cl-ai-b__left">
+    {%- comment -%} show_prompt:false (non-AI upload template) drops Step 1 and
+      renumbers the rest. {%- endcomment -%}
+    {%- if show_prompt == false -%}{%- assign n_upload = 1 -%}{%- assign n_qc = 2 -%}{%- assign n_cust = 3 -%}
+    {%- else -%}{%- assign n_upload = 2 -%}{%- assign n_qc = 3 -%}{%- assign n_cust = 4 -%}{%- endif -%}
 
-    {%- comment -%} ===== STEP 1 — PROMPT ===== {%- endcomment -%}
+    {%- comment -%} ===== STEP 1 — PROMPT (AI only) ===== {%- endcomment -%}
+    {%- if show_prompt != false -%}
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
         <span class="cl-ai__step-num">STEP 1</span>
@@ -84,11 +89,12 @@ Now create:' }}</pre>
         </div>
       {%- endif -%}
     </div>
+    {%- endif -%}
 
     {%- comment -%} ===== STEP 2 — UPLOAD ===== {%- endcomment -%}
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
-        <span class="cl-ai__step-num">STEP 2</span>
+        <span class="cl-ai__step-num">STEP {{ n_upload }}</span>
         <h2 class="cl-ai__step-title">{{ upload_title | default: 'UPLOAD YOUR AI ARTWORK' }}</h2>
       </div>
 
@@ -109,7 +115,7 @@ Now create:' }}</pre>
       <div class="cl-ai-b__tips">
         <span class="cl-ai-b__tips-title">💡 TIPS FOR BEST RESULTS</span>
         <ul role="list">
-          <li>Use the prompt above</li>
+          {%- if show_prompt != false -%}<li>Use the prompt above</li>{%- endif -%}
           <li>Keep main subject centered</li>
           <li>Avoid small text</li>
           <li>High detail works best</li>
@@ -121,7 +127,7 @@ Now create:' }}</pre>
     {%- comment -%} ===== STEP 4 — QUALITY CHECK (grouped with the upload) ===== {%- endcomment -%}
     <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
       <div class="cl-ai__step-head">
-        <span class="cl-ai__step-num">STEP 3</span>
+        <span class="cl-ai__step-num">STEP {{ n_qc }}</span>
         <h2 class="cl-ai__step-title">{{ qc_title | default: 'PRINT QUALITY CHECK' }}</h2>
       </div>
 
@@ -185,7 +191,7 @@ Now create:' }}</pre>
 
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
-        <span class="cl-ai__step-num">STEP 4</span>
+        <span class="cl-ai__step-num">STEP {{ n_cust }}</span>
         <h2 class="cl-ai__step-title">{{ customize_title | default: 'CUSTOMIZE YOUR HAT' }}</h2>
       </div>
 

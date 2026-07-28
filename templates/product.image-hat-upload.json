@@ -1,0 +1,90 @@
+{
+  "sections": {
+    "main": {
+      "type": "cl-ai-hat",
+      "blocks": {
+        "usp_1": {
+          "type": "usp",
+          "settings": {
+            "icon": "🛡",
+            "title": "PREMIUM QUALITY"
+          }
+        },
+        "usp_2": {
+          "type": "usp",
+          "settings": {
+            "icon": "💧",
+            "title": "WATER RESISTANT"
+          }
+        },
+        "usp_3": {
+          "type": "usp",
+          "settings": {
+            "icon": "✳",
+            "title": "LASER ENGRAVED"
+          }
+        },
+        "usp_4": {
+          "type": "usp",
+          "settings": {
+            "icon": "🚚",
+            "title": "FAST SHIPPING"
+          }
+        },
+        "vp_1": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "✅",
+            "title": "DESIGNED BY YOU",
+            "text": "Upload your own image or logo — 100% original."
+          }
+        },
+        "vp_2": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "⚙",
+            "title": "PROFESSIONALLY MADE",
+            "text": "We laser engrave your art for a premium look."
+          }
+        },
+        "vp_3": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "🛡",
+            "title": "BUILT TO LAST",
+            "text": "Water resistant & made for everyday wear."
+          }
+        },
+        "vp_4": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "❤",
+            "title": "MADE FOR YOU",
+            "text": "Every hat is custom printed just for you."
+          }
+        }
+      },
+      "block_order": [
+        "usp_1",
+        "usp_2",
+        "usp_3",
+        "usp_4",
+        "vp_1",
+        "vp_2",
+        "vp_3",
+        "vp_4"
+      ],
+      "settings": {
+        "show_prompt": false,
+        "hero_accent": "IMAGE HAT",
+        "hero_tagline": "Turn your photos and logos into wearable art.",
+        "hero_sub": "Upload your own image or logo — then we'll professionally print it on a premium patch.",
+        "upload_title": "UPLOAD YOUR IMAGE",
+        "inspo_title": "INSPIRATION"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
