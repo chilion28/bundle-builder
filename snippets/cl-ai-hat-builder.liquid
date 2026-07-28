@@ -38,6 +38,33 @@
     {%- if show_prompt == false -%}{%- assign n_upload = 1 -%}{%- assign n_qc = 2 -%}{%- assign n_cust = 3 -%}
     {%- else -%}{%- assign n_upload = 2 -%}{%- assign n_qc = 3 -%}{%- assign n_cust = 4 -%}{%- endif -%}
 
+    {%- comment -%} Live patch preview — captured once, then placed in the RIGHT
+      column (AI template) or here in the LEFT column under Step 1 (upload template,
+      show_prompt:false), which lets the right column's Customize shift up. {%- endcomment -%}
+    {%- capture cl_preview_block -%}
+    <div class="cl-ai__step cl-ai-b__preview">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
+        <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>
+      </div>
+      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle"
+           {%- for sh in shape_list %} data-mask-{{ sh | downcase }}="{{ 'cl-patch-mask-' | append: sh | downcase | append: '.png' | asset_url }}"{% endfor %}>
+        <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
+        <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
+        {%- for sh in shape_list -%}
+          <img class="cl-ai-pf__frame" data-frame="{{ sh | downcase }}"
+               src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+               alt="{{ sh }} patch frame" loading="lazy">
+        {%- endfor -%}
+      </div>
+      <div class="cl-ai-b__placed-actions" data-cl-ai-actions hidden>
+        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
+        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-replace>↻ Replace</button>
+      </div>
+      <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
+    </div>
+    {%- endcapture -%}
+
     {%- comment -%} ===== STEP 1 — PROMPT (AI only) ===== {%- endcomment -%}
     {%- if show_prompt != false -%}
     <div class="cl-ai__step">
@@ -124,6 +151,9 @@ Now create:' }}</pre>
       </div>
     </div>
 
+    {%- comment -%} Upload template: preview sits here, right under Step 1. {%- endcomment -%}
+    {%- if show_prompt == false -%}{{ cl_preview_block }}{%- endif -%}
+
     {%- comment -%} ===== STEP 4 — QUALITY CHECK (grouped with the upload) ===== {%- endcomment -%}
     <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
       <div class="cl-ai__step-head">
@@ -152,28 +182,9 @@ Now create:' }}</pre>
   {%- comment -%} ========== RIGHT COLUMN — Live preview + Step 3 ========== {%- endcomment -%}
   <div class="cl-ai-b__right">
 
-    {%- comment -%} ===== LIVE PREVIEW (patch frame, always visible) ===== {%- endcomment -%}
-    <div class="cl-ai__step cl-ai-b__preview">
-      <div class="cl-ai__step-head">
-        <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
-        <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>
-      </div>
-      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle"
-           {%- for sh in shape_list %} data-mask-{{ sh | downcase }}="{{ 'cl-patch-mask-' | append: sh | downcase | append: '.png' | asset_url }}"{% endfor %}>
-        <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
-        <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
-        {%- for sh in shape_list -%}
-          <img class="cl-ai-pf__frame" data-frame="{{ sh | downcase }}"
-               src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
-               alt="{{ sh }} patch frame" loading="lazy">
-        {%- endfor -%}
-      </div>
-      <div class="cl-ai-b__placed-actions" data-cl-ai-actions hidden>
-        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
-        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-replace>↻ Replace</button>
-      </div>
-      <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
-    </div>
+    {%- comment -%} ===== LIVE PREVIEW — shown here unless it was moved to the left
+      column (upload template, show_prompt:false). ===== {%- endcomment -%}
+    {%- unless show_prompt == false -%}{{ cl_preview_block }}{%- endunless -%}
 
   {%- comment -%} ===== STEP 3 — CUSTOMIZE (form) ===== {%- endcomment -%}
   {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
