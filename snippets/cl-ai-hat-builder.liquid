@@ -189,6 +189,23 @@ Now create:' }}</pre>
         <h2 class="cl-ai__step-title">{{ customize_title | default: 'CUSTOMIZE YOUR HAT' }}</h2>
       </div>
 
+      {%- comment -%} Patch shape (line-item property) — shown first so the customer
+        picks the patch before choosing style + colours. {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Patch Shape</label>
+        <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
+          {%- for sh in shape_list -%}
+            <button type="button" class="cl-ai-b__shape cl-ai-b__shape--{{ sh | downcase }}{% if forloop.first %} is-active{% endif %}"
+                    data-cl-ai-shape data-value="{{ sh }}" role="radio" aria-label="{{ sh }}"
+                    aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+              <img class="cl-ai-b__shape-icon"
+                   src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+                   alt="{{ sh }}" loading="lazy">
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+
       {%- comment -%} Style {%- endcomment -%}
       <div class="cl-ai-b__field">
         <label class="cl-ai-b__label">Style: <span data-cl-ai-style-label>{% if style_opt %}{{ style_opt.selected_value }}{% else %}Trucker{% endif %}</span></label>
@@ -252,22 +269,6 @@ Now create:' }}</pre>
       <div class="cl-ai-b__field">
         <label class="cl-ai-b__label">Choose colours &amp; quantities</label>
         <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
-      </div>
-
-      {%- comment -%} Patch shape (line-item property) {%- endcomment -%}
-      <div class="cl-ai-b__field">
-        <label class="cl-ai-b__label">Patch Shape</label>
-        <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
-          {%- for sh in shape_list -%}
-            <button type="button" class="cl-ai-b__shape cl-ai-b__shape--{{ sh | downcase }}{% if forloop.first %} is-active{% endif %}"
-                    data-cl-ai-shape data-value="{{ sh }}" role="radio" aria-label="{{ sh }}"
-                    aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
-              <img class="cl-ai-b__shape-icon"
-                   src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
-                   alt="{{ sh }}" loading="lazy">
-            </button>
-          {%- endfor -%}
-        </div>
       </div>
 
       {%- comment -%} Optional patch text — baked into the print file, so it also
