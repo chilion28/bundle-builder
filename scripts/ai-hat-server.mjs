@@ -110,7 +110,7 @@ function page() {
         <td><div class="strong">${esc(j.shape || '—')}</div><div class="meta">${esc(j.variant)}</div><div class="meta">Qty ${esc(j.qty)}</div></td>
         <td class="txt">${j.text ? `<div class="strong">${esc(j.text)}</div><div class="meta"><span class="chip chip--${esc(String(j.textColor || '').toLowerCase())}"></span>${esc(j.textColor || '')}</div>` : '<span class="none">—</span>'}</td>
         <td class="meta">${esc(j.score || '—')}</td>
-        <td class="links">${fa(j.original, 'Original', 'original')}${fa(j.print, 'Print 600dpi', 'print')}${fa(j.pdf, 'PDF', 'print')}${fa(j.preview, 'Preview', 'preview')}</td>
+        <td class="links">${fa(j.original, 'Original', 'original')}${fa(j.print, 'Print 300dpi', 'print')}${fa(j.pdf, 'PDF', 'print')}${fa(j.preview, 'Preview', 'preview')}</td>
       </tr>`;
     }).join('\n');
   }).join('\n');

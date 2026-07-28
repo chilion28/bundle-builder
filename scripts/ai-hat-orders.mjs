@@ -246,7 +246,7 @@ function renderHtml(jobs, { store, days }) {
       <td class="meta score">${esc(j.score || '—')}</td>
       <td class="links">
         ${link(j.original, 'Original', 'original')}
-        ${link(j.print, 'Print 600dpi', 'print')}
+        ${link(j.print, 'Print 300dpi', 'print')}
         ${link(j.pdf, 'PDF', 'print')}
         ${link(j.preview, 'Preview', 'preview')}
       </td>
