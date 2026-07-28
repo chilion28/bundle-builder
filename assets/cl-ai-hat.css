@@ -107,6 +107,9 @@
    positioned + clipped to each shape's window (measured from the PNGs). */
 .cl-ai-b__placed{display:flex;flex-direction:column;align-items:center;gap:12px}
 .cl-ai-pf{position:relative;width:100%;max-width:500px;aspect-ratio:1/1}
+/* Upload template: the preview sits in the wide left column, so cap it smaller
+   (centered) to cut the empty margins the square frame leaves above/below. */
+.cl-ai-b--upload .cl-ai-pf{max-width:320px}
 .cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;display:none;pointer-events:none;z-index:2}
 .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
 .cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__frame[data-frame="rounded"],
