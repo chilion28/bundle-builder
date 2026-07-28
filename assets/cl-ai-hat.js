@@ -326,6 +326,46 @@
     try { canvas.toBlob(function (b) { cb(b); }, 'image/png'); }
     catch (e) { cb(null); }   // tainted canvas — skip rather than block the order
   }
+
+  // CRC-32 (PNG chunk checksum).
+  var CRC_TABLE = (function () {
+    var t = new Uint32Array(256);
+    for (var n = 0; n < 256; n += 1) {
+      var c = n;
+      for (var k = 0; k < 8; k += 1) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    var c = 0xFFFFFFFF;
+    for (var i = 0; i < bytes.length; i += 1) c = CRC_TABLE[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  /* Embed a physical-resolution (pHYs) chunk so the PNG — and the PDF Cloudinary
+     derives from it — open at the given DPI in Photoshop, i.e. at the patch's true
+     physical size (1140px @ 300dpi = 3.8"). Without it, production had to manually
+     change the resolution 150 -> 300 on every file. */
+  function pngSetDpi(blob, dpi) {
+    return blob.arrayBuffer().then(function (buf) {
+      var data = new Uint8Array(buf);
+      if (data.length < 33 || data[0] !== 0x89 || data[1] !== 0x50) return blob; // not a PNG
+      var ppm = Math.round(dpi / 0.0254);            // pixels per metre
+      var chunk = new Uint8Array(21);                // 4 len + 4 type + 9 data + 4 crc
+      var dv = new DataView(chunk.buffer);
+      dv.setUint32(0, 9);                            // data length
+      chunk[4] = 0x70; chunk[5] = 0x48; chunk[6] = 0x59; chunk[7] = 0x73; // 'pHYs'
+      dv.setUint32(8, ppm); dv.setUint32(12, ppm);   // x, y pixels-per-metre
+      chunk[16] = 1;                                 // unit = metre
+      dv.setUint32(17, crc32(chunk.subarray(4, 17))); // CRC over type + data
+      // Insert right after IHDR (bytes 0..32); pHYs must precede IDAT.
+      var out = new Uint8Array(data.length + 21);
+      out.set(data.subarray(0, 33), 0);
+      out.set(chunk, 33);
+      out.set(data.subarray(33), 33 + 21);
+      return new Blob([out], { type: 'image/png' });
+    }).catch(function () { return blob; });
+  }
   var edState = { img: null, file: null, natW: 0, natH: 0, scale: 1, rotation: 0, offsetX: 0, offsetY: 0,
                   baseScale: 1, maskW: 0, maskH: 0,
                   fit: false,          // false = fill/crop, true = contain + padded background
@@ -1076,8 +1116,13 @@
       var framed = buildPreviewCanvas(print);
       uploadInFlight = new Promise(function (resolve) {
         safeToBlob(print, function (printBlob) {
-          if (framed) safeToBlob(framed, function (pv) { uploadArtwork(printBlob, pv, resolve); });
-          else uploadArtwork(printBlob, null, resolve);
+          if (!printBlob) { uploadArtwork(null, null, resolve); return; }
+          // Tag the print file at the target DPI so it opens at the true patch
+          // size in Photoshop (no manual 150 -> 300 resize by production).
+          pngSetDpi(printBlob, CL_AI_HAT.targetDpi).then(function (dpiBlob) {
+            if (framed) safeToBlob(framed, function (pv) { uploadArtwork(dpiBlob, pv, resolve); });
+            else uploadArtwork(dpiBlob, null, resolve);
+          });
         });
       });
     };
