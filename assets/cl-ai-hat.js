@@ -604,7 +604,7 @@
   function drawGuides(ctx, W, H) {
     if (!edGuide.v && !edGuide.h) return;
     ctx.save();
-    ctx.strokeStyle = '#ff2d9b'; ctx.lineWidth = 1;
+    ctx.strokeStyle = '#00a0ea'; ctx.lineWidth = 1;
     if (edGuide.v) { ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); }
     if (edGuide.h) { ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke(); }
     ctx.restore();
@@ -714,6 +714,12 @@
     var dragging = false, resizing = false, lastX = 0, lastY = 0, rzDist0 = 1, rzScale0 = 1;
     var txtDragging = false, txtResizing = false, txtDist0 = 1, txtScale0 = 1;
     var stretching = false, stretchAxis = 'x';   // edge-handle non-uniform resize
+    // Snap-to-centre state. We track the RAW (unsnapped) position and only "arm"
+    // snapping for an axis once the object has left the centre zone — so an object
+    // that starts centred moves freely instead of feeling stuck.
+    var PSNAP = 7, TSNAP = 0.02;
+    var rawX = 0, rawY = 0, rawTX = 0, rawTY = 0;
+    var armedX = false, armedY = false, armedTX = false, armedTY = false;
     function stageXY(e) { var r = edStage.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
     function handleHit(px, py) {
       if (!edBox.handles) return -1;
@@ -742,6 +748,9 @@
         txtScale0 = edState.textScale || 1;
       } else if (textBodyHit(p[0], p[1])) {
         txtDragging = true;
+        var tn = edState.textNorm || (edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase()));
+        rawTX = tn.x; rawTY = tn.y;
+        armedTX = Math.abs(rawTX) >= TSNAP; armedTY = Math.abs(rawTY) >= TSNAP;
       } else if (edState.showBox && handleHit(p[0], p[1]) >= 0) {
         var hi = handleHit(p[0], p[1]);
         if (hi < 4) {                            // corner → proportional scale
@@ -752,7 +761,11 @@
           stretching = true;
           stretchAxis = (hi === 4 || hi === 6) ? 'y' : 'x';  // top/bottom → y, right/left → x
         }
-      } else { dragging = true; }
+      } else {
+        dragging = true;
+        rawX = edState.offsetX; rawY = edState.offsetY;
+        armedX = Math.abs(rawX) >= PSNAP; armedY = Math.abs(rawY) >= PSNAP;
+      }
       lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId);
     });
     edStage.addEventListener('pointermove', function (e) {
@@ -765,13 +778,15 @@
       }
       if (txtDragging) {
         if (!edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
-        var nx = edState.textNorm.x + (e.clientX - lastX) / edState.maskW;
-        var ny = edState.textNorm.y + (e.clientY - lastY) / edState.maskH;
-        var TSNAP = 0.02;                       // ~2% of the window → snap to centre
-        if (Math.abs(nx) < TSNAP) { nx = 0; edGuide.v = true; } else edGuide.v = false;
-        if (Math.abs(ny) < TSNAP) { ny = 0; edGuide.h = true; } else edGuide.h = false;
-        edState.textNorm.x = Math.max(-0.5, Math.min(0.5, nx));
-        edState.textNorm.y = Math.max(-0.5, Math.min(0.5, ny));
+        rawTX += (e.clientX - lastX) / edState.maskW;
+        rawTY += (e.clientY - lastY) / edState.maskH;
+        if (!armedTX && Math.abs(rawTX) >= TSNAP) armedTX = true;   // arm once it leaves centre
+        if (!armedTY && Math.abs(rawTY) >= TSNAP) armedTY = true;
+        var tx = (armedTX && Math.abs(rawTX) < TSNAP) ? 0 : rawTX;
+        var ty = (armedTY && Math.abs(rawTY) < TSNAP) ? 0 : rawTY;
+        edState.textNorm.x = Math.max(-0.5, Math.min(0.5, tx));
+        edState.textNorm.y = Math.max(-0.5, Math.min(0.5, ty));
+        edGuide.v = Math.abs(tx) < 0.0015; edGuide.h = Math.abs(ty) < 0.0015;
         lastX = e.clientX; lastY = e.clientY; edDraw();
         return;
       }
@@ -806,10 +821,12 @@
           : hb >= 0 ? 'nwse-resize' : 'grab';
         return;
       }
-      edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
-      var PSNAP = 7;                            // px slack → snap the artwork to centre
-      if (Math.abs(edState.offsetX) < PSNAP) { edState.offsetX = 0; edGuide.v = true; } else edGuide.v = false;
-      if (Math.abs(edState.offsetY) < PSNAP) { edState.offsetY = 0; edGuide.h = true; } else edGuide.h = false;
+      rawX += e.clientX - lastX; rawY += e.clientY - lastY;
+      if (!armedX && Math.abs(rawX) >= PSNAP) armedX = true;        // arm once it leaves centre
+      if (!armedY && Math.abs(rawY) >= PSNAP) armedY = true;
+      edState.offsetX = (armedX && Math.abs(rawX) < PSNAP) ? 0 : rawX;
+      edState.offsetY = (armedY && Math.abs(rawY) < PSNAP) ? 0 : rawY;
+      edGuide.v = Math.abs(edState.offsetX) < 0.5; edGuide.h = Math.abs(edState.offsetY) < 0.5;
       lastX = e.clientX; lastY = e.clientY; edDraw();
     });
     function endDrag() {
