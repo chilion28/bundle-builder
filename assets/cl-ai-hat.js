@@ -22,9 +22,7 @@
     cloudName: 'ycnncucq',
     uploadPreset: 'ai_hat_unsigned',
     // NOTE: never put api_key / api_secret here — unsigned uploads don't need them.
-    // Physical patch size (inches) — drives the quality/DPI math.
-    patchWidthIn: 4,
-    patchHeightIn: 2.25,
+    // Physical patch size is per-shape — see PATCH_IN below (production spec).
     targetDpi: 300,
     maxFileMB: 25,
     patchBg: '#ffffff'   // default pad for transparent art
@@ -377,6 +375,19 @@
   function safeFor(shape) { return SAFE[String(shape).toLowerCase()] || SAFE.rectangle; }
 
   function shapeAspect() { var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle; return win.w / win.h; }
+
+  /* Finished patch size in inches per shape (production spec). Drives the print
+     file's pixel dimensions (inches × DPI) so the artwork drops into production
+     at its true physical size instead of a one-size-fits-all 4" width. The
+     ratios here match the WINDOW aspects above, so the on-screen crop and the
+     printed file stay 1:1. */
+  var PATCH_IN = {
+    circle:    { w: 2.25, h: 2.25 },   // ROUND
+    rectangle: { w: 3.8,  h: 2.024 },  // RECTANGLE
+    rounded:   { w: 3.0,  h: 2.383 },  // SQUARE
+    hexagon:   { w: 3.8,  h: 2.077 }   // HEX
+  };
+  function patchSize() { return PATCH_IN[String(state.shape).toLowerCase()] || PATCH_IN.rectangle; }
 
   function computeMask() {
     var W = edStage.clientWidth, H = edStage.clientHeight;
@@ -889,11 +900,12 @@
     if (uploadTimer) { clearTimeout(uploadTimer); uploadTimer = null; }
     var run = function () {
       uploadTimer = null;
-      // Output at the target print DPI (300 × 4" patch = 1200px). buildPrintCanvas
-      // supersamples at 2400px, so this is a high-quality downscale — and it keeps
-      // the PNG under Cloudinary's 10 MB delivery cap so the PDF (same asset served
-      // as .pdf) can be generated. 600 DPI (2400px) pushed circle PDFs over 10 MB.
-      var print = composeWithText(CL_AI_HAT.targetDpi * CL_AI_HAT.patchWidthIn);
+      // Output at the target print DPI for THIS shape's physical size (e.g.
+      // rectangle 3.8" × 300 = 1140px wide). buildPrintCanvas supersamples at
+      // 2400px, so this is a high-quality downscale — and it keeps the PNG under
+      // Cloudinary's 10 MB delivery cap so the PDF (same asset served as .pdf)
+      // can be generated. 600 DPI (2400px) pushed circle PDFs over 10 MB.
+      var print = composeWithText(Math.round(patchSize().w * CL_AI_HAT.targetDpi));
       if (!print) return;
       var framed = buildPreviewCanvas(print);
       uploadInFlight = new Promise(function (resolve) {
@@ -979,16 +991,17 @@
   /* ---- client-side print-quality scoring ---- */
   function runQualityCheck(file, w, h) {
     // Effective DPI = smaller of the two axis resolutions against the patch size.
-    var dpiW = w / CL_AI_HAT.patchWidthIn;
-    var dpiH = h / CL_AI_HAT.patchHeightIn;
+    var size = patchSize();
+    var dpiW = w / size.w;
+    var dpiH = h / size.h;
     var dpi = Math.min(dpiW, dpiH);
 
     // Resolution score out of 100 (caps at 100 once target DPI is met).
     var resScore = Math.max(0, Math.min(100, Math.round((dpi / CL_AI_HAT.targetDpi) * 100)));
     setResult('resolution', resScore >= 60 ? 'pass' : (resScore >= 40 ? 'warn' : 'fail'), resScore + '/100');
 
-    // Safe margins — compare aspect ratio to the patch aspect (4 : 2.25 ≈ 1.778).
-    var targetAspect = CL_AI_HAT.patchWidthIn / CL_AI_HAT.patchHeightIn;
+    // Safe margins — compare the upload's aspect ratio to this shape's patch aspect.
+    var targetAspect = size.w / size.h;
     var aspect = w / h;
     var aspectDelta = Math.abs(aspect - targetAspect) / targetAspect;
     var marginState = aspectDelta <= 0.18 ? 'pass' : (aspectDelta <= 0.4 ? 'warn' : 'fail');
