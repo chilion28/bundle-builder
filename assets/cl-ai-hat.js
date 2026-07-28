@@ -798,15 +798,15 @@
       // momentum events, so a fixed per-event step compounds into abrupt jumps.
       // Small scrolls now give fine, precise scaling; each event is capped.
       var d = e.deltaY; if (e.deltaMode === 1) d *= 16;   // line units → ~px
-      var factor = Math.max(0.95, Math.min(1.05, Math.exp(-d * 0.0012)));
+      var factor = Math.max(0.92, Math.min(1.08, Math.exp(-d * 0.0018)));
       edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * factor));
       if (edZoom) edZoom.value = edState.scale; edDraw();
     }, { passive: false });
 
     if (edZoom) edZoom.addEventListener('input', function () { edState.scale = parseFloat(edZoom.value); edDraw(); });
     var zoomBy = function (f) { edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * f)); if (edZoom) edZoom.value = edState.scale; edDraw(); };
-    on('[data-cl-ai-ed-zoom-in]', function () { zoomBy(1.07); });
-    on('[data-cl-ai-ed-zoom-out]', function () { zoomBy(0.935); });
+    on('[data-cl-ai-ed-zoom-in]', function () { zoomBy(1.1); });
+    on('[data-cl-ai-ed-zoom-out]', function () { zoomBy(0.91); });
     var rotateBy = function (d) { edState.rotation += d; computeMask(); edDraw(); };
     on('[data-cl-ai-ed-rotate-l]', function () { rotateBy(-90); });
     on('[data-cl-ai-ed-rotate-r]', function () { rotateBy(90); });
