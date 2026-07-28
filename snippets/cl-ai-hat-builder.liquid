@@ -317,6 +317,16 @@ Now create:' }}</pre>
         <label class="cl-ai-ed__boxtoggle"><input type="checkbox" data-cl-ai-ed-box checked> Show box</label>
       </div>
 
+      <div class="cl-ai-ed__controls">
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-l aria-label="Rotate left">⟲</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-out aria-label="Zoom out">−</button>
+        <input type="range" class="cl-ai-ed__zoom" data-cl-ai-ed-zoom min="0.4" max="4" step="0.01" value="1" aria-label="Zoom">
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-in aria-label="Zoom in">+</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-r aria-label="Rotate right">⟳</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-center aria-label="Center artwork">Center</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-reset aria-label="Reset">Reset</button>
+      </div>
+
       {%- comment -%} Optional patch text — typed here, then dragged + resized on the
         patch. Baked into the print file / PDF / preview at the placed position. {%- endcomment -%}
       <div class="cl-ai-ed__textrow">
@@ -331,16 +341,6 @@ Now create:' }}</pre>
                     data-cl-ai-textcolor data-value="White" role="radio" aria-checked="false" aria-label="White text"></button>
           </div>
         </div>
-      </div>
-
-      <div class="cl-ai-ed__controls">
-        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-l aria-label="Rotate left">⟲</button>
-        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-out aria-label="Zoom out">−</button>
-        <input type="range" class="cl-ai-ed__zoom" data-cl-ai-ed-zoom min="0.4" max="4" step="0.01" value="1" aria-label="Zoom">
-        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-in aria-label="Zoom in">+</button>
-        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-r aria-label="Rotate right">⟳</button>
-        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-center aria-label="Center artwork">Center</button>
-        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-reset aria-label="Reset">Reset</button>
       </div>
 
       <div class="cl-ai-ed__actions">
