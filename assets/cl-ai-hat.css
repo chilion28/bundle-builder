@@ -107,22 +107,27 @@
    positioned + clipped to each shape's window (measured from the PNGs). */
 .cl-ai-b__placed{display:flex;flex-direction:column;align-items:center;gap:12px}
 .cl-ai-pf{position:relative;width:100%;max-width:500px;aspect-ratio:1/1}
-/* Upload template: the preview sits in the wide left column, so cap it smaller
-   (centered) to cut the empty margins the square frame leaves above/below. */
-.cl-ai-b--upload .cl-ai-pf{max-width:320px}
-.cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;display:none;pointer-events:none;z-index:2}
+/* Preview only: crop each square frame PNG to its tan-bezel bounds (object-fit:
+   cover, bezel is ~vertically centred) + a per-shape aspect ratio, so the patch
+   fills the preview with no empty margin. The editor-modal frames are untouched. */
+.cl-ai-pf[data-shape="rectangle"]{aspect-ratio:1.777/1}
+.cl-ai-pf[data-shape="rounded"]{aspect-ratio:1.24/1}
+.cl-ai-pf[data-shape="hexagon"]{aspect-ratio:1.746/1}
+.cl-ai-b--upload .cl-ai-pf{max-width:460px}
+.cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;z-index:2}
 .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
 .cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__frame[data-frame="rounded"],
 .cl-ai-pf[data-shape="circle"]    .cl-ai-pf__frame[data-frame="circle"],
 .cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"]{display:block}
 /* Artwork is clipped by a pixel-perfect mask PNG derived from each frame's window
-   (mask-image set per shape in JS). Positioned to each window's measured bbox. */
+   (mask-image set per shape in JS). Positioned to each window's bbox, expressed
+   relative to the cropped preview container. */
 .cl-ai-pf__art{position:absolute;z-index:1;background:#f3f4f6 center/cover no-repeat;
   -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
-.cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__art{left:3.42%;top:25.92%;width:93.17%;height:49.58%}
-.cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__art{left:3.67%;top:13.17%;width:92.67%;height:73.58%}
+.cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__art{left:3.42%;top:7.21%;width:93.17%;height:88.1%}
+.cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__art{left:3.67%;top:4.33%;width:92.67%;height:91.2%}
 .cl-ai-pf[data-shape="circle"]    .cl-ai-pf__art{left:3.83%;top:3.83%;width:92.33%;height:92.33%}
-.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__art{left:3.0%;top:24.08%;width:94%;height:51.33%}
+.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__art{left:3.0%;top:4.75%;width:94%;height:89.6%}
 .cl-ai-b__placed-actions{display:flex;gap:10px}
 .cl-ai-b__placed-btn{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;
   font-weight:700;font-size:13px;color:#374151;transition:.15s}
