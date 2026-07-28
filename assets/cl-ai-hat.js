@@ -593,7 +593,21 @@
     }
     if (edState.showBox) drawTransformBox(ctx, W, H); else edBox.handles = null;
     drawEditorText(ctx, W, H);
+    drawGuides(ctx, W, H);
     updateWarn();
+  }
+
+  /* Smart-alignment guides — a magenta centre line appears (and the object snaps)
+   * when the artwork or the caption lines up with the patch centre while dragging.
+   * Cleared on pointer-up. */
+  var edGuide = { v: false, h: false };
+  function drawGuides(ctx, W, H) {
+    if (!edGuide.v && !edGuide.h) return;
+    ctx.save();
+    ctx.strokeStyle = '#ff2d9b'; ctx.lineWidth = 1;
+    if (edGuide.v) { ctx.beginPath(); ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H); ctx.stroke(); }
+    if (edGuide.h) { ctx.beginPath(); ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2); ctx.stroke(); }
+    ctx.restore();
   }
 
   /* The draggable/resizable caption inside the editor — drawn at the window
@@ -751,8 +765,13 @@
       }
       if (txtDragging) {
         if (!edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
-        edState.textNorm.x = Math.max(-0.5, Math.min(0.5, edState.textNorm.x + (e.clientX - lastX) / edState.maskW));
-        edState.textNorm.y = Math.max(-0.5, Math.min(0.5, edState.textNorm.y + (e.clientY - lastY) / edState.maskH));
+        var nx = edState.textNorm.x + (e.clientX - lastX) / edState.maskW;
+        var ny = edState.textNorm.y + (e.clientY - lastY) / edState.maskH;
+        var TSNAP = 0.02;                       // ~2% of the window → snap to centre
+        if (Math.abs(nx) < TSNAP) { nx = 0; edGuide.v = true; } else edGuide.v = false;
+        if (Math.abs(ny) < TSNAP) { ny = 0; edGuide.h = true; } else edGuide.h = false;
+        edState.textNorm.x = Math.max(-0.5, Math.min(0.5, nx));
+        edState.textNorm.y = Math.max(-0.5, Math.min(0.5, ny));
         lastX = e.clientX; lastY = e.clientY; edDraw();
         return;
       }
@@ -788,10 +807,17 @@
         return;
       }
       edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
+      var PSNAP = 7;                            // px slack → snap the artwork to centre
+      if (Math.abs(edState.offsetX) < PSNAP) { edState.offsetX = 0; edGuide.v = true; } else edGuide.v = false;
+      if (Math.abs(edState.offsetY) < PSNAP) { edState.offsetY = 0; edGuide.h = true; } else edGuide.h = false;
       lastX = e.clientX; lastY = e.clientY; edDraw();
     });
-    edStage.addEventListener('pointerup', function () { dragging = resizing = txtDragging = txtResizing = stretching = false; });
-    edStage.addEventListener('pointercancel', function () { dragging = resizing = txtDragging = txtResizing = stretching = false; });
+    function endDrag() {
+      dragging = resizing = txtDragging = txtResizing = stretching = false;
+      if (edGuide.v || edGuide.h) { edGuide.v = edGuide.h = false; edDraw(); }   // clear guides
+    }
+    edStage.addEventListener('pointerup', endDrag);
+    edStage.addEventListener('pointercancel', endDrag);
     edStage.addEventListener('wheel', function (e) {
       e.preventDefault();
       // Velocity-aware + capped: a Magic Mouse / trackpad fires a rapid stream of
