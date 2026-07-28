@@ -228,7 +228,7 @@
     var img = new Image();
     img.onload = function () {
       edState.img = img; edState.file = file; edState.natW = img.naturalWidth; edState.natH = img.naturalHeight;
-      edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0;
+      edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; edState.stretchX = 1; edState.stretchY = 1;
       edState.contentBox = computeContentBox(img);   // subject bounds for the off-safe-area warning
       edState.hasAlpha = !!edState.contentBox.hasAlpha;   // transparent file → always pad the background
       // Transparent art → pad with the real leather patch colour (cream), not the
@@ -331,7 +331,11 @@
                   showBox: true,       // transform box overlay on/off
                   textNorm: null,      // caption position {x,y} normalized to the window (0,0 = centre)
                   textScale: 1,        // caption font-size multiplier (drag a handle to resize)
+                  stretchX: 1, stretchY: 1,  // per-axis stretch (edge handles) — 1 = original proportions
                   bg: '#ffffff' };
+  // Effective per-axis scale: uniform zoom × per-axis stretch × the cover baseline.
+  function edSX() { return edState.baseScale * edState.scale * (edState.stretchX || 1); }
+  function edSY() { return edState.baseScale * edState.scale * (edState.stretchY || 1); }
 
   /* Most AI patch art sits on a flat background, so sampling the border pixels
      gives us the colour to pad with — the same thing a designer would pick when
@@ -417,17 +421,22 @@
       : Math.max(maskW / iw, maskH / ih);
   }
 
-  function clampOffset() {
+  // On-screen axis-aligned extents of the (per-axis scaled, rotated) image.
+  function edExtent() {
     var rot = ((edState.rotation % 360) + 360) % 360;
-    var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
-    var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
-    var s = edState.baseScale * edState.scale;
+    var swap = (rot === 90 || rot === 270);
+    var wx = edState.natW * edSX(), hy = edState.natH * edSY();
+    return { ew: swap ? hy : wx, eh: swap ? wx : hy };
+  }
+
+  function clampOffset() {
     // Pan within the slack in BOTH directions: a larger-than-window image pans
     // the crop (fill); a smaller-than-window image (fit / zoomed out) can be
     // nudged around inside the padding. Old code zeroed the range when the image
     // was smaller than the window, which killed dragging in Fit mode.
-    var maxX = Math.abs(iw * s - edState.maskW) / 2;
-    var maxY = Math.abs(ih * s - edState.maskH) / 2;
+    var ext = edExtent();
+    var maxX = Math.abs(ext.ew - edState.maskW) / 2;
+    var maxY = Math.abs(ext.eh - edState.maskH) / 2;
     edState.offsetX = Math.max(-maxX, Math.min(maxX, edState.offsetX));
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
@@ -505,11 +514,8 @@
   // doesn't, the background colour pads the gap (identically in preview + print).
   function imgCovers() {
     if (!edState.img || !edState.maskW) return true;
-    var rot = ((edState.rotation % 360) + 360) % 360;
-    var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
-    var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
-    var s = edState.baseScale * edState.scale;
-    return iw * s >= edState.maskW - 0.5 && ih * s >= edState.maskH - 0.5;
+    var ext = edExtent();
+    return ext.ew >= edState.maskW - 0.5 && ext.eh >= edState.maskH - 0.5;
   }
 
   // Pad (and show the background picker) whenever the patch would otherwise have
@@ -550,8 +556,7 @@
     ctx.save();
     ctx.translate(W / 2 + edState.offsetX, H / 2 + edState.offsetY);
     ctx.rotate(edState.rotation * Math.PI / 180);
-    var s = edState.baseScale * edState.scale;
-    ctx.scale(s, s);
+    ctx.scale(edSX(), edSY());
     ctx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
     ctx.restore();
   }
@@ -619,9 +624,9 @@
   var edBox = { cx: 0, cy: 0, handles: null };
   function drawTransformBox(ctx, W, H) {
     if (!edState.img || !edState.maskW) { edBox.handles = null; return; }
-    var s = edState.baseScale * edState.scale;
-    var lX = -edState.natW * s / 2, rX = edState.natW * s / 2;   // full uploaded-file edges
-    var tY = -edState.natH * s / 2, bY = edState.natH * s / 2;
+    var sx = edSX(), sy = edSY();
+    var lX = -edState.natW * sx / 2, rX = edState.natW * sx / 2;   // full uploaded-file edges
+    var tY = -edState.natH * sy / 2, bY = edState.natH * sy / 2;
     var cx = W / 2 + edState.offsetX, cy = H / 2 + edState.offsetY;
     var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
     function P(ox, oy) { return [cx + ox * c - oy * sn, cy + ox * sn + oy * c]; }
@@ -651,11 +656,11 @@
     if (!edWarn) return;
     var outside = false;
     if (edState.img && edState.maskW) {
-      var s = edState.baseScale * edState.scale;
+      var sx = edSX(), sy = edSY();
       var cb = edState.contentBox || { l: 0, t: 0, r: 1, b: 1 };
       // Subject-box edges relative to the image centre (stage px).
-      var lX = (cb.l - 0.5) * edState.natW * s, rX = (cb.r - 0.5) * edState.natW * s;
-      var tY = (cb.t - 0.5) * edState.natH * s, bY = (cb.b - 0.5) * edState.natH * s;
+      var lX = (cb.l - 0.5) * edState.natW * sx, rX = (cb.r - 0.5) * edState.natW * sx;
+      var tY = (cb.t - 0.5) * edState.natH * sy, bY = (cb.b - 0.5) * edState.natH * sy;
       var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
       var pts = [[lX, tY], [rX, tY], [rX, bY], [lX, bY]];
       var minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
@@ -676,7 +681,7 @@
 
   function openEditor(isNew) {
     if (!editor) return;
-    if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; }
+    if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; edState.stretchX = 1; edState.stretchY = 1; }
     if (edMask) edMask.setAttribute('data-shape', String(state.shape).toLowerCase());
     if (edZoom) edZoom.value = edState.scale;
     // Reflect any existing caption in the modal's text controls.
@@ -694,6 +699,7 @@
     // Drag to pan; drag a transform-box handle to resize (scale around centre).
     var dragging = false, resizing = false, lastX = 0, lastY = 0, rzDist0 = 1, rzScale0 = 1;
     var txtDragging = false, txtResizing = false, txtDist0 = 1, txtScale0 = 1;
+    var stretching = false, stretchAxis = 'x';   // edge-handle non-uniform resize
     function stageXY(e) { var r = edStage.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
     function handleHit(px, py) {
       if (!edBox.handles) return -1;
@@ -723,9 +729,15 @@
       } else if (textBodyHit(p[0], p[1])) {
         txtDragging = true;
       } else if (edState.showBox && handleHit(p[0], p[1]) >= 0) {
-        resizing = true;
-        rzDist0 = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy) || 1;
-        rzScale0 = edState.scale;
+        var hi = handleHit(p[0], p[1]);
+        if (hi < 4) {                            // corner → proportional scale
+          resizing = true;
+          rzDist0 = Math.hypot(p[0] - edBox.cx, p[1] - edBox.cy) || 1;
+          rzScale0 = edState.scale;
+        } else {                                 // edge → stretch one axis
+          stretching = true;
+          stretchAxis = (hi === 4 || hi === 6) ? 'y' : 'x';  // top/bottom → y, right/left → x
+        }
       } else { dragging = true; }
       lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId);
     });
@@ -751,18 +763,35 @@
         if (edZoom) edZoom.value = edState.scale; edDraw();
         return;
       }
+      if (stretching) {   // edge handle → stretch one axis (in the image's local frame)
+        var ps = stageXY(e);
+        var rad = edState.rotation * Math.PI / 180, c = Math.cos(rad), sn = Math.sin(rad);
+        var dx = ps[0] - edBox.cx, dy = ps[1] - edBox.cy;
+        var uni = edState.baseScale * edState.scale || 1;
+        if (stretchAxis === 'x') {
+          var projx = Math.abs(dx * c + dy * sn);             // project onto local x
+          edState.stretchX = Math.max(0.2, Math.min(5, (2 * projx / edState.natW) / uni));
+        } else {
+          var projy = Math.abs(-dx * sn + dy * c);            // project onto local y
+          edState.stretchY = Math.max(0.2, Math.min(5, (2 * projy / edState.natH) / uni));
+        }
+        edDraw();
+        return;
+      }
       if (!dragging) {   // hover cursor hint over the various handles
         var h = stageXY(e);
+        var hb = edState.showBox ? handleHit(h[0], h[1]) : -1;
         edStage.style.cursor = textHandleHit(h[0], h[1]) >= 0 ? 'nwse-resize'
           : textBodyHit(h[0], h[1]) ? 'move'
-          : (edState.showBox && handleHit(h[0], h[1]) >= 0) ? 'nwse-resize' : 'grab';
+          : hb >= 4 ? ((hb === 5 || hb === 7) ? 'ew-resize' : 'ns-resize')
+          : hb >= 0 ? 'nwse-resize' : 'grab';
         return;
       }
       edState.offsetX += e.clientX - lastX; edState.offsetY += e.clientY - lastY;
       lastX = e.clientX; lastY = e.clientY; edDraw();
     });
-    edStage.addEventListener('pointerup', function () { dragging = resizing = txtDragging = txtResizing = false; });
-    edStage.addEventListener('pointercancel', function () { dragging = resizing = txtDragging = txtResizing = false; });
+    edStage.addEventListener('pointerup', function () { dragging = resizing = txtDragging = txtResizing = stretching = false; });
+    edStage.addEventListener('pointercancel', function () { dragging = resizing = txtDragging = txtResizing = stretching = false; });
     edStage.addEventListener('wheel', function (e) {
       e.preventDefault();
       edState.scale = Math.max(minZoom(), Math.min(4, edState.scale * (e.deltaY < 0 ? 1.08 : 0.92)));
@@ -777,7 +806,7 @@
     on('[data-cl-ai-ed-rotate-l]', function () { rotateBy(-90); });
     on('[data-cl-ai-ed-rotate-r]', function () { rotateBy(90); });
     on('[data-cl-ai-ed-center]', function () { edState.offsetX = 0; edState.offsetY = 0; edDraw(); });
-    on('[data-cl-ai-ed-reset]', function () { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; if (edZoom) edZoom.value = 1; computeMask(); edDraw(); });
+    on('[data-cl-ai-ed-reset]', function () { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; edState.stretchX = 1; edState.stretchY = 1; if (edZoom) edZoom.value = 1; computeMask(); edDraw(); });
     $$('[data-cl-ai-ed-cancel]').forEach(function (b) { b.addEventListener('click', closeEditor); });
     on('[data-cl-ai-ed-confirm]', edConfirm);
     window.addEventListener('resize', function () { if (!editor.hidden) { computeMask(); edDraw(); } });
@@ -821,16 +850,21 @@
     var out = document.createElement('canvas');
     out.width = targetW; out.height = targetH;
     var octx = out.getContext('2d');
+    // Per-axis output scale (uniform zoom × stretch), mirroring the editor exactly.
+    var sBX = base * edState.scale * (edState.stretchX || 1);
+    var sBY = base * edState.scale * (edState.stretchY || 1);
+    var swap = (rot === 90 || rot === 270);
+    var outW = swap ? edState.natH * sBY : edState.natW * sBX;
+    var outH = swap ? edState.natW * sBX : edState.natH * sBY;
     // Pad with the artwork's own background so the file is full-bleed and
     // production doesn't have to rebuild the background.
-    var covers = iw * base * edState.scale >= targetW - 0.5 && ih * base * edState.scale >= targetH - 0.5;
+    var covers = outW >= targetW - 0.5 && outH >= targetH - 0.5;
     if (edState.hasAlpha || !covers) { octx.fillStyle = edState.bg; octx.fillRect(0, 0, targetW, targetH); }
     octx.save();
     octx.translate(targetW / 2 + (edState.normX || 0) * targetW,
                    targetH / 2 + (edState.normY || 0) * targetH);
     octx.rotate(edState.rotation * Math.PI / 180);
-    var s = base * edState.scale;
-    octx.scale(s, s);
+    octx.scale(sBX, sBY);
     octx.drawImage(edState.img, -edState.natW / 2, -edState.natH / 2, edState.natW, edState.natH);
     octx.restore();
     return out;
