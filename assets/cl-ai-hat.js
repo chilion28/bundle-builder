@@ -57,7 +57,8 @@
     color: (($('[data-cl-ai-color].is-active') || {}).dataset || {}).value || null,
     shape: 'Rectangle',
     text: '',
-    textColor: 'Black',
+    textFill: '#000000',       // caption colour (full picker)
+    textOutline: 'white',      // caption outline: 'white' | 'black' | 'none'
     artUrl: '',
     score: ''
   };
@@ -702,6 +703,11 @@
     if (textToggle) textToggle.checked = !!state.text;
     if (textGroup) textGroup.hidden = !state.text;
     if (textInput && state.text) textInput.value = state.text;
+    if (textFillInput) textFillInput.value = state.textFill;
+    $$('[data-cl-ai-outline]').forEach(function (b) {
+      var on = b.dataset.value === state.textOutline;
+      b.classList.toggle('is-active', on); b.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
     syncModeButtons();
     editor.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -1005,8 +1011,8 @@
     var txt = (state.text || '').trim();
     if (!txt) return null;
     var shape = String(state.shape).toLowerCase();
-    var fill = state.textColor === 'White' ? '#ffffff' : '#000000';
-    var stroke = state.textColor === 'White' ? '#000000' : '#ffffff';
+    var fill = state.textFill || '#000000';
+    var outline = state.textOutline || 'none';   // 'white' | 'black' | 'none'
     if (!edState.textNorm) edState.textNorm = defaultTextNorm(shape);
     var size = Math.max(6, winH * 0.14 * (edState.textScale || 1));
     ctx.font = fontStack(size);
@@ -1018,9 +1024,11 @@
     ctx.save();
     ctx.lineJoin = 'round';
     ctx.miterLimit = 2;
-    ctx.strokeStyle = stroke;
-    ctx.lineWidth = Math.max(2, size * 0.16);
-    ctx.strokeText(txt, x, y);
+    if (outline !== 'none') {
+      ctx.strokeStyle = outline === 'black' ? '#000000' : '#ffffff';
+      ctx.lineWidth = Math.max(2, size * 0.16);
+      ctx.strokeText(txt, x, y);
+    }
     ctx.fillStyle = fill;
     ctx.fillText(txt, x, y);
     ctx.restore();
@@ -1420,12 +1428,13 @@
   var countEl = $('[data-cl-ai-count]');
   var propText = $('[data-cl-ai-prop-text]');
   var propTextColor = $('[data-cl-ai-prop-textcolor]');
+  var textFillInput = $('[data-cl-ai-text-fill]');
 
   function syncText() {
     var on = textToggle ? textToggle.checked : false;
     state.text = on && textInput ? textInput.value.trim() : '';
     if (propText) propText.value = state.text;
-    if (propTextColor) propTextColor.value = state.text ? state.textColor : '';
+    if (propTextColor) propTextColor.value = state.text ? state.textFill : '';
     if (countEl && textInput) countEl.textContent = String(textInput.value.length);
     // First time text is added, drop it at the shape's default spot so it's visible.
     if (state.text && !edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
@@ -1444,11 +1453,15 @@
   }
   if (textInput) textInput.addEventListener('input', syncText);
 
-  $$('[data-cl-ai-textcolor]').forEach(function (btn) {
+  // Full colour picker for the text fill.
+  if (textFillInput) textFillInput.addEventListener('input', function () { state.textFill = textFillInput.value; syncText(); });
+
+  // Outline: White / Black / None.
+  $$('[data-cl-ai-outline]').forEach(function (btn) {
     btn.addEventListener('click', function () {
-      $$('[data-cl-ai-textcolor]').forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
+      $$('[data-cl-ai-outline]').forEach(function (b) { b.classList.remove('is-active'); b.setAttribute('aria-checked', 'false'); });
       btn.classList.add('is-active'); btn.setAttribute('aria-checked', 'true');
-      state.textColor = btn.dataset.value;
+      state.textOutline = btn.dataset.value;
       syncText();
     });
   });
@@ -1494,7 +1507,8 @@
       if (propPreview && propPreview.value) props['_Artwork Preview'] = propPreview.value; // framed patch visual
       if (state.text) {                       // ~90% of orders have no patch text
         props['Custom Text'] = state.text;
-        props['Text Color'] = state.textColor;
+        props['Text Color'] = state.textFill;
+        props['Text Outline'] = state.textOutline;
       }
       // One line item per selected colour — all share the same artwork. The
       // tag-based bulk discount then applies cart-wide across every line.

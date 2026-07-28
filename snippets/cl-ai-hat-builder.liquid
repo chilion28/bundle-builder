@@ -334,11 +334,14 @@ Now create:' }}</pre>
         <div class="cl-ai-ed__text-group" data-cl-ai-text-group hidden>
           <input type="text" class="cl-ai-ed__textinput" maxlength="30"
                  placeholder="Type text, then drag &amp; resize it on the patch" data-cl-ai-text autocomplete="off">
-          <div class="cl-ai-ed__tcs" data-cl-ai-textcolors role="radiogroup" aria-label="Text colour">
-            <button type="button" class="cl-ai-b__tc cl-ai-b__tc--black is-active"
-                    data-cl-ai-textcolor data-value="Black" role="radio" aria-checked="true" aria-label="Black text"></button>
-            <button type="button" class="cl-ai-b__tc cl-ai-b__tc--white"
-                    data-cl-ai-textcolor data-value="White" role="radio" aria-checked="false" aria-label="White text"></button>
+          <label class="cl-ai-ed__tclabel">Text
+            <input type="color" data-cl-ai-text-fill value="#000000" aria-label="Text colour">
+          </label>
+          <div class="cl-ai-ed__outline" data-cl-ai-text-outline role="radiogroup" aria-label="Text outline">
+            <span class="cl-ai-ed__tclabel">Outline</span>
+            <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--white is-active" data-cl-ai-outline data-value="white" role="radio" aria-checked="true" aria-label="White outline"></button>
+            <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--black" data-cl-ai-outline data-value="black" role="radio" aria-checked="false" aria-label="Black outline"></button>
+            <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--none" data-cl-ai-outline data-value="none" role="radio" aria-checked="false" aria-label="No outline">None</button>
           </div>
         </div>
       </div>
