@@ -808,6 +808,14 @@
     on('[data-cl-ai-ed-center]', function () { edState.offsetX = 0; edState.offsetY = 0; edDraw(); });
     on('[data-cl-ai-ed-reset]', function () { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; edState.stretchX = 1; edState.stretchY = 1; if (edZoom) edZoom.value = 1; computeMask(); edDraw(); });
     $$('[data-cl-ai-ed-cancel]').forEach(function (b) { b.addEventListener('click', closeEditor); });
+    // Click-outside-to-close, but ONLY a genuine click that both starts AND ends
+    // on the backdrop — so releasing a handle drag out here never discards work.
+    var edBackdrop = $('[data-cl-ai-ed-backdrop]');
+    if (edBackdrop) {
+      var downOnBackdrop = false;
+      edBackdrop.addEventListener('pointerdown', function (e) { downOnBackdrop = (e.target === edBackdrop); });
+      edBackdrop.addEventListener('pointerup', function (e) { if (downOnBackdrop && e.target === edBackdrop) closeEditor(); downOnBackdrop = false; });
+    }
     on('[data-cl-ai-ed-confirm]', edConfirm);
     window.addEventListener('resize', function () { if (!editor.hidden) { computeMask(); edDraw(); } });
   }
