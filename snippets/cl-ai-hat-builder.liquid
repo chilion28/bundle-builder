@@ -28,7 +28,7 @@
 {%- comment -%} Patch shapes → real frame PNGs in assets/ (transparent windows) {%- endcomment -%}
 {%- assign shape_list = 'Rectangle,Rounded,Circle,Hexagon' | split: ',' -%}
 
-<div class="cl-ai-b{% if show_prompt == false %} cl-ai-b--upload{% endif %}" data-cl-ai-builder
+<div class="cl-ai cl-ai-b{% if show_prompt == false %} cl-ai-b--upload{% endif %}" data-cl-ai-builder
      data-patch-font="{{ 'AkzidenzGrotesk-Black.woff2' | asset_url }}">
 
   {%- comment -%} ========== LEFT COLUMN — Step 1 prompt + Step 2 upload ========== {%- endcomment -%}

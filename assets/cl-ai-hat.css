@@ -385,3 +385,54 @@
 .cl-ai-ed__ol--none{background:#fff;
   background-image:linear-gradient(to top right, transparent 0 calc(50% - 1.2px), #e0342a calc(50% - 1.2px) calc(50% + 1.2px), transparent calc(50% + 1.2px) 100%)}
 .cl-ai-ed__ol.is-active{border-color:var(--blue,#00a0ea);box-shadow:0 0 0 2px #e4f4fd}
+
+/* ---------- GEMPAGES COMPATIBILITY ----------
+   GemPages' Tailwind preflight is scoped with `.gps`, which makes rules such as
+   `.gps button` and `.gps img` more specific than the component classes above.
+   Repeat only the affected component declarations at a stronger, local scope. */
+.gps .cl-ai .cl-ai__step-title{font-size:19px;font-weight:800;letter-spacing:.01em;line-height:normal}
+
+.gps .cl-ai .cl-ai__copy-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#374151;
+  border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;
+  letter-spacing:.03em;line-height:normal}
+.gps .cl-ai .cl-ai__copy-btn:hover{background:#fff;color:var(--green);border-color:var(--green)}
+.gps .cl-ai .cl-ai__copy-btn.is-copied{background:var(--green);border-color:var(--green);color:#fff}
+
+.gps .cl-ai .cl-ai-b__choose{background:#1a1f26;color:#fff;border:0;border-radius:8px;
+  padding:9px 20px;font-size:13px;font-weight:700;line-height:normal}
+.gps .cl-ai .cl-ai-b__choose:hover{background:#000;color:#fff}
+.gps .cl-ai .cl-ai-b__placed-btn{background:#fff;color:#374151;border:1.5px solid var(--line);
+  border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;line-height:normal}
+.gps .cl-ai .cl-ai-b__placed-btn:hover{background:#fff;color:var(--green);border-color:var(--green)}
+
+.gps .cl-ai .cl-ai-b__pill{display:block;background:#fff;color:#374151;border:1.5px solid var(--line);
+  border-radius:10px;padding:12px 10px;font-size:14px;font-weight:600;line-height:normal}
+.gps .cl-ai .cl-ai-b__pill:hover{border-color:#9dd6f4}
+.gps .cl-ai .cl-ai-b__pill.is-active{background:#e4f4fd;color:var(--green-dk);border-color:var(--green);
+  box-shadow:inset 0 0 0 1px var(--green)}
+.gps .cl-ai .cl-ai-b__shape{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px}
+.gps .cl-ai .cl-ai-b__shape.is-active{background:#e4f4fd;border-color:var(--green)}
+.gps .cl-ai .cl-ai-b__tc{border:2px solid var(--line);padding:0}
+.gps .cl-ai .cl-ai-b__tc.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
+
+.gps .cl-ai .cl-ai-b__qty-btn{background:#fff;color:#374151;border:0;padding:0;font-size:20px;font-weight:400}
+.gps .cl-ai .cl-ai-b__row-qty .cl-ai-b__qty-btn{font-size:18px}
+.gps .cl-ai .cl-ai-b__qty-btn:hover{background:#f3f4f6}
+.gps .cl-ai .cl-ai-b__cta{display:block;width:100%;background:var(--green);color:#fff;border:0;
+  border-radius:12px;padding:17px;font-size:17px;font-weight:800;line-height:normal;letter-spacing:.02em;
+  box-shadow:var(--shadow)}
+.gps .cl-ai .cl-ai-b__cta:hover{background:var(--green-dk);color:#fff}
+
+.gps .cl-ai .cl-ai-pf{overflow:hidden}
+.gps .cl-ai .cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;max-width:none;
+  object-fit:cover;display:none !important}
+.gps .cl-ai .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
+.gps .cl-ai .cl-ai-pf[data-shape="rounded"] .cl-ai-pf__frame[data-frame="rounded"],
+.gps .cl-ai .cl-ai-pf[data-shape="circle"] .cl-ai-pf__frame[data-frame="circle"],
+.gps .cl-ai .cl-ai-pf[data-shape="hexagon"] .cl-ai-pf__frame[data-frame="hexagon"]{display:block !important}
+.gps .cl-ai .cl-ai-b__swatch-img,
+.gps .cl-ai .cl-ai-b__row-hat img,
+.gps .cl-ai .cl-ai-b__shape-icon{height:100%;width:100%;object-fit:contain}
+.gps .cl-ai .cl-ai-b__qc-thumb{width:130px;height:100px;object-fit:cover}
+.gps .cl-ai .cl-ai__inspo-grid .cl-ai__inspo-media img{position:absolute;inset:0;width:100%;height:100%;
+  max-width:none;object-fit:cover}
