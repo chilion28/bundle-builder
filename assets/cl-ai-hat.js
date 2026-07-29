@@ -1422,19 +1422,22 @@
     var swatches = $$('[data-cl-ai-color]').filter(function (b) { return !b.hidden; });
     var html = swatches.map(function (b) {
       var v = variantFor(state.style, b.dataset.value);
-      if (!v) return '';
+      // The quantity picker is an ordering surface, so unavailable variants add
+      // noise without providing an action. Keep them in the variant data layer,
+      // but omit their rows until Shopify reports them available again.
+      if (!v || !v.available) return '';
       var disp = displayColor(b.dataset.value);
       var img = b.dataset.swatchImg;
-      var soldout = !v.available;
       var qv = qtySel[v.id] || 0;
-      var dis = soldout ? ' disabled' : '';
-      return '<div class="cl-ai-b__row' + (soldout ? ' is-soldout' : '') + '" data-cl-ai-row data-vid="' + v.id + '">' +
-        '<div class="cl-ai-b__row-hat">' + (img ? '<img src="' + esc(img) + '" alt="' + esc(disp) + '" loading="lazy">' : '') + '</div>' +
-        '<div class="cl-ai-b__row-name">' + esc(disp) + (soldout ? ' <span class="cl-ai-b__soldout">Sold out</span>' : '') + '</div>' +
+      return '<div class="cl-ai-b__row" data-cl-ai-row data-vid="' + v.id + '">' +
+        '<button type="button" class="cl-ai-b__row-hat" data-cl-ai-image-open data-image="' + esc(img || '') + '" data-label="' + esc(disp) + '" aria-label="View larger image of ' + esc(disp) + '">' +
+          (img ? '<img src="' + esc(img) + '" alt="" loading="lazy">' : '') +
+        '</button>' +
+        '<div class="cl-ai-b__row-name">' + esc(disp) + '</div>' +
         '<div class="cl-ai-b__row-qty">' +
-          '<button type="button" class="cl-ai-b__qty-btn" data-cl-ai-grid-minus aria-label="Decrease ' + esc(disp) + '"' + dis + '>−</button>' +
-          '<input type="text" class="cl-ai-b__qty-input" inputmode="numeric" value="' + qv + '" data-cl-ai-grid-qty aria-label="' + esc(disp) + ' quantity"' + dis + '>' +
-          '<button type="button" class="cl-ai-b__qty-btn" data-cl-ai-grid-plus aria-label="Increase ' + esc(disp) + '"' + dis + '>+</button>' +
+          '<button type="button" class="cl-ai-b__qty-btn" data-cl-ai-grid-minus aria-label="Decrease ' + esc(disp) + '">−</button>' +
+          '<input type="text" class="cl-ai-b__qty-input" inputmode="numeric" value="' + qv + '" data-cl-ai-grid-qty aria-label="' + esc(disp) + ' quantity">' +
+          '<button type="button" class="cl-ai-b__qty-btn" data-cl-ai-grid-plus aria-label="Increase ' + esc(disp) + '">+</button>' +
         '</div>' +
       '</div>';
     }).join('');
@@ -1456,6 +1459,45 @@
       setRowQty(row.dataset.vid, digits);
     });
   }
+
+  /* Hat thumbnail lightbox. */
+  var imgbox = $('[data-cl-ai-imgbox]');
+  var imgboxImage = $('[data-cl-ai-imgbox-image]');
+  var imgboxTitle = $('[data-cl-ai-imgbox-title]');
+  var imgboxLastFocus = null;
+  var imgboxBodyOverflow = '';
+
+  function closeImgbox() {
+    if (!imgbox || imgbox.hidden) return;
+    imgbox.hidden = true;
+    document.body.style.overflow = imgboxBodyOverflow;
+    if (imgboxImage) { imgboxImage.src = ''; imgboxImage.alt = ''; }
+    if (imgboxLastFocus && imgboxLastFocus.focus) imgboxLastFocus.focus();
+  }
+  function openImgbox(btn) {
+    if (!imgbox || !imgboxImage || !btn || !btn.dataset.image) return;
+    imgboxLastFocus = btn;
+    imgboxImage.src = btn.dataset.image;
+    imgboxImage.alt = btn.dataset.label || 'Hat';
+    if (imgboxTitle) imgboxTitle.textContent = btn.dataset.label || '';
+    imgboxBodyOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    imgbox.hidden = false;
+    var close = $('[data-cl-ai-imgbox-close]', imgbox);
+    if (close) close.focus();
+  }
+  document.addEventListener('click', function (e) {
+    var opener = e.target && e.target.closest ? e.target.closest('[data-cl-ai-image-open]') : null;
+    if (opener) { e.preventDefault(); openImgbox(opener); }
+  });
+  if (imgbox) {
+    $$('[data-cl-ai-imgbox-close]', imgbox).forEach(function (btn) {
+      btn.addEventListener('click', function (e) { e.preventDefault(); closeImgbox(); });
+    });
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && imgbox && !imgbox.hidden) closeImgbox();
+  });
 
   syncPrompt();           // initial — size guidance for the default shape
   filterColorsForStyle(); // initial — hide colours not offered in the default style
