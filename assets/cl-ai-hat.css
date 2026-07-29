@@ -114,11 +114,13 @@
 .cl-ai-pf[data-shape="rounded"]{aspect-ratio:1.24/1}
 .cl-ai-pf[data-shape="hexagon"]{aspect-ratio:1.746/1}
 .cl-ai-b--upload .cl-ai-pf{max-width:460px}
-.cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;pointer-events:none;z-index:2}
+/* !important so a page-builder host (e.g. GemPages forcing img{display:block})
+   can't override the show-only-the-active-frame logic. */
+.cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none !important;pointer-events:none;z-index:2}
 .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
 .cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__frame[data-frame="rounded"],
 .cl-ai-pf[data-shape="circle"]    .cl-ai-pf__frame[data-frame="circle"],
-.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"]{display:block}
+.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"]{display:block !important}
 /* Artwork is clipped by a pixel-perfect mask PNG derived from each frame's window
    (mask-image set per shape in JS). Positioned to each window's bbox, expressed
    relative to the cropped preview container. */
