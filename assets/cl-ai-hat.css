@@ -106,14 +106,14 @@
    Frames are 1200×1200 PNGs with transparent windows; the artwork sits behind,
    positioned + clipped to each shape's window (measured from the PNGs). */
 .cl-ai-b__placed{display:flex;flex-direction:column;align-items:center;gap:12px}
-.cl-ai-pf{position:relative;width:100%;max-width:500px;aspect-ratio:1/1}
+.cl-ai-pf{position:relative;width:100%;max-width:500px !important;aspect-ratio:1/1;margin:0 auto}
 /* Preview only: crop each square frame PNG to its tan-bezel bounds (object-fit:
    cover, bezel is ~vertically centred) + a per-shape aspect ratio, so the patch
    fills the preview with no empty margin. The editor-modal frames are untouched. */
 .cl-ai-pf[data-shape="rectangle"]{aspect-ratio:1.777/1}
 .cl-ai-pf[data-shape="rounded"]{aspect-ratio:1.24/1}
 .cl-ai-pf[data-shape="hexagon"]{aspect-ratio:1.746/1}
-.cl-ai-b--upload .cl-ai-pf{max-width:460px}
+.cl-ai-b--upload .cl-ai-pf{max-width:460px !important}
 /* !important so a page-builder host (e.g. GemPages forcing img{display:block})
    can't override the show-only-the-active-frame logic. */
 .cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none !important;pointer-events:none;z-index:2}
