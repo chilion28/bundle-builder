@@ -122,7 +122,8 @@ Now create:' }}</pre>
     <div class="cl-ai__step">
       <div class="cl-ai__step-head">
         <span class="cl-ai__step-num">STEP {{ n_upload }}</span>
-        <h2 class="cl-ai__step-title">{{ upload_title | default: 'UPLOAD YOUR AI ARTWORK' }}</h2>
+        {%- if show_prompt == false -%}{%- assign upl_default = 'UPLOAD YOUR IMAGE, ARTWORK OR LOGO' -%}{%- else -%}{%- assign upl_default = 'UPLOAD YOUR AI ARTWORK' -%}{%- endif -%}
+        <h2 class="cl-ai__step-title">{{ upload_title | default: upl_default }}</h2>
       </div>
 
       <input type="file" class="cl-ai-b__file" data-cl-ai-file
@@ -367,6 +368,16 @@ Now create:' }}</pre>
         <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--ghost" data-cl-ai-ed-cancel>Cancel</button>
         <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--primary" data-cl-ai-ed-confirm>Use this image</button>
       </div>
+    </div>
+  </div>
+
+  {%- comment -%} Hat image lightbox — populated by the quantity-grid thumbnail buttons. {%- endcomment -%}
+  <div class="cl-ai-imgbox" data-cl-ai-imgbox hidden role="dialog" aria-modal="true" aria-labelledby="cl-ai-imgbox-title">
+    <button type="button" class="cl-ai-imgbox__backdrop" data-cl-ai-imgbox-close aria-label="Close image preview"></button>
+    <div class="cl-ai-imgbox__panel">
+      <button type="button" class="cl-ai-imgbox__close" data-cl-ai-imgbox-close aria-label="Close image preview">×</button>
+      <img class="cl-ai-imgbox__image" data-cl-ai-imgbox-image src="" alt="">
+      <p class="cl-ai-imgbox__title" id="cl-ai-imgbox-title" data-cl-ai-imgbox-title></p>
     </div>
   </div>
 

@@ -1098,8 +1098,11 @@
   function refreshArtwork(immediate) {
     if (!baseCanvas) return;
     // Reflect reality rather than the aspect-only guess made at upload time.
-    if (edState.fit) setResult('margins', 'pass', 'Inside safe area');
-    else setResult('margins', 'warn', 'Edges may crop');
+    var marginSt = edState.fit ? 'pass' : 'warn';
+    setResult('margins', marginSt, edState.fit ? 'Inside safe area' : 'Edges may crop');
+    // Refresh the overall verdict with the positioned margin state (keeps it in
+    // sync with the checklist instead of the stale aspect-ratio guess).
+    setVerdict(state.qcRes || 'pass', marginSt, state.qcQuality || 'pass');
     var shown = composeWithText(900);
     if (shown) applyArtwork(shown.toDataURL('image/png'));
 
@@ -1230,24 +1233,39 @@
                   (marginState === 'pass' ? 'margins ok' : 'margins ' + marginState);
     if (propScore) propScore.value = state.score;
 
-    // Overall verdict.
-    var worst = [resState(resScore), marginState, qState].indexOf('fail') > -1 ? 'fail'
-              : [resState(resScore), marginState, qState].indexOf('warn') > -1 ? 'warn' : 'pass';
-    if (qcVerdict) {
-      qcVerdict.hidden = false;
-      qcVerdict.classList.toggle('is-warn', worst !== 'pass');
-      var vt = $('[data-cl-ai-qc-verdict-title]', qcVerdict);
-      var vx = $('[data-cl-ai-qc-verdict-text]', qcVerdict);
-      if (worst === 'pass') {
-        if (vt) vt.textContent = 'READY TO PRINT!';
-        if (vx) vx.textContent = "Your artwork looks great. Add to cart when you're ready.";
-      } else if (worst === 'warn') {
-        if (vt) vt.textContent = 'USABLE — BUT COULD BE BETTER';
-        if (vx) vx.textContent = 'This will print, but a higher-resolution image gives the sharpest result.';
-      } else {
-        if (vt) vt.textContent = 'LOW QUALITY';
-        if (vx) vx.textContent = 'This image is too low-resolution for a crisp patch. Try re-generating at a larger size.';
-      }
+    // Remember the resolution/quality inputs so re-positioning can refresh the
+    // overall verdict with the POSITIONED margin state — not the initial
+    // aspect-ratio guess (which otherwise left the verdict stale + contradictory).
+    state.qcRes = resState(resScore);
+    state.qcQuality = qState;
+    setVerdict(state.qcRes, marginState, qState);
+  }
+
+  /* Overall READY / USABLE / LOW verdict. Cause-aware: a resolution problem and a
+     placement problem get different titles + guidance (fixes the "checklist all
+     green but verdict says LOW QUALITY" contradiction). */
+  function setVerdict(resSt, marginSt, qSt) {
+    if (!qcVerdict) return;
+    var states = [resSt, marginSt, qSt];
+    var worst = states.indexOf('fail') > -1 ? 'fail' : states.indexOf('warn') > -1 ? 'warn' : 'pass';
+    var resProblem = resSt !== 'pass' || qSt !== 'pass';
+    qcVerdict.hidden = false;
+    qcVerdict.classList.toggle('is-warn', worst !== 'pass');
+    var vt = $('[data-cl-ai-qc-verdict-title]', qcVerdict);
+    var vx = $('[data-cl-ai-qc-verdict-text]', qcVerdict);
+    if (worst === 'pass') {
+      if (vt) vt.textContent = 'READY TO PRINT!';
+      if (vx) vx.textContent = "Your artwork looks great. Add to cart when you're ready.";
+    } else if (worst === 'warn') {
+      if (vt) vt.textContent = 'USABLE — BUT COULD BE BETTER';
+      if (vx) vx.textContent = resProblem
+        ? 'This will print, but a higher-resolution image gives the sharpest result.'
+        : 'This will print — just check the positioning so nothing important gets cropped.';
+    } else {
+      if (vt) vt.textContent = resProblem ? 'LOW QUALITY' : 'CHECK YOUR CROP';
+      if (vx) vx.textContent = resProblem
+        ? 'This image is too low-resolution for a crisp patch. Try a larger image.'
+        : 'Part of your artwork may be cut off — reposition it inside the dashed guide.';
     }
   }
   function resState(score) { return score >= 60 ? 'pass' : (score >= 40 ? 'warn' : 'fail'); }
