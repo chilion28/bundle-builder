@@ -31,6 +31,13 @@
         data-plate-design="{{ item.properties['Plate Design'] | escape }}"
         data-plate-handle="{{ item.properties._plate_product_handle | escape }}"
         data-field-names="{{ item.properties._plate_field_names | escape }}"
+        data-custom-text="{{ item.properties['Custom Text'] | escape }}"
+        data-custom-text-one="{{ item.properties['Custom Text One'] | escape }}"
+        data-custom-text-two="{{ item.properties['Custom Text Two'] | escape }}"
+        data-custom-text-three="{{ item.properties['Custom Text Three'] | escape }}"
+        data-custom-text-four="{{ item.properties['Custom Text Four'] | escape }}"
+        data-month="{{ item.properties['Month'] | escape }}"
+        data-year="{{ item.properties['Year'] | escape }}"
         data-line-properties="{{ item.properties | json | escape }}">
         Edit personalization
       </button>
