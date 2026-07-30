@@ -130,8 +130,9 @@ production app maps those names to its Custom 1–4 columns and production files
   differ from the current `personalization_fields` metafield and defaults.
 - Confirm the production app will route generic `Bundle Hat` components using
   `_plate_product_handle`/`Plate Design`, or update that app's mapping if needed.
-- The parent bundle line carries all configured properties, including `Month`
-  and `Year`. The current Cart Transform copies only `Custom Text` and
-  `Custom Text Two` onto each expanded `Bundle Hat` row. Its app/function source
-  is outside this theme repository and must be updated separately to propagate
-  every name listed in `_plate_field_names` (including `Month` and `Year`).
+- The Cart Transform source lives in the sibling
+  `Custom App/citylocs-functions/extensions/bundle-cart-transform` project.
+  Commit `ab2ebcf` fixes the multi-bundle quantity multiplier and propagates
+  `Plate State`, `Plate Design`, `Month`, `Year`, and Custom Text 1–4 onto every
+  expanded component. That app version must be released before checkout will
+  reflect the corrected quantities, price, and component properties.
