@@ -126,13 +126,19 @@
     fieldsList.innerHTML = cfg.fields.map(function (propertyName) {
       var field = FIELD_DEFAULTS[propertyName] || { maxLength: 30, placeholder: '', required: true };
       var id = 'cl-fxb-field-' + propertyName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      return '<label class="cl-fxb__field cl-fxb__dynamic-field" for="' + id + '">' +
+      var inputField = '<label class="cl-fxb__field cl-fxb__dynamic-field" for="' + id + '"' +
+        (propertyName === 'Custom Text Two' ? ' data-cl-second-line-field hidden' : '') + '>' +
         '<span class="cl-fxb__field-label">' + escapeHtml(propertyName) + (field.required ? ' <span aria-hidden="true">*</span>' : ' <small>(optional)</small>') + '</span>' +
         '<input id="' + id + '" class="cl-fxb__input" type="text" autocomplete="off" ' +
           'data-cl-property-name="' + escapeHtml(propertyName) + '" maxlength="' + field.maxLength + '" ' +
           'placeholder="' + escapeHtml(field.placeholder) + '"' + (field.required ? ' required' : '') + '>' +
         '<span class="cl-fxb__count" data-cl-count-for="' + escapeHtml(propertyName) + '">0/' + field.maxLength + '</span>' +
       '</label>';
+      if (propertyName !== 'Custom Text Two') return inputField;
+      return '<label class="cl-fxb__second-toggle">' +
+        '<input type="checkbox" data-cl-second-line-toggle> ' +
+        '<span>Add a second line of text</span>' +
+      '</label>' + inputField;
     }).join('');
     renderPreview();
   }
@@ -140,7 +146,8 @@
   function previewValues(cfg) {
     var values = activeValues();
     cfg.fields.forEach(function (propertyName) {
-      if (!values[propertyName]) values[propertyName] = (FIELD_DEFAULTS[propertyName] || {}).placeholder || '';
+      var defaults = FIELD_DEFAULTS[propertyName] || {};
+      if (!values[propertyName] && defaults.required !== false) values[propertyName] = defaults.placeholder || '';
     });
     return values;
   }
@@ -165,6 +172,19 @@
   fieldsList.addEventListener('input', function (event) {
     if (!event.target.matches('[data-cl-property-name]')) return;
     updateCount(event.target);
+    renderPreview();
+  });
+  fieldsList.addEventListener('change', function (event) {
+    if (!event.target.matches('[data-cl-second-line-toggle]')) return;
+    var secondLineField = fieldsList.querySelector('[data-cl-second-line-field]');
+    var secondLineInput = secondLineField && secondLineField.querySelector('[data-cl-property-name="Custom Text Two"]');
+    secondLineField.hidden = !event.target.checked;
+    if (!event.target.checked && secondLineInput) {
+      secondLineInput.value = '';
+      updateCount(secondLineInput);
+    } else if (secondLineInput) {
+      secondLineInput.focus();
+    }
     renderPreview();
   });
 

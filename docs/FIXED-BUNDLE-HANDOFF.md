@@ -80,7 +80,9 @@ production app maps those names to its Custom 1–4 columns and production files
 - The renderer supports `Custom Text One` through `Custom Text Four` plus any
   additional configured label using a safe fallback.
 - `Custom Text Two` remains optional to match the flexible builder's current
-  behavior. All other listed fields default to required.
+  behavior. It is hidden behind an `Add a second line of text` checkbox; while
+  unchecked, it is omitted from both the live preview and cart properties. All
+  other listed fields default to required.
 - The preview calls `window.CLPlatePreview(previewEl, productHandle, values)`.
 - The cart breakdown loops over all public properties instead of hardcoding two
   text fields.
@@ -128,3 +130,8 @@ production app maps those names to its Custom 1–4 columns and production files
   differ from the current `personalization_fields` metafield and defaults.
 - Confirm the production app will route generic `Bundle Hat` components using
   `_plate_product_handle`/`Plate Design`, or update that app's mapping if needed.
+- The parent bundle line carries all configured properties, including `Month`
+  and `Year`. The current Cart Transform copies only `Custom Text` and
+  `Custom Text Two` onto each expanded `Bundle Hat` row. Its app/function source
+  is outside this theme repository and must be updated separately to propagate
+  every name listed in `_plate_field_names` (including `Month` and `Year`).

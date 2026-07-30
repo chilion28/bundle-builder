@@ -80,6 +80,16 @@
 #cl-fxb-personalizer .cl-fxb__fields[hidden] { display: none !important; }
 #cl-fxb-personalizer .cl-fxb__fields-list { display: grid !important; gap: 14px !important; margin-top: 8px !important; }
 #cl-fxb-personalizer .cl-fxb__dynamic-field { position: relative !important; }
+#cl-fxb-personalizer .cl-fxb__dynamic-field[hidden] { display: none !important; }
+#cl-fxb-personalizer .cl-fxb__second-toggle {
+  display: flex !important; align-items: center !important; gap: 9px !important;
+  color: var(--ink) !important; font-size: 15px !important; cursor: pointer !important;
+  user-select: none !important;
+}
+#cl-fxb-personalizer .cl-fxb__second-toggle input {
+  width: 18px !important; height: 18px !important; margin: 0 !important;
+  accent-color: #00a0ea !important; cursor: pointer !important; flex: 0 0 auto !important;
+}
 #cl-fxb-personalizer .cl-fxb__combo { position: relative !important; }
 #cl-fxb-personalizer .cl-fxb__combo-input { cursor: text !important; }
 #cl-fxb-personalizer .cl-fxb__combo-menu {
