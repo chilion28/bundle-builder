@@ -21,9 +21,10 @@
     };
 
     try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
-    catch (error) { return; }
+    catch (error) { /* The URL payload below is the cross-page fallback. */ }
 
     window.location.href = (trigger.dataset.productUrl || '/products/3-hat-fixed-bundle-exclusive') +
-      '?edit_bundle=1&line_key=' + encodeURIComponent(payload.key);
+      '?edit_bundle=1&line_key=' + encodeURIComponent(payload.key) +
+      '&edit_data=' + encodeURIComponent(JSON.stringify(payload));
   });
 })();

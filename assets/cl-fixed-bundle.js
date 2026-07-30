@@ -98,11 +98,20 @@
 
   var cartEdit = null;
   var editLineKey = '';
-  if (new URLSearchParams(window.location.search).get('edit_bundle') === '1') {
-    editLineKey = new URLSearchParams(window.location.search).get('line_key') || '';
+  var editParams = new URLSearchParams(window.location.search);
+  if (editParams.get('edit_bundle') === '1') {
+    editLineKey = editParams.get('line_key') || '';
     try {
-      cartEdit = JSON.parse(window.sessionStorage.getItem(CART_EDIT_STORAGE_KEY) || 'null');
+      cartEdit = JSON.parse(editParams.get('edit_data') || 'null');
       if (!cartEdit || (editLineKey && cartEdit.key !== editLineKey)) cartEdit = null;
+    } catch (error) {
+      cartEdit = null;
+    }
+    try {
+      if (!cartEdit) {
+        cartEdit = JSON.parse(window.sessionStorage.getItem(CART_EDIT_STORAGE_KEY) || 'null');
+        if (!cartEdit || (editLineKey && cartEdit.key !== editLineKey)) cartEdit = null;
+      }
     } catch (error) {
       cartEdit = null;
     }
