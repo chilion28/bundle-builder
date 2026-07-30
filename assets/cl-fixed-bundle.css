@@ -1,0 +1,124 @@
+/* Fixed 3-Hat Bundle — personalizer styles. Self-contained (vars + box-sizing
+   scoped to the block) so it renders correctly inside a GemPages custom-code
+   block as well as the native section.
+
+   NOTE: every rule is scoped under #cl-fxb-personalizer (id → high specificity)
+   AND uses !important on the properties GemPages' global `.gps` reset overrides
+   (font, padding, margin, appearance, colour on inputs/selects/buttons). Both
+   together reliably beat GemPages inside its `.gps` wrapper. */
+
+#cl-fxb-personalizer.cl-fxb__personalizer {
+  --navy: #0e2a5e;
+  --ink: #12203a;
+  --line: #e1e3e6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+  background: #fff !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  color: var(--ink) !important;
+  max-width: 620px !important;
+  margin: 0 auto !important;
+}
+#cl-fxb-personalizer * { box-sizing: border-box !important; }
+
+#cl-fxb-personalizer .cl-fxb__form {
+  display: flex !important; flex-direction: column !important; gap: 14px !important; margin: 0 !important;
+}
+#cl-fxb-personalizer .cl-fxb__field {
+  display: flex !important; flex-direction: column !important; gap: 6px !important; position: relative !important;
+}
+#cl-fxb-personalizer .cl-fxb__field-label {
+  font-weight: 700 !important; font-size: 13px !important; color: var(--ink) !important; line-height: 1.3 !important;
+}
+#cl-fxb-personalizer .cl-fxb__select,
+#cl-fxb-personalizer .cl-fxb__input {
+  width: 100% !important;
+  border: 1px solid #c9cdd4 !important;
+  border-radius: 9px !important;
+  padding: 13px 14px !important;
+  font-size: 16px !important;
+  line-height: 1.3 !important;
+  background: #fff !important;
+  color: var(--ink) !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  margin: 0 !important;
+  height: auto !important;
+}
+#cl-fxb-personalizer .cl-fxb__select:focus,
+#cl-fxb-personalizer .cl-fxb__input:focus {
+  outline: 2px solid var(--navy) !important; outline-offset: 1px !important; border-color: var(--navy) !important;
+}
+#cl-fxb-personalizer .cl-fxb__count {
+  position: absolute !important; right: 2px !important; top: 0 !important; font-size: 12px !important; color: #8a92a3 !important;
+}
+#cl-fxb-personalizer .cl-fxb__select-wrap { position: relative !important; display: block !important; }
+#cl-fxb-personalizer .cl-fxb__select-wrap::after {
+  content: '' !important; position: absolute !important; right: 16px !important; top: 50% !important;
+  width: 8px !important; height: 8px !important; border-right: 2px solid var(--ink) !important;
+  border-bottom: 2px solid var(--ink) !important; transform: translateY(-70%) rotate(45deg) !important;
+  pointer-events: none !important;
+}
+#cl-fxb-personalizer .cl-fxb__select { padding-right: 42px !important; cursor: pointer !important; }
+#cl-fxb-personalizer .cl-fxb__design {
+  padding: 11px 13px !important; border: 1px solid #dbe2ed !important; border-radius: 9px !important;
+  background: #f7f9fc !important; display: grid !important; gap: 2px !important;
+}
+#cl-fxb-personalizer .cl-fxb__design[hidden] { display: none !important; }
+#cl-fxb-personalizer .cl-fxb__design-label {
+  color: #687389 !important; font-size: 11px !important; font-weight: 800 !important; letter-spacing: .05em !important;
+  text-transform: uppercase !important;
+}
+#cl-fxb-personalizer .cl-fxb__design strong { color: var(--ink) !important; font-size: 15px !important; }
+#cl-fxb-personalizer .cl-fxb__fields {
+  border: 0 !important; padding: 0 !important; margin: 0 !important; min-width: 0 !important;
+}
+#cl-fxb-personalizer .cl-fxb__fields[hidden] { display: none !important; }
+#cl-fxb-personalizer .cl-fxb__fields-list { display: grid !important; gap: 14px !important; margin-top: 8px !important; }
+#cl-fxb-personalizer .cl-fxb__dynamic-field { position: relative !important; }
+#cl-fxb-personalizer .cl-fxb__combo { position: relative !important; }
+#cl-fxb-personalizer .cl-fxb__combo-input { cursor: text !important; }
+#cl-fxb-personalizer .cl-fxb__combo-menu {
+  list-style: none !important; margin: 4px 0 0 !important; padding: 4px !important;
+  position: absolute !important; left: 0 !important; right: 0 !important; top: 100% !important; z-index: 50 !important;
+  background: #fff !important; border: 1px solid var(--line) !important; border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.14) !important; max-height: 260px !important; overflow-y: auto !important;
+}
+#cl-fxb-personalizer .cl-fxb__combo-menu[hidden] { display: none !important; }
+#cl-fxb-personalizer .cl-fxb__combo-item {
+  padding: 10px 12px !important; border-radius: 7px !important; font-size: 15px !important; color: var(--ink) !important;
+  cursor: pointer !important; line-height: 1.2 !important; list-style: none !important;
+}
+#cl-fxb-personalizer .cl-fxb__combo-item:hover,
+#cl-fxb-personalizer .cl-fxb__combo-item.is-active { background: #eef2fb !important; }
+#cl-fxb-personalizer .cl-fxb__combo-empty {
+  padding: 10px 12px !important; color: #8a92a3 !important; font-size: 14px !important; list-style: none !important;
+}
+
+#cl-fxb-personalizer .cl-fxb__preview-wrap {
+  position: relative !important; background: #f3f4f6 !important; border-radius: 10px !important; padding: 14px !important;
+  min-height: 150px !important; display: flex !important; align-items: center !important; justify-content: center !important;
+}
+#cl-fxb-personalizer .cl-fxb__preview-tag {
+  position: absolute !important; top: 10px !important; left: 10px !important; background: var(--navy) !important; color: #fff !important;
+  font-size: 11px !important; font-weight: 800 !important; letter-spacing: .06em !important; padding: 3px 8px !important; border-radius: 5px !important;
+  z-index: 9 !important;
+}
+#cl-fxb-personalizer .cl-fxb__preview { width: 100% !important; max-width: 420px !important; }
+#cl-fxb-personalizer .cl-fxb__zepto-hidden {
+  position: absolute !important; left: -10000px !important; top: auto !important;
+  width: 1px !important; height: 1px !important; overflow: hidden !important;
+  opacity: 0 !important; pointer-events: none !important;
+}
+#cl-fxb-personalizer .cl-fxb__cta {
+  width: 100% !important; margin: 4px 0 0 !important; background: #00a0ea !important; color: #fff !important;
+  border: 0 !important; border-radius: 10px !important; padding: 18px 20px !important; font-weight: 800 !important;
+  font-size: 18px !important; letter-spacing: .02em !important; cursor: pointer !important; line-height: 1.2 !important;
+  display: flex !important; align-items: center !important; justify-content: center !important; gap: 10px !important;
+  text-transform: none !important;
+}
+#cl-fxb-personalizer .cl-fxb__cta:hover { filter: brightness(1.08) !important; }

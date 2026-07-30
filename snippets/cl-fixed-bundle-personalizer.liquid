@@ -1,0 +1,57 @@
+{%- comment -%}
+  Fixed 3-Hat Bundle — personalizer block (state + design-driven fields + live preview +
+  AJAX add-to-cart). Self-contained: loads its own CSS/JS assets so it can be
+  dropped into a GemPages custom-code block OR rendered by the native section.
+
+  Usage: {% render 'cl-fixed-bundle-personalizer' %}
+  Optional: {% render 'cl-fixed-bundle-personalizer', cta_label: 'BUY NOW' %}
+{%- endcomment -%}
+
+{{ 'cl-pack-grid.css' | asset_url | stylesheet_tag }}
+{{ 'cl-fixed-bundle.css' | asset_url | stylesheet_tag }}
+
+<div class="cl-fxb__personalizer" id="cl-fxb-personalizer" data-product-id="{{ product.id }}">
+  {% form 'product', product, id: 'cl-fxb-form', class: 'cl-fxb__form' %}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+
+    <label class="cl-fxb__field">
+      <span class="cl-fxb__field-label">1 · Choose your state</span>
+      <span class="cl-fxb__select-wrap">
+        <select id="cl-fxb-state" class="cl-fxb__select" required>
+          <option value="">Select a state…</option>
+        </select>
+      </span>
+    </label>
+
+    <div id="cl-fxb-design" class="cl-fxb__design" hidden aria-live="polite">
+      <span class="cl-fxb__design-label">Featured plate design</span>
+      <strong id="cl-fxb-design-name"></strong>
+    </div>
+
+    <fieldset id="cl-fxb-fields" class="cl-fxb__fields" hidden>
+      <legend class="cl-fxb__field-label">2 · Personalize your plate</legend>
+      <div id="cl-fxb-fields-list" class="cl-fxb__fields-list"></div>
+    </fieldset>
+
+    {%- comment -%} Live inline preview — filled by window.CLPlatePreview. {%- endcomment -%}
+    <div class="cl-fxb__preview-wrap">
+      <span class="cl-fxb__preview-tag">PREVIEW</span>
+      <div id="cl-fxb-preview" class="cl-fxb__preview"></div>
+    </div>
+
+    {%- comment -%} Kept for Zepto compatibility; this bundle uses the source plate's
+      exact property names and the shared local preview rather than this mount. {%- endcomment -%}
+    <div id="pplr-{{ product.id }}"
+         data-id="{{ product.id }}"
+         data-handle="{{ product.handle }}"
+         class="product-personalizer cl-fxb__mount cl-fxb__zepto-hidden"></div>
+
+    <button type="submit" class="cl-fxb__cta" name="add">
+      {{ cta_label | default: 'CLAIM MY 3 HAT BUNDLE' }} <span aria-hidden="true">→</span>
+    </button>
+  {% endform %}
+</div>
+
+<script src="{{ 'cl-pack-grid.js' | asset_url }}" defer></script>
+<script src="{{ 'cl-fixed-bundle.js' | asset_url }}" defer></script>
