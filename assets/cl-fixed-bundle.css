@@ -132,3 +132,13 @@
   text-transform: none !important;
 }
 #cl-fxb-personalizer .cl-fxb__cta:hover { filter: brightness(1.08) !important; }
+#cl-fxb-personalizer .cl-fxb__editing-notice {
+  display: flex !important; justify-content: space-between !important; align-items: center !important; gap: 14px !important;
+  padding: 11px 13px !important; border: 1px solid #9bdcf7 !important; border-radius: 9px !important;
+  background: #eef9fe !important; color: var(--navy) !important; font-size: 14px !important; font-weight: 700 !important;
+}
+#cl-fxb-personalizer .cl-fxb__editing-cancel {
+  flex: none !important; border: 0 !important; background: none !important; color: #007bb5 !important;
+  padding: 2px !important; font: inherit !important; font-size: 13px !important;
+  text-decoration: underline !important; cursor: pointer !important;
+}

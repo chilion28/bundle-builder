@@ -25,6 +25,8 @@
         data-cl-fxb-edit
         data-line-key="{{ item.key | escape }}"
         data-line-quantity="{{ item.quantity }}"
+        data-product-id="{{ item.product.id }}"
+        data-product-url="{{ item.product.url | escape }}"
         data-plate-handle="{{ item.properties._plate_product_handle | escape }}"
         data-field-names="{{ item.properties._plate_field_names | escape }}"
         data-line-properties="{{ item.properties | json | escape }}">

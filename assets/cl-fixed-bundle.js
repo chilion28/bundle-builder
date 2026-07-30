@@ -7,6 +7,8 @@
 (function () {
   'use strict';
 
+  var CART_EDIT_STORAGE_KEY = 'cl-fixed-bundle-cart-edit';
+
   var FIELD_DEFAULTS = {
     'Month':             { maxLength: 3,  placeholder: 'MONTH', required: true },
     'Year':              { maxLength: 4,  placeholder: 'YEAR', required: true },
@@ -93,6 +95,16 @@
   if (!stateSelect || !fieldsList || !previewEl || !form) return;
   if (stateSelect.dataset.clInit === '1') return;
   stateSelect.dataset.clInit = '1';
+
+  var cartEdit = null;
+  if (new URLSearchParams(window.location.search).get('edit_bundle') === '1') {
+    try {
+      cartEdit = JSON.parse(window.sessionStorage.getItem(CART_EDIT_STORAGE_KEY) || 'null');
+      if (!cartEdit || String(cartEdit.productId) !== String(form.closest('[data-product-id]') && form.closest('[data-product-id]').dataset.productId)) cartEdit = null;
+    } catch (error) {
+      cartEdit = null;
+    }
+  }
 
   Object.keys(STATE_DESIGNS).sort().forEach(function (state) {
     var option = document.createElement('option');
@@ -218,12 +230,13 @@
 
     /* Public properties are visible to staff/customers. Underscored properties
      * remain on the order for integrations while staying out of cart displays. */
-    var properties = {
-      'Plate State': stateSelect.value,
-      'Plate Design': cfg.title,
-      '_plate_product_handle': cfg.handle,
-      '_plate_field_names': cfg.fields.join('|')
-    };
+    var properties = cartEdit ? Object.assign({}, cartEdit.properties || {}) : {};
+    var oldFields = cartEdit && Array.isArray(cartEdit.fieldNames) ? cartEdit.fieldNames : [];
+    oldFields.concat(Object.keys(FIELD_DEFAULTS)).forEach(function (name) { delete properties[name]; });
+    properties['Plate State'] = stateSelect.value;
+    properties['Plate Design'] = cfg.title;
+    properties['_plate_product_handle'] = cfg.handle;
+    properties['_plate_field_names'] = cfg.fields.join('|');
     cfg.fields.forEach(function (name) {
       if (values[name]) properties[name] = values[name];
     });
@@ -231,15 +244,26 @@
     var original = cta.innerHTML;
     cta.disabled = true;
     cta.textContent = 'Adding…';
-    fetch('/cart/add.js', {
+    var editing = cartEdit && cartEdit.key;
+    var endpoint = editing ? '/cart/change.js' : '/cart/add.js';
+    var payload = editing ? {
+      id: cartEdit.key,
+      quantity: parseInt(cartEdit.quantity, 10) || 1,
+      properties: properties
+    } : { id: variantInput.value, quantity: 1, properties: properties };
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: variantInput.value, quantity: 1, properties: properties })
+      body: JSON.stringify(payload)
     }).then(function (response) {
       if (!response.ok) throw new Error('add failed');
       cta.disabled = false;
       cta.innerHTML = original;
-      if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') window.AMP_API.OPEN_CART();
+      if (editing) {
+        window.sessionStorage.removeItem(CART_EDIT_STORAGE_KEY);
+        window.location.href = '/cart';
+      }
+      else if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') window.AMP_API.OPEN_CART();
       else window.location.href = '/cart';
     }).catch(function () {
       cta.disabled = false;
@@ -256,7 +280,34 @@
     if (event.target && event.target.id === 'cl-fxb-form') addToCart(event);
   }, true);
 
-  renderFields(null);
+  if (cartEdit && cartEdit.properties && STATE_DESIGNS[cartEdit.properties['Plate State']]) {
+    stateSelect.value = cartEdit.properties['Plate State'];
+    renderFields(activeDesign());
+    fieldsList.querySelectorAll('[data-cl-property-name]').forEach(function (input) {
+      var name = input.getAttribute('data-cl-property-name');
+      input.value = cartEdit.properties[name] || '';
+      updateCount(input);
+    });
+    var secondToggle = fieldsList.querySelector('[data-cl-second-line-toggle]');
+    var secondField = fieldsList.querySelector('[data-cl-second-line-field]');
+    if (secondToggle && secondField) {
+      secondToggle.checked = !!cartEdit.properties['Custom Text Two'];
+      secondField.hidden = !secondToggle.checked;
+    }
+    var notice = document.createElement('div');
+    notice.className = 'cl-fxb__editing-notice';
+    notice.innerHTML = '<span>Editing bundle from your cart</span><button type="button" class="cl-fxb__editing-cancel">Cancel</button>';
+    form.insertBefore(notice, form.firstChild);
+    notice.querySelector('.cl-fxb__editing-cancel').addEventListener('click', function () {
+      window.sessionStorage.removeItem(CART_EDIT_STORAGE_KEY);
+      window.location.href = '/cart';
+    });
+    var editCta = form.querySelector('.cl-fxb__cta');
+    if (editCta) editCta.innerHTML = 'SAVE CHANGES <span aria-hidden="true">→</span>';
+    renderPreview();
+  } else {
+    renderFields(null);
+  }
   var tries = 0;
   var timer = setInterval(function () {
     tries++;
