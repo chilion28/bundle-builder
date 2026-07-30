@@ -86,6 +86,11 @@ production app maps those names to its Custom 1–4 columns and production files
 - The preview calls `window.CLPlatePreview(previewEl, productHandle, values)`.
 - The cart breakdown loops over all public properties instead of hardcoding two
   text fields.
+- Eligible parent bundle lines show `Edit personalization` in the cart. The
+  editor reopens the exact configured fields with their current values and live
+  plate preview, then updates the same cart line through `/cart/change.js`
+  without changing its quantity. One edit therefore applies to every unit on
+  that parent line; different text requires a separate bundle line.
 
 ## Validation completed locally
 

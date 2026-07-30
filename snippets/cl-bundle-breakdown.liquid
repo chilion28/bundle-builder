@@ -18,6 +18,20 @@
       {%- endif -%}
     {%- endfor -%}
 
+    {%- if item.properties._plate_product_handle != blank -%}
+      <button
+        type="button"
+        class="cl-bd__edit"
+        data-cl-fxb-edit
+        data-line-key="{{ item.key | escape }}"
+        data-line-quantity="{{ item.quantity }}"
+        data-plate-handle="{{ item.properties._plate_product_handle | escape }}"
+        data-field-names="{{ item.properties._plate_field_names | escape }}"
+        data-line-properties="{{ item.properties | json | escape }}">
+        Edit personalization
+      </button>
+    {%- endif -%}
+
     <button type="button" class="cl-bd__toggle" data-cl-bd-toggle aria-expanded="true">
       <span class="cl-bd__toggle-text">Hide {{ bundle_components.size }} items</span>
       <svg class="cl-bd__chevron" width="14" height="14" viewBox="0 0 20 20" aria-hidden="true">

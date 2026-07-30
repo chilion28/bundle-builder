@@ -32,6 +32,10 @@
   .cart-item--content:has(.cl-bd) .pplr_properties { display: none !important; }
 </style>
 
+{{ 'cl-fixed-bundle-cart-editor.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'cl-pack-grid.js' | asset_url }}" defer></script>
+<script src="{{ 'cl-fixed-bundle-cart-editor.js' | asset_url }}" defer></script>
+
 <script>
   (function () {
     // Delegated toggle so it survives the cart's Vue mount / partial reloads.
