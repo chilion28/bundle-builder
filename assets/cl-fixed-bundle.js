@@ -99,6 +99,35 @@
   var cartEdit = null;
   var editLineKey = '';
   var editParams = new URLSearchParams(window.location.search);
+  function usableCartEdit(edit) {
+    return !!(edit && edit.properties && STATE_DESIGNS[edit.properties['Plate State']]);
+  }
+  function cartEditFromParams() {
+    var state = editParams.get('edit_state') || '';
+    if (!STATE_DESIGNS[state]) return null;
+    var fieldNames = [];
+    var properties = {
+      'Plate State': state,
+      'Plate Design': editParams.get('edit_design') || STATE_DESIGNS[state].title,
+      '_plate_product_handle': editParams.get('edit_handle') || STATE_DESIGNS[state].handle
+    };
+    for (var index = 0; index < 4; index++) {
+      var name = editParams.get('edit_field_' + index);
+      if (!name) continue;
+      fieldNames.push(name);
+      var value = editParams.get('edit_value_' + index) || '';
+      if (value) properties[name] = value;
+    }
+    if (!fieldNames.length) fieldNames = STATE_DESIGNS[state].fields.slice();
+    properties._plate_field_names = fieldNames.join('|');
+    return {
+      key: editLineKey,
+      quantity: parseInt(editParams.get('edit_quantity'), 10) || 1,
+      properties: properties,
+      fieldNames: fieldNames,
+      handle: properties._plate_product_handle
+    };
+  }
   if (editParams.get('edit_bundle') === '1') {
     editLineKey = editParams.get('line_key') || '';
     try {
@@ -115,6 +144,7 @@
     } catch (error) {
       cartEdit = null;
     }
+    if (!usableCartEdit(cartEdit)) cartEdit = cartEditFromParams();
   }
 
   Object.keys(STATE_DESIGNS).sort().forEach(function (state) {
