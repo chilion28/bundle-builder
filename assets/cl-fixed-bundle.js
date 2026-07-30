@@ -97,10 +97,12 @@
   stateSelect.dataset.clInit = '1';
 
   var cartEdit = null;
+  var editLineKey = '';
   if (new URLSearchParams(window.location.search).get('edit_bundle') === '1') {
+    editLineKey = new URLSearchParams(window.location.search).get('line_key') || '';
     try {
       cartEdit = JSON.parse(window.sessionStorage.getItem(CART_EDIT_STORAGE_KEY) || 'null');
-      if (!cartEdit || String(cartEdit.productId) !== String(form.closest('[data-product-id]') && form.closest('[data-product-id]').dataset.productId)) cartEdit = null;
+      if (!cartEdit || (editLineKey && cartEdit.key !== editLineKey)) cartEdit = null;
     } catch (error) {
       cartEdit = null;
     }
@@ -280,7 +282,12 @@
     if (event.target && event.target.id === 'cl-fxb-form') addToCart(event);
   }, true);
 
-  if (cartEdit && cartEdit.properties && STATE_DESIGNS[cartEdit.properties['Plate State']]) {
+  function applyCartEdit(edit) {
+    cartEdit = edit;
+    if (!cartEdit || !cartEdit.properties || !STATE_DESIGNS[cartEdit.properties['Plate State']]) {
+      renderFields(null);
+      return;
+    }
     stateSelect.value = cartEdit.properties['Plate State'];
     renderFields(activeDesign());
     fieldsList.querySelectorAll('[data-cl-property-name]').forEach(function (input) {
@@ -305,6 +312,38 @@
     var editCta = form.querySelector('.cl-fxb__cta');
     if (editCta) editCta.innerHTML = 'SAVE CHANGES <span aria-hidden="true">→</span>';
     renderPreview();
+  }
+
+  if (cartEdit) {
+    applyCartEdit(cartEdit);
+  } else if (editLineKey) {
+    previewEl.innerHTML = '<div class="cl-perso-empty">Loading your customization…</div>';
+    fetch('/cart.js', { headers: { 'Accept': 'application/json' } })
+      .then(function (response) {
+        if (!response.ok) throw new Error('cart load failed');
+        return response.json();
+      })
+      .then(function (cart) {
+        var item = (cart.items || []).find(function (candidate) { return candidate.key === editLineKey; });
+        if (!item || !item.properties) throw new Error('bundle line missing');
+        var properties = item.properties;
+        applyCartEdit({
+          key: item.key,
+          quantity: item.quantity || 1,
+          productId: String(item.product_id || ''),
+          properties: properties,
+          fieldNames: String(properties._plate_field_names || '').split('|').filter(Boolean),
+          handle: properties._plate_product_handle || ''
+        });
+      })
+      .catch(function () {
+        renderFields(null);
+        var message = document.createElement('div');
+        message.className = 'cl-fxb__editing-notice';
+        message.innerHTML = '<span>We could not load that cart customization.</span><button type="button" class="cl-fxb__editing-cancel">Return to cart</button>';
+        form.insertBefore(message, form.firstChild);
+        message.querySelector('button').addEventListener('click', function () { window.location.href = '/cart'; });
+      });
   } else {
     renderFields(null);
   }

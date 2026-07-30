@@ -23,6 +23,7 @@
     try { window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
     catch (error) { return; }
 
-    window.location.href = (trigger.dataset.productUrl || '/products/3-hat-fixed-bundle-exclusive') + '?edit_bundle=1';
+    window.location.href = (trigger.dataset.productUrl || '/products/3-hat-fixed-bundle-exclusive') +
+      '?edit_bundle=1&line_key=' + encodeURIComponent(payload.key);
   });
 })();
