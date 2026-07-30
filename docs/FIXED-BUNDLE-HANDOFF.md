@@ -24,8 +24,10 @@ The implementation deliberately preserves the existing two-product setup:
    - Contains the available style/size/color combinations.
    - Tracks inventory per physical variant.
 3. **Cart Transform:** expands one parent cart line into the three configured
-   component variants at checkout. Its app/function source is not in this theme
-   repository and was not changed.
+   component variants at checkout. Its source is in the sibling
+   `Custom App/citylocs-functions/extensions/bundle-cart-transform` project.
+   Commit `ab2ebcf` was released during this project; it fixes parent-quantity
+   multiplication and copies all plate/customization properties to each child.
 
 ## Plate-product relationship
 
@@ -65,8 +67,11 @@ production app maps those names to its Custom 1–4 columns and production files
 
 - `assets/cl-fixed-bundle.js`
 - `assets/cl-fixed-bundle.css`
+- `assets/cl-fixed-bundle-cart-editor.js`
+- `assets/cl-fixed-bundle-cart-editor.css`
 - `snippets/cl-fixed-bundle-personalizer.liquid`
 - `snippets/cl-bundle-breakdown.liquid`
+- `snippets/cart-item-list.liquid`
 - `sections/cl-fixed-bundle.liquid`
 - `templates/product.fixed-bundle.liquid`
 - `docs/FIXED-BUNDLE-HANDOFF.md`
@@ -93,6 +98,15 @@ production app maps those names to its Custom 1–4 columns and production files
   line through `/cart/change.js` without changing its quantity. One edit
   therefore applies to every unit on that parent line; different text requires
   a separate bundle line.
+- The edit link includes the cart line key plus explicit URL parameters for the
+  state, design, quantity, ordered field names, and values. It also retains a
+  JSON/session-storage fallback. Explicit per-field `data-*` attributes are
+  intentional: Shopify Liquid's serialized `item.properties` did not survive
+  reliably inside the button dataset during storefront testing.
+- Supported explicit edit-transfer fields are `Custom Text`, `Custom Text One`,
+  `Custom Text Two`, `Custom Text Three`, `Custom Text Four`, `Month`, and
+  `Year`. Keep these names synchronized with `FIELD_DEFAULTS` and the production
+  app if the property contract changes.
 
 ## Validation completed locally
 
@@ -105,14 +119,16 @@ production app maps those names to its Custom 1–4 columns and production files
   California renders four exact fields and the 60's plate preview; Texas replaces
   them with its two exact fields and the Texas Black Plate preview.
 
-## Test theme and template assignment
+## Deployment status
 
 - Unpublished theme: `Fixed Bundle Test 2026-07-30` (`153264947288`)
-- The parent product must use the `fixed-bundle` product template before launch.
-- Until that assignment is made, append `?view=fixed-bundle` to the product URL
-  when testing the template explicitly.
+- Live theme: `OG-Empire` (`121696682072`)
+- The focused bundle files were deployed to the live theme on 2026-07-30.
+- The parent product is reachable at
+  `/products/3-hat-fixed-bundle-exclusive` using the fixed-bundle experience.
+- Incognito smoke testing passed after the production deployment.
 
-## Required test-theme validation
+## Completed acceptance validation
 
 1. Select California and confirm four fields appear:
    `Custom Text`, `Custom Text Two`, `Month`, and `Year`.
@@ -125,8 +141,28 @@ production app maps those names to its Custom 1–4 columns and production files
    cosmetic component row.
 7. Continue to checkout and confirm Cart Transform expands the three exact
    variants configured in `custom.bundle_components`.
-8. Place representative test orders and verify the production app receives the
-   expected Custom 1–4 values, tag, and Illustrator template.
+8. Quantity 2 produces six component hats, remains $120 total, and does not
+   double-multiply component quantities.
+9. Month and Year propagate to the component line items.
+10. Edit personalization restores state, design, exact text fields, counters,
+    and preview; Save Changes updates the existing cart line while preserving
+    quantity and price.
+
+The four final production acceptance cases (edit/save, one $60 bundle line,
+updated properties on all three hats, and checkout display) passed, followed by
+an incognito live-store smoke test.
+
+## Focused theme commit history
+
+- `d63eca8` — Build fixed bundle personalization engine
+- `dbd3ab2` — Add optional second-line toggle
+- `bcc5c43` — Document Cart Transform bundle fix
+- `755c205` — Add fixed bundle cart personalization editor
+- `be5b2a3` — Move bundle cart edits to product builder
+- `2147264` — Load cart edit data from cart line
+- `0369fe2` — Fix fixed-bundle edit prefill redirect
+- `5d9489d` — Make bundle edit prefill deterministic
+- `b26498e` — Pass bundle edit fields explicitly
 
 ## Business-data review still required
 
@@ -137,9 +173,6 @@ production app maps those names to its Custom 1–4 columns and production files
   differ from the current `personalization_fields` metafield and defaults.
 - Confirm the production app will route generic `Bundle Hat` components using
   `_plate_product_handle`/`Plate Design`, or update that app's mapping if needed.
-- The Cart Transform source lives in the sibling
-  `Custom App/citylocs-functions/extensions/bundle-cart-transform` project.
-  Commit `ab2ebcf` fixes the multi-bundle quantity multiplier and propagates
-  `Plate State`, `Plate Design`, `Month`, `Year`, and Custom Text 1–4 onto every
-  expanded component. That app version must be released before checkout will
-  reflect the corrected quantities, price, and component properties.
+- If field names are added or renamed, update the production app, Cart Transform
+  propagation allowlist, `FIELD_DEFAULTS`, and the explicit cart-edit transfer
+  attributes together.
