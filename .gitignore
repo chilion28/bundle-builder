@@ -1,5 +1,12 @@
 .DS_Store
-.env.admin-api
+
+# Admin API credentials — never commit. Covers .env.admin-api and its per-sandbox
+# token variants (e.g. .env.admin-api.sb-xxxx). The .example template is safe to keep.
+.env.admin-api*
+!.env.admin-api.example
+
+# Local backups / scratch — not part of the theme
+.cl-backups/
 
 # Generated AI Hat order reports — contain live order data, never commit
 scripts/out/

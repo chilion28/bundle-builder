@@ -14,7 +14,7 @@
       <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
 
 
-        <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.js"></script>
+        <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
         {% comment %} <script src="https://unpkg.com/v3-infinite-loading@1.0.6/lib/v3-infinite-loading.umd.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/v3-infinite-loading@1.0.6/lib/style.css" /> {% endcomment %}
    
@@ -82,6 +82,19 @@
       <link rel="preload" href="{{ settings.type_menu | font_url }}" as="font" crossorigin="anonymous">
       <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
       <link rel="preload" as="style" href="{{ 'citylocs.css' | asset_url }}">
+      {% if template.name == 'cart' %}
+        <script>
+          // Shopify can append logged_in=true when a customer returns from checkout.
+          // Remove it before app embeds initialize; GemX otherwise reloads this URL indefinitely.
+          (function () {
+            var url = new URL(window.location.href);
+            if (!url.searchParams.has('logged_in')) return;
+
+            url.searchParams.delete('logged_in');
+            window.history.replaceState(window.history.state, '', url.pathname + url.search + url.hash);
+          })();
+        </script>
+      {% endif %}
       {{ content_for_header }}
   
       {{ 'theme.css' | asset_url | stylesheet_tag }}
@@ -833,5 +846,6 @@
 </style>
 {% render 'cl-bundle-cart' %}
 {% render 'cl-amp-milestone' %}
+{% render 'cl-builder-product-guard' %}
 </body>
   </html>

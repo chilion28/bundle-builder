@@ -29,7 +29,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ENV_FILE = path.join(ROOT, '.env.admin-api');
 const PORT = 3456;
 const REDIRECT = `http://localhost:${PORT}/auth/callback`;
-const SCOPES = 'read_orders';
+const SCOPES = 'read_orders,read_products';
 
 function loadEnv(file) {
   const env = {};

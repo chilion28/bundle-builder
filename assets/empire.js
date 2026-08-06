@@ -351,6 +351,14 @@ class VariantSelection extends HTMLElement {
   _fetchProduct() {
     return fetch(this.getAttribute('product-url')).then(response => response.json()).then(product => {
       this._product = product;
+
+      if (!product.variants.some(variant => variant.id.toString() === this.variant) && product.variants.length) {
+        const fallbackVariant = product.variants.find(variant => variant.available) || product.variants[0];
+        window.setTimeout(() => {
+          this.variant = fallbackVariant.id.toString();
+        }, 0);
+      }
+
       return product;
     }).catch(() => {
       this._product = null;
@@ -615,7 +623,9 @@ function updateOptions(product, selectOptions, radioOptions, selectedOptions, di
         optionValue.dataset.variantOptionAccessible = accessible;
         optionValue.dataset.variantOptionAvailable = available;
 
-        if (!removeUnavailableOptions || accessible || isChooseOption) {
+        const exists = value in optionsAccessibility[i];
+
+        if ((!removeUnavailableOptions && exists) || accessible || isChooseOption) {
           fragment.insertBefore(wrapper, fragment.firstElementChild);
         }
       }
@@ -35929,12 +35939,15 @@ class LiveSearch {
       el.style.setProperty('--live-search-takeover-initial-width', `${width}px`);
       el.parentNode.style.height = `${el.parentNode.getBoundingClientRect().height}px`;
       this.animationTakeover.animateTo('open', {
-        force: this.disableAnimations
+        // Mobile Safari can leave the takeover transition's internal state out
+        // of sync with its DOM classes after closing. Complete mobile takeover
+        // transitions synchronously so every subsequent open starts cleanly.
+        force: this.disableAnimations || Layout.isLessThanBreakpoint('S')
       });
     } else {
       // "Slide up" style
       this.animationTakeover.animateTo('open', {
-        force: this.disableAnimations,
+        force: this.disableAnimations || Layout.isLessThanBreakpoint('S'),
         hold: true
       });
     }
@@ -35950,7 +35963,7 @@ class LiveSearch {
     }
 
     this.animationTakeover.animateTo('closed', {
-      force: this.disableAnimations
+      force: this.disableAnimations || Layout.isLessThanBreakpoint('S')
     }).then(() => {
       ScrollLock.unlock();
       document.body.classList.remove('search-takeover-active');

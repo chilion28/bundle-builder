@@ -51,7 +51,7 @@
               const productGet = await axios.get("{{ product.handle }}.js");
 
               productGet.data.variants.forEach((prodEl, idx) => {
-                if( prodEl.inventory_management != "shopify" || 
+                if( prodEl.inventory_management != "shopify" ||
                   (prodEl.inventory_management == "shopify" && prodEl.inventory_quantity > 0) ) {
                   variant.value.push(prodEl);
                 }
@@ -489,4 +489,3 @@
     productForm.mount('#add-to-cart-form')
   }
 </script>
-

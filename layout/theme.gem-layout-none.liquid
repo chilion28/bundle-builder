@@ -21,7 +21,7 @@
       <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
   
 
-        <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.js"></script>
+        <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
         {% comment %} <script src="https://unpkg.com/v3-infinite-loading@1.0.6/lib/v3-infinite-loading.umd.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/v3-infinite-loading@1.0.6/lib/style.css" /> {% endcomment %}
    
@@ -430,5 +430,6 @@
           margin-right: 5px;
         }
       </style>
+{% render 'cl-builder-product-guard' %}
 </body>
   </html>

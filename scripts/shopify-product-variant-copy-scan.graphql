@@ -1,0 +1,88 @@
+query ProductVariantCopyScan($sourceId: ID!, $destinationId: ID!) {
+  source: product(id: $sourceId) {
+    id
+    title
+    handle
+    options {
+      id
+      name
+      position
+      optionValues {
+        id
+        name
+        hasVariants
+      }
+    }
+    variants(first: 250) {
+      nodes {
+        id
+        title
+        sku
+        selectedOptions { name value }
+        price
+        compareAtPrice
+        barcode
+        taxable
+        inventoryPolicy
+        image { id url altText }
+        inventoryItem {
+          id
+          tracked
+          requiresShipping
+          measurement { weight { value unit } }
+          inventoryLevels(first: 100) {
+            nodes {
+              location { id }
+              quantities(names: ["available"]) { name quantity }
+            }
+            pageInfo { hasNextPage }
+          }
+        }
+      }
+      pageInfo { hasNextPage endCursor }
+    }
+  }
+  destination: product(id: $destinationId) {
+    id
+    title
+    handle
+    options {
+      id
+      name
+      position
+      optionValues {
+        id
+        name
+        hasVariants
+      }
+    }
+    variants(first: 250) {
+      nodes {
+        id
+        title
+        sku
+        selectedOptions { name value }
+        price
+        compareAtPrice
+        barcode
+        taxable
+        inventoryPolicy
+        image { id url altText }
+        inventoryItem {
+          id
+          tracked
+          requiresShipping
+          measurement { weight { value unit } }
+          inventoryLevels(first: 100) {
+            nodes {
+              location { id }
+              quantities(names: ["available"]) { name quantity }
+            }
+            pageInfo { hasNextPage }
+          }
+        }
+      }
+      pageInfo { hasNextPage endCursor }
+    }
+  }
+}

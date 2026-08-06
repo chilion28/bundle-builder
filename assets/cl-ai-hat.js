@@ -19,9 +19,28 @@
    * Settings ▸ Upload ▸ Add upload preset (Unsigned) → its name (uploadPreset).
    * ===================================================================== */
   var CL_AI_HAT = {
+    // Which storage backend receives the print/original/preview files.
+    // 'cloudinary' (default, battle-tested) | 'cloudflare' (R2 via the Vercel
+    // /api/upload endpoint). This is the ONLY switch: flip it to move providers,
+    // flip it back to roll straight back to Cloudinary. See storageReady()/
+    // providerUpload() below — everything downstream (order props, PDF link,
+    // dashboard) is identical regardless of provider.
+    storage: 'cloudflare',
+
+    // --- Cloudinary (unsigned browser upload) ---
     cloudName: 'ycnncucq',
     uploadPreset: 'ai_hat_unsigned',
     // NOTE: never put api_key / api_secret here — unsigned uploads don't need them.
+
+    // --- Cloudflare (R2) ---
+    // The Vercel serverless route that accepts the blob, PutObject's it to R2 and
+    // returns { url }. It is ALSO responsible for writing a '.pdf' sibling next to
+    // the print '.png' (same key, .pdf extension) so the printUrl.replace(...)
+    // contract below holds for both providers with no client branching.
+    // The Vercel /api/upload route (citylocs-dashboard project). Set, but only
+    // used when storage === 'cloudflare' above.
+    cloudflareUploadUrl: 'https://citylocs-dashboard.vercel.app/api/upload',
+
     // Physical patch size is per-shape — see PATCH_IN below (production spec).
     targetDpi: 300,
     maxFileMB: 25,
@@ -31,10 +50,51 @@
     return CL_AI_HAT.cloudName && CL_AI_HAT.cloudName !== 'YOUR_CLOUD_NAME' &&
            CL_AI_HAT.uploadPreset && CL_AI_HAT.uploadPreset !== 'YOUR_PRESET';
   }
+  function cloudflareReady() {
+    return /^https?:\/\//.test(CL_AI_HAT.cloudflareUploadUrl || '');
+  }
+  // Is the SELECTED provider configured and ready to store files? Drives the
+  // local-preview fallback in uploadArtwork() the same way for either backend.
+  function storageReady() {
+    return CL_AI_HAT.storage === 'cloudflare' ? cloudflareReady() : cloudinaryReady();
+  }
 
   var root = document.querySelector('[data-cl-ai-builder]');
   if (!root || root.dataset.clInit === '1') return;
   root.dataset.clInit = '1';
+  // Per-product stored-file prefix (image-hat, image-pendant, …). getAttribute, not
+  // dataset — a hyphenated data-cl-ai-* attr maps to dataset.clAiX, an easy trap.
+  var filePrefix = (root.getAttribute('data-cl-ai-file-prefix') || 'image-hat').replace(/[^a-z0-9-]/gi, '') || 'image-hat';
+
+  /* ---- config-driven per-shape geometry (optional) ----
+   * A product can carry its own patch geometry via a [data-cl-ai-config] JSON
+   * block (emitted by the builder snippet's config_json param — the seam a
+   * Shopify metaobject/metafield will feed later). Any shape defined here MERGES
+   * OVER the hardcoded per-shape maps below, so unassigned products (the hat)
+   * keep their built-in geometry as the fallback. Shape:
+   *   { "shapes": { "pendant": { "window": {l,t,w,h}, "frame_aspect": n,
+   *       "safe": {w,h}, "patch_in": {w,h}, "usable": n, "text_y": n, "text_maxw": n } } }
+   */
+  // Normalize a shape name to a lookup slug: lowercase, all spaces/punctuation
+  // stripped. So a display name like "Swap Patch" and its config key stay in sync,
+  // and a space can never break the `data-mask-<shape>` attribute wiring. Every
+  // shape→key/attribute lookup in the engine goes through this.
+  function sh(x) { return String(x == null ? '' : x).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+  var cfgShapes = {};
+  try {
+    var cfgEl = document.querySelector('[data-cl-ai-config]');
+    if (cfgEl && cfgEl.textContent.trim()) { cfgShapes = (JSON.parse(cfgEl.textContent) || {}).shapes || {}; }
+  } catch (e) { cfgShapes = {}; }
+  // Merge one config field into a per-shape map (config wins; missing = keep hardcoded).
+  function applyShapeCfg(map, field) {
+    for (var s in cfgShapes) {
+      if (Object.prototype.hasOwnProperty.call(cfgShapes, s) && cfgShapes[s] && cfgShapes[s][field] != null) {
+        map[sh(s)] = cfgShapes[s][field];
+      }
+    }
+    return map;
+  }
 
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
@@ -55,7 +115,9 @@
   var state = {
     style: (($('[data-cl-ai-style].is-active') || {}).dataset || {}).value || null,
     color: (($('[data-cl-ai-color].is-active') || {}).dataset || {}).value || null,
-    shape: 'Rectangle',
+    // Default shape: hat = Rectangle; single-shape products (e.g. pendant) set it
+    // on the builder root so there's no shape selector to read from.
+    shape: (root && root.getAttribute('data-cl-ai-default-shape')) || 'Rectangle',
     text: '',
     textFill: '#000000',       // caption colour (full picker)
     textOutline: 'white',      // caption outline: 'white' | 'black' | 'none'
@@ -82,7 +144,7 @@
     hexagon:   'Make a WIDE LANDSCAPE image, about 1792 x 1024 pixels (roughly 16:9).\n' +
                'Fill the ENTIRE rectangle, edge to edge. Do NOT make a square image.',
     // window 1.26 — only slightly wider than tall
-    rounded:   'Make a LANDSCAPE image, about 1536 x 1024 pixels (3:2).\n' +
+    square:   'Make a LANDSCAPE image, about 1536 x 1024 pixels (3:2).\n' +
                'Fill the ENTIRE rectangle, edge to edge. Do NOT make a square image.',
     // window 1.0 — exact square
     circle:    'Make a SQUARE image, 1024 x 1024 pixels.\n' +
@@ -93,7 +155,7 @@
   var promptTemplate = promptEl ? promptEl.textContent : '';
   function syncPrompt() {
     if (!promptEl || promptTemplate.indexOf('[[SIZE]]') === -1) return;
-    var guide = PROMPT_SIZE[String(state.shape).toLowerCase()] || PROMPT_SIZE.rectangle;
+    var guide = PROMPT_SIZE[sh(state.shape)] || PROMPT_SIZE.rectangle;
     promptEl.textContent = promptTemplate.replace(/\[\[SIZE\]\]/g, guide);
   }
   var copyBtn = $('[data-cl-ai-copy]');
@@ -273,7 +335,13 @@
   var edBg = $('[data-cl-ai-ed-bg]');
   // Reuse the Step-2 preview's frame PNG URLs (already rendered with asset_url).
   function currentFrameSrc() {
-    var f = document.querySelector('.cl-ai-pf__frame[data-frame="' + String(state.shape).toLowerCase() + '"]');
+    var shape = sh(state.shape);
+    // Config-driven products use arbitrary Shopify Files names, so a frame URL
+    // cannot be derived from the mask filename. The snippet emits both URLs as
+    // stable data attributes; this also avoids theme lazy-loader rewrites.
+    var configured = patchframe ? patchframe.getAttribute('data-frame-' + shape) : '';
+    if (configured) return configured;
+    var f = document.querySelector('.cl-ai-pf__frame[data-frame="' + shape + '"]');
     return f ? f.getAttribute('src') : '';
   }
   // Pixel-perfect window masks (derived from the frames): apply to the preview art
@@ -281,11 +349,22 @@
   var maskUrl = function (shape) { return patchframe ? patchframe.getAttribute('data-mask-' + shape) : null; };
   function setPatchMask() {
     if (!pfArt) return;
-    var url = maskUrl(String(state.shape).toLowerCase());
+    var url = maskUrl(sh(state.shape));
     if (url) { pfArt.style.webkitMaskImage = 'url("' + url + '")'; pfArt.style.maskImage = 'url("' + url + '")'; }
   }
+  // Shapes actually present = the data-mask-<shape> attributes the snippet emitted
+  // (one per shape, already slugged). Derived, NOT hardcoded, so a config-driven
+  // shape (e.g. a new patch type) preloads its mask/frame for export like any other.
+  var SHAPE_KEYS = [];
+  if (patchframe) {
+    Array.prototype.forEach.call(patchframe.attributes, function (a) {
+      if (a.name.indexOf('data-mask-') === 0) SHAPE_KEYS.push(a.name.slice(10));
+    });
+  }
+  if (!SHAPE_KEYS.length) SHAPE_KEYS = ['rectangle', 'square', 'circle', 'hexagon'];
+
   var edMasks = {};
-  ['rectangle', 'rounded', 'circle', 'hexagon'].forEach(function (s) {
+  SHAPE_KEYS.forEach(function (s) {
     var u = maskUrl(s); if (u) { var im = new Image(); im.src = u; edMasks[s] = im; }
   });
 
@@ -293,7 +372,7 @@
   // onto a canvas taints it and toBlob() then throws. Kept apart from the display
   // copies above so a missing CORS header can never break the editor itself.
   var exportMasks = {}, exportFrames = {};
-  ['rectangle', 'rounded', 'circle', 'hexagon'].forEach(function (s) {
+  SHAPE_KEYS.forEach(function (s) {
     var mu = maskUrl(s);
     if (mu) { var mi = new Image(); mi.crossOrigin = 'anonymous'; mi.src = mu; exportMasks[s] = mi; }
     var fEl = document.querySelector('.cl-ai-pf__frame[data-frame="' + s + '"]');
@@ -303,23 +382,27 @@
   // Artwork composited inside the real patch frame — the visual reference of the
   // finished patch for production/CS. Null if the frame isn't usable for export.
   function buildPreviewCanvas(printCanvas) {
-    var shape = String(state.shape).toLowerCase();
+    var shape = sh(state.shape);
     var win = WINDOW[shape] || WINDOW.rectangle;
     var frame = exportFrames[shape], mask = exportMasks[shape];
     if (!frame || !frame.complete || !frame.naturalWidth) return null;
-    var S = 1200;
-    var dx = win.l * S, dy = win.t * S, dw = win.w * S, dh = win.h * S;
-    var art = document.createElement('canvas'); art.width = S; art.height = S;
+    // Size the preview to the FRAME's own aspect (was a hardcoded 1200x1200 square,
+    // which squished non-square frames — pendant portrait, swap-patch landscape).
+    // Long edge capped at 1200. Square hat frames → 1200x1200, unchanged.
+    var scale = 1200 / Math.max(frame.naturalWidth, frame.naturalHeight);
+    var W = Math.round(frame.naturalWidth * scale), H = Math.round(frame.naturalHeight * scale);
+    var dx = win.l * W, dy = win.t * H, dw = win.w * W, dh = win.h * H;
+    var art = document.createElement('canvas'); art.width = W; art.height = H;
     var actx = art.getContext('2d');
     actx.drawImage(printCanvas, dx, dy, dw, dh);
     if (mask && mask.complete && mask.naturalWidth) {
       actx.globalCompositeOperation = 'destination-in';
       actx.drawImage(mask, dx, dy, dw, dh);
     }
-    var pv = document.createElement('canvas'); pv.width = S; pv.height = S;
+    var pv = document.createElement('canvas'); pv.width = W; pv.height = H;
     var pctx = pv.getContext('2d');
     pctx.drawImage(art, 0, 0);
-    pctx.drawImage(frame, 0, 0, S, S);
+    pctx.drawImage(frame, 0, 0, W, H);
     return pv;
   }
   function safeToBlob(canvas, cb) {
@@ -406,22 +489,34 @@
   // (measured from the transparent windows). Drives editor aspect + output dims.
   var WINDOW = {
     rectangle: { l: 0.0342, t: 0.2592, w: 0.9317, h: 0.4958 },
-    rounded:   { l: 0.0367, t: 0.1317, w: 0.9267, h: 0.7358 },
+    square:   { l: 0.0367, t: 0.1317, w: 0.9267, h: 0.7358 },
     circle:    { l: 0.0383, t: 0.0383, w: 0.9233, h: 0.9233 },
     hexagon:   { l: 0.0300, t: 0.2408, w: 0.9400, h: 0.5133 }
+    // pendant + any other assigned shape come from config (applyShapeCfg below).
   };
+  applyShapeCfg(WINDOW, 'window');
+  /* Frame PNG aspect (w/h). Hat frames are square (1200x1200) → 1. The pendant
+     frame is portrait (500x950). Lets a non-square frame with an off-centre window
+     (the pendant's bail sits above the window) drive the editor correctly. */
+  var FRAME_ASPECT = {};   // pendant + others come from config (frame_aspect)
+  applyShapeCfg(FRAME_ASPECT, 'frame_aspect');
+  function frameAspect(shape) { return FRAME_ASPECT[sh(shape)] || 1; }
   /* The dashed guide on each frame is the safe area: production needs artwork —
      especially text and logos — to sit inside it, or they have to nudge it by
      hand. Measured from the frames, as a fraction of the window. */
   var SAFE = {
     rectangle: { w: 0.972, h: 0.949 },
-    rounded:   { w: 0.968, h: 0.960 },
+    square:   { w: 0.968, h: 0.960 },
     circle:    { w: 0.959, h: 0.959 },
     hexagon:   { w: 0.978, h: 0.959 }
+    // pendant + others come from config (safe)
   };
-  function safeFor(shape) { return SAFE[String(shape).toLowerCase()] || SAFE.rectangle; }
+  applyShapeCfg(SAFE, 'safe');
+  function safeFor(shape) { return SAFE[sh(shape)] || SAFE.rectangle; }
 
-  function shapeAspect() { var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle; return win.w / win.h; }
+  // Window aspect on screen = window-fraction ratio × the frame's own aspect.
+  // For square frames (hats) frameAspect=1, so this is unchanged (win.w/win.h).
+  function shapeAspect() { var win = WINDOW[sh(state.shape)] || WINDOW.rectangle; return (win.w / win.h) * frameAspect(state.shape); }
 
   /* Finished patch size in inches per shape (production spec). Drives the print
      file's pixel dimensions (inches × DPI) so the artwork drops into production
@@ -431,10 +526,12 @@
   var PATCH_IN = {
     circle:    { w: 2.25, h: 2.25 },   // ROUND
     rectangle: { w: 3.8,  h: 2.024 },  // RECTANGLE
-    rounded:   { w: 3.0,  h: 2.383 },  // SQUARE
+    square:   { w: 3.0,  h: 2.383 },  // SQUARE
     hexagon:   { w: 3.8,  h: 2.077 }   // HEX
+    // pendant + others come from config (patch_in)
   };
-  function patchSize() { return PATCH_IN[String(state.shape).toLowerCase()] || PATCH_IN.rectangle; }
+  applyShapeCfg(PATCH_IN, 'patch_in');
+  function patchSize() { return PATCH_IN[sh(state.shape)] || PATCH_IN.rectangle; }
 
   function computeMask() {
     var W = edStage.clientWidth, H = edStage.clientHeight;
@@ -444,10 +541,20 @@
     edState.maskW = maskW; edState.maskH = maskH;
     if (edMask) { edMask.style.width = maskW + 'px'; edMask.style.height = maskH + 'px'; }
     // Size the real frame PNG so its transparent window lines up with the mask.
+    // Width and height are derived SEPARATELY from the window fractions so a
+    // non-square frame (pendant) keeps its true proportions; for a square frame
+    // with a correctly-measured window these are equal → identical to before.
     if (edFrame) {
-      var win = WINDOW[String(state.shape).toLowerCase()] || WINDOW.rectangle;
-      var fw = maskW / win.w;                 // frame width whose window == maskW
-      edFrame.style.width = fw + 'px'; edFrame.style.height = fw + 'px';
+      var win = WINDOW[sh(state.shape)] || WINDOW.rectangle;
+      var frW = maskW / win.w;                 // frame display width  (window == maskW)
+      var frH = maskH / win.h;                 // frame display height (window == maskH)
+      edFrame.style.width = frW + 'px'; edFrame.style.height = frH + 'px';
+      // The mask sits at stage centre; if the window isn't centred in the frame
+      // (pendant's bail offsets it upward) shift the frame so its window aligns.
+      // Tiny offsets (hats, ~0) are snapped to 0 so hat frames don't move.
+      var offX = 0.5 - (win.l + win.w / 2); if (Math.abs(offX) < 0.01) offX = 0;
+      var offY = 0.5 - (win.t + win.h / 2); if (Math.abs(offY) < 0.01) offY = 0;
+      edFrame.style.transform = 'translate(-50%,-50%) translate(' + (offX * frW) + 'px,' + (offY * frH) + 'px)';
       var src = currentFrameSrc();
       if (src && edFrame.getAttribute('src') !== src) edFrame.setAttribute('src', src);
     }
@@ -523,7 +630,8 @@
    * Only zooms IN (logos that have transparent margins); full-bleed art, which
    * already fills the frame, is left alone. Per-shape usable fractions keep the
    * subject inside the tapered shapes (circle/hexagon). */
-  var USABLE = { rectangle: 0.92, rounded: 0.86, circle: 0.68, hexagon: 0.74 };
+  var USABLE = { rectangle: 0.92, square: 0.86, circle: 0.68, hexagon: 0.74 };
+  applyShapeCfg(USABLE, 'usable');   // pendant + others come from config
   function autoFrameSubject() {
     if (!edState.img || !edState.maskW || !edState.contentBox || !edState.baseScale) return;
     // Only reframe TRANSPARENT logos (crop to their content). Opaque designs
@@ -533,7 +641,7 @@
     var cb = edState.contentBox;
     var subjW = (cb.r - cb.l) * edState.natW, subjH = (cb.b - cb.t) * edState.natH;
     if (subjW <= 1 || subjH <= 1) return;
-    var u = USABLE[String(state.shape).toLowerCase()] || 0.9;
+    var u = USABLE[sh(state.shape)] || 0.9;
     var absScale = Math.min(edState.maskW * u / subjW, edState.maskH * u / subjH);
     var rel = absScale / edState.baseScale;
     if (rel <= 1.05) return;   // subject already fills the frame — leave it
@@ -568,7 +676,7 @@
   // Trace the current shape's window path, centred at (cx,cy), size mw×mh.
   // Geometry measured from the frame PNGs' transparent windows.
   function edShapePath(ctx, cx, cy, mw, mh) {
-    var shape = String(state.shape).toLowerCase();
+    var shape = sh(state.shape);
     var x = cx - mw / 2, y = cy - mh / 2;
     ctx.beginPath();
     if (shape === 'circle') { ctx.ellipse(cx, cy, mw / 2, mh / 2, 0, 0, Math.PI * 2); return; }
@@ -577,9 +685,9 @@
       P.forEach(function (p, i) { var X = x + p[0] * mw, Y = y + p[1] * mh; if (i) ctx.lineTo(X, Y); else ctx.moveTo(X, Y); });
       ctx.closePath(); return;
     }
-    // rectangle / rounded → elliptical-corner rounded rect
-    var rx = (shape === 'rounded' ? 0.46 : 0.05) * mw;
-    var ry = (shape === 'rounded' ? 0.20 : 0.08) * mh;
+    // rectangle / square → elliptical-corner rounded rect
+    var rx = (shape === 'square' ? 0.46 : 0.05) * mw;
+    var ry = (shape === 'square' ? 0.20 : 0.08) * mh;
     rx = Math.min(rx, mw / 2); ry = Math.min(ry, mh / 2);
     ctx.moveTo(x + rx, y);
     ctx.lineTo(x + mw - rx, y);
@@ -615,7 +723,7 @@
     if (edBgWrap) edBgWrap.hidden = !needsPad();   // show whenever the background is padding something
     // Dimmed full image (shows what's cropped out), then bright inside the window.
     ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore();
-    var mimg = edMasks[String(state.shape).toLowerCase()];
+    var mimg = edMasks[sh(state.shape)];
     if (mimg && mimg.complete && mimg.naturalWidth) {
       // Pixel-perfect: paint bright image on an offscreen, keep only the window via the mask.
       var off = document.createElement('canvas'); off.width = edCanvas.width; off.height = edCanvas.height;
@@ -737,7 +845,7 @@
   function openEditor(isNew) {
     if (!editor) return;
     if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; edState.stretchX = 1; edState.stretchY = 1; }
-    if (edMask) edMask.setAttribute('data-shape', String(state.shape).toLowerCase());
+    if (edMask) edMask.setAttribute('data-shape', sh(state.shape));
     if (edZoom) edZoom.value = edState.scale;
     // Reflect any existing caption in the modal's text controls.
     if (textToggle) textToggle.checked = !!state.text;
@@ -750,10 +858,15 @@
     });
     syncModeButtons();
     editor.hidden = false;
+    document.body.classList.add('cl-ai-editor-open');
     document.body.style.overflow = 'hidden';
     requestAnimationFrame(function () { computeMask(); if (isNew) autoFrameSubject(); edDraw(); });
   }
-  function closeEditor() { if (editor) editor.hidden = true; document.body.style.overflow = ''; }
+  function closeEditor() {
+    if (editor) editor.hidden = true;
+    document.body.classList.remove('cl-ai-editor-open');
+    document.body.style.overflow = '';
+  }
 
   if (editor) {
     // Drag to pan; drag a transform-box handle to resize (scale around centre).
@@ -794,7 +907,7 @@
         txtScale0 = edState.textScale || 1;
       } else if (textBodyHit(p[0], p[1])) {
         txtDragging = true;
-        var tn = edState.textNorm || (edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase()));
+        var tn = edState.textNorm || (edState.textNorm = defaultTextNorm(sh(state.shape)));
         rawTX = tn.x; rawTY = tn.y;
         armedTX = Math.abs(rawTX) >= TSNAP; armedTY = Math.abs(rawTY) >= TSNAP;
       } else if (edState.showBox && handleHit(p[0], p[1]) >= 0) {
@@ -815,6 +928,11 @@
       lastX = e.clientX; lastY = e.clientY; edStage.setPointerCapture(e.pointerId);
     });
     edStage.addEventListener('pointermove', function (e) {
+      // Safety net: if a gesture is active but no mouse button is held, the release
+      // happened where we couldn't hear it (pointer left the window and was let go
+      // outside). Without this, the drag/resize stays "stuck" and every subsequent
+      // move keeps zooming/panning. End it the instant an un-pressed move arrives.
+      if (e.buttons === 0 && (dragging || resizing || stretching || txtDragging || txtResizing)) { endDrag(); }
       if (txtResizing) {
         var pt = stageXY(e);
         var dt = Math.hypot(pt[0] - edTextBox.cx, pt[1] - edTextBox.cy);
@@ -823,7 +941,7 @@
         return;
       }
       if (txtDragging) {
-        if (!edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
+        if (!edState.textNorm) edState.textNorm = defaultTextNorm(sh(state.shape));
         rawTX += (e.clientX - lastX) / edState.maskW;
         rawTY += (e.clientY - lastY) / edState.maskH;
         if (!armedTX && Math.abs(rawTX) >= TSNAP) armedTX = true;   // arm once it leaves centre
@@ -881,6 +999,10 @@
     }
     edStage.addEventListener('pointerup', endDrag);
     edStage.addEventListener('pointercancel', endDrag);
+    // Backup for a release that lands outside the stage/window (pointer capture can be
+    // lost if the pointer leaves the browser) — window-level up/cancel still ends it.
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
     edStage.addEventListener('wheel', function (e) {
       e.preventDefault();
       // Velocity-aware + capped: a Magic Mouse / trackpad fires a rapid stream of
@@ -1025,7 +1147,7 @@
       if (yFrac >= 0.65) return (1 - yFrac) / 0.35;
       return 1;
     }
-    if (shape === 'rounded') {                            // big elliptical corners
+    if (shape === 'square') {                            // big elliptical corners
       var edge = yFrac < 0.2 ? yFrac / 0.2 : yFrac > 0.8 ? (1 - yFrac) / 0.2 : 1;
       return edge >= 1 ? 1 : 0.08 + 0.92 * Math.sqrt(Math.max(0, 1 - (1 - edge) * (1 - edge)));
     }
@@ -1034,10 +1156,12 @@
 
   /* Where the text baseline sits per shape — pushed up on the shapes that taper
    * so there's usable width for it. */
-  var TEXT_Y = { rectangle: 0.86, rounded: 0.80, circle: 0.80, hexagon: 0.75 };
-  // How much of the available width the text may use, per shape. Rounded is
+  var TEXT_Y = { rectangle: 0.86, square: 0.80, circle: 0.80, hexagon: 0.75 };
+  applyShapeCfg(TEXT_Y, 'text_y');   // pendant + others come from config
+  // How much of the available width the text may use, per shape. Square is
   // pulled in so the caption clears the corner rivets.
-  var TEXT_MAXW = { rectangle: 0.86, rounded: 0.62, circle: 0.86, hexagon: 0.86 };
+  var TEXT_MAXW = { rectangle: 0.86, square: 0.62, circle: 0.86, hexagon: 0.86 };
+  applyShapeCfg(TEXT_MAXW, 'text_maxw');   // pendant + others come from config
 
   // The caption's default anchor when text is first added (before the customer
   // drags it) — bottom-ish per shape, normalized to the window centre.
@@ -1050,7 +1174,7 @@
   function drawText(ctx, cx, cy, winW, winH) {
     var txt = (state.text || '').trim();
     if (!txt) return null;
-    var shape = String(state.shape).toLowerCase();
+    var shape = sh(state.shape);
     var fill = state.textFill || '#000000';
     var outline = state.textOutline || 'none';   // 'white' | 'black' | 'none'
     if (!edState.textNorm) edState.textNorm = defaultTextNorm(shape);
@@ -1163,14 +1287,46 @@
       .then(function (res) { if (res && res.secure_url) return res.secure_url; throw new Error('no url'); });
   }
 
+  /* Cloudflare R2 upload — POSTs the RAW blob bytes to our Vercel /api/upload
+   * route (metadata rides in headers, no multipart to parse server-side). The
+   * endpoint PutObject's it to R2 and returns { url }; for kind 'print' it also
+   * writes the matching '.pdf' sibling so the extension-swap PDF link keeps
+   * working. Returns a plain URL string — drop-in with cloudinaryUpload. */
+  function cloudflareUpload(fileOrBlob, name, kind) {
+    return fetch(CL_AI_HAT.cloudflareUploadUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': (fileOrBlob && fileOrBlob.type) || 'application/octet-stream',
+        'X-Upload-Kind': kind || 'print',
+        'X-Upload-Name': encodeURIComponent(name || 'artwork')
+      },
+      body: fileOrBlob
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) { if (res && res.url) return res.url; throw new Error('no url'); });
+  }
+
+  /* Single dispatch point — both backends share the (blob, name) -> Promise<url>
+   * contract, so the rest of the code never cares which provider is live. */
+  function providerUpload(fileOrBlob, name, kind) {
+    return CL_AI_HAT.storage === 'cloudflare'
+      ? cloudflareUpload(fileOrBlob, name, kind)
+      : cloudinaryUpload(fileOrBlob, name);
+  }
+
   function uploadArtwork(printBlob, previewBlob, done) {
     var finish = function () { if (typeof done === 'function') done(); };
     var stamp = Date.now();
     var origName = (edState.file && edState.file.name) || 'artwork';
-    if (!cloudinaryReady() || !printBlob) {
+    // The patch shape IS known at upload time, so bake it into the filename
+    // (rectangle/square/circle/hexagon) — the order number is NOT known yet
+    // (no order exists until checkout), so the dashboard appends that on download.
+    var shapeSlug = String(state.shape || 'shape').toLowerCase().replace(/[^a-z0-9]+/g, '') || 'shape';
+    var nm = function (part, ext) { return filePrefix + '-' + shapeSlug + '-' + part + '-' + stamp + ext; };
+    if (!storageReady() || !printBlob) {
       state.artUrl = state.localArt;
       if (propArt) propArt.value = '[local-preview] ' + origName;
-      setStatus('warn', 'Preview only — connect Cloudinary to store the file.');
+      setStatus('warn', 'Preview only — connect storage to save the file.');
       finish();
       return;
     }
@@ -1178,10 +1334,22 @@
     // Only the print file is critical; the extras fail soft so a hiccup on them
     // can't stop the customer ordering.
     var soft = function (p) { return p.catch(function () { return ''; }); };
+    // Retry a (re-invokable) upload a couple of times before giving up. The ORIGINAL
+    // is the raw source file production opens in Photoshop, and it's the one most
+    // prone to a transient miss (largest file; the customer's exact MIME) — so it
+    // gets retries rather than a single silent attempt. `make` must return a FRESH
+    // promise each call (fetch bodies aren't replayable).
+    var retry = function (make, tries) {
+      return make().catch(function (e) { return tries > 1 ? retry(make, tries - 1) : Promise.reject(e); });
+    };
+    var origJob = edState.file
+      ? retry(function () { return providerUpload(edState.file, nm('original', '-' + origName), 'original'); }, 3)
+          .catch(function () { try { console.warn('[cl-ai-hat] original upload failed after retries'); } catch (e) {} return ''; })
+      : Promise.resolve('');
     var jobs = [
-      cloudinaryUpload(printBlob, 'ai-hat-print-' + stamp + '.png'),
-      soft(edState.file ? cloudinaryUpload(edState.file, 'ai-hat-original-' + stamp + '-' + origName) : Promise.resolve('')),
-      soft(previewBlob ? cloudinaryUpload(previewBlob, 'ai-hat-preview-' + stamp + '.png') : Promise.resolve(''))
+      providerUpload(printBlob, nm('print', '.png'), 'print'),
+      origJob,
+      soft(previewBlob ? providerUpload(previewBlob, nm('preview', '.png'), 'preview') : Promise.resolve(''))
     ];
 
     Promise.all(jobs).then(function (urls) {
@@ -1257,10 +1425,10 @@
       if (vt) vt.textContent = 'READY TO PRINT!';
       if (vx) vx.textContent = "Your artwork looks great. Add to cart when you're ready.";
     } else if (worst === 'warn') {
-      if (vt) vt.textContent = 'USABLE — BUT COULD BE BETTER';
+      if (vt) vt.textContent = 'GOOD TO GO — JUST A HEADS-UP';
       if (vx) vx.textContent = resProblem
-        ? 'This will print, but a higher-resolution image gives the sharpest result.'
-        : 'This will print — just check the positioning so nothing important gets cropped.';
+        ? 'This will print fine. A higher-resolution image would look even sharper.'
+        : 'This will print — just make sure nothing important sits outside the dashed guide.';
     } else {
       if (vt) vt.textContent = resProblem ? 'LOW QUALITY' : 'CHECK YOUR CROP';
       if (vx) vx.textContent = resProblem
@@ -1362,17 +1530,40 @@
   });
   bindRadioGroup('[data-cl-ai-shape]', function (val) {
     state.shape = val;
-    var sl = String(val).toLowerCase();
+    var sl = sh(val);
     var prop = $('[data-cl-ai-prop-shape]'); if (prop) prop.value = val;
     if (patch) patch.setAttribute('data-shape', sl);            // hero overlay
     if (patchframe) patchframe.setAttribute('data-shape', sl);  // Step-2 patch frame
     syncPrompt();                                               // Step-1 size guidance
     setPatchMask();
+    applyConfigPreviewGeometry();
     if (editor && !editor.hidden) { edMask.setAttribute('data-shape', sl); computeMask(); edDraw(); }
     // A different shape means a different window aspect — rebuild the print file
     // so the stored artwork always matches the selected patch.
     if (baseCanvas && edState.img) { baseCanvas = buildPrintCanvas(); refreshArtwork(true); }
   });
+  // For CONFIG-DRIVEN shapes (geometry from the metaobject, not the hand-tuned CSS),
+  // drive the static preview from the config so NO per-shape CSS is ever needed for a
+  // new product: set the container aspect from the frame, un-hide the matching frame
+  // (frames are display:none by default, un-hidden by CSS only for the known shapes),
+  // and position the preview art window from the config window fractions. Guarded to
+  // config shapes, so the hat's hand-tuned cropped CSS stays untouched.
+  var cfgSlugs = {}; for (var _ck in cfgShapes) { if (Object.prototype.hasOwnProperty.call(cfgShapes, _ck)) cfgSlugs[sh(_ck)] = 1; }
+  function applyConfigPreviewGeometry() {
+    if (!patchframe) return;
+    var shape = sh(state.shape);
+    if (!cfgSlugs[shape]) return;
+    var win = WINDOW[shape]; if (!win) return;
+    patchframe.style.aspectRatio = String(frameAspect(state.shape));
+    var fr = patchframe.querySelector('.cl-ai-pf__frame[data-frame="' + shape + '"]');
+    if (fr) fr.style.setProperty('display', 'block', 'important');
+    if (pfArt) {
+      pfArt.style.left = (win.l * 100) + '%'; pfArt.style.top = (win.t * 100) + '%';
+      pfArt.style.width = (win.w * 100) + '%'; pfArt.style.height = (win.h * 100) + '%';
+    }
+  }
+  applyConfigPreviewGeometry();
+
   setPatchMask(); // initial
 
   // Map Style/Color selection to a Shopify variant id.
@@ -1400,6 +1591,19 @@
    * ===================================================================== */
   var qtySel = {};
   var gridEl = $('[data-cl-ai-grid]');
+  // SIMPLE mode = single-variant product with no colour×qty grid (e.g. pendant):
+  // add one line for the resolved variant instead of iterating the grid.
+  var SIMPLE = !gridEl;
+  var simpleQtyEl = $('[data-cl-ai-simple-qty]');
+  function simpleQty() { var n = parseInt(simpleQtyEl && simpleQtyEl.value, 10); return (n > 0) ? n : 1; }
+  // −/+ stepper for the single-variant quantity (mirrors the hat grid rows).
+  function setSimpleQty(n) { if (simpleQtyEl) simpleQtyEl.value = Math.max(1, n || 1); }
+  (function () {
+    var minus = $('[data-cl-ai-simple-minus]'), plus = $('[data-cl-ai-simple-plus]');
+    if (minus) minus.addEventListener('click', function () { setSimpleQty(simpleQty() - 1); });
+    if (plus) plus.addEventListener('click', function () { setSimpleQty(simpleQty() + 1); });
+    if (simpleQtyEl) simpleQtyEl.addEventListener('blur', function () { setSimpleQty(simpleQty()); });
+  })();
   var ctaLabelEl = $('[data-cl-ai-cta-label]');
   var ctaDefaultLabel = ctaLabelEl ? ctaLabelEl.textContent : 'ADD TO CART';
 
@@ -1542,7 +1746,7 @@
     if (propTextColor) propTextColor.value = state.text ? state.textFill : '';
     if (countEl && textInput) countEl.textContent = String(textInput.value.length);
     // First time text is added, drop it at the shape's default spot so it's visible.
-    if (state.text && !edState.textNorm) edState.textNorm = defaultTextNorm(String(state.shape).toLowerCase());
+    if (state.text && !edState.textNorm) edState.textNorm = defaultTextNorm(sh(state.shape));
     // Editing happens INSIDE the modal: redraw live there (cheap, no upload).
     // The finished text is baked on "Use this image" (edConfirm → refreshArtwork).
     if (editor && !editor.hidden) edDraw();
@@ -1590,8 +1794,8 @@
       if (drop) drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
-    // Require at least one colour with a quantity.
-    if (!totalQty()) {
+    // Require at least one colour with a quantity (grid products only).
+    if (!SIMPLE && !totalQty()) {
       setStatus('err', 'Please choose a quantity for at least one colour.');
       if (gridEl) gridEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -1615,10 +1819,17 @@
         props['Text Color'] = state.textFill;
         props['Text Outline'] = state.textOutline;
       }
-      // One line item per selected colour — all share the same artwork. The
-      // tag-based bulk discount then applies cart-wide across every line.
-      var items = Object.keys(qtySel).filter(function (vid) { return qtySel[vid] > 0; })
-        .map(function (vid) { return { id: vid, quantity: qtySel[vid], properties: props }; });
+      // SIMPLE: one line for the single resolved variant. Otherwise one line item
+      // per selected colour — all share the same artwork. The tag-based bulk
+      // discount then applies cart-wide across every line.
+      var items;
+      if (SIMPLE) {
+        var vid = (variantIdInput && variantIdInput.value) || (variants[0] && variants[0].id);
+        items = [{ id: vid, quantity: simpleQty(), properties: props }];
+      } else {
+        items = Object.keys(qtySel).filter(function (k) { return qtySel[k] > 0; })
+          .map(function (k) { return { id: k, quantity: qtySel[k], properties: props }; });
+      }
       setCta(true, 'Adding…');
       return fetch('/cart/add.js', {
         method: 'POST',
@@ -1627,7 +1838,7 @@
       });
     }).then(function (r) {
       if (!r.ok) throw new Error('add failed');
-      qtySel = {}; renderGrid();            // clear the batch so re-clicking can't duplicate it
+      if (!SIMPLE) { qtySel = {}; renderGrid(); }  // clear the batch so re-clicking can't duplicate it
       setCta(false);
       if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') {
         window.AMP_API.OPEN_CART();

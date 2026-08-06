@@ -10,19 +10,38 @@
 {{ 'cl-pack-grid.css' | asset_url | stylesheet_tag }}
 {{ 'cl-fixed-bundle.css' | asset_url | stylesheet_tag }}
 
-<div class="cl-fxb__personalizer" id="cl-fxb-personalizer" data-product-id="{{ product.id }}">
+{%- comment -%}
+  SKU-bridge: the promo Bundle Hat component variants share their SKUs with a
+  matching variant on every chosen design product. Emit those SKUs so the JS can
+  resolve them against /products/<design-handle>.js at add-time and send the real
+  design-product variant GIDs to the cart transform (so production can route).
+{%- endcomment -%}
+{%- assign fxb_component_skus = '' -%}
+{%- for fxb_variant in product.metafields.custom.bundle_components.value -%}
+  {%- if fxb_variant.sku and fxb_variant.sku != blank -%}
+    {%- if fxb_component_skus == '' -%}
+      {%- assign fxb_component_skus = fxb_variant.sku -%}
+    {%- else -%}
+      {%- assign fxb_component_skus = fxb_component_skus | append: '|' | append: fxb_variant.sku -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+<div class="cl-fxb__personalizer" id="cl-fxb-personalizer" data-product-id="{{ product.id }}" data-component-skus="{{ fxb_component_skus | escape }}">
   {% form 'product', product, id: 'cl-fxb-form', class: 'cl-fxb__form' %}
     <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
     <input type="hidden" name="quantity" value="1">
 
-    <label class="cl-fxb__field">
+    <div class="cl-fxb__field">
       <span class="cl-fxb__field-label">1 · Choose your state</span>
-      <span class="cl-fxb__select-wrap">
-        <select id="cl-fxb-state" class="cl-fxb__select" required>
-          <option value="">Select a state…</option>
-        </select>
-      </span>
-    </label>
+      <div class="cl-fxb__combo" data-cl-combo>
+        <input type="text" id="cl-fxb-state-search" class="cl-fxb__input cl-fxb__combo-input"
+               placeholder="Search or choose a state…" autocomplete="off"
+               role="combobox" aria-expanded="false" aria-controls="cl-fxb-state-menu" aria-autocomplete="list">
+        <input type="hidden" id="cl-fxb-state" value="">
+        <button type="button" class="cl-fxb__combo-clear" data-cl-combo-clear aria-label="Clear state" hidden>&times;</button>
+        <ul class="cl-fxb__combo-menu" id="cl-fxb-state-menu" role="listbox" hidden></ul>
+      </div>
+    </div>
 
     <div id="cl-fxb-design" class="cl-fxb__design" hidden aria-live="polite">
       <span class="cl-fxb__design-label">Featured plate design</span>

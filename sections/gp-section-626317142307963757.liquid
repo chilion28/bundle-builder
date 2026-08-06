@@ -2362,6 +2362,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const discountRulesByHandle = new Map();
 
+    // A builder collection's tiered discount is tag-based and identical across
+    // its products, so we fetch it ONCE and use it as the fallback for every
+    // handle — instead of hammering /discount-info for all ~84 cards on load.
+    let sharedDiscountRule = null;
+
     const defaultDiscountRule = {
       key: 'default',
       qtys: [1],
@@ -2426,39 +2431,53 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-    async function loadCityLocsDiscount() {
-  const handles = getProductHandlesFromCards();
-  if (!handles.length) { renderSummary(); return; }
+    async function fetchDiscountRuleForHandle(handle) {
+  try {
+    const product = await fetch(`/products/${handle}.js`).then(r => r.json());
+    const productTags = Array.isArray(product.tags) ? product.tags : [];
+    if (!productTags.length) return null;
 
-  await Promise.all(handles.map(async (handle) => {
-    try {
-      const product = await fetch(`/products/${handle}.js`).then(r => r.json());
-      const productTags = Array.isArray(product.tags) ? product.tags : [];
-      if (!productTags.length) return;
+    const data = await fetch(
+      `/apps/citylocs/discount-info?tags=${encodeURIComponent(JSON.stringify(productTags))}`
+    ).then(r => r.json());
 
-      const data = await fetch(
-        `/apps/citylocs/discount-info?tags=${encodeURIComponent(JSON.stringify(productTags))}`
-      ).then(r => r.json());
-
-      if (data.discountBreak && data.discountAmount) {
-        const rule = {
-          key: data.tag || productTags.join('|') || handle,
-          tag: data.tag || '',
-          qtys: [1, ...data.discountBreak.map(Number)],
-          amounts: [0, ...data.discountAmount.map(Number)],
-          name: data.discountMessage || builderConfig.itemSingular
-        };
-        discountRulesByHandle.set(handle, rule);
-        if (discountQtys.length === 1) {
-          discountQtys = rule.qtys;
-          discountAmounts = rule.amounts;
-          discountName = rule.name;
-        }
-      }
-    } catch (error) {
-      console.warn(`Could not load discount rule for ${handle}`, error);
+    if (data.discountBreak && data.discountAmount) {
+      return {
+        key: data.tag || productTags.join('|') || handle,
+        tag: data.tag || '',
+        qtys: [1, ...data.discountBreak.map(Number)],
+        amounts: [0, ...data.discountAmount.map(Number)],
+        name: data.discountMessage || builderConfig.itemSingular
+      };
     }
-  }));
+  } catch (error) {
+    console.warn(`Could not load discount rule for ${handle}`, error);
+  }
+  return null;
+}
+
+    async function loadCityLocsDiscount() {
+  // Fetch the tiered discount ONCE (2 requests) instead of once per card
+  // (~168), and re-render the summary as soon as it lands — this is what the
+  // shopper sees flip from base price to the discounted price. Probe an
+  // in-pack handle first (its exact rule), else the first card as the
+  // representative. The result becomes the shared fallback for every handle.
+  const cartHandles = Array.from(selected.values())
+    .map(i => i.handle)
+    .filter(Boolean);
+  const probeHandle = cartHandles[0] || getProductHandlesFromCards()[0];
+  if (!probeHandle) { renderSummary(); return; }
+
+  const rule = await fetchDiscountRuleForHandle(probeHandle);
+  if (rule) {
+    sharedDiscountRule = rule;
+    discountRulesByHandle.set(probeHandle, rule);
+    if (discountQtys.length === 1) {
+      discountQtys = rule.qtys;
+      discountAmounts = rule.amounts;
+      discountName = rule.name;
+    }
+  }
 
   renderSummary();
 }
@@ -2847,7 +2866,7 @@ function renderGiftProgressBanner(totalQty) {
 }
 
     function getRepresentativeDiscountRule() {
-  return discountRulesByHandle.values().next().value || defaultDiscountRule;
+  return discountRulesByHandle.values().next().value || sharedDiscountRule || defaultDiscountRule;
 }
 
     function perItemPriceAtQty(qty) {
@@ -3337,7 +3356,7 @@ if (giftCardsHtml) {
   }
 
     function refreshItemDiscountRule(item) {
-  const rule = discountRulesByHandle.get(item.handle) || defaultDiscountRule;
+  const rule = discountRulesByHandle.get(item.handle) || sharedDiscountRule || defaultDiscountRule;
 
   return {
     ...item,

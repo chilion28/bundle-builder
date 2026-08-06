@@ -31,6 +31,7 @@
     'Colorado':       design('hat-colorado-plate', 'Colorado Plate Hat'),
     'Connecticut':    design('hat-connecticut-plate', 'Connecticut Plate Hat'),
     'Delaware':       design('hat-delaware-plate', 'Delaware Plate Hat'),
+    'District of Columbia': design('copy-of-hat-washington-plate', 'Washington DC Plate Hat'),
     'Florida':        design('hat-florida', 'Florida Plate Hat'),
     'Georgia':        design('hat-georgia-plate', 'Georgia Plate Hat'),
     'Hawaii':         design('hat-hawaii-plate', 'Hawaii Plate Hat'),
@@ -40,39 +41,39 @@
     'Iowa':           design('hat-iowa-plate', 'Iowa Plate Hat'),
     'Kansas':         design('hat-kansas', 'Kansas Plate Hat'),
     'Kentucky':       design('hat-kentucky-plate', 'Kentucky Plate Hat'),
-    'Louisiana':      design('hat-louisiana-plate', 'Louisiana Plate Hat'),
+    'Louisiana':      design('louisiana-2022-plate-hat', 'Louisiana 2022 Plate Hat'),
     'Maine':          design('hat-maine-plate', 'Maine Plate Hat'),
     'Maryland':       design('hat-maryland-plate', 'Maryland Plate Hat'),
     'Massachusetts':  design('hat-massachusetts', 'Massachusetts Plate Hat'),
     'Michigan':       design('hat-michigan', 'Michigan Plate Hat'),
     'Minnesota':      design('hat-minnesota-plate', 'Minnesota Plate Hat'),
-    'Mississippi':    design('hat-mississippi-plate', 'Mississippi Plate Hat'),
-    'Missouri':       design('hat-missouri-plate', 'Missouri Plate Hat'),
+    'Mississippi':    design('mississippi-2022-plate-hat', 'Mississippi 2022 Plate Hat'),
+    'Missouri':       design('missouri-plate-hat-v2', 'Missouri Plate Hat v2'),
     'Montana':        design('hat-montana', 'Montana Plate Hat'),
-    'Nebraska':       design('hat-nebraska-plate', 'Nebraska Plate Hat'),
+    'Nebraska':       design('nebraska-2023-plate-hat', 'Nebraska 2023 Plate Hat'),
     'Nevada':         design('hat-nevada-plate', 'Nevada Plate Hat'),
     'New Hampshire':  design('hat-new-hampshire-plate', 'New Hampshire Plate Hat'),
     'New Jersey':     design('hat-new-jersey', 'New Jersey Plate Hat'),
-    'New Mexico':     design('hat-new-mexico-plate', 'New Mexico Plate Hat'),
-    'New York':       design('hat-new-york-plate', 'New York Plate Hat'),
+    'New Mexico':     design('new-mexico-chile-plate-hat', 'New Mexico Chiles Plate Hat'),
+    'New York':       design('new-york-2022-plate-hat', 'New York 2022 Plate Hat'),
     'North Carolina': design('hat-north-carolina-plate', 'North Carolina Plate Hat'),
     'North Dakota':   design('hat-north-dakota-plate', 'North Dakota Plate Hat'),
     'Ohio':           design('hat-ohio-plate', 'Ohio Plate Hat'),
-    'Oklahoma':       design('hat-oklahoma-plate', 'Oklahoma Plate Hat'),
+    'Oklahoma':       design('oklahoma-red-plate-hat', 'Oklahoma Red Plate Hat'),
     'Oregon':         design('hat-oregon', 'Oregon Plate Hat'),
-    'Pennsylvania':   design('hat-pennsylvania', 'Pennsylvania Plate Hat'),
+    'Pennsylvania':   design('pennsylvania-2025-plate-hat', 'Pennsylvania 2025 Plate Hat'),
     'Rhode Island':   design('hat-rhode-island-plate', 'Rhode Island Plate Hat'),
-    'South Carolina': design('hat-south-carolina-plate', 'South Carolina Plate Hat'),
+    'South Carolina': design('south-carolina-2022-plate-hat', 'South Carolina 2022 Plate Hat'),
     'South Dakota':   design('hat-south-dakota-plate', 'South Dakota Plate Hat'),
-    'Tennessee':      design('hat-tennessee', 'Tennessee Plate Hat'),
+    'Tennessee':      design('tennessee-2022-plate-hat', 'Tennessee 2022 Plate Hat'),
     'Texas':          design('hat-60s-texas-plate', 'Texas Black Plate Hat'),
     'Utah':           design('hat-utah-plate', 'Utah Plate Hat'),
     'Vermont':        design('hat-vermont-plate', 'Vermont Plate Hat'),
     'Virginia':       design('hat-virginia', 'Virginia Plate Hat'),
     'Washington':     design('hat-washington', 'Washington Plate Hat'),
     'West Virginia':  design('hat-west-virginia-plate', 'West Virginia Plate Hat'),
-    'Wisconsin':      design('hat-wisconsin-plate', 'Wisconsin Plate Hat'),
-    'Wyoming':        design('hat-wyoming-plate', 'Wyoming Plate Hat')
+    'Wisconsin':      design('hat-wisconsin-plate', 'Wisconsin Hat'),
+    'Wyoming':        design('wyoming-2022-plate-hat', 'Wyoming 2022 Plate Hat')
   };
 
   function design(handle, title, fields) {
@@ -85,14 +86,56 @@
     });
   }
 
-  var stateSelect = document.getElementById('cl-fxb-state');
+  var stateSelect = document.getElementById('cl-fxb-state');       // hidden value holder
+  var searchInput = document.getElementById('cl-fxb-state-search'); // searchable input
+  var stateMenu = document.getElementById('cl-fxb-state-menu');
+  var stateCombo = document.querySelector('[data-cl-combo]');
   var designPanel = document.getElementById('cl-fxb-design');
   var designName = document.getElementById('cl-fxb-design-name');
   var fieldsWrap = document.getElementById('cl-fxb-fields');
   var fieldsList = document.getElementById('cl-fxb-fields-list');
   var previewEl = document.getElementById('cl-fxb-preview');
   var form = document.getElementById('cl-fxb-form');
-  if (!stateSelect || !fieldsList || !previewEl || !form) return;
+  if (!stateSelect || !searchInput || !stateMenu || !fieldsList || !previewEl || !form) return;
+
+  /* SKU-bridge: the promo Bundle Hat component variants share a SKU with a
+   * matching variant on every design product. Emitted by the Liquid snippet as
+   * "SKU|SKU|SKU"; resolved at add-time against /products/<handle>.js so each
+   * order line becomes the customer's REAL chosen design product (routable by
+   * the production app). Falls back to the parent metafield if unresolved. */
+  var personalizerRoot = document.getElementById('cl-fxb-personalizer');
+  var COMPONENT_SKUS = ((personalizerRoot && personalizerRoot.getAttribute('data-component-skus')) || '')
+    .split('|').map(function (s) { return s.trim(); }).filter(Boolean);
+  var productJsonCache = {};
+
+  /* Resolve the selected design product plus any matching component variants.
+   * The product ID is retained even when one or more promo SKUs do not exist on
+   * the design product. This lets production inherit that product's automation
+   * configuration while Cart Transform safely falls back to the real Bundle
+   * Hat variants for non-universal clearance colors. */
+  function resolveDesignRouting(handle) {
+    if (!handle) return Promise.resolve({ productId: '', componentGids: '' });
+    var fetchJson = productJsonCache[handle] ||
+      (productJsonCache[handle] = fetch('/products/' + encodeURIComponent(handle) + '.js', {
+        headers: { 'Accept': 'application/json' }
+      }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }));
+    return fetchJson.then(function (data) {
+      if (!data) return { productId: '', componentGids: '' };
+      var productId = data.id ? String(data.id) : '';
+      if (!Array.isArray(data.variants) || COMPONENT_SKUS.length === 0) {
+        return { productId: productId, componentGids: '' };
+      }
+      var bySku = {};
+      data.variants.forEach(function (v) { if (v && v.sku) bySku[String(v.sku).trim()] = v.id; });
+      var gids = [];
+      for (var i = 0; i < COMPONENT_SKUS.length; i++) {
+        var id = bySku[COMPONENT_SKUS[i]];
+        if (!id) return { productId: productId, componentGids: '' }; // fall back to Bundle Hat variants
+        gids.push('gid://shopify/ProductVariant/' + id);
+      }
+      return { productId: productId, componentGids: gids.join('|') };
+    }).catch(function () { return { productId: '', componentGids: '' }; });
+  }
   if (stateSelect.dataset.clInit === '1') return;
   stateSelect.dataset.clInit = '1';
 
@@ -147,12 +190,66 @@
     if (!usableCartEdit(cartEdit)) cartEdit = cartEditFromParams();
   }
 
-  Object.keys(STATE_DESIGNS).sort().forEach(function (state) {
-    var option = document.createElement('option');
-    option.value = state;
-    option.textContent = state;
-    stateSelect.appendChild(option);
+  // ---- Searchable state combobox (like the pack builder). #cl-fxb-state stays
+  // the hidden value holder so all downstream logic keeps working; picking a
+  // state sets its value and dispatches 'change'. ----
+  var STATE_LIST = Object.keys(STATE_DESIGNS).sort();
+  var comboActiveIdx = -1;
+  var comboFiltered = STATE_LIST.slice();
+  var comboClear = document.querySelector('[data-cl-combo-clear]');
+  function updateClearBtn() { if (comboClear) comboClear.hidden = !(searchInput.value || '').trim(); }
+
+  function comboRenderMenu(showAll) {
+    var q = showAll ? '' : (searchInput.value || '').trim().toLowerCase();
+    comboFiltered = STATE_LIST.filter(function (s) { return !q || s.toLowerCase().indexOf(q) !== -1; });
+    if (!comboFiltered.length) { stateMenu.innerHTML = '<li class="cl-fxb__combo-empty">No states found</li>'; return; }
+    stateMenu.innerHTML = comboFiltered.map(function (s, i) {
+      return '<li class="cl-fxb__combo-item' + (i === comboActiveIdx ? ' is-active' : '') +
+        '" role="option" data-val="' + escapeHtml(s) + '">' + escapeHtml(s) + '</li>';
+    }).join('');
+  }
+  function comboOpen(showAll) { comboRenderMenu(showAll); stateMenu.hidden = false; searchInput.setAttribute('aria-expanded', 'true'); }
+  function comboClose() {
+    stateMenu.hidden = true; comboActiveIdx = -1; searchInput.setAttribute('aria-expanded', 'false');
+    // If a valid state is still selected, restore its name (undo an abandoned search).
+    if (stateSelect.value) searchInput.value = stateSelect.value;
+  }
+  function comboScroll() { var el = stateMenu.querySelector('.cl-fxb__combo-item.is-active'); if (el) el.scrollIntoView({ block: 'nearest' }); }
+  function comboSelect(state) {
+    stateSelect.value = state;
+    searchInput.value = state;
+    updateClearBtn();
+    comboClose();
+    stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  function comboSyncFromValue() { if (stateSelect.value) searchInput.value = stateSelect.value; updateClearBtn(); }
+  function comboClearState() {
+    searchInput.value = '';
+    stateSelect.value = '';
+    updateClearBtn();
+    stateSelect.dispatchEvent(new Event('change', { bubbles: true })); // clears design/fields/preview
+    searchInput.focus();
+    comboOpen(true);
+  }
+
+  // On focus: select the current text (so typing replaces it) and show the FULL
+  // list — no need to delete the current state before searching a new one.
+  searchInput.addEventListener('focus', function () { searchInput.select(); comboActiveIdx = -1; comboOpen(true); });
+  searchInput.addEventListener('input', function () { stateSelect.value = ''; comboActiveIdx = -1; updateClearBtn(); comboOpen(false); });
+  if (comboClear) comboClear.addEventListener('click', comboClearState);
+  updateClearBtn();
+  stateMenu.addEventListener('mousedown', function (event) {
+    var li = event.target.closest ? event.target.closest('[data-val]') : null;
+    if (li) { event.preventDefault(); comboSelect(li.getAttribute('data-val')); }
   });
+  searchInput.addEventListener('keydown', function (event) {
+    if (stateMenu.hidden && event.key === 'ArrowDown') { comboOpen(); return; }
+    if (event.key === 'ArrowDown') { event.preventDefault(); comboActiveIdx = Math.min(comboActiveIdx + 1, comboFiltered.length - 1); comboRenderMenu(); comboScroll(); }
+    else if (event.key === 'ArrowUp') { event.preventDefault(); comboActiveIdx = Math.max(comboActiveIdx - 1, 0); comboRenderMenu(); comboScroll(); }
+    else if (event.key === 'Enter') { if (comboActiveIdx >= 0 && comboFiltered[comboActiveIdx]) { event.preventDefault(); comboSelect(comboFiltered[comboActiveIdx]); } }
+    else if (event.key === 'Escape') { comboClose(); }
+  });
+  document.addEventListener('click', function (event) { if (stateCombo && !stateCombo.contains(event.target)) comboClose(); });
 
   function activeDesign() { return STATE_DESIGNS[stateSelect.value] || null; }
 
@@ -261,7 +358,7 @@
       if (event.stopImmediatePropagation) event.stopImmediatePropagation();
     }
     var cfg = activeDesign();
-    if (!cfg) { stateSelect.focus(); return; }
+    if (!cfg) { searchInput.focus(); comboOpen(); return; }
     var values = activeValues();
     if (focusFirstInvalid(cfg, values)) return;
 
@@ -278,6 +375,7 @@
     properties['Plate Design'] = cfg.title;
     properties['_plate_product_handle'] = cfg.handle;
     properties['_plate_field_names'] = cfg.fields.join('|');
+    properties['_fxb_schema_version'] = '1';
     cfg.fields.forEach(function (name) {
       if (values[name]) properties[name] = values[name];
     });
@@ -287,15 +385,22 @@
     cta.textContent = 'Adding…';
     var editing = cartEdit && cartEdit.key;
     var endpoint = editing ? '/cart/change.js' : '/cart/add.js';
-    var payload = editing ? {
-      id: cartEdit.key,
-      quantity: parseInt(cartEdit.quantity, 10) || 1,
-      properties: properties
-    } : { id: variantInput.value, quantity: 1, properties: properties };
-    fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+
+    delete properties['_component_variants'];
+    delete properties['_fxb_design_product_id'];
+    resolveDesignRouting(cfg.handle).then(function (routing) {
+      if (routing.productId) properties['_fxb_design_product_id'] = routing.productId;
+      if (routing.componentGids) properties['_component_variants'] = routing.componentGids;
+      var payload = editing ? {
+        id: cartEdit.key,
+        quantity: parseInt(cartEdit.quantity, 10) || 1,
+        properties: properties
+      } : { id: variantInput.value, quantity: 1, properties: properties };
+      return fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
     }).then(function (response) {
       if (!response.ok) throw new Error('add failed');
       cta.disabled = false;
@@ -328,6 +433,7 @@
       return;
     }
     stateSelect.value = cartEdit.properties['Plate State'];
+    comboSyncFromValue();
     renderFields(activeDesign());
     fieldsList.querySelectorAll('[data-cl-property-name]').forEach(function (input) {
       var name = input.getAttribute('data-cl-property-name');

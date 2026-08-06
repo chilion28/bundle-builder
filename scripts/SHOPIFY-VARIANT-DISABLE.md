@@ -12,9 +12,10 @@ as a variant on hundreds of separate Shopify products.
 - Set every existing location's `available` quantity to `0`.
 - Verify the final state independently.
 
-Do not delete variants. A backend shutdown can leave a variant visible as sold
-out, depending on the theme, but it prevents checkout. Theme hiding is a
-separate optional step.
+Do not delete variants. The CityLocs custom product forms now read Shopify
+inventory directly: tracked variants above zero are shown, while tracked
+variants at zero are omitted. Shopify's `DENY` policy remains the checkout
+safety net.
 
 ## Authentication
 
@@ -93,5 +94,17 @@ on the production store:
 Final state: 771 tracked, 771 set to `DENY`, total available quantity `0`, and
 zero verification failures.
 
-The live theme explicitly hides all three SKUs from its product selectors and
-custom CityLocs/GemPages product forms.
+On July 27, 2026 the fixed SKU blocklist was removed from the live theme.
+Storefront visibility is now inventory-driven, so all three SKUs return
+automatically after a genuine restock.
+
+The July 27 restock reconciliation also found and repaired 16 duplicate product
+variants that the upstream stock update missed:
+
+| SKU | Exact copies | Restored available quantity | Missed copies repaired |
+| --- | ---: | ---: | ---: |
+| `P5AF-BLK` | 318 | 1,897 | 9 |
+| `P5AF-WHT` | 237 | 462 | 7 |
+
+An independent, paginated read-back verified that all 555 exact copies now
+have the expected positive quantity and none remain at zero.

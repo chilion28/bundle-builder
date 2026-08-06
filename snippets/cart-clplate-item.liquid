@@ -30,19 +30,28 @@
   data-cartitem-key="{{ item.key }}"
   {% if bundle_collection and bundle_collection != blank %}data-cartitem-collection="{{ bundle_collection }}"{% endif %}
   data-cartitem-price="{{ item.price }}">
-  <figure class="cart-item--image-wrapper">
-    <a href="{{ item_link }}">
-      {% if item.image %}
-        {%
-          render 'rimg',
-          img: item.image,
-          alt: item.title,
-          size: '120x'
-        %}
-      {% else %}
-        {{ 'image' | placeholder_svg_tag: 'placeholder--image' }}
+  <figure class="cart-item--image-wrapper" style="display: grid; gap: 8px;">
+    {%- comment -%}
+      This cart row groups every selected variant of the same custom-hat
+      product. Render one thumbnail per grouped line so each selected color is
+      visible instead of showing only the first line's image.
+    {%- endcomment -%}
+    {% for image_item in cart.items %}
+      {% if image_item.product.title == item.product.title %}
+        <a href="{{ item_link }}">
+          {% if image_item.image %}
+            {%
+              render 'rimg',
+              img: image_item.image,
+              alt: image_item.title,
+              size: '120x'
+            %}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder--image' }}
+          {% endif %}
+        </a>
       {% endif %}
-    </a>
+    {% endfor %}
   </figure>
 
   <div class="cart-item--inner">
@@ -269,4 +278,3 @@
     </div>
   </div>
 </li>
-

@@ -176,3 +176,121 @@ an incognito live-store smoke test.
 - If field names are added or renamed, update the production app, Cart Transform
   propagation allowlist, `FIELD_DEFAULTS`, and the explicit cart-edit transfer
   attributes together.
+
+---
+
+## Production-routing refactor — SKU-bridge (added 2026-07-31)
+
+### Why
+
+`clOrdersApp` routes orders **by product**, not by line-item property. It assigns
+an Illustrator template per design product and uses the `UV-F100-Rectangle-Patch`
+tag to locate the Dropbox template path. The original cart transform expanded the
+bundle into the three generic `Bundle Hat` component variants — those carry **no
+per-design template**, so production had nothing to route. `_plate_product_handle`
+/ `Plate Design` are just text properties the app doesn't key on.
+
+### The fix (refined Option A)
+
+Instead of the fixed `Bundle Hat` variants, each order line now becomes the
+customer's **real chosen design product** variant, resolved via a shared SKU. The
+promo `Bundle Hat` component variants and every design product share the same SKUs
+per style/color (validated across California, Texas, Tennessee, Wyoming):
+
+| Promo SKU        | Style / Color         |
+| ---------------- | --------------------- |
+| `6089BLK`        | Snapback / Black      |
+| `6606BROWN/KH`   | Trucker / Brown&Khaki |
+| `P5AF-NVY`       | Pro Five / Navy       |
+
+Because the SKU is stable across all ~700 design products, the SKU acts as a
+bridge: promo style/color → the matching variant on whatever design the customer
+picked. Price ($60), checkout grouping, and personalization are unchanged.
+
+### The three coordinated pieces
+
+1. **Liquid** — `snippets/cl-fixed-bundle-personalizer.liquid`
+   Emits the three promo SKUs from `product.metafields.custom.bundle_components`
+   onto the root element as `data-component-skus="SKU|SKU|SKU"`. Team can still
+   swap the component variants via the admin metafield picker — the SKUs follow.
+
+2. **Storefront JS** — `assets/cl-fixed-bundle.js`
+   - `COMPONENT_SKUS` read from `data-component-skus`.
+   - `resolveComponentVariants(handle)` fetches `/products/<design-handle>.js`
+     (cached per handle), maps each promo SKU → that design product's numeric
+     variant id, and returns pipe-joined `gid://shopify/ProductVariant/<id>`.
+   - **Fail-safe:** if any SKU is missing on the chosen product, it returns `''`
+     so the transform falls back to the metafield. Never blocks add-to-cart.
+   - `addToCart` awaits resolution and sets the `_component_variants` line
+     property before POSTing to `/cart/add.js` (or `/cart/change.js` on edit).
+
+3. **Cart transform** — `Custom App/citylocs-functions/extensions/bundle-cart-transform`
+   - `cart_transform_run.graphql`: added
+     `componentVariantsAttr: attribute(key: "_component_variants") { value }`.
+   - `cart_transform_run.js`: reads `line.componentVariantsAttr.value` first
+     (split on `|`), else falls back to the `custom.bundle_components` metafield.
+     **Backward-compatible** — old carts / other themes keep working.
+   - Released as app version **`citylocs-functions-15`**. Functions are global
+     (not per-theme); this release is live but inert for any line lacking the new
+     attribute, so it was safe to ship while the promo runs.
+
+### Deploy status
+
+- Function: **deployed live** (v15, backward-compatible).
+- Storefront: pushed to **DEV theme `153264947288`** and then **promoted to LIVE
+  theme OG-Empire `121696682072`** on 2026-07-31 — the two files
+  (`assets/cl-fixed-bundle.js`, `snippets/cl-fixed-bundle-personalizer.liquid`)
+  are live. SKU-bridge routing is now active on the storefront.
+- Diane confirmed all hat products share the same promo SKUs, so every offered
+  design resolves (no silent fallback expected in practice).
+
+### How to verify (DEV theme)
+
+1. Preview: `https://citylocs.myshopify.com?preview_theme_id=153264947288`.
+2. Pick a state, personalize, add to cart.
+3. Inspect the cart line's `_component_variants` property — three GIDs that match
+   the chosen design product's Snapback/Black, Trucker/Brown&Khaki, Pro Five/Navy
+   variants (confirm on `/products/<handle>.js`).
+4. Reach checkout; confirm the three expanded lines are the **design product**
+   (not generic `Bundle Hat`), price splits to $20 each, and all plate
+   properties propagate.
+5. Place a real test order and confirm `clOrdersApp` routes each line to the
+   correct Illustrator template.
+
+### Tests
+
+`extensions/bundle-cart-transform/src/cart_transform_run.test.js` — added two
+cases: `_component_variants` takes priority over the metafield, and the metafield
+is still used when the attribute is absent. `npx vitest run` → 4 passing.
+
+### Open items
+
+- **Alaska** still maps to `test-plate` (placeholder handle) — replace with the
+  real product before live.
+- Confirm the three promo SKUs exist on **every** offered design product (spot-
+  checked 4 states so far). Any design missing a SKU silently falls back to the
+  generic `Bundle Hat` for that line — safe, but not production-routable.
+
+### Validating component colors before a swap
+
+Only colors stocked on **all 51 offered designs** route natively. Before changing
+the `custom.bundle_components` colors, run:
+
+```
+node scripts/check-fixed-bundle-colors.mjs 6089BLK 6606BROWN/KH P5AF-NVY
+```
+
+It lists the universally-safe SKUs and flags any candidate that would fall back.
+(No args → prints the full safe menu.) Verified end-to-end in production
+2026-07-31: a California test order routed all 3 lines in clOrdersApp with the
+correct `UV-F100-Rectangle-Patch` template + Dropbox path.
+
+### Odd / non-universal colors → needs a clOrdersApp change
+
+The business wants to clear hat colors that are **not** stocked on the design
+products. Those can't use the SKU-bridge (there's no design-product variant to
+match), so they arrive as generic `Bundle Hat` lines with no template. Routing
+them requires a **production-side change**: clOrdersApp must select the template
+from the line's `_plate_product_handle` / `Plate Design` property and print it on
+the odd-color blank from the line's variant. Full developer spec:
+[`docs/CLORDERSAPP-BUNDLE-ROUTING-SPEC.md`](CLORDERSAPP-BUNDLE-ROUTING-SPEC.md).

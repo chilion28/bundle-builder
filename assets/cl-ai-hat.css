@@ -74,7 +74,7 @@
 
 /* ---------- Two-column builder layout ---------- */
 .cl-ai-b{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;
-  border-top:1px solid var(--line);padding-top:34px}
+  border-top:none;padding-top:34px}
 .cl-ai-b__left,.cl-ai-b__right{display:flex;flex-direction:column;gap:26px;min-width:0}
 /* Live preview block */
 .cl-ai-b__preview{display:flex;flex-direction:column;align-items:center;gap:14px}
@@ -111,25 +111,38 @@
    cover, bezel is ~vertically centred) + a per-shape aspect ratio, so the patch
    fills the preview with no empty margin. The editor-modal frames are untouched. */
 .cl-ai-pf[data-shape="rectangle"]{aspect-ratio:1.777/1}
-.cl-ai-pf[data-shape="rounded"]{aspect-ratio:1.24/1}
+.cl-ai-pf[data-shape="square"]{aspect-ratio:1.24/1}
 .cl-ai-pf[data-shape="hexagon"]{aspect-ratio:1.746/1}
+/* Pendant: portrait. Frame is padded to a 950x950 square (engine assumes square
+   frames); cover-crop the transparent sides to show just the pendant. */
+.cl-ai-pf[data-shape="pendant"]{aspect-ratio:500/884}
+/* Single-shape products (pendant): smaller preview + tighter spacing. The extra
+   .cl-ai-b--single-shape class (spec 0,3,0) makes max-width WIN over the upload
+   layout's .cl-ai-b--upload .cl-ai-pf 460px (0,2,0) — without shrinking the separate
+   upload-hat product. Hats are otherwise unaffected. */
+.cl-ai-b--single-shape .cl-ai-pf[data-shape="pendant"]{max-width:265px !important}
+.cl-ai-b--single-shape .cl-ai-b__left{gap:12px}
+.cl-ai-b--single-shape .cl-ai-b__preview{gap:6px}
+.cl-ai-b--single-shape .cl-ai-b__preview .cl-ai__step-head{margin-bottom:2px}
 .cl-ai-b--upload .cl-ai-pf{max-width:460px !important}
 /* !important so a page-builder host (e.g. GemPages forcing img{display:block})
    can't override the show-only-the-active-frame logic. */
 .cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none !important;pointer-events:none;z-index:2}
 .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
-.cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__frame[data-frame="rounded"],
+.cl-ai-pf[data-shape="square"]   .cl-ai-pf__frame[data-frame="square"],
 .cl-ai-pf[data-shape="circle"]    .cl-ai-pf__frame[data-frame="circle"],
-.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"]{display:block !important}
+.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"],
+.cl-ai-pf[data-shape="pendant"]   .cl-ai-pf__frame[data-frame="pendant"]{display:block !important}
 /* Artwork is clipped by a pixel-perfect mask PNG derived from each frame's window
    (mask-image set per shape in JS). Positioned to each window's bbox, expressed
    relative to the cropped preview container. */
 .cl-ai-pf__art{position:absolute;z-index:1;background:#f3f4f6 center/cover no-repeat;
   -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
 .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__art{left:3.42%;top:7.21%;width:93.17%;height:88.1%}
-.cl-ai-pf[data-shape="rounded"]   .cl-ai-pf__art{left:3.67%;top:4.33%;width:92.67%;height:91.2%}
+.cl-ai-pf[data-shape="square"]   .cl-ai-pf__art{left:3.67%;top:4.33%;width:92.67%;height:91.2%}
 .cl-ai-pf[data-shape="circle"]    .cl-ai-pf__art{left:3.83%;top:3.83%;width:92.33%;height:92.33%}
 .cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__art{left:3.0%;top:4.75%;width:94%;height:89.6%}
+.cl-ai-pf[data-shape="pendant"]   .cl-ai-pf__art{left:12.2%;top:17.42%;width:75.8%;height:76.24%}
 .cl-ai-b__placed-actions{display:flex;gap:10px}
 .cl-ai-b__placed-btn{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;
   font-weight:700;font-size:13px;color:#374151;transition:.15s}
@@ -158,7 +171,8 @@
   z-index:4;pointer-events:none;display:none}
 .cl-ai-ed__frame[src]{display:block}
 .cl-ai-ed__mask-safe{display:none}
-.cl-ai-ed__mask[data-shape="rounded"]{border-radius:18px}
+.cl-ai-ed__mask[data-shape="square"]{border-radius:18px}
+.cl-ai-ed__mask[data-shape="pendant"]{border-radius:16px}
 .cl-ai-ed__mask[data-shape="circle"]{aspect-ratio:1/1;width:70%;border-radius:50%}
 .cl-ai-ed__mask[data-shape="hexagon"]{aspect-ratio:1/1;width:72%;border-radius:0;
   clip-path:polygon(25% 4%,75% 4%,100% 50%,75% 96%,25% 96%,0 50%)}
@@ -263,8 +277,8 @@
 .cl-ai-b__grid{display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
 .cl-ai-b__row{display:flex;align-items:center;gap:14px;padding:10px 12px;border-top:1px solid #eef1f4}
 .cl-ai-b__row:first-child{border-top:0}
-.cl-ai-b__row-hat{flex:0 0 52px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;
-  background:#fbfbfb;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.cl-ai-b__row-hat{flex:0 0 52px;width:52px;height:52px;padding:0;display:flex;align-items:center;justify-content:center;
+  background:#fbfbfb;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:zoom-in}
 .cl-ai-b__row-hat img{width:100%;height:100%;object-fit:contain}
 .cl-ai-b__row-name{flex:1;font-size:15px;font-weight:600;color:var(--ink,#1a1f26)}
 .cl-ai-b__soldout{color:#b0453b;font-weight:700;font-size:12px;margin-left:6px}
@@ -386,6 +400,36 @@
   background-image:linear-gradient(to top right, transparent 0 calc(50% - 1.2px), #e0342a calc(50% - 1.2px) calc(50% + 1.2px), transparent calc(50% + 1.2px) 100%)}
 .cl-ai-ed__ol.is-active{border-color:var(--blue,#00a0ea);box-shadow:0 0 0 2px #e4f4fd}
 
+/* ---------- HAT IMAGE LIGHTBOX ---------- */
+.cl-ai-imgbox{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:24px}
+.cl-ai-imgbox[hidden]{display:none}
+.cl-ai-imgbox__backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(10,15,20,.78);padding:0}
+.cl-ai-imgbox__panel{position:relative;z-index:1;width:min(90vw,720px);max-height:90vh;padding:24px;background:#fff;
+  border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center}
+.cl-ai-imgbox__close{position:absolute;right:10px;top:8px;width:42px;height:42px;padding:0;border:0;border-radius:50%;
+  background:#fff;color:#1a1f26;font-size:32px;line-height:1;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.cl-ai-imgbox__image{display:block;width:100%;height:auto;max-width:640px;max-height:72vh;object-fit:contain}
+.cl-ai-imgbox__title{margin:14px 0 0;font-size:18px;font-weight:800;color:#1a1f26;text-align:center}
+
+/* Keep floating support launchers from covering the artwork modal actions on phones. */
+@media (max-width:768px){
+  body.cl-ai-editor-open #gorgias-chat-container,
+  body.cl-ai-editor-open #gorgias-chat-messenger-button,
+  body.cl-ai-editor-open iframe#chat-button,
+  body.cl-ai-editor-open #chat-button,
+  body.cl-ai-editor-open #shopify-chat,
+  body.cl-ai-editor-open #shopify-chat-container,
+  body.cl-ai-editor-open #tidio-chat,
+  body.cl-ai-editor-open #willdesk-button,
+  body.cl-ai-editor-open .willdesk-chat-button,
+  body.cl-ai-editor-open #richpanel-container,
+  body.cl-ai-editor-open .rp-widget-launcher,
+  body.cl-ai-editor-open .zsiq_floatmain,
+  body.cl-ai-editor-open #chat-widget-container{
+    display:none !important;
+  }
+}
+
 /* ---------- GEMPAGES COMPATIBILITY ----------
    GemPages' Tailwind preflight is scoped with `.gps`, which makes rules such as
    `.gps button` and `.gps img` more specific than the component classes above.
@@ -399,12 +443,15 @@
 .gps .cl-ai .cl-ai__copy-btn.is-copied{background:var(--green);border-color:var(--green);color:#fff}
 
 .gps .cl-ai .cl-ai-b__choose{background:#1a1f26;color:#fff;border:0;border-radius:8px;
-  padding:9px 20px;font-size:13px;font-weight:700;line-height:normal}
+  padding:9px 20px;margin-bottom:8px;font-size:13px;font-weight:700;line-height:normal}
 .gps .cl-ai .cl-ai-b__choose:hover{background:#000;color:#fff}
 .gps .cl-ai .cl-ai-b__placed-btn{background:#fff;color:#374151;border:1.5px solid var(--line);
   border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;line-height:normal}
 .gps .cl-ai .cl-ai-b__placed-btn:hover{background:#fff;color:var(--green);border-color:var(--green)}
 
+.gps .cl-ai .cl-ai-b__pills,
+.gps .cl-ai .cl-ai-b__shapes,
+.gps .cl-ai .cl-ai-b__placed-actions{margin-bottom:10px}
 .gps .cl-ai .cl-ai-b__pill{display:block;background:#fff;color:#374151;border:1.5px solid var(--line);
   border-radius:10px;padding:12px 10px;font-size:14px;font-weight:600;line-height:normal}
 .gps .cl-ai .cl-ai-b__pill:hover{border-color:#9dd6f4}
@@ -416,23 +463,110 @@
 .gps .cl-ai .cl-ai-b__tc.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
 
 .gps .cl-ai .cl-ai-b__qty-btn{background:#fff;color:#374151;border:0;padding:0;font-size:20px;font-weight:400}
+.gps .cl-ai .cl-ai-b__row-hat{background:#fbfbfb;border:1px solid var(--line);padding:0}
 .gps .cl-ai .cl-ai-b__row-qty .cl-ai-b__qty-btn{font-size:18px}
 .gps .cl-ai .cl-ai-b__qty-btn:hover{background:#f3f4f6}
+.gps .cl-ai .cl-ai-imgbox__backdrop{position:absolute;background:rgba(10,15,20,.78);border:0;padding:0}
+.gps .cl-ai .cl-ai-imgbox__close{background:#fff;color:#1a1f26;border:0;padding:0;font-size:32px;font-weight:400}
+.gps .cl-ai .cl-ai-imgbox__image{display:block;width:100%;height:auto;max-width:640px;max-height:72vh;object-fit:contain}
+.gps .cl-ai .cl-ai-imgbox__title{margin:14px 0 0;font-size:18px;font-weight:800;color:#1a1f26}
 .gps .cl-ai .cl-ai-b__cta{display:block;width:100%;background:var(--green);color:#fff;border:0;
   border-radius:12px;padding:17px;font-size:17px;font-weight:800;line-height:normal;letter-spacing:.02em;
-  box-shadow:var(--shadow)}
+  margin-bottom:12px;box-shadow:var(--shadow)}
 .gps .cl-ai .cl-ai-b__cta:hover{background:var(--green-dk);color:#fff}
+.gps .cl-ai .cl-ai-b__reassure{margin:0;padding:0}
 
 .gps .cl-ai .cl-ai-pf{overflow:hidden}
 .gps .cl-ai .cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;max-width:none;
   object-fit:cover;display:none !important}
 .gps .cl-ai .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
-.gps .cl-ai .cl-ai-pf[data-shape="rounded"] .cl-ai-pf__frame[data-frame="rounded"],
+.gps .cl-ai .cl-ai-pf[data-shape="square"] .cl-ai-pf__frame[data-frame="square"],
 .gps .cl-ai .cl-ai-pf[data-shape="circle"] .cl-ai-pf__frame[data-frame="circle"],
-.gps .cl-ai .cl-ai-pf[data-shape="hexagon"] .cl-ai-pf__frame[data-frame="hexagon"]{display:block !important}
+.gps .cl-ai .cl-ai-pf[data-shape="hexagon"] .cl-ai-pf__frame[data-frame="hexagon"],
+.gps .cl-ai .cl-ai-pf[data-shape="pendant"] .cl-ai-pf__frame[data-frame="pendant"]{display:block !important}
 .gps .cl-ai .cl-ai-b__swatch-img,
 .gps .cl-ai .cl-ai-b__row-hat img,
 .gps .cl-ai .cl-ai-b__shape-icon{height:100%;width:100%;object-fit:contain}
 .gps .cl-ai .cl-ai-b__qc-thumb{width:130px;height:100px;object-fit:cover}
 .gps .cl-ai .cl-ai__inspo-grid .cl-ai__inspo-media img{position:absolute;inset:0;width:100%;height:100%;
   max-width:none;object-fit:cover}
+
+/* ---------- MOBILE "HOW IT WORKS" CARDS ----------
+   GemPages stacks each image, heading, and blurb vertically on phones. Keep the
+   desktop three-column layout intact, but use a compact 30/70 media/text row on
+   the Image Hat product page at the mobile breakpoint. */
+@media (max-width:767px){
+  .gps-630538012308013725 #gYBB4R3xw1{
+    row-gap:10px !important;
+  }
+
+  .gps-630538012308013725 #gveIcjWlwZ,
+  .gps-630538012308013725 #geJkJ2QgOc,
+  .gps-630538012308013725 #gUtjzQBWEY{
+    padding:12px 8px !important;
+  }
+
+  .gps-630538012308013725 #gveIcjWlwZ > [data-same-height-display-contents],
+  .gps-630538012308013725 #geJkJ2QgOc > [data-same-height-display-contents],
+  .gps-630538012308013725 #gUtjzQBWEY > [data-same-height-display-contents]{
+    display:grid !important;
+    grid-template-columns:minmax(0,3fr) minmax(0,7fr) !important;
+    grid-template-rows:auto auto;
+    column-gap:14px;
+    align-items:center;
+  }
+
+  .gps-630538012308013725 [data-id="gu1V6Oyr3h"],
+  .gps-630538012308013725 [data-id="grM7158fWG"],
+  .gps-630538012308013725 [data-id="gESRilCoD7"]{
+    grid-column:1;
+    grid-row:1 / 3;
+    align-self:center;
+    margin-bottom:0 !important;
+  }
+
+  .gps-630538012308013725 [data-id="gu1V6Oyr3h"] img,
+  .gps-630538012308013725 [data-id="grM7158fWG"] img,
+  .gps-630538012308013725 [data-id="gESRilCoD7"] img{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .gps-630538012308013725 [data-id="gxKfzyqzCg"],
+  .gps-630538012308013725 [data-id="g9997_RSUw"]{
+    grid-column:2;
+    grid-row:1;
+    align-self:end;
+  }
+
+  .gps-630538012308013725 [data-id="gDZe75wan2"],
+  .gps-630538012308013725 [data-id="gq_vtH_r3m"]{
+    grid-column:2;
+    grid-row:2;
+    align-self:start;
+  }
+
+  .gps-630538012308013725 #gSNAPDskPA{
+    grid-column:2;
+    grid-row:1 / 3;
+    align-self:center;
+    margin-bottom:0 !important;
+  }
+
+  .gps-630538012308013725 [data-id="gxKfzyqzCg"] [data-gp-text],
+  .gps-630538012308013725 [data-id="g9997_RSUw"] [data-gp-text],
+  .gps-630538012308013725 [data-id="g5Ba3XaYOU"] [data-gp-text]{
+    padding:0 0 5px !important;
+    text-align:left !important;
+    font-size:18px !important;
+    line-height:1.2 !important;
+  }
+
+  .gps-630538012308013725 [data-id="gDZe75wan2"] [data-gp-text],
+  .gps-630538012308013725 [data-id="gq_vtH_r3m"] [data-gp-text],
+  .gps-630538012308013725 [data-id="g--hUw84D7"] [data-gp-text]{
+    text-align:left !important;
+    font-size:13px !important;
+    line-height:1.45 !important;
+  }
+}

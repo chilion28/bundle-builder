@@ -30,6 +30,17 @@
 
 {% render 'breadcrumbs' %}
 
+{% if product.handle == 'pistolero-golf-custom-hat-variant-12345678901234' %}
+  <script>
+    window.CL_ZEPTO_RECOVERY = {
+      productId: {{ product.id | json }},
+      handle: {{ product.handle | json }},
+      shop: {{ shop.permanent_domain | json }}
+    };
+  </script>
+  <script src="{{ 'cl-zepto-recovery.js' | asset_url }}" defer></script>
+{% endif %}
+
 
 <section class="product--container" data-product-wrapper>
   {%

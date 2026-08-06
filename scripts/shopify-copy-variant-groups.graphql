@@ -1,0 +1,37 @@
+mutation CopyApprovedVariantGroups(
+  $productId: ID!
+  $variants: [ProductVariantsBulkInput!]!
+  $media: [CreateMediaInput!]
+) {
+  productVariantsBulkCreate(
+    productId: $productId
+    variants: $variants
+    media: $media
+  ) {
+    productVariants {
+      id
+      title
+      sku
+      selectedOptions { name value }
+      price
+      compareAtPrice
+      barcode
+      taxable
+      inventoryPolicy
+      image { id url altText }
+      inventoryItem {
+        id
+        tracked
+        requiresShipping
+        measurement { weight { value unit } }
+        inventoryLevels(first: 100) {
+          nodes {
+            location { id }
+            quantities(names: ["available"]) { name quantity }
+          }
+        }
+      }
+    }
+    userErrors { code field message }
+  }
+}

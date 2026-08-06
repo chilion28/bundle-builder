@@ -1,0 +1,90 @@
+{%- comment -%}
+  Generic customizer template — the "assign the editor to any product from admin"
+  path (the Zepto-like ask). Reads the product's `custom.customizer_config`
+  metaobject (see docs/CUSTOMIZER-METAOBJECT.md) and drives the SAME in-house
+  editor engine (assets/cl-ai-hat.js + cl-ai-hat-builder) that the hat and pendant
+  use. No per-product code: assign this theme template + fill the metaobject.
+
+  Supersedes product.pendant.liquid once the pendant is assigned a metaobject
+  entry (the pendant template hardcodes the same values inline).
+{%- endcomment -%}
+
+{%- assign cfg = product.metafields.custom.customizer_config.value -%}
+
+{%- if cfg == blank -%}
+  {%- comment -%} No config assigned — render nothing customizer-specific so the
+    page still shows title/description rather than a broken editor. {%- endcomment -%}
+  <div style="max-width:1120px;margin:0 auto;padding:28px 18px">
+    <h1 style="font:800 30px/1.1 -apple-system,sans-serif;margin:0">{{ product.title }}</h1>
+    {%- if product.description != blank -%}
+      <div style="color:#5c6b7a;max-width:60ch;margin-top:8px">{{ product.description }}</div>
+    {%- endif -%}
+  </div>
+{%- else -%}
+
+{{ 'cl-ai-hat.css' | asset_url | stylesheet_tag }}
+
+{%- assign shape_key = cfg.shape_name | default: 'Rectangle' -%}
+
+{%- comment -%} Resolve the metaobject's frame/mask File refs to URLs. If set, they
+  override the theme-asset convention in the builder (a brand-new product then needs
+  no cl-patch-<shape>.png upload). Blank → builder falls back to the asset naming. {%- endcomment -%}
+{%- assign frame_url = '' -%}
+{%- assign mask_url = '' -%}
+{%- if cfg.frame_image != blank -%}{%- assign frame_url = cfg.frame_image | image_url: width: 2000 -%}{%- endif -%}
+{%- if cfg.mask_image != blank -%}{%- assign mask_url = cfg.mask_image | image_url: width: 2000 -%}{%- endif -%}
+
+<div class="cl-ai-customizer-page" style="max-width:1120px;margin:0 auto;padding:28px 18px">
+  <div class="cl-ai-customizer-hero" style="margin-bottom:14px">
+    <p style="font:700 12px/1 -apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#00a0ea;margin:0 0 6px">CityLocs</p>
+    <h1 style="font:800 30px/1.1 -apple-system,sans-serif;letter-spacing:-.02em;margin:0">{{ product.title }}</h1>
+    {%- if product.description != blank -%}
+      <div style="color:#5c6b7a;max-width:60ch;margin-top:8px">{{ product.description | strip_html | truncatewords: 40 }}</div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Build the engine config JSON. If the (advanced) shapes_json field
+    is filled it wins verbatim — that's the multi-shape escape hatch. Otherwise
+    assemble a single-shape config from the typed geometry fields. {%- endcomment -%}
+  {%- if cfg.shapes_json != blank -%}
+    {%- assign customizer_config = cfg.shapes_json -%}
+  {%- else -%}
+    {%- comment -%} Every numeric field gets a `| default:` so a blank/unset field in
+      the metaobject can never produce invalid JSON (which would throw in the engine
+      and silently break the geometry). Defaults are sane full-frame-ish fallbacks —
+      a missing value degrades gracefully instead of breaking the whole editor. {%- endcomment -%}
+    {%- capture customizer_config -%}
+  {
+    "shapes": {
+      "{{ shape_key | downcase }}": {
+        "window":      { "l": {{ cfg.window_l | default: 0 }}, "t": {{ cfg.window_t | default: 0 }}, "w": {{ cfg.window_w | default: 1 }}, "h": {{ cfg.window_h | default: 1 }} },
+        "frame_aspect": {{ cfg.frame_aspect | default: 1 }},
+        "safe":        { "w": {{ cfg.safe_w | default: 0.95 }}, "h": {{ cfg.safe_h | default: 0.95 }} },
+        "patch_in":    { "w": {{ cfg.patch_in_w | default: 2 }}, "h": {{ cfg.patch_in_h | default: 2 }} },
+        "usable": {{ cfg.usable | default: 0.9 }},
+        "text_y": {{ cfg.text_y | default: 0.86 }},
+        "text_maxw": {{ cfg.text_maxw | default: 0.86 }}
+      }
+    }
+  }
+    {%- endcapture -%}
+  {%- endif -%}
+
+  {% render 'cl-ai-hat-builder',
+     shapes: shape_key,
+     config_json: customizer_config,
+     frame_url: frame_url,
+     mask_url: mask_url,
+     show_variants: cfg.show_variants,
+     show_prompt: cfg.show_prompt,
+     price_display: product.price,
+     cta_label: cfg.cta_label,
+     upload_title: cfg.upload_title,
+     upload_note: cfg.upload_note,
+     qc_title: cfg.qc_title,
+     preview_title: cfg.preview_title,
+     customize_title: cfg.customize_title,
+     file_prefix: cfg.file_prefix %}
+</div>
+
+{%- endif -%}

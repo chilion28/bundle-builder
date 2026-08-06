@@ -26,9 +26,15 @@
 {%- endfor -%}
 
 {%- comment -%} Patch shapes → real frame PNGs in assets/ (transparent windows) {%- endcomment -%}
-{%- assign shape_list = 'Rectangle,Rounded,Circle,Hexagon' | split: ',' -%}
+{%- comment -%} `shapes` param lets a product override the patch shapes (e.g. a
+  single-shape product like the pendant passes shapes:'Pendant'). Default = the hat's
+  four. `show_variants` (default true) toggles the Style/Colour/quantity grid; false =
+  a single-variant product (pendant) → the JS uses SIMPLE add. {%- endcomment -%}
+{%- assign shape_list = shapes | default: 'Rectangle,Square,Circle,Hexagon' | split: ',' -%}
 
-<div class="cl-ai cl-ai-b{% if show_prompt == false %} cl-ai-b--upload{% endif %}" data-cl-ai-builder
+<div class="cl-ai cl-ai-b{% if show_prompt == false %} cl-ai-b--upload{% endif %}{% if shape_list.size == 1 %} cl-ai-b--single-shape{% endif %}" data-cl-ai-builder
+     data-cl-ai-default-shape="{{ shape_list[0] }}"
+     data-cl-ai-file-prefix="{{ file_prefix | default: 'image-hat' }}"
      data-patch-font="{{ 'AkzidenzGrotesk-Black.woff2' | asset_url }}">
 
   {%- comment -%} ========== LEFT COLUMN — Step 1 prompt + Step 2 upload ========== {%- endcomment -%}
@@ -47,13 +53,24 @@
         <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
         <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>
       </div>
-      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="rectangle"
-           {%- for sh in shape_list %} data-mask-{{ sh | downcase }}="{{ 'cl-patch-mask-' | append: sh | downcase | append: '.png' | asset_url }}"{% endfor %}>
+      {%- comment -%} Frame/mask images: default to the theme-asset convention
+        (cl-patch-<shape>.png / cl-patch-mask-<shape>.png). A config-driven product
+        (single shape) may override the FIRST shape's frame/mask via `frame_url` /
+        `mask_url` (e.g. Shopify Files URLs from the customizer metaobject) so a new
+        product needs no theme-asset upload. Blank override → convention. {%- endcomment -%}
+      {%- comment -%} Shape SLUG (lowercase, spaces/punctuation stripped) is the key
+        used in the data-mask-<shape> attribute name and data-frame value. The engine
+        (cl-ai-hat.js `sh()`) slugs the shape identically for lookups, so a display
+        name with a space (e.g. "Swap Patch") can never break the attribute. {%- endcomment -%}
+      {%- assign shape0_slug = shape_list[0] | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
+      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="{{ shape0_slug }}"
+           {%- for sh in shape_list %}{%- assign sh_slug = sh | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' %} data-mask-{{ sh_slug }}="{% if forloop.first and mask_url != blank %}{{ mask_url }}{% else %}{{ 'cl-patch-mask-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}" data-frame-{{ sh_slug }}="{% if forloop.first and frame_url != blank %}{{ frame_url }}{% else %}{{ 'cl-patch-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}"{% endfor %}>
         <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
         <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
         {%- for sh in shape_list -%}
-          <img class="cl-ai-pf__frame" data-frame="{{ sh | downcase }}"
-               src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+          {%- assign sh_slug = sh | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
+          <img class="cl-ai-pf__frame" data-frame="{{ sh_slug }}"
+               src="{% if forloop.first and frame_url != blank %}{{ frame_url }}{% else %}{{ 'cl-patch-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}"
                alt="{{ sh }} patch frame" loading="lazy">
         {%- endfor -%}
       </div>
@@ -152,8 +169,10 @@ Now create:' }}</pre>
       </div>
     </div>
 
-    {%- comment -%} Upload template: preview sits here, right under Step 1. {%- endcomment -%}
-    {%- if show_prompt == false -%}{{ cl_preview_block }}{%- endif -%}
+    {%- comment -%} Upload template (multi-shape hat): preview sits here under Step 1.
+      Single-shape products (pendant) move it to the RIGHT column to fill that space —
+      see below. {%- endcomment -%}
+    {%- if show_prompt == false and shape_list.size > 1 -%}{{ cl_preview_block }}{%- endif -%}
 
     {%- comment -%} ===== STEP 4 — QUALITY CHECK (grouped with the upload) ===== {%- endcomment -%}
     <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
@@ -183,9 +202,10 @@ Now create:' }}</pre>
   {%- comment -%} ========== RIGHT COLUMN — Live preview + Step 3 ========== {%- endcomment -%}
   <div class="cl-ai-b__right">
 
-    {%- comment -%} ===== LIVE PREVIEW — shown here unless it was moved to the left
-      column (upload template, show_prompt:false). ===== {%- endcomment -%}
-    {%- unless show_prompt == false -%}{{ cl_preview_block }}{%- endunless -%}
+    {%- comment -%} ===== LIVE PREVIEW — shown here for the AI template AND for
+      single-shape products (pendant), so the otherwise-sparse right column is filled.
+      The multi-shape upload hat keeps it in the left column (above). ===== {%- endcomment -%}
+    {%- if show_prompt != false or shape_list.size == 1 -%}{{ cl_preview_block }}{%- endif -%}
 
   {%- comment -%} ===== STEP 3 — CUSTOMIZE (form) ===== {%- endcomment -%}
   {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
@@ -209,6 +229,8 @@ Now create:' }}</pre>
 
       {%- comment -%} Patch shape (line-item property) — shown first so the customer
         picks the patch before choosing style + colours. {%- endcomment -%}
+      {%- comment -%} Shape selector — only when the product offers more than one. {%- endcomment -%}
+      {%- if shape_list.size > 1 -%}
       <div class="cl-ai-b__field">
         <label class="cl-ai-b__label">Patch Shape</label>
         <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
@@ -223,6 +245,11 @@ Now create:' }}</pre>
           {%- endfor -%}
         </div>
       </div>
+      {%- endif -%}
+
+      {%- comment -%} Style + Colour + quantity grid — only for multi-variant products.
+        Single-variant products (pendant) show a simple qty instead (JS SIMPLE add). {%- endcomment -%}
+      {%- if show_variants != false -%}
 
       {%- comment -%} Style {%- endcomment -%}
       <div class="cl-ai-b__field">
@@ -289,6 +316,20 @@ Now create:' }}</pre>
         <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
       </div>
 
+      {%- else -%}
+      {%- comment -%} Single-variant (pendant): a −/+ quantity stepper matching the
+        hat grid rows; the JS SIMPLE-add path uses data-cl-ai-simple-qty. {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Quantity</label>
+        <div class="cl-ai-b__qty">
+          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-simple-minus aria-label="Decrease quantity">−</button>
+          <input class="cl-ai-b__qty-input" id="cl-ai-simple-qty" type="text" inputmode="numeric"
+                 value="1" data-cl-ai-simple-qty aria-label="Quantity">
+          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-simple-plus aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+      {%- endif -%}
+
       {%- comment -%} Patch text now lives INSIDE the artwork editor modal, where the
         customer can drag + resize it on the patch. See the modal below. {%- endcomment -%}
 
@@ -296,11 +337,6 @@ Now create:' }}</pre>
         <span data-cl-ai-cta-label>{{ cta_label | default: 'ADD TO CART' }}</span>
         <span class="cl-ai-b__cta-price"> · <span data-cl-ai-cta-price>{{ price_display | money }}</span></span>
       </button>
-
-      <ul class="cl-ai-b__reassure" role="list">
-        <li>↺ 30 Day Returns</li>
-        <li>✓ Satisfaction Guaranteed</li>
-      </ul>
     </div>
   {% endform %}
 
@@ -402,6 +438,18 @@ Now create:' }}</pre>
     ]
   }
   </script>
+
+  {%- comment -%} Optional config-driven geometry: the `config_json` param → this
+    JSON block → cl-ai-hat.js merges it OVER its hardcoded per-shape maps
+    (window/frame_aspect/safe/patch_in/usable/text_y/text_maxw). Lets a product
+    carry its own patch geometry with no engine edit — the seam a Shopify
+    metaobject/metafield will feed later. Absent = the engine's built-in maps
+    (the hat) are used unchanged. {%- endcomment -%}
+  {%- if config_json != blank -%}
+  <script type="application/json" data-cl-ai-config>
+  {{ config_json }}
+  </script>
+  {%- endif -%}
 </div>
 
 <script src="{{ 'cl-ai-hat.js' | asset_url }}" defer></script>

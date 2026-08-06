@@ -1312,6 +1312,68 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 
 /* Configurator: square (not rounded) color rows */
 .cl-cfg .cl-qv-row { border-radius: 0; }
+
+/* Builder-only product pages: offer banner */
+.cl-builder-offer-banner {
+  background: #eaf6ff;
+  border-top: 1px solid #b8def8;
+  border-bottom: 1px solid #b8def8;
+  padding: 14px 18px;
+}
+.cl-builder-offer-banner__link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  max-width: 1180px;
+  margin: 0 auto;
+  color: #1d2939;
+  text-align: center;
+  text-decoration: none;
+}
+.cl-builder-offer-banner__title {
+  flex: 0 0 auto;
+  font-size: 18px;
+  font-weight: 800;
+}
+.cl-builder-offer-banner__text {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.cl-builder-offer-banner__cta {
+  flex: 0 0 auto;
+  background: #1f9ce6;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  padding: 11px 18px;
+  text-transform: uppercase;
+}
+.cl-builder-offer-banner__link:hover .cl-builder-offer-banner__cta {
+  background: #147fc0;
+}
+@media (max-width: 768px) {
+  .cl-builder-offer-banner {
+    padding: 12px 14px;
+  }
+  .cl-builder-offer-banner__link {
+    display: block;
+  }
+  .cl-builder-offer-banner__title,
+  .cl-builder-offer-banner__text {
+    display: block;
+  }
+  .cl-builder-offer-banner__title {
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+  .cl-builder-offer-banner__cta {
+    display: inline-block;
+    margin-top: 10px;
+  }
+}
+
 /* Bigger style pills + color/qty rows on desktop */
 @media (min-width: 769px) {
   .cl-cfg .cl-qv-style { font-size: 14px; padding: 11px 14px; }
@@ -1322,4 +1384,29 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
   .cl-cfg .cl-cfg-size { font-size: 14px; }
   .cl-cfg .cl-qv-btn { width: 38px; height: 38px; font-size: 20px; }
   .cl-cfg .cl-qv-qty { width: 54px; height: 38px; font-size: 16px; }
+}
+
+/* Keep the Gorgias launcher in the conventional mobile bottom-right position. */
+@media (max-width: 768px) {
+  html body iframe#chat-button {
+    left: auto !important;
+    right: 16px !important;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* Mobile search takeover safety net.
+   Tapping the header search icon adds `mobile-search-takeover-active` to <body>
+   and `live-search--takeover` to the panel synchronously, but the panel is only
+   made visible by a JS requestAnimationFrame animation that sets
+   data-animation-state="open". On some mobile devices that animation never
+   completes, so the dimmer + scroll-lock fire (screen grays out) while the
+   search panel stays at opacity:0 / translateY(40%) — i.e. no visible search
+   form. Force the panel open the moment the takeover class lands, independent
+   of the animation, so the search field always appears. It reverts to the
+   theme's closed state as soon as the takeover is dismissed. */
+body.mobile-search-takeover-active [data-site-header-mobile-search-button] .live-search--takeover {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
 }
