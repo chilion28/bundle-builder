@@ -221,6 +221,9 @@
       {%-if variant == empty or variant == null -%}
         {%- assign variant = product.selected_or_first_available_variant -%}
       {%- endif -%}
+      {% unless isSettingSameHeightProductList %}
+        {%- assign isSettingSameHeightProductList = false -%}
+      {% endunless %}
     
       <gp-product
         data-uid="g5IS6ky5nG"
@@ -254,7 +257,7 @@
     <gp-product-description
       data-id="g3Yj5tpf0Q"
       class="gp-product-description undefined"
-      gp-data='{"setting":{"lineClamp":{"desktop":3},"hasLineClamp":{"desktop":false},"viewMoreText":"{{ section.settings.gg3Yj5tpf0Q_viewMoreText_-1361653502 }}","viewLessText":"{{ section.settings.gg3Yj5tpf0Q_viewLessText_-164448351 }}","enableViewMoreIcon":true},"textStyle":{"--ts":"none","--c":"var(--g-c-text-1, text-1)","--ff":"var(--g-font-Inter, &#039;Inter&#039;), var(--g-font-body, body)","--weight":"400","--size":"16px","--size-tablet":"16px","--size-mobile":"14px","--lh":"180%","--lh-tablet":"180%","--lh-mobile":"180%","--maxh":"none","--maxh-tablet":"none","--maxh-mobile":"none","--line-clamp":"unset","--line-clamp-tablet":"unset","--line-clamp-mobile":"unset"}}'
+      gp-data='{"setting":{"lineClamp":{"desktop":3},"hasLineClamp":{"desktop":false},"viewMoreText":"{{ section.settings.gg3Yj5tpf0Q_viewMoreText_-1361653502 }}","viewLessText":"{{ section.settings.gg3Yj5tpf0Q_viewLessText_-164448351 }}","enableViewMoreIcon":true},"textStyle":{"--ts":"none","--c":"var(--g-c-text-1, text-1)","--ff":"var(--g-font-Inter, \u0027Inter\u0027), var(--g-font-body, body)","--weight":"400","--size":"16px","--size-tablet":"16px","--size-mobile":"14px","--lh":"180%","--lh-tablet":"180%","--lh-mobile":"180%","--maxh":"none","--maxh-tablet":"none","--maxh-mobile":"none","--line-clamp":"unset","--line-clamp-tablet":"unset","--line-clamp-mobile":"unset"}}'
       data-view-more-text="{{ section.settings.gg3Yj5tpf0Q_viewMoreText_-1361653502 }}"
       data-view-less-text="{{ section.settings.gg3Yj5tpf0Q_viewLessText_-164448351 }}"
     >
@@ -262,8 +265,7 @@
       .p-description-wrapper.gp-p-description-text * {
         color: inherit;
         line-height: inherit !important;
-      }</style>
-      <style>
+      }
    .gp-p-description-text > :not(ol, ul, table, div, style, script) {
       display: inline !important;
     }

@@ -1,1 +1,80 @@
-{"sections":{"main":{"type":"static-product","blocks":{"title":{"type":"title","settings":{}},"vendor":{"type":"vendor","settings":{}},"rating":{"type":"rating","settings":{}},"price":{"type":"price","settings":{}},"description":{"type":"description","settings":{}},"form":{"type":"form","settings":{"enable_local_pickup":false}},"key_details":{"type":"key_details","settings":{}},"share":{"type":"share","settings":{}}},"block_order":["title","vendor","rating","price","description","form","key_details","share"],"settings":{}},"recommendations":{"type":"static-product-recommendations","settings":{"show_product_recommendations":true}},"recently-viewed":{"type":"static-recently-viewed","settings":{"enable_recently_viewed_products":true}}},"order":["main","recommendations","recently-viewed"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "static-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "vendor": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "rating": {
+          "type": "rating",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "form": {
+          "type": "form",
+          "settings": {
+            "enable_local_pickup": false
+          }
+        },
+        "key_details": {
+          "type": "key_details",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "vendor",
+        "rating",
+        "price",
+        "description",
+        "form",
+        "key_details",
+        "share"
+      ],
+      "settings": {}
+    },
+    "recommendations": {
+      "type": "static-product-recommendations",
+      "settings": {
+        "show_product_recommendations": true
+      }
+    },
+    "recently-viewed": {
+      "type": "static-recently-viewed",
+      "settings": {
+        "enable_recently_viewed_products": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "recommendations",
+    "recently-viewed"
+  ]
+}

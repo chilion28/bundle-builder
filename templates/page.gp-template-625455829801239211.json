@@ -1,0 +1,46 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_625455829851570859": {
+      "settings": {
+        "checksum": "a33cf7bcff7a996e798aa57c3bd309e39130816f3a8bde45e6882f9d8fac26d6_1_1_1_0__1",
+        "ggNl6uxfST0_label": "<p>Buy Now</p>",
+        "ggmCS13TXeq_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Work-Hats-Category_1.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-625455829851570859"
+    },
+    "gp_section_625455829851636395": {
+      "settings": {
+        "checksum": "fe3d60af6492fc5f3c4508bcb341dee11acf631d999a127502a6f4299263cbf6_1_1_1_0__1",
+        "gg4l_Y-99Rc_label": "<p>Buy Now</p>",
+        "ggLvSUn4Pm2_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Monogram-Hats-01.jpg",
+        "gg_IAJAtYFT_label": "<p>Buy Now</p>",
+        "gglTP9zeIfb_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/US-License-Plate-Hats.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-625455829851636395"
+    },
+    "gp_section_625455829851701931": {
+      "settings": {
+        "checksum": "b58dc0f90457fe22d93b8524b3ed487baee39c491e0c66ecb023f1937a12f4df_1_1_1_0__1",
+        "ggZG3ihIl_5_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Nopales-Hat-Landing-Page_82667a3e-6849-4336-9927-25fdcd0200ba.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-625455829851701931"
+    }
+  },
+  "order": [
+    "gp_section_625455829851701931",
+    "gp_section_625455829851636395",
+    "gp_section_625455829851570859"
+  ]
+}

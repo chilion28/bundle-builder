@@ -11,21 +11,73 @@
   "sections": {
     "gp_section_630521846017557040": {
       "settings": {
-        "checksum": "fab12e04423a25eb5ec737349f03613decacfe1f85498b695b7bcf9b2d2421a2_1_1_1_0__1",
+        "checksum": "84e24979d66ca9613265a2e03354a0c652f36a90768bc48c07b1f83815db0226_1_1_1_0__1",
+        "gg4sg0QzR7I_text": "Custom image hats",
+        "gg6uWSoBmap_text": "<p>Perfect for gifts, businesses, memorials, clubs, teams, or simply carrying your favorite memory wherever you go.</p>",
+        "gg7Qu-Ybr55_label": "<p>How it works</p>",
+        "gg8dW5HMC7B_text": "<p>Some memories deserve more than a spot on your phone.</p>",
+        "ggQ-azcdT75_text": "<p>Whether it's a photo of your family, your kids, a loved one, your dog, your truck, your company logo, or a moment you'll never forget, we'll transform it into a premium leather patch that's printed in stunning detail and handcrafted onto one of our signature hats.</p>",
+        "ggQH48OYkW3_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/sample3.png",
+        "ggRY4fkkYIy_label": "<p>Upload your image</p>",
+        "ggsWVezVewA_text": "<p><strong>Turn Your Favorite Photo Into a Hat You'll Wear Everywhere</strong></p>",
         "section_preload": "true"
       },
       "type": "gp-section-630521846017557040"
     },
     "gp_section_630521846017557149": {
       "settings": {
-        "checksum": "40a0c6a66eca0ec4689de70806aedb73c47547569a7624cd05b27d7e80e6d980_1_1_1_0__1",
+        "checksum": "e5dc5fa5de35360c870d2fffc542d7f73980e7b010074fc24e95ade326ab3876_1_1_1_0__1",
         "section_preload": "true"
       },
       "type": "gp-section-630521846017557149"
+    },
+    "gp_section_630538012308013725": {
+      "settings": {
+        "checksum": "0a431db4fd39a59839f48b3d826e9f64843108e4e511a511207a98bad3315046_1_1_1_0__1",
+        "gg--hUw84D7_text": "<p>Our team carefully creates your custom leather patch and assembles your hat before shipping it directly to your door.</p>",
+        "gg5Ba3XaYOU_text": "We handcraft and ship it",
+        "gg9997_RSUw_text": "Customize your hat",
+        "ggDZe75wan2_text": "<p>Choose anyimage you'd like featured on your custom hat. Your favorite photo, logo, artwork, or design. If you can upload it, we can print it.</p>",
+        "ggESRilCoD7_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/test3.png",
+        "gg_67feZG-6_text": "How Our Custom Image Hat Works",
+        "ggq_vtH_r3m_text": "<p>Select your preferred hat style and color, then preview your design before placing your order.</p>",
+        "ggrM7158fWG_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/test2.png",
+        "ggu1V6Oyr3h_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/test1.png",
+        "ggxKfzyqzCg_text": "Upload your image"
+      },
+      "type": "gp-section-630538012308013725"
+    },
+    "gp_section_630538037775827722": {
+      "settings": {
+        "checksum": "4a9d563274c4d1f9b4897393f1108121789d1ddac8916e391f89593f3ab45bc2_1_1_1_0__1",
+        "ggAVTiMYe3T_text": "<p>Built tough for everyday use</p>",
+        "ggLTEuViiPB_text": "over 5,000 5-star reviews",
+        "ggODxtp_Yl3_text": "<p>Made in 5-7 days and delivered in 10-12 business days</p>",
+        "ggVe_o3PjjN_text": "Printed and shipped from the USA",
+        "gggGYkdAwVU_text": "fast custom production",
+        "ggkVRhPhQnk_text": "<p>Loved by thousands of happy customers</p>"
+      },
+      "type": "gp-section-630538037775827722"
+    },
+    "gp_section_630549325016990256": {
+      "settings": {
+        "checksum": "40eb1c876424a1cafd5f9c62b24ca747d92b3946386b83ea9138d801ba87faf0_1_1_1_0__1",
+        "gg7DUaMjbEf_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_24_2026_09_54_37_AM.png",
+        "ggBzRWb0CNO_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_20_2026_02_32_49_PM_4ef7d37d-b4a3-4a0b-bf8c-e21967145496.png",
+        "ggF9LVNgAzP_text": "<p>Already created an amazing image with ChatGPT, Midjourney, Gemini, Grok, or another AI image generator?</p><p>&nbsp;</p><p>Upload your AI-generated artwork and we'll transform it into a premium custom leather patch hat. Whether it's a logo, character, landscape, pet portrait, or original artwork, if you can generate it, we can print it.</p>",
+        "ggJd4diYRQI_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_20_2026_02_12_28_PM_51b3e348-382d-4429-a623-ab0fb009ffc2.png",
+        "ggM8oWrJ8MJ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_21_2026_01_09_27_PM_eb9e1740-12e9-4ba8-9236-d47ac8a6d03c.png",
+        "gghEQlosl88_text": "Bring Your AI Art to Life",
+        "gguRNF-DQWb_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_20_2026_10_37_35_AM_25d59810-e66b-44b2-8446-e323175699bb.png"
+      },
+      "type": "gp-section-630549325016990256"
     }
   },
   "order": [
     "gp_section_630521846017557040",
-    "gp_section_630521846017557149"
+    "gp_section_630538037775827722",
+    "gp_section_630538012308013725",
+    "gp_section_630521846017557149",
+    "gp_section_630549325016990256"
   ]
 }

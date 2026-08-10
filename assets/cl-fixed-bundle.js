@@ -108,33 +108,27 @@
     .split('|').map(function (s) { return s.trim(); }).filter(Boolean);
   var productJsonCache = {};
 
-  /* Resolve the selected design product plus any matching component variants.
-   * The product ID is retained even when one or more promo SKUs do not exist on
-   * the design product. This lets production inherit that product's automation
-   * configuration while Cart Transform safely falls back to the real Bundle
-   * Hat variants for non-universal clearance colors. */
-  function resolveDesignRouting(handle) {
-    if (!handle) return Promise.resolve({ productId: '', componentGids: '' });
+  /* Resolve the chosen design's variant GIDs for the promo SKUs. Returns a
+   * pipe-joined GID string, or '' if it can't confidently match all SKUs (so
+   * the cart transform safely falls back to the metafield). */
+  function resolveComponentVariants(handle) {
+    if (!handle || COMPONENT_SKUS.length === 0) return Promise.resolve('');
     var fetchJson = productJsonCache[handle] ||
       (productJsonCache[handle] = fetch('/products/' + encodeURIComponent(handle) + '.js', {
         headers: { 'Accept': 'application/json' }
       }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }));
     return fetchJson.then(function (data) {
-      if (!data) return { productId: '', componentGids: '' };
-      var productId = data.id ? String(data.id) : '';
-      if (!Array.isArray(data.variants) || COMPONENT_SKUS.length === 0) {
-        return { productId: productId, componentGids: '' };
-      }
+      if (!data || !Array.isArray(data.variants)) return '';
       var bySku = {};
       data.variants.forEach(function (v) { if (v && v.sku) bySku[String(v.sku).trim()] = v.id; });
       var gids = [];
       for (var i = 0; i < COMPONENT_SKUS.length; i++) {
         var id = bySku[COMPONENT_SKUS[i]];
-        if (!id) return { productId: productId, componentGids: '' }; // fall back to Bundle Hat variants
+        if (!id) return ''; // missing a component → fall back to metafield
         gids.push('gid://shopify/ProductVariant/' + id);
       }
-      return { productId: productId, componentGids: gids.join('|') };
-    }).catch(function () { return { productId: '', componentGids: '' }; });
+      return gids.join('|');
+    }).catch(function () { return ''; });
   }
   if (stateSelect.dataset.clInit === '1') return;
   stateSelect.dataset.clInit = '1';
@@ -375,7 +369,6 @@
     properties['Plate Design'] = cfg.title;
     properties['_plate_product_handle'] = cfg.handle;
     properties['_plate_field_names'] = cfg.fields.join('|');
-    properties['_fxb_schema_version'] = '1';
     cfg.fields.forEach(function (name) {
       if (values[name]) properties[name] = values[name];
     });
@@ -387,10 +380,8 @@
     var endpoint = editing ? '/cart/change.js' : '/cart/add.js';
 
     delete properties['_component_variants'];
-    delete properties['_fxb_design_product_id'];
-    resolveDesignRouting(cfg.handle).then(function (routing) {
-      if (routing.productId) properties['_fxb_design_product_id'] = routing.productId;
-      if (routing.componentGids) properties['_component_variants'] = routing.componentGids;
+    resolveComponentVariants(cfg.handle).then(function (componentGids) {
+      if (componentGids) properties['_component_variants'] = componentGids;
       var payload = editing ? {
         id: cartEdit.key,
         quantity: parseInt(cartEdit.quantity, 10) || 1,

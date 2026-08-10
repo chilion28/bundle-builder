@@ -1,1 +1,28 @@
-{"sections":{"gp_section_607973848742101590":{"settings":{"checksum":"136d4f823114cbc4d01bd5d8cdd46960b7d105b729631e417ddc0bd49aaf41ac_1_1_1_0__1","ggE1KsuuSor_label":"\u003cp\u003eSTART CUSTOMIZING\u003c/p\u003e","ggHpv6kic7U_text":"\u003cp\u003eReady to lock in your own story?\u003cbr\u003eMake it custom. Make it yours.\u003c/p\u003e","ggMkQ37LbVU_text":"Yeah… That’s The Payoff.","ggTaAB4dVeb_text":"That Double Take?","gg_lytnRP5h_text":"\u003cp\u003eJim matched his License Plate Hat to his Corvette’s vanity plate.\u003c/p\u003e\u003cp\u003eThat pause.\u003c/p\u003e\u003cp\u003eThat second look.\u003c/p\u003e\u003cp\u003eThat “yo… that’s hard.”\u003c/p\u003e\u003cp\u003eThat’s what happens when your gear actually says something.\u003c/p\u003e\u003cp\u003eHit play and see how he turned a ride into a statement.\u003c/p\u003e","section_preload":"true"},"type":"gp-section-607973848742101590"}},"order":["gp_section_607973848742101590"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_607973848742101590": {
+      "settings": {
+        "checksum": "136d4f823114cbc4d01bd5d8cdd46960b7d105b729631e417ddc0bd49aaf41ac_1_1_1_0__1",
+        "ggE1KsuuSor_label": "<p>START CUSTOMIZING</p>",
+        "ggHpv6kic7U_text": "<p>Ready to lock in your own story?<br>Make it custom. Make it yours.</p>",
+        "ggMkQ37LbVU_text": "Yeah… That’s The Payoff.",
+        "ggTaAB4dVeb_text": "That Double Take?",
+        "gg_lytnRP5h_text": "<p>Jim matched his License Plate Hat to his Corvette’s vanity plate.</p><p>That pause.</p><p>That second look.</p><p>That “yo… that’s hard.”</p><p>That’s what happens when your gear actually says something.</p><p>Hit play and see how he turned a ride into a statement.</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-607973848742101590"
+    }
+  },
+  "order": [
+    "gp_section_607973848742101590"
+  ]
+}

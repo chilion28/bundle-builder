@@ -1,0 +1,51 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_628357985692811875": {
+      "settings": {
+        "checksum": "c7abe11185f869a342eee59ebe2d206598ff53700ecec1f88daac443b5bb9a6a_1_1_0_0__1",
+        "ggyV8W6kRtF_label": "<p>Only $20 per hat</p>"
+      },
+      "type": "gp-section-628357985692811875"
+    },
+    "gp_section_628358008660820893": {
+      "settings": {
+        "checksum": "49d24df71d98d52283b9aeb6ba5b2fef93c695f53872d311dcf3d981165e867b_1_1_0_0__1"
+      },
+      "type": "gp-section-628358008660820893"
+    },
+    "gp_section_628365053598368694": {
+      "settings": {
+        "checksum": "c6f62d49c1edf442729d36efe2c368a18c270af5b08fc1276fa8e33896b3f6eb_1_1_0_0__1",
+        "ggSnYAX-nig_text": "<p>exclusive offer for our customers</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-628365053598368694"
+    },
+    "gp_section_628365539164553827": {
+      "settings": {
+        "checksum": "5ad64afe8d6d8786cafdfae6f35d609df16c17d8e79127b1b8c4d60f0c64d138_1_1_0_0__1",
+        "gg3-N-1UJF0_text": "Your Style. More Options.",
+        "gg6kYv6d4V-_text": "3 Hats. $60.",
+        "ggE5AAFu8uK_text": "<p>Same custom designs on all 3 hats.</p>",
+        "ggRdeOSxdny_text": "<p>Choose your state and text –– we'll handle the rest.</p>",
+        "ggbTpSRXOTq_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-2-blank-hat.png"
+      },
+      "type": "gp-section-628365539164553827"
+    }
+  },
+  "order": [
+    "gp_section_628365053598368694",
+    "gp_section_628365539164553827",
+    "gp_section_628357985692811875",
+    "gp_section_628358008660820893"
+  ]
+}

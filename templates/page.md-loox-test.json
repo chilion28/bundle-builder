@@ -1,1 +1,45 @@
-{"sections":{"main":{"type":"page","disabled":true,"settings":{}},"16999873456cb0bcab":{"type":"apps","blocks":{"f4bcb0fb-c4b0-40c4-8aeb-250c34b79270":{"type":"shopify:\/\/apps\/loox-product-reviews-photos\/blocks\/loox-referrals-section\/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e","settings":{"max_width":650,"layout":"without-photo","photo":"shopify:\/\/shop_images\/Sugar-Skull-Golf-Hat-Sand.jpg","primary_color":"","text_color":"#000000","text_field_border_color":"#c9cdd4","background":""}}},"block_order":["f4bcb0fb-c4b0-40c4-8aeb-250c34b79270"],"settings":{"include_padding":true}}},"order":["main","16999873456cb0bcab"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "disabled": true,
+      "settings": {}
+    },
+    "16999873456cb0bcab": {
+      "type": "apps",
+      "blocks": {
+        "f4bcb0fb-c4b0-40c4-8aeb-250c34b79270": {
+          "type": "shopify://apps/loox-product-reviews-photos/blocks/loox-referrals-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "max_width": 650,
+            "layout": "without-photo",
+            "photo": "shopify://shop_images/Sugar-Skull-Golf-Hat-Sand.jpg",
+            "primary_color": "",
+            "text_color": "#000000",
+            "text_field_border_color": "#c9cdd4",
+            "background": ""
+          }
+        }
+      },
+      "block_order": [
+        "f4bcb0fb-c4b0-40c4-8aeb-250c34b79270"
+      ],
+      "settings": {
+        "include_padding": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "16999873456cb0bcab"
+  ]
+}

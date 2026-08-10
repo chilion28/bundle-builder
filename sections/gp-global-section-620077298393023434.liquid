@@ -255,6 +255,7 @@
         assign productSrc = 'DynamicCollection'
         assign c = 0
         assign limit = 10
+        assign isSettingSameHeightProductList = true
 
         if request.page_type == 'collection' or preview_page_type == 'collection'
           assign target_collection = collection
@@ -381,8 +382,9 @@
     .gem-slider-item-gJCZQH8vf7-{{product.id}}.gp-gallery-image-item::after, .gem-slider-item-gp-gallery-gJCZQH8vf7-{{product.id}}.gp-gallery-image-item.gem-slider-item-active::after {
       content: "";
       height: 100%;
-      width: 100%;
+      width: calc(100% - 1px);
       position: absolute;
+      box-sizing: border-box;
       z-index: 999;
       top: 0;
       left: 0;
@@ -529,10 +531,10 @@
         >
            
     <img
-      alt="{{featureMedia.alt | escape}}" width="2237" height="1678" draggable="false" quality-type quality-percent data-sizes="auto" sizes="100vw" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIzNyIgaGVpZ2h0PSIxNjc4IiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPgogICAgPGRlZnM+CiAgICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZy0yMjM3LTE2NzgiPgogICAgICAgIDxzdG9wIHN0b3AtY29sb3I9InJnYmEoNTEsIDUxLCA1MSwgMCkiIG9mZnNldD0iMjAlIiAvPgogICAgICAgIDxzdG9wIHN0b3AtY29sb3I9InJnYmEoNTEsIDUxLCA1MSwgMCkiIG9mZnNldD0iNTAlIiAvPgogICAgICAgIDxzdG9wIHN0b3AtY29sb3I9InJnYmEoNTEsIDUxLCA1MSwgMCkiIG9mZnNldD0iNzAlIiAvPgogICAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPC9kZWZzPgogICAgPHJlY3Qgd2lkdGg9IjIyMzciIGhlaWdodD0iMTY3OCIgZmlsbD0icmdiYSg1MSwgNTEsIDUxLCAwKSIgLz4KICAgIDxyZWN0IGlkPSJyIiB3aWR0aD0iMjIzNyIgaGVpZ2h0PSIxNjc4IiBmaWxsPSJ1cmwoI2ctMjIzNy0xNjc4KSIgLz4KICAgIDxhbmltYXRlIHhsaW5rOmhyZWY9IiNyIiBhdHRyaWJ1dGVOYW1lPSJ4IiBmcm9tPSItMjIzNyIgdG89IjIyMzciIGR1cj0iMXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAgLz4KICA8L3N2Zz4=" base-src="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" data-src="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" data-srcset="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}"
+      alt="{{featureMedia.alt | escape}}" width="2237" height="1678" draggable="false" quality-type quality-percent data-sizes="auto" sizes="100vw" src="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" isNotLazyload="true" srcset base-src="{{featureMedia.preview_image.src | product_img_url: '1024x1024'}}" loading="lazy"
       id="video-thumbnail"
       
-      class="gp-w-full gp-h-full gp-object-cover gp_lazyload"
+      class="gp-w-full gp-h-full gp-object-cover"
     />
           <button type="button" class="gp-absolute gp-left-1/2 gp-top-1/2 gp-flex gp-aspect-[56/32] gp-w-14 -gp-translate-x-1/2 -gp-translate-y-1/2 gp-items-center gp-justify-center gp-rounded gp-bg-black/80 gp-transition-colors hover:gp-bg-[#ef0800]" aria-label="Play">
             <svg class="gp-w-5 gp-text-white" viewBox="0 0 24 24">

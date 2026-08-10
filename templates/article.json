@@ -1,1 +1,25 @@
-{"sections":{"main":{"type":"static-article","settings":{"featured_image_width":"content-width","show_date":true,"show_author":false,"use_share_buttons":false}}},"order":["main"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "static-article",
+      "settings": {
+        "featured_image_width": "content-width",
+        "show_date": true,
+        "show_author": false,
+        "use_share_buttons": false
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

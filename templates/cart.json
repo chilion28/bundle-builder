@@ -1,1 +1,52 @@
-{"sections":{"main":{"type":"static-cart","settings":{"show_sku":false,"enable_order_notes":false,"enable_shipping_calc":true,"shipping_calc_default_country":"United States"}},"1665448062555134a7":{"type":"apps","settings":{"include_padding":true}},"16675144220b912e4b":{"type":"apps","blocks":{"ff334ea4-798b-4eac-9c56-829a78f8a2a8":{"type":"shopify:\/\/apps\/product-options-customizer\/blocks\/cart-page-customizer\/6857ca6c-35eb-4b6f-9d58-a039f31d9406","settings":{"heading":"Product Customizer - Cart Page","pc_cart_advanced_custom_css":"","pc_cart_advanced_custom_js":""}}},"block_order":["ff334ea4-798b-4eac-9c56-829a78f8a2a8"],"settings":{"include_padding":true}}},"order":["main","1665448062555134a7","16675144220b912e4b"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "static-cart",
+      "settings": {
+        "show_sku": false,
+        "enable_order_notes": false,
+        "enable_shipping_calc": true,
+        "shipping_calc_default_country": "United States"
+      }
+    },
+    "1665448062555134a7": {
+      "type": "apps",
+      "settings": {
+        "include_padding": true
+      }
+    },
+    "16675144220b912e4b": {
+      "type": "apps",
+      "blocks": {
+        "ff334ea4-798b-4eac-9c56-829a78f8a2a8": {
+          "type": "shopify://apps/product-options-customizer/blocks/cart-page-customizer/6857ca6c-35eb-4b6f-9d58-a039f31d9406",
+          "settings": {
+            "heading": "Product Customizer - Cart Page",
+            "pc_cart_advanced_custom_css": "",
+            "pc_cart_advanced_custom_js": ""
+          }
+        }
+      },
+      "block_order": [
+        "ff334ea4-798b-4eac-9c56-829a78f8a2a8"
+      ],
+      "settings": {
+        "include_padding": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1665448062555134a7",
+    "16675144220b912e4b"
+  ]
+}

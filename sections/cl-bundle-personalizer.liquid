@@ -468,104 +468,6 @@ function canGeneratePreview() {
   return fieldsToValidate.every(fieldHasValue);
 }
 
-/*
- * Zepto/pplr renders its preview inside a modal appended to
- * <body>, outside our root. These helpers locate that modal and
- * the generated image/canvas so we can mirror it into the inline
- * preview panel. Selectors are broad on purpose — the third-party
- * markup is not under our control, so we match by likely class
- * fragments and fall back to geometry.
- */
-function getCandidateOverlays() {
-  const nodes = Array.from(
-    document.body.querySelectorAll(
-      [
-        '[class*="pplr" i]',
-        '[class*="personalizer" i]',
-        '[class*="preview" i]',
-        '[class*="modal" i]',
-        '[role="dialog"]'
-      ].join(',')
-    )
-  );
-
-  return nodes
-    .filter((node) => {
-      if (root.contains(node)) return false;
-      if (!isVisible(node)) return false;
-
-      const rect = node.getBoundingClientRect();
-      return rect.width > 150 && rect.height > 100;
-    })
-    .sort((a, b) => {
-      const ra = a.getBoundingClientRect();
-      const rb = b.getBoundingClientRect();
-      return rb.width * rb.height - ra.width * ra.height;
-    });
-}
-
-function findLargestImage(overlay) {
-  const images = Array.from(
-    overlay.querySelectorAll('img')
-  ).filter((img) => isVisible(img));
-
-  if (!images.length) return null;
-
-  return images.sort((a, b) => {
-    return (
-      b.naturalWidth * b.naturalHeight -
-      a.naturalWidth * a.naturalHeight
-    );
-  })[0];
-}
-
-function findLargestCanvas(overlay) {
-  const canvases = Array.from(
-    overlay.querySelectorAll('canvas')
-  ).filter((canvas) => isVisible(canvas));
-
-  if (!canvases.length) return null;
-
-  return canvases.sort((a, b) => {
-    return b.width * b.height - a.width * a.height;
-  })[0];
-}
-
-/*
- * schedulePreview debounces user input; triggerPreview clicks the
- * hidden Zepto "Preview" button once all required fields are
- * filled, then the MutationObserver calls captureGeneratedPreview
- * until the rendered image appears.
- */
-function triggerPreview() {
-  if (!loaded || rendering) return;
-  if (!canGeneratePreview()) return;
-
-  if (!previewButton) {
-    preparePreviewButton();
-  }
-
-  if (!previewButton) return;
-
-  rendering = true;
-  previewPanel.classList.add('is-loading');
-
-  clearRenderTimeout();
-
-  previewTimeout = window.setTimeout(() => {
-    // Give up on this attempt so the next input can retry.
-    rendering = false;
-    previewPanel.classList.remove('is-loading');
-  }, 8000);
-
-  previewButton.click();
-}
-
-function schedulePreview() {
-  window.clearTimeout(previewTimer);
-  previewTimer = window.setTimeout(triggerPreview, 400);
-}
-
 
 
 
@@ -655,17 +557,7 @@ function schedulePreview() {
   document.body.style.overflow = '';
 }
 
-/*
- * Called by the MutationObserver while `rendering` is true. Looks
- * for the Zepto preview modal, extracts its generated image (or
- * canvas), mirrors it into the inline preview, then closes the
- * modal. Returns false and lets the observer retry until the
- * preview has actually finished rendering.
- */
-function captureGeneratedPreview() {
-  if (!rendering) {
-    return false;
-  }
+
 
   const overlay = getCandidateOverlays()[0];
 

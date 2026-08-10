@@ -158,6 +158,9 @@
           "enable_live_search_articles_pages": true,
           "quick_links": "",
           "menu": "main-menu",
+          "cl_use_editable_mega_menu": true,
+          "cl_editable_mega_menu": "citylocs-editable-mega-menu",
+          "cl_mega_menu_show_images": true,
           "secondary_menu": "",
           "small_promo_heading": "",
           "small_promo_text": "",
@@ -313,11 +316,6 @@
         "disabled": false,
         "settings": {}
       },
-      "316487575649303945": {
-        "type": "shopify://apps/easify-options/blocks/app-embed-block/d2288b18-c1ba-42f5-b3b3-26c75c8820bf",
-        "disabled": false,
-        "settings": {}
-      },
       "319724205969189013": {
         "type": "shopify://apps/hulk-form-builder/blocks/app-embed/b6b8dd14-356b-4725-a4ed-77232212b3c3",
         "disabled": false,
@@ -348,10 +346,17 @@
         "disabled": false,
         "settings": {}
       },
-      "qikify-tmenu-1701320628": {
-        "type": "shopify://apps/qikify-smart-menu-mega-menu/blocks/app-embed/19d2f1cd-1836-4a32-8937-03df3c601dc8",
+      "7539343560218715217": {
+        "type": "shopify://apps/lucky-orange-heatmaps-replay/blocks/lucky_orange_tracking/019b2899-e426-7dbd-b9e7-ff9f0bb0d0f3",
         "disabled": false,
         "settings": {}
+      },
+      "4173391341582057001": {
+        "type": "shopify://apps/restore-ai/blocks/custom_events/0199a734-39c8-7ba5-ad02-985b2156bd53",
+        "disabled": false,
+        "settings": {
+          "cart_drawer_overlay_klaviyo_form_ids": ""
+        }
       }
     }
   },
@@ -553,7 +558,7 @@
             "gallery_video_autoplay": true,
             "gallery_video_looping": true,
             "gallery_hover_zoom": "disabled",
-            "gallery_click_to_zoom": "always"
+            "gallery_click_to_zoom": "desktop"
           }
         },
         "static-announcement": {
@@ -783,7 +788,7 @@
             "gallery_video_autoplay": true,
             "gallery_video_looping": true,
             "gallery_hover_zoom": "disabled",
-            "gallery_click_to_zoom": "always"
+            "gallery_click_to_zoom": "desktop"
           }
         },
         "static-announcement": {

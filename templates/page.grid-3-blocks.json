@@ -1,1 +1,242 @@
-{"sections":{"main":{"type":"page","settings":{}},"1662673809e78777a2":{"type":"dynamic-promo-grid","blocks":{"16626738096a7b65a8-0":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"16626738096a7b65a8-1":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"16626738096a7b65a8-2":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"16626738096a7b65a8-3":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"78cf6eef-ed8d-4612-af63-7b9323f3a4f5":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"d0d72608-f74a-478b-8b44-a4845e91754f":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"37531be8-f04f-4bcf-b71a-3900ac2e8fa7":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"fb0cb8aa-47d1-4e37-8434-68da4ba62971":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"d1b46e2d-52d4-4533-81f1-7707686a2527":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"d54ae368-6900-4b3d-b0bc-fc944f339710":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"135a257d-c3ea-4439-af23-4d41fa6dbe35":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"df82a3c1-aefa-47f9-b039-d9f0fdd17d05":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}},"b3dfa04c-3a12-479a-931c-5c924706c564":{"type":"promotion","settings":{"background_position":"center-center","title":"","text":"","color":"#4d4d4d","block_link":"","button_text":"","button_style":"primary","show_overlay":false,"background":"","opacity":50}}},"block_order":["16626738096a7b65a8-0","16626738096a7b65a8-1","16626738096a7b65a8-2","16626738096a7b65a8-3","78cf6eef-ed8d-4612-af63-7b9323f3a4f5","d0d72608-f74a-478b-8b44-a4845e91754f","37531be8-f04f-4bcf-b71a-3900ac2e8fa7","fb0cb8aa-47d1-4e37-8434-68da4ba62971","d1b46e2d-52d4-4533-81f1-7707686a2527","d54ae368-6900-4b3d-b0bc-fc944f339710","135a257d-c3ea-4439-af23-4d41fa6dbe35","df82a3c1-aefa-47f9-b039-d9f0fdd17d05","b3dfa04c-3a12-479a-931c-5c924706c564"],"settings":{"title":"","section_height":"natural","section_columns":3,"text_alignment":"top-left"}}},"order":["main","1662673809e78777a2"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "1662673809e78777a2": {
+      "type": "dynamic-promo-grid",
+      "blocks": {
+        "16626738096a7b65a8-0": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-1": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-2": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-3": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "78cf6eef-ed8d-4612-af63-7b9323f3a4f5": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "d0d72608-f74a-478b-8b44-a4845e91754f": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "37531be8-f04f-4bcf-b71a-3900ac2e8fa7": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "fb0cb8aa-47d1-4e37-8434-68da4ba62971": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "d1b46e2d-52d4-4533-81f1-7707686a2527": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "d54ae368-6900-4b3d-b0bc-fc944f339710": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "135a257d-c3ea-4439-af23-4d41fa6dbe35": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "df82a3c1-aefa-47f9-b039-d9f0fdd17d05": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "b3dfa04c-3a12-479a-931c-5c924706c564": {
+          "type": "promotion",
+          "settings": {
+            "background_position": "center-center",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        }
+      },
+      "block_order": [
+        "16626738096a7b65a8-0",
+        "16626738096a7b65a8-1",
+        "16626738096a7b65a8-2",
+        "16626738096a7b65a8-3",
+        "78cf6eef-ed8d-4612-af63-7b9323f3a4f5",
+        "d0d72608-f74a-478b-8b44-a4845e91754f",
+        "37531be8-f04f-4bcf-b71a-3900ac2e8fa7",
+        "fb0cb8aa-47d1-4e37-8434-68da4ba62971",
+        "d1b46e2d-52d4-4533-81f1-7707686a2527",
+        "d54ae368-6900-4b3d-b0bc-fc944f339710",
+        "135a257d-c3ea-4439-af23-4d41fa6dbe35",
+        "df82a3c1-aefa-47f9-b039-d9f0fdd17d05",
+        "b3dfa04c-3a12-479a-931c-5c924706c564"
+      ],
+      "settings": {
+        "title": "",
+        "section_height": "natural",
+        "section_columns": 3,
+        "text_alignment": "top-left"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1662673809e78777a2"
+  ]
+}

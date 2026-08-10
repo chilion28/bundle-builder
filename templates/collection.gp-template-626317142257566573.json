@@ -11,27 +11,21 @@
   "sections": {
     "gp_section_626317142307898221": {
       "settings": {
-        "checksum": "4bd6b3073a1145494267a4244a32a607776a28c534de290e628cbc434534d03a_1_1_1_0__1",
-        "gg1Xu1lOBuY_errorMessage": "Cannot add product to cart",
-        "gg1Xu1lOBuY_label": "Add to cart",
-        "gg1Xu1lOBuY_outOfStockLabel": "Out Of Stock",
-        "gg1Xu1lOBuY_successMessage": "Add product to cart successfully",
-        "gg1Xu1lOBuY_unavailableLabel": "Unavailable",
-        "gg1Xu1lOBuY_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "checksum": "6269146d07443371f71b303867e498a3822296e62d096120da7a7b3037695080_1_1_1_0__1",
         "section_preload": "true"
       },
       "type": "gp-section-626317142307898221"
     },
     "gp_section_626317142307963757": {
       "settings": {
-        "checksum": "c87515e10fb6133c8ea6017cca035de9b29bd6bb598e34360b8222046e98a92b_1_1_1_0__1",
+        "checksum": "d67c134a1a7338e0ed3056d52fa22bf3ea73a09538d0c40dbc1b26c44f2a1ee9_1_1_1_0__1",
         "section_preload": "true"
       },
       "type": "gp-section-626317142307963757"
     },
     "gp_section_626317142308029293": {
       "settings": {
-        "checksum": "2fe3a7297a1c8cf0e1ff20143d08ff79c16d85bc6b23da3eb8733489ba211e4e_1_1_1_0__1",
+        "checksum": "9a0a3132ceb3c62b1954500312773d1067d21cd6bc2ec8c1859802b5f7dccbc9_1_1_1_0__1",
         "ggBDQpPyzrf_text": "The More You Bundle, The More You Save",
         "ggZOOMgUl2W_viewLessText": "Show less",
         "ggZOOMgUl2W_viewMoreText": "Show more",
