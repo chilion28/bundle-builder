@@ -711,10 +711,24 @@ j    @param variant_selection_id
         }
 
         const displayImg = (imgSrc) => {
+          const imageOptions = window.matchMedia('(hover: none), (max-width: 767px)').matches
+            ? {
+                Image: {
+                  zoom: false,
+                  click: 'close',
+                  doubleClick: 'close',
+                  wheel: false,
+                },
+                Toolbar: {
+                  display: ['close'],
+                },
+              }
+            : {};
+
           Fancybox.show([ {
             src: imgSrc,
             type: "image",
-          } ]);
+          } ], imageOptions);
         }
 
         const toggleApproval = (add) => {

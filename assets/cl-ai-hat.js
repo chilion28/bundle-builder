@@ -1340,14 +1340,20 @@
     // gets retries rather than a single silent attempt. `make` must return a FRESH
     // promise each call (fetch bodies aren't replayable).
     var retry = function (make, tries) {
-      return make().catch(function (e) { return tries > 1 ? retry(make, tries - 1) : Promise.reject(e); });
+      return make().catch(function (e) {
+        if (tries > 1) return new Promise(function (r) { setTimeout(r, 500); }).then(function () { return retry(make, tries - 1); });
+        return Promise.reject(e);
+      });
     };
     var origJob = edState.file
       ? retry(function () { return providerUpload(edState.file, nm('original', '-' + origName), 'original'); }, 3)
           .catch(function () { try { console.warn('[cl-ai-hat] original upload failed after retries'); } catch (e) {} return ''; })
       : Promise.resolve('');
     var jobs = [
-      providerUpload(printBlob, nm('print', '.png'), 'print'),
+      // The PRINT is the critical file (what production actually prints) — retry it
+      // 3x with backoff before giving up, so a transient network/CDN blip doesn't
+      // land an order with [upload-failed] and no artwork (see order #405134).
+      retry(function () { return providerUpload(printBlob, nm('print', '.png'), 'print'); }, 3),
       origJob,
       soft(previewBlob ? providerUpload(previewBlob, nm('preview', '.png'), 'preview') : Promise.resolve(''))
     ];
@@ -1365,7 +1371,7 @@
     }).catch(function () {
       state.artUrl = state.localArt;
       if (propArt) propArt.value = '[upload-failed] ' + origName;
-      setStatus('err', 'Upload failed — we saved a preview. You can still order; we may email you for the file.');
+      setStatus('err', '⚠ Your image couldn’t be uploaded. You can still place your order — our team will email you to collect your photo so we can make your patch.');
       finish();
     });
   }
