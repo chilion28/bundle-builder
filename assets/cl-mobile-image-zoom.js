@@ -158,7 +158,22 @@
     'display:flex;align-items:center;justify-content:center;border:none;' +
     'border-radius:50%;background:rgba(255,255,255,.95);color:#111;' +
     'font-size:26px;line-height:1;cursor:pointer;padding:0;' +
-    'box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:1;}';
+    'box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:1;}' +
+    // Zepto (Product Personalizer) PREVIEW modal (#pplr-preview): it pins to the
+    // top of the viewport on mobile. Center it both axes. We only reposition the
+    // box (not its size) so the plate image + text overlay stay aligned.
+    '@media (max-width:767px){#pplr-preview{top:50% !important;bottom:auto !important;' +
+    'left:50% !important;right:auto !important;transform:translate(-50%,-50%) !important;' +
+    'margin:0 !important;max-width:94vw !important;}' +
+    // Overlay Zepto's close (X) onto the preview's top-right corner instead of
+    // floating it awkwardly above the modal.
+    '#pplr-preview .pplr_close{position:absolute !important;top:6px !important;' +
+    'right:6px !important;left:auto !important;bottom:auto !important;margin:0 !important;' +
+    'width:40px !important;height:40px !important;display:flex !important;' +
+    'align-items:center !important;justify-content:center !important;border-radius:50% !important;' +
+    'background:rgba(0,0,0,.6) !important;color:#fff !important;z-index:11 !important;' +
+    'box-shadow:0 2px 8px rgba(0,0,0,.35) !important;}' +
+    '#pplr-preview .pplr_close i,#pplr-preview .pplr_close:before{color:#fff !important;}}';
 
   function injectStyle() {
     if (document.getElementById(STYLE_ID)) return;
@@ -224,6 +239,56 @@
         '';
       if (!src) return;
       open(src);
+    },
+    true
+  );
+
+  /* =================================================================
+   * PART 3 — Zepto (Product Personalizer) PREVIEW modal
+   *   (a) center it both axes on mobile (it pins to the top otherwise), and
+   *   (b) tap anywhere on the preview (image or backdrop) closes it.
+   * Zepto exposes pplr_preview_hide() to close. Centering is applied via inline
+   * !important because Zepto's own CSS wins over our stylesheet for `top`; we
+   * only reposition the box (never resize it) so the plate + text overlay stay
+   * aligned. We re-assert for a few seconds because the modal renders async and
+   * Zepto sets its position after insertion.
+   * ================================================================= */
+  function centerZeptoPreview() {
+    var m = document.getElementById('pplr-preview');
+    if (!m || m.style.getPropertyValue('top') === '50%') return !!m;
+    m.style.setProperty('top', '50%', 'important');
+    m.style.setProperty('bottom', 'auto', 'important');
+    m.style.setProperty('left', '50%', 'important');
+    m.style.setProperty('right', 'auto', 'important');
+    m.style.setProperty('transform', 'translate(-50%,-50%)', 'important');
+    m.style.setProperty('margin', '0', 'important');
+    m.style.setProperty('max-width', '94vw', 'important');
+    return true;
+  }
+
+  // Tap-to-close.
+  document.addEventListener(
+    'click',
+    function (e) {
+      if (!isTouch()) return;
+      if (!e.target.closest('#pplr-preview') && !e.target.closest('#pplr-preview-bg')) return;
+      if (typeof window.pplr_preview_hide === 'function') window.pplr_preview_hide();
+    },
+    true
+  );
+
+  // When the PREVIEW button is tapped, re-assert centering for a few seconds
+  // (the modal renders async and Zepto positions it after insertion).
+  document.addEventListener(
+    'click',
+    function (e) {
+      if (!isTouch()) return;
+      if (!e.target.closest('.pplr-preview-btn') && !e.target.closest('.ptc_button')) return;
+      var n = 0;
+      var iv = setInterval(function () {
+        centerZeptoPreview();
+        if (++n > 60) clearInterval(iv); // ~6s safety window
+      }, 100);
     },
     true
   );
