@@ -1,0 +1,52 @@
+{%- comment -%}
+  Renders the existing empire legacy font face settings as CSS variables.
+
+  Usage:
+  {% render 'head.styles.empire-legacy-settings-font-face' %}
+{%- endcomment -%}
+
+{% liquid
+  assign font_size_scale = settings.type_heading_size | times: 1.0
+  assign fonts_type_heading_family = settings.type_heading.family | default: 'Montserrat, sans-serif'
+  if settings.type_heading.fallback_families != blank
+    assign fonts_type_heading_family = fonts_type_heading_family | append: ',' | append: settings.type_heading.fallback_families
+  endif
+
+  assign fonts_type_button_family = settings.type_button.family | default: 'Nunito Sans, sans-serif'
+  if settings.type_button.fallback_families != blank
+    assign fonts_type_button_family = fonts_type_button_family | append: ',' | append: settings.type_button.fallback_families
+  endif
+
+  assign fonts_type_menu_family = settings.type_menu.family | default: 'Nunito Sans, sans-serif'
+  if settings.type_menu.fallback_families != blank
+    assign fonts_type_menu_family = fonts_type_menu_family | append: ',' | append: settings.type_menu.fallback_families
+  endif
+%}
+
+{%- style -%}
+  :root {
+    /* Override heading font stack with empire legacy settings */
+    --heading-font-family: {{ fonts_type_heading_family }};
+    --heading-font-scale: {{ font_size_scale }};
+    --heading-font-weight: {{ settings.type_heading.weight | default: 800 | times: 1 }};
+    --heading-font-style: {{ settings.type_heading.style | default: 'normal' }};
+    --heading-font-capitalization: {% if settings.type_heading_capitalize %}uppercase{% else %}initial{% endif %};
+    --heading-letter-spacing: {{ settings.type_heading_spacing | default: 0 | divided_by: 100.0 }}em;
+    --subheading-font-family: {{ settings.type_subheading_family | default: "'Nunito Sans', sans-serif" }};
+    --button-font-family: {{ fonts_type_button_family }};
+    --button-font-weight: {{ settings.type_button.weight | default: '700'| times: 1 }};
+    --button-font-style: {{ settings.type_button.style | default: 'normal' }};
+    --button-font-capitalization: {% if settings.type_button_capitalize %}uppercase{% else %}initial{% endif %};
+    --button-letter-spacing: {{ settings.type_button_spacing | default: 0 | divided_by: 100.0 }}em;
+
+    --heading-responsive: 1;
+    --subheading-responsive: 1;
+    --body-font-family: {{ settings.type_body.family | default: "'Nunito Sans', sans-serif" }};
+
+    --menu-font-family: {{ fonts_type_menu_family }};
+    --menu-font-weight: {{ settings.type_menu.weight | default: '700' | times: 1 }};
+    --menu-font-style: {{ settings.type_menu.style | default: 'normal' }};
+    --menu-font-capitalization: {% if settings.type_menu_capitalize %}uppercase{% else %}none{% endif %};
+    --menu-letter-spacing: {{ settings.type_menu_spacing | default: 0 | divided_by: 100.0 }}em;
+  }
+{%- endstyle -%}

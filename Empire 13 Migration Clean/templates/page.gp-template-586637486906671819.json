@@ -1,0 +1,85 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_586637487040889547": {
+      "type": "gp-section-586637487040889547",
+      "settings": {
+        "checksum": "715f2e89be48d1be0084032a4292aa6798a05cd394b8607269c0a481f91467f1_1_1_0_0__1",
+        "gg8IR_Iyhb1_text": "<span style=\"font-size:55px;\">LICENSE PLATES</span>"
+      }
+    },
+    "gp_section_586637487040955083": {
+      "type": "gp-section-586637487040955083",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "0cfb69571fd4ffed8575e2bcff09249cbad8d45b8cab23371d7b6ab617d9d878_1_1_0_0__1"
+      }
+    },
+    "gp_section_586637487041020619": {
+      "type": "gp-section-586637487041020619",
+      "settings": {
+        "checksum": "0b49daabe79dbae93bcf9f4f31a246204821ade48139334d23d9a1144c5a0aa8_1_1_0_0__1",
+        "gg6UcAwyZ5y_text": "<p><span style=\"color:#F35820;\">PERFECT FOR COLLECTORES</span></p>",
+        "ggYwJyYunKJ_text": "<span style=\"color:#990202;\">SPOOKY ENAMEL PINS</span>"
+      }
+    },
+    "gp_section_586637487041086155": {
+      "type": "gp-section-586637487041086155",
+      "settings": {
+        "checksum": "c2bbcc39ba887251e6a5ff534ea52a339454a72cc2ff8806ed56fc8cd14fd6b1_1_1_0_0__1",
+        "ggN4nC7zIUM_text": "<a href=\"https://citylocs.com › collections › halloween-custom-metal-license-plates\" target=\"_blank\"><span style=\"color:#000000;font-size:20px;\">Horror ICON LICENSE PLATES</span></a>",
+        "ggBbBQgjMSW_label": "<p>COLLECTION</p>",
+        "ggE8Q7lJkoP_text": "<a href=\"https://citylocs.com/collections/spooky-custom-enamel-pins\"><span style=\"color:#000000;font-size:20px;\">Spooky collectors ENAMEL PINS</span></a>",
+        "ggWyer5EzAU_label": "<p>COLLECTION</p>",
+        "ggYwXuO6bIN_text": "<span style=\"color:#000000;font-size:20px;\">Spooky MOVIE POSTER TIN SIGN</span>",
+        "ggbqvC2ZiFl_label": "<p>COLLECTION</p>",
+        "ggIyJKRMfAa_text": "<span style=\"color:#000000;font-size:20px;\">&nbsp;Spooky ENGRAVED GIFT BOXES</span>",
+        "ggTY_drLJ71_label": "<p>COLLECTION</p>"
+      }
+    },
+    "gp_section_586637487041151691": {
+      "type": "gp-section-586637487041151691",
+      "settings": {
+        "checksum": "935fc723d85fcd6767b2bbaeeb52ca0a3ff693bc6a50a192478a08836a8793cb_1_1_0_0__1",
+        "ggZfwC_VX8h_text": "<span style=\"background-color:rgba(221,219,204,0);color:#F4F3EC;\">Stories That Haunt the Walls</span>",
+        "ggNc_ibrD0J_text": "<p><span style=\"color:#F4F3EC;\">Step into the world of classic horror and timeless folklore with our vintage poster and Mexican folk cover tin signs. Each rugged tin comes with a unique twist — you can customize the credits just like a real movie poster. Add your own name as the writer, producer, actor, or director and create a one-of-a-kind collectible that blends vintage art with your personal story. Built tough, printed bold, and made to turn heads, these tins are the perfect way to make your walls truly yours.</span></p>",
+        "ggTjEVBnwem_label": "SHOP NOW"
+      }
+    },
+    "gp_section_586637487041217227": {
+      "type": "gp-section-586637487041217227",
+      "settings": {
+        "checksum": "e4a13f64b510d9b424ef7b4d39fbf5aa000ddf9bc901aa03ebf857c3dd97e8ee_1_1_0_0__1"
+      }
+    },
+    "gp_section_586637487041282763": {
+      "type": "gp-section-586637487041282763",
+      "settings": {
+        "checksum": "b01fafbd7ffdb66bd762f000e9e90231c052a3467383d3fb33ccacedcf65c9ea_1_1_0_0__1",
+        "ggzwHOZwU9S_label": "SHOP NOW"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_586637487040955083",
+    "gp_section_586637487041086155",
+    "gp_section_586637487041151691",
+    "gp_section_586637487040889547",
+    "gp_section_586637487041282763",
+    "gp_section_586637487041020619",
+    "gp_section_586637487041217227"
+  ]
+}

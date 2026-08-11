@@ -1,0 +1,616 @@
+{% comment %}
+  CityLocs Upsell Configurator — full product-page template.
+  Self-contained (own Vue app), reuses the modal's tier/colour/cart-aware logic.
+  Assign a product to the "product.upsell" template to use it.
+{% endcomment %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+
+{% comment %} Page background — scoped to this template (section only renders here). {% endcomment %}
+<style>
+  .site-main { background-color: #f4f4f4; }
+
+  /* Hide only the floating chat LAUNCHER button on mobile for this template (keep the
+     container/window so it can still open) — replaced by the "Chat with us" link. */
+  @media (max-width: 620px) {
+    #gorgias-chat-messenger-button,
+    #chat-button, #shopify-chat, #tidio-chat, #willdesk-button, .willdesk-chat-button,
+    #richpanel-container, .rp-widget-launcher, .zsiq_floatmain, #chat-widget-container {
+      display: none !important;
+    }
+  }
+</style>
+
+<div class="cl-cfg-page">
+  {% comment %} ---- Product header ---- {% endcomment %}
+  <header class="cl-cfg-header">
+    <nav class="cl-cfg-crumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      {%- for c in product.collections limit: 2 -%}
+        <span class="cl-cfg-crumb-sep">/</span><a href="{{ c.url }}">{{ c.title }}</a>
+      {%- endfor -%}
+      <span class="cl-cfg-crumb-sep">/</span><span class="cl-cfg-crumb-cur">{{ product.title }}</span>
+    </nav>
+
+    {%- assign cl_pills = section.settings.pills | default: product.type -%}
+    {%- if cl_pills != blank -%}
+      <div class="cl-cfg-pills">
+        {%- assign cl_pill_arr = cl_pills | split: ',' -%}
+        {%- for p in cl_pill_arr -%}
+          {%- assign p_trim = p | strip -%}
+          {%- if p_trim != blank -%}<span class="cl-cfg-pill">{{ p_trim }}</span>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="cl-cfg-headrow">
+      <div class="cl-cfg-headmain">
+        <h1 class="cl-cfg-title">{{ product.title }}</h1>
+        <div class="cl-cfg-meta">
+          {%- if section.settings.show_rating -%}
+            <span class="cl-cfg-rating">
+              <div class="loox-rating" data-id="{{ product.id }}" data-rating="{{ product.metafields.loox.avg_rating }}" data-raters="{{ product.metafields.loox.num_reviews }}"></div>
+              {%- assign cl_avg = product.metafields.loox.avg_rating -%}
+              {%- if cl_avg -%}<span class="cl-cfg-rating-lbl">{{ cl_avg }} Reviews</span>{%- endif -%}
+            </span>
+          {%- endif -%}
+          {%- if product.available -%}
+            <span class="cl-cfg-stock cl-cfg-stock--in">
+              <span class="cl-cfg-dot"></span>In stock
+            </span>
+          {%- else -%}
+            <span class="cl-cfg-stock cl-cfg-stock--out"><span class="cl-cfg-dot"></span>Currently unavailable</span>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="cl-cfg-headprice">
+        <span class="cl-cfg-fromval">{{ product.price | money }}</span>
+        <span class="cl-cfg-fromnote">/ {{ section.settings.item_singular | default: 'item' }}</span>
+      </div>
+    </div>
+  </header>
+
+  <script>
+  // Click the header star rating -> smooth-scroll to the Loox reviews
+  (function () {
+    var rating = document.querySelector('.cl-cfg-rating');
+    if (!rating) return;
+    rating.style.cursor = 'pointer';
+    rating.addEventListener('click', function () {
+      var target = document.querySelector('.cl-cfg-reviews') || document.getElementById('looxReviews');
+      if (!target) return;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - 80;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    });
+  })();
+  </script>
+
+  <div id="cl-configurator" class="cl-upsell-modal cl-up2 cl-cfg" style="display:none;" v-cloak>
+    {% comment %} Header {% endcomment %}
+    <div class="cl-up2-eyebrow">{{ section.settings.eyebrow_text }}</div>
+    <h3 class="cl-up2-title" v-if="totalQty > 0 && upsellNext()">Add ${ upsellNext().moreNeeded } more &amp; <span class="cl-up2-save">save $${ upsellSavings() }</span></h3>
+    <h3 class="cl-up2-title" v-else-if="totalQty > 0 && !upsellNext()">You've unlocked our best price!</h3>
+    <h3 class="cl-up2-title" v-else>Buy more, save more</h3>
+    <div class="cl-up2-sub" v-if="upsellNext()">Unlock $${ upsellNext().price } each at ${ upsellNext().qty }+ {{ section.settings.item_plural }}</div>
+    <div class="cl-up2-sub" v-else>Pick your colors below to build your order</div>
+
+    {% comment %} Tier cards {% endcomment %}
+    <div class="cl-up2-tiers" v-if="tierCards().length">
+      <div class="cl-up2-tier" v-for="c in tierCards()" :key="c.qty" :class="'is-' + c.state">
+        <div class="cl-up2-tier-badge" v-if="c.state === 'current'">You're here</div>
+        <div class="cl-up2-tier-qty">${ c.qty }+</div>
+        <div class="cl-up2-tier-price">$${ c.price }</div>
+      </div>
+    </div>
+
+    {% comment %} Two-column body {% endcomment %}
+    <div class="cl-up2-body">
+      <div class="cl-up2-left">
+        <div class="cl-up2-gallery">
+          <img class="cl-up2-img" :src="modalImg" alt="Selected hat">
+          <span class="cl-up2-chip" v-if="modalColorLabel">${ modalColorLabel }</span>
+        </div>
+      </div>
+
+      <div class="cl-up2-right">
+        {% comment %} Zepto personalizer — direct placement. Wrapped in a product form so Zepto finds
+          one; onsubmit disabled (our own Add-to-cart handles it). v-pre so Vue leaves Zepto's DOM alone. {% endcomment %}
+        {% comment %} Validation error — outside the v-pre Zepto wrapper so Vue evaluates v-if {% endcomment %}
+        <div class="cl-cfg-err cl-cfg-err--top" v-if="cfgError">${ cfgError }</div>
+        <div class="cl-cfg-pcard">
+          <div class="cl-cfg-eyelabel">Personalize your {{ section.settings.item_singular }}</div>
+          <div class="cl-cfg-personalizer" v-pre>
+            <form class="cl-cfg-pplr-form" action="/cart/add" method="post" onsubmit="return false;">
+              <div id="pplr-{{ product.id }}" data-id="{{ product.id }}" class="product-personalizer" data-handle="{{ product.handle }}"></div>
+            </form>
+          </div>
+          <div class="cl-cfg-pnote">Applied to every {{ section.settings.item_singular }} in this order</div>
+        </div>
+
+        <div class="cl-cfg-eyelabel">Choose your style</div>
+        <div class="cl-qv-styles">
+          <button type="button" v-for="style in styleList()" :key="style" class="cl-qv-style" :class="{ 'is-active': selected === style }" @click="selectStyle(style)">${ style }</button>
+        </div>
+        <div class="cl-cfg-collabel">
+          <span class="cl-cfg-eyelabel">Choose colors &amp; quantities</span>
+          <span class="cl-cfg-selcount" v-if="selectedCount() > 0">${ selectedCount() } color${ selectedCount() == 1 ? '' : 's' } selected</span>
+        </div>
+        <div class="cl-qv-colors cl-cfg-colors">
+          <div class="cl-qv-row" v-for="option in options" :key="option.id" :class="{ 'is-selected': handleQty(`${ option.id }`) > 0 }" @mouseenter="setModalView(option)">
+            <img class="cl-qv-thumb" :src="option.featured_media.preview_image.src" alt="" @click="openColorImage(option)" title="View larger">
+            <span class="cl-qv-name"><strong>${ option.option3 }</strong> <span class="cl-cfg-size">· ${ shortSize(option.option2) }</span></span>
+            <span class="cl-qv-stepper">
+              <span class="cl-qv-btn" @click="minQty(`${option.id}`)">–</span>
+              <input class="cl-qv-qty" type="text" :value="handleQty(`${ option.id }`)" @input="inputQty(`${ option.id }`, $event.target.value)">
+              <span class="cl-qv-btn" @click="addQty(`${option.id}`); setModalView(option)">+</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% comment %} Summary + Add to cart — full-width bar under both columns {% endcomment %}
+    <div class="cl-up2-footer">
+      {% comment %} Mobile-only discount milestone: keeps the current tier + next-tier nudge always visible {% endcomment %}
+      <div class="cl-cfg-milebar" v-if="tierCards().length">
+        <div class="cl-cfg-milebar-top">
+          <span class="cl-cfg-milebar-cur"><span class="cl-cfg-milebar-badge">You're here</span> <span v-if="currentTier()"><strong>${ currentTier().qty }+ {{ section.settings.item_plural }}</strong> • $${ currentTier().price } each</span><span v-else><strong>${ combinedQty() } {{ section.settings.item_plural }}</strong> • $${ indiPrice } each</span></span>
+          <span class="cl-cfg-milebar-nudge" v-if="upsellNext()">Add ${ upsellNext().moreNeeded } → <strong>$${ upsellNext().price }</strong></span>
+          <span class="cl-cfg-milebar-nudge cl-cfg-milebar-max" v-else>🔥 Best price unlocked</span>
+        </div>
+        <div class="cl-cfg-milebar-track"><div class="cl-cfg-milebar-fill" :style="{ width: milestoneProgress() + '%' }"></div></div>
+      </div>
+      <div class="cl-up2-sumchip">
+        <span class="cl-up2-sumqty">${ totalQty }</span>
+        <span class="cl-up2-summeta">${ totalQty == 1 ? '{{ section.settings.item_singular }}' : '{{ section.settings.item_plural }}' } added now<br><span class="cl-up2-each">$${ indiPrice } each</span><span v-if="cartQty > 0"> · ${ cartQty } already in cart</span></span>
+      </div>
+      <div class="cl-up2-total">
+        <span class="cl-up2-total-label">Subtotal</span>
+        <span class="cl-up2-total-val">$${ subTotal }</span>
+        <span class="cl-up2-total-sub">$${ indiPrice }/{{ section.settings.item_singular }}<span v-if="cartQty > 0"> · ${ cartQty } in cart</span></span>
+      </div>
+      <button type="button" class="cl-up2-cta" :disabled="adding" @click="addToCart()">
+        <span class="cl-up2-cta-qty" v-if="totalQty > 0">${ totalQty }</span>
+        <span class="cl-up2-cta-label">${ adding ? 'Adding…' : 'Add to cart' }</span>
+        <span class="cl-up2-cta-price"> · $${ subTotal }</span>
+      </button>
+      <a href="#" class="cl-cfg-chatlink" @click.prevent="openChat()">💬 Chat with us</a>
+    </div>
+
+    {% comment %} Color image lightbox {% endcomment %}
+    <div class="cl-img-modal" v-if="imgOpen" @click.self="imgOpen = false">
+      <div class="cl-img-modal-dialog">
+        <button type="button" class="cl-img-modal-x" @click="imgOpen = false" aria-label="Close">&times;</button>
+        <img class="cl-img-modal-img" :src="imgSrc" :alt="imgLabel">
+        <div class="cl-img-modal-cap" v-if="imgLabel">${ imgLabel }</div>
+      </div>
+    </div>
+  </div>
+
+  {% comment %} ===== Phase 3: content sections ===== {% endcomment %}
+  {%- assign hero_heading = product.metafields.custom.product_tagline | default: section.settings.desc_heading -%}
+  <section class="cl-cfg-hero{% if section.settings.desc_dark %} cl-cfg-hero--dark{% endif %}">
+    {%- if section.settings.desc_eyebrow != blank -%}<div class="cl-cfg-hero-eyebrow">{{ section.settings.desc_eyebrow }}</div>{%- endif -%}
+    {%- if hero_heading != blank -%}<h2 class="cl-cfg-hero-title">{{ hero_heading }}</h2>{%- endif -%}
+    <div class="cl-cfg-hero-body rte cl-rt">
+      {%- if product.metafields.custom.short_description != blank -%}{{ product.metafields.custom.short_description }}
+      {%- elsif product.metafields.custom.plate_description != blank -%}{{ product.metafields.custom.plate_description }}
+      {%- else -%}{{ section.settings.desc_body }}{%- endif -%}
+    </div>
+  </section>
+
+  <div class="cl-cfg-cards">
+    {%- if section.settings.show_customization -%}
+      {%- assign ct1 = product.metafields.custom.custom_text_1_max | default: section.settings.cust1_max -%}
+      {%- assign ct2 = product.metafields.custom.custom_text_2_max | default: section.settings.cust2_max -%}
+      <section class="cl-cfg-card">
+        <div class="cl-cfg-card-head"><span class="cl-cfg-card-ico">✎</span><h3 class="cl-cfg-card-title">{{ section.settings.cust_heading }}</h3></div>
+        <ul class="cl-cfg-card-rows">
+          <li><span class="cl-cfg-card-k">Custom Text 1</span><span class="cl-cfg-card-v">{{ ct1 }} letters max</span></li>
+          <li><span class="cl-cfg-card-k">Custom Text 2</span><span class="cl-cfg-card-v">{{ ct2 }} letters max</span></li>
+        </ul>
+        {%- if section.settings.cust_tip != blank -%}<div class="cl-cfg-card-tip">💡 {{ section.settings.cust_tip }}</div>{%- endif -%}
+      </section>
+    {%- endif -%}
+
+    {%- if section.settings.show_patch -%}
+      <section class="cl-cfg-card">
+        <div class="cl-cfg-card-head"><span class="cl-cfg-card-ico">◆</span><h3 class="cl-cfg-card-title">{{ section.settings.patch_heading }}</h3></div>
+        <ul class="cl-cfg-card-bullets">
+          {%- assign patch_lines = section.settings.patch_lines | newline_to_br | split: '<br />' -%}
+          {%- for line in patch_lines -%}{%- assign l = line | strip -%}{%- if l != blank -%}<li>{{ l }}</li>{%- endif -%}{%- endfor -%}
+        </ul>
+      </section>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Hat Specifications — 5-column comparison, short desc + "View Details" modal {%- endcomment -%}
+  {%- if section.settings.show_specs -%}
+    <section class="cl-cfg-card cl-cfg-specs">
+      <div class="cl-cfg-card-head"><span class="cl-cfg-card-ico">📐</span><h3 class="cl-cfg-card-title">{{ section.settings.specs_heading }}</h3></div>
+      <div class="cl-cfg-spec-grid">
+        {%- if product.metafields.custom.snapback_description != blank or section.settings.spec_snapback != blank -%}
+          <div class="cl-cfg-spec-col">
+            <div class="cl-cfg-spec-col-title">Snapback</div>
+            {%- if product.metafields.custom.snapback_description != blank -%}<div class="cl-cfg-spec-col-body rte cl-rt">{{ product.metafields.custom.snapback_description }}</div>{%- else -%}{%- assign parts = section.settings.spec_snapback | strip | newline_to_br | split: '<br />' -%}<div class="cl-cfg-spec-col-body rte"><p class="cl-spec-h">{{ parts[0] | strip }}</p><ul>{%- for p in parts offset: 1 -%}{%- assign pt = p | strip -%}{%- if pt != blank -%}<li>{{ pt }}</li>{%- endif -%}{%- endfor -%}</ul></div>{%- endif -%}
+            {%- if product.metafields.custom.snapback_hat_long_description.value.content != blank -%}<button type="button" class="cl-cfg-spec-more" data-spec="snapback">View details &rarr;</button>{%- endif -%}
+          </div>
+        {%- endif -%}
+        {%- if product.metafields.custom.trucker_description != blank or section.settings.spec_trucker != blank -%}
+          <div class="cl-cfg-spec-col">
+            <div class="cl-cfg-spec-col-title">Trucker</div>
+            {%- if product.metafields.custom.trucker_description != blank -%}<div class="cl-cfg-spec-col-body rte cl-rt">{{ product.metafields.custom.trucker_description }}</div>{%- else -%}{%- assign parts = section.settings.spec_trucker | strip | newline_to_br | split: '<br />' -%}<div class="cl-cfg-spec-col-body rte"><p class="cl-spec-h">{{ parts[0] | strip }}</p><ul>{%- for p in parts offset: 1 -%}{%- assign pt = p | strip -%}{%- if pt != blank -%}<li>{{ pt }}</li>{%- endif -%}{%- endfor -%}</ul></div>{%- endif -%}
+            {%- if product.metafields.custom.trucker_hat_long_description.value.content != blank -%}<button type="button" class="cl-cfg-spec-more" data-spec="trucker">View details &rarr;</button>{%- endif -%}
+          </div>
+        {%- endif -%}
+        {%- if product.metafields.custom.pro_five_a_frame_description != blank or section.settings.spec_profive != blank -%}
+          <div class="cl-cfg-spec-col">
+            <div class="cl-cfg-spec-col-title">Pro Five A Frame</div>
+            {%- if product.metafields.custom.pro_five_a_frame_description != blank -%}<div class="cl-cfg-spec-col-body rte cl-rt">{{ product.metafields.custom.pro_five_a_frame_description }}</div>{%- else -%}{%- assign parts = section.settings.spec_profive | strip | newline_to_br | split: '<br />' -%}<div class="cl-cfg-spec-col-body rte"><p class="cl-spec-h">{{ parts[0] | strip }}</p><ul>{%- for p in parts offset: 1 -%}{%- assign pt = p | strip -%}{%- if pt != blank -%}<li>{{ pt }}</li>{%- endif -%}{%- endfor -%}</ul></div>{%- endif -%}
+            {%- if product.metafields.custom.pro_five_a_frame_long_description.value.content != blank -%}<button type="button" class="cl-cfg-spec-more" data-spec="pro_five_a_frame">View details &rarr;</button>{%- endif -%}
+          </div>
+        {%- endif -%}
+        {%- if product.metafields.custom.flex_fit_description != blank or section.settings.spec_flexfit != blank -%}
+          <div class="cl-cfg-spec-col">
+            <div class="cl-cfg-spec-col-title">Flex Fit</div>
+            {%- if product.metafields.custom.flex_fit_description != blank -%}<div class="cl-cfg-spec-col-body rte cl-rt">{{ product.metafields.custom.flex_fit_description }}</div>{%- else -%}{%- assign parts = section.settings.spec_flexfit | strip | newline_to_br | split: '<br />' -%}<div class="cl-cfg-spec-col-body rte"><p class="cl-spec-h">{{ parts[0] | strip }}</p><ul>{%- for p in parts offset: 1 -%}{%- assign pt = p | strip -%}{%- if pt != blank -%}<li>{{ pt }}</li>{%- endif -%}{%- endfor -%}</ul></div>{%- endif -%}
+            {%- if product.metafields.custom.flex_fit_hat_long_description.value.content != blank -%}<button type="button" class="cl-cfg-spec-more" data-spec="flex_fit">View details &rarr;</button>{%- endif -%}
+          </div>
+        {%- endif -%}
+        {%- if product.metafields.custom.signature_series_description != blank or section.settings.spec_signature != blank -%}
+          <div class="cl-cfg-spec-col">
+            <div class="cl-cfg-spec-col-title">Signature Series</div>
+            {%- if product.metafields.custom.signature_series_description != blank -%}<div class="cl-cfg-spec-col-body rte cl-rt">{{ product.metafields.custom.signature_series_description }}</div>{%- else -%}{%- assign parts = section.settings.spec_signature | strip | newline_to_br | split: '<br />' -%}<div class="cl-cfg-spec-col-body rte"><p class="cl-spec-h">{{ parts[0] | strip }}</p><ul>{%- for p in parts offset: 1 -%}{%- assign pt = p | strip -%}{%- if pt != blank -%}<li>{{ pt }}</li>{%- endif -%}{%- endfor -%}</ul></div>{%- endif -%}
+            {%- if product.metafields.custom.signature_series_hat_long_description.value.content != blank -%}<button type="button" class="cl-cfg-spec-more" data-spec="signature_series">View details &rarr;</button>{%- endif -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </section>
+
+    {%- comment -%} Long descriptions (hidden) + modal shell {%- endcomment -%}
+    <div class="cl-cfg-spec-store" hidden>
+      <div data-spec="snapback" data-title="Snapback">{{ product.metafields.custom.snapback_hat_long_description.value.content }}</div>
+      <div data-spec="trucker" data-title="Trucker">{{ product.metafields.custom.trucker_hat_long_description.value.content }}</div>
+      <div data-spec="pro_five_a_frame" data-title="Pro Five A Frame">{{ product.metafields.custom.pro_five_a_frame_long_description.value.content }}</div>
+      <div data-spec="flex_fit" data-title="Flex Fit">{{ product.metafields.custom.flex_fit_hat_long_description.value.content }}</div>
+      <div data-spec="signature_series" data-title="Signature Series">{{ product.metafields.custom.signature_series_hat_long_description.value.content }}</div>
+    </div>
+    <div class="cl-spec-modal" id="cl-spec-modal" aria-hidden="true">
+      <div class="cl-spec-modal-backdrop" data-close></div>
+      <div class="cl-spec-modal-dialog" role="dialog" aria-modal="true">
+        <button type="button" class="cl-spec-modal-x" data-close aria-label="Close">&times;</button>
+        <h3 class="cl-spec-modal-title"></h3>
+        <div class="cl-spec-modal-body rte"></div>
+      </div>
+    </div>
+    <script>
+    (function () {
+      var modal = document.getElementById('cl-spec-modal');
+      if (!modal) return;
+      var titleEl = modal.querySelector('.cl-spec-modal-title');
+      var bodyEl = modal.querySelector('.cl-spec-modal-body');
+      function openSpec(key) {
+        var src = document.querySelector('.cl-cfg-spec-store [data-spec="' + key + '"]');
+        if (!src) return;
+        titleEl.textContent = src.getAttribute('data-title') || '';
+        bodyEl.innerHTML = src.innerHTML;
+        modal.classList.add('is-open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeSpec() {
+        modal.classList.remove('is-open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      document.addEventListener('click', function (e) {
+        var more = e.target.closest && e.target.closest('.cl-cfg-spec-more');
+        if (more) { e.preventDefault(); openSpec(more.getAttribute('data-spec')); return; }
+        if (e.target.closest && e.target.closest('#cl-spec-modal [data-close]')) closeSpec();
+      });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSpec(); });
+    })();
+    </script>
+  {%- endif -%}
+
+  {%- if section.settings.show_full_details and product.description != blank -%}
+    <details class="cl-cfg-details">
+      <summary>{{ section.settings.details_label }}</summary>
+      <div class="cl-cfg-desc rte">{{ product.description }}</div>
+    </details>
+  {%- endif -%}
+
+  {%- comment -%} Loox reviews widget {%- endcomment -%}
+  {%- if section.settings.show_reviews -%}
+    <div class="cl-cfg-reviews">
+      <div id="looxReviews" data-product-id="{{ product.id }}"></div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Render Shopify rich-text JSON metafields to HTML in the browser (this store
+    outputs the raw JSON rather than HTML for rich_text metafields). {%- endcomment -%}
+  <script>
+  (function () {
+    function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function render(node) {
+      if (!node) return '';
+      var kids = (node.children || []).map(render).join('');
+      switch (node.type) {
+        case 'root': return kids;
+        case 'paragraph': return '<p>' + kids + '</p>';
+        case 'heading': var l = node.level || 3; return '<h' + l + '>' + kids + '</h' + l + '>';
+        case 'list': return '<' + (node.listType === 'ordered' ? 'ol' : 'ul') + '>' + kids + '</' + (node.listType === 'ordered' ? 'ol' : 'ul') + '>';
+        case 'list-item': return '<li>' + kids + '</li>';
+        case 'link': return '<a href="' + esc(node.url) + '"' + (node.target ? ' target="' + esc(node.target) + '" rel="noopener"' : '') + '>' + kids + '</a>';
+        case 'text': var t = esc(node.value); if (node.bold) t = '<strong>' + t + '</strong>'; if (node.italic) t = '<em>' + t + '</em>'; return t;
+        default: return kids;
+      }
+    }
+    document.querySelectorAll('.cl-rt').forEach(function (el) {
+      var raw = (el.textContent || '').trim();
+      if (raw.charAt(0) !== '{') return; // already HTML
+      try {
+        var data = JSON.parse(raw);
+        if (data && data.type === 'root') el.innerHTML = render(data);
+      } catch (e) {}
+    });
+  })();
+  </script>
+</div>
+
+<script>
+(function () {
+  const productTags = {{ product.tags | json }};
+  const productHandle = {{ product.handle | json }};
+  const boot = function () {
+    if (!window.Vue || !document.querySelector('#cl-configurator')) { return setTimeout(boot, 50); }
+    const { ref, reactive, createApp, watch, onBeforeMount } = Vue;
+
+    createApp({
+      delimiters: ['${', '}'],
+      setup() {
+        let selected = ref('');
+        let variant = ref([]);
+        let options = ref([]);
+        let qtySelected = reactive({});
+        let basePrice = ref({{ product.selected_or_first_available_variant.price | divided_by: 100.0 }});
+        let totalQty = ref(0);
+        let subTotal = ref('0.00');
+        let indiPrice = ref('0.00');
+        let discountQtys = ref([]);
+        let discountAmounts = ref([]);
+        let discountName = ref('');
+        let cartQty = ref(0);
+        let modalImg = ref('');
+        let modalColorLabel = ref('');
+        let adding = ref(false);
+        let cfgError = ref('');
+
+        const combinedQty = () => totalQty.value + cartQty.value;
+        const refreshCartQty = () => fetch('/cart.js').then(r => r.json()).then(cart => {
+          let q = 0; (cart.items || []).forEach(it => { if (it.handle === productHandle) q += it.quantity; }); cartQty.value = q;
+        }).catch(() => {});
+
+        const milestoneTiers = () => {
+          const qtys = discountQtys.value, amounts = discountAmounts.value, out = [];
+          for (let i = 0; i < qtys.length; i++) { if (qtys[i] <= 1) continue; out.push({ qty: qtys[i], price: (basePrice.value - amounts[i]).toFixed(2) }); }
+          return out;
+        };
+        const getNextTier = () => {
+          const qtys = discountQtys.value, amounts = discountAmounts.value, q = combinedQty();
+          for (let i = 0; i < qtys.length; i++) { if (q < qtys[i] && qtys[i] > 1) return { qty: qtys[i], price: (basePrice.value - amounts[i]).toFixed(2), moreNeeded: qtys[i] - q }; }
+          return null;
+        };
+        const upsellSavings = () => { const n = getNextTier(); if (!n) return ''; const s = Math.max(0, (parseFloat(indiPrice.value) - parseFloat(n.price)) * n.qty); return s > 0 ? s.toFixed(2) : ''; };
+        const upsellNext = () => getNextTier();
+        const tierCards = () => {
+          const tiers = milestoneTiers(), q = combinedQty(); let ci = -1;
+          tiers.forEach((t, i) => { if (q >= t.qty) ci = i; });
+          return tiers.map((t, i) => ({ qty: t.qty, price: t.price, state: i < ci ? 'reached' : (i === ci ? 'current' : 'future') }));
+        };
+
+        const currentTier = () => {
+          const tiers = milestoneTiers(), q = combinedQty(); let cur = null;
+          tiers.forEach(t => { if (q >= t.qty) cur = t; });
+          return cur;
+        };
+        const milestoneProgress = () => {
+          const next = getNextTier();
+          if (!next) return 100;
+          const q = combinedQty();
+          let prev = 1;
+          milestoneTiers().forEach(t => { if (t.qty <= q) prev = t.qty; });
+          const span = next.qty - prev;
+          if (span <= 0) return 100;
+          return Math.min(100, Math.max(0, ((q - prev) / span) * 100));
+        };
+        const styleList = () => { const seen = []; variant.value.forEach(v => { if (v.option1 && seen.indexOf(v.option1) === -1) seen.push(v.option1); }); return seen; };
+        const selectStyle = (s) => { selected.value = s; };
+        const shortSize = (s) => (s || '').replace(/one size fits all/i, 'One Size').trim();
+        const setModalView = (o) => {
+          if (!o) return;
+          modalImg.value = o.featured_media.preview_image.src;
+          const color = (o.option3 || '').trim(), size = shortSize(o.option2);
+          modalColorLabel.value = size ? (color + ' · ' + size) : color;
+        };
+        const imgOpen = ref(false);
+        const imgSrc = ref('');
+        const imgLabel = ref('');
+        const openColorImage = (o) => {
+          if (!o) return;
+          imgSrc.value = o.featured_media.preview_image.src;
+          const color = (o.option3 || '').trim(), size = shortSize(o.option2);
+          imgLabel.value = size ? (color + ' · ' + size) : color;
+          imgOpen.value = true;
+        };
+        const selectedCount = () => Object.keys(qtySelected).filter(id => qtySelected[id] > 0).length;
+
+        const addQty = (id) => { let q = qtySelected[id] ? Number(qtySelected[id]) : 0; qtySelected[id] = q + 1; };
+        const minQty = (id) => { if (qtySelected[id] > 0) qtySelected[id] = Number(qtySelected[id]) - 1; };
+        const inputQty = (id, v) => { qtySelected[id] = Number(v) || 0; };
+        const handleQty = (id) => qtySelected[id] ? qtySelected[id] : 0;
+
+        const recalc = () => {
+          const qtys = discountQtys.value, amounts = discountAmounts.value;
+          if (!qtys.length) return;
+          let b = 0; Object.keys(qtySelected).forEach(s => b += qtySelected[s]); totalQty.value = b;
+          const combined = b + cartQty.value;
+          let idx = 0;
+          for (let i = 0; i < qtys.length; i++) { if (combined == qtys[i]) { idx = i; break; } else if (combined < qtys[i]) { idx = i - 1; break; } else { idx = qtys.length - 1; } }
+          idx = Math.max(0, idx);
+          const per = basePrice.value - amounts[idx];
+          subTotal.value = (b * per).toFixed(2);
+          indiPrice.value = (b > 0 ? per : 0).toFixed(2);
+        };
+        watch(qtySelected, recalc); watch(cartQty, recalc); watch(discountQtys, recalc);
+
+        // Personalization comes from the app (Zepto) inputs in the v-pre slot.
+        const customTextField = () => document.querySelector('input[name="properties[Custom Text]"]') || document.querySelector('#user_input');
+        const collectProperties = () => {
+          const p = {};
+          document.querySelectorAll('.cl-cfg-page [name^="properties["]').forEach(f => {
+            const m = f.name.match(/^properties\[(.+)\]$/); if (!m) return;
+            const v = (f.value || '').trim(); if (v) p[m[1]] = v;
+          });
+          return p;
+        };
+        const openChat = () => {
+          try {
+            if (window.GorgiasChat && GorgiasChat.open) return GorgiasChat.open();
+            if (window.Tawk_API && Tawk_API.maximize) return Tawk_API.maximize();
+            if (window.$zoho && $zoho.salesiq && $zoho.salesiq.floatwindow) return $zoho.salesiq.floatwindow.visible('show');
+            if (window.Willdesk && Willdesk.open) return Willdesk.open();
+            if (window.Chatra) return window.Chatra('openChat');
+            if (window.$crisp) return window.$crisp.push(['do', 'chat:open']);
+          } catch (e) {}
+          // fallback: click the native launcher
+          const sels = ['#gorgias-chat-container button', '#gorgias-chat-messenger-button', '#chat-button',
+            '#willdesk-button', '.willdesk-chat-button', '#shopify-chat', '.rp-widget-launcher',
+            '.zsiq_floatmain', '#chat-widget-container'];
+          for (let i = 0; i < sels.length; i++) { const el = document.querySelector(sels[i]); if (el) { try { el.click(); } catch (e) {} return; } }
+        };
+        const scrollToEl = (sel) => { const el = document.querySelector(sel); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+        const addToCart = () => {
+          if (totalQty.value <= 0) {
+            cfgError.value = 'Please choose a colour and set a quantity below.';
+            scrollToEl('.cl-cfg-pcard');
+            return;
+          }
+          const ct = customTextField();
+          if (ct && !(ct.value || '').trim()) {
+            cfgError.value = 'Please enter your custom text before adding to cart.';
+            scrollToEl('.cl-cfg-pcard');
+            return;
+          }
+          cfgError.value = '';
+          const props = collectProperties();
+          const items = Object.keys(qtySelected).filter(id => qtySelected[id] > 0).map(id => ({ id: id, quantity: qtySelected[id], properties: props }));
+          adding.value = true;
+          fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: items })
+          }).then(() => {
+            adding.value = false;
+            Object.keys(qtySelected).forEach(k => { qtySelected[k] = 0; });
+            refreshCartQty();
+            if (window.AMP_API && AMP_API.OPEN_CART) AMP_API.OPEN_CART(); else window.location.href = '/cart';
+          }).catch(() => { adding.value = false; });
+        };
+
+        const load = async () => {
+          refreshCartQty();
+          if (productTags && productTags.length) {
+            fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(JSON.stringify(productTags)))
+              .then(r => r.json()).then(d => {
+                if (d.discountBreak && d.discountAmount) {
+                  discountQtys.value = [1].concat(d.discountBreak.map(Number));
+                  discountAmounts.value = [0].concat(d.discountAmount.map(Number));
+                  discountName.value = d.discountMessage || d.name || '';
+                }
+              }).catch(() => {});
+          }
+          try {
+            const pgRes = await fetch('{{ product.url }}.js');
+            const pg = { data: await pgRes.json() };
+            pg.data.variants.forEach(v => {
+              if (v.inventory_management != 'shopify' || (v.inventory_management == 'shopify' && v.inventory_quantity > 0)) variant.value.push(v);
+            });
+            if (variant.value.length) selected.value = variant.value[0].option1;
+            const sel = variant.value.filter(v => v.option1 == selected.value);
+            options.value = []; options.value.push(...sel);
+            if (options.value.length) setModalView(options.value[0]);
+          } catch (e) { console.log(e); }
+        };
+        watch(selected, () => {
+          const u = variant.value.filter(v => v.option1 == selected.value);
+          options.value = []; options.value.push(...u);
+          if (options.value.length) setModalView(options.value[0]);
+        });
+        onBeforeMount(load);
+
+        return {
+          selected, variant, options, qtySelected, basePrice, totalQty, subTotal, indiPrice, discountName, cartQty,
+          modalImg, modalColorLabel, adding, cfgError,
+          imgOpen, imgSrc, imgLabel, openColorImage,
+          combinedQty, milestoneTiers, getNextTier, upsellSavings, upsellNext, tierCards, milestoneProgress, currentTier, openChat,
+          styleList, selectStyle, setModalView, shortSize, selectedCount, addQty, minQty, inputQty, handleQty, addToCart
+        };
+      }
+    }).mount('#cl-configurator');
+    var el = document.querySelector('#cl-configurator');
+    if (el) el.style.display = '';
+  };
+  boot();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Upsell Configurator",
+  "settings": [
+    { "type": "text", "id": "eyebrow_text", "label": "Eyebrow text", "default": "The more you stack, the less you pay" },
+    { "type": "text", "id": "item_singular", "label": "Item noun (singular)", "default": "hat" },
+    { "type": "text", "id": "item_plural", "label": "Item noun (plural)", "default": "hats" },
+    { "type": "header", "content": "Product header" },
+    { "type": "text", "id": "pills", "label": "Category pills (comma-separated)", "info": "e.g. California Classics, Custom Printed. Falls back to the product type if blank." },
+    { "type": "checkbox", "id": "show_rating", "label": "Show Loox rating widget", "default": true },
+
+    { "type": "header", "content": "Description hero" },
+    { "type": "checkbox", "id": "desc_dark", "label": "Dark background", "default": true },
+    { "type": "text", "id": "desc_eyebrow", "label": "Eyebrow", "default": "Flaunt your state pride" },
+    { "type": "text", "id": "desc_heading", "label": "Heading", "default": "Built to turn heads" },
+    { "type": "richtext", "id": "desc_body", "label": "Body", "info": "Per-product override: metafield custom.short_description (or custom.plate_description)", "default": "<p>Designed to resemble the most iconic license plates your home state has to offer. Personalized with your nickname, club name, or company name — these are uniquely yours.</p>" },
+
+    { "type": "header", "content": "Customization card" },
+    { "type": "checkbox", "id": "show_customization", "label": "Show card", "default": true },
+    { "type": "text", "id": "cust_heading", "label": "Heading", "default": "Customization" },
+    { "type": "text", "id": "cust1_max", "label": "Custom Text 1 max letters", "info": "Per-product override: metafield custom.custom_text_1_max", "default": "20" },
+    { "type": "text", "id": "cust2_max", "label": "Custom Text 2 max letters", "info": "Per-product override: metafield custom.custom_text_2_max", "default": "26" },
+    { "type": "text", "id": "cust_tip", "label": "Tip", "default": "Fewer letters = a more authentic plate look." },
+
+    { "type": "header", "content": "The Patch card" },
+    { "type": "checkbox", "id": "show_patch", "label": "Show card", "default": true },
+    { "type": "text", "id": "patch_heading", "label": "Heading", "default": "The Patch" },
+    { "type": "textarea", "id": "patch_lines", "label": "Details (one per line)", "default": "UV ink printed on genuine leather\nPlate patch measures 4 × 2¼\"\nAttached with high-quality rivets" },
+
+    { "type": "header", "content": "Hat specifications (per style)" },
+    { "type": "checkbox", "id": "show_specs", "label": "Show specifications", "default": true, "info": "Each column uses the per-style metafield if set, otherwise the default below. First line = intro, following lines = bullets." },
+    { "type": "text", "id": "specs_heading", "label": "Heading", "default": "Hat Specifications" },
+    { "type": "textarea", "id": "spec_snapback", "label": "Snapback default", "default": "ADJUSTABLE SNAPBACK\nVisor: Flat Bill, Green Bottom\nProfile: High\nCrown: 3 3/4\"\nPanels: 6" },
+    { "type": "textarea", "id": "spec_trucker", "label": "Trucker default", "default": "TRUCKER SNAPBACK\nVisor: Curved, Single Color\nProfile: Medium\nCrown: 3 1/2\"\nPanels: 5" },
+    { "type": "textarea", "id": "spec_profive", "label": "Pro Five A Frame default", "default": "Pro Five A-Frame\nVisor: Flat Bill, Green Bottom\nProfile: High\nCrown: 3 3/4\"\nPanels: 6" },
+    { "type": "textarea", "id": "spec_flexfit", "label": "Flex Fit default", "default": "FLEXFIT (Fitted)\nVisor: Flat Bill, Single Color\nProfile: High\nCrown: 3 3/4\"\nPanels: 6" },
+    { "type": "textarea", "id": "spec_signature", "label": "Signature Series default", "default": "Signature Series\nVisor: Flat Bill, Green Bottom\nProfile: High\nCrown: 3 3/4\"\nPanels: 6" },
+
+    { "type": "header", "content": "Full product details" },
+    { "type": "checkbox", "id": "show_full_details", "label": "Show collapsible full description", "default": true },
+    { "type": "text", "id": "details_label", "label": "Toggle label", "default": "Full product details & specifications" },
+
+    { "type": "header", "content": "Reviews" },
+    { "type": "checkbox", "id": "show_reviews", "label": "Show Loox reviews widget", "default": true }
+  ],
+  "presets": [{ "name": "Upsell Configurator" }]
+}
+{% endschema %}

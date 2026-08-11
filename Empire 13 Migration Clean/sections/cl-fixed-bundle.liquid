@@ -1,0 +1,103 @@
+{%- comment -%}
+  Fixed 3-Hat Bundle — branded storefront (native section).
+  Hero (ribbon, headline, hats, pricing, badges) lives here; the interactive
+  personalizer is the shared snippet `cl-fixed-bundle-personalizer` so it can be
+  reused as-is inside a GemPages custom-code block.
+  See [[fixed-bundle-cart-transform]] in memory for the full architecture.
+{%- endcomment -%}
+
+{%- assign components = product.metafields.custom.bundle_components.value -%}
+{%- assign hat_count = components.size | default: 3 -%}
+{%- if hat_count == 0 -%}{%- assign hat_count = 3 -%}{%- endif -%}
+{%- assign per_hat = product.price | divided_by: hat_count -%}
+
+<section class="cl-fxb" data-cl-fixed-bundle data-product-id="{{ product.id }}">
+  <div class="cl-fxb__ribbon">🔒 {{ section.settings.ribbon_text | default: 'EXCLUSIVE OFFER FOR OUR CUSTOMERS' }}</div>
+
+  <div class="cl-fxb__inner">
+    <header class="cl-fxb__hero">
+      <p class="cl-fxb__kicker">{{ section.settings.kicker | default: 'YOUR STYLE. MORE OPTIONS.' }}</p>
+      <h1 class="cl-fxb__headline">
+        {{ hat_count }} HATS. {{ product.price | money_without_trailing_zeros }}.
+      </h1>
+      <p class="cl-fxb__subhead">
+        {{ section.settings.subhead | default: 'Choose your state and personalize its featured plate. The same design is applied to all 3 hats — we’ll choose the hat styles and colors.' }}
+      </p>
+    </header>
+
+    {%- if product.images.size > 0 -%}
+      <ul class="cl-fxb__hats" role="list">
+        {%- for img in product.images limit: 3 -%}
+          <li class="cl-fxb__hat">
+            <img class="cl-fxb__hat-img" src="{{ img | image_url: width: 480 }}"
+                 alt="{{ product.title | escape }} — hat {{ forloop.index }}"
+                 width="480" height="480" loading="lazy">
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    <div class="cl-fxb__pricing">
+      {%- if product.compare_at_price > product.price -%}
+        <s class="cl-fxb__was">{{ product.compare_at_price | money }}</s>
+      {%- endif -%}
+      <span class="cl-fxb__now">{{ product.price | money }}</span>
+      <span class="cl-fxb__perhat">ONLY {{ per_hat | money_without_trailing_zeros }} PER HAT</span>
+    </div>
+
+    <ul class="cl-fxb__badges" role="list">
+      <li><strong>{{ hat_count }} PREMIUM HATS</strong></li>
+      {%- if product.compare_at_price > product.price -%}
+        <li><strong>BEST VALUE</strong><span>Save {{ product.compare_at_price | minus: product.price | money }}</span></li>
+      {%- endif -%}
+      <li><strong>PERFECT FOR GIFTS</strong></li>
+      <li><strong>QUALITY YOU CAN COUNT ON</strong></li>
+    </ul>
+
+    {% render 'cl-fixed-bundle-personalizer', cta_label: section.settings.cta_label %}
+
+    <p class="cl-fxb__foot">🚚 FAST PRODUCTION · RELIABLE SHIPPING</p>
+  </div>
+</section>
+
+<style>
+  .cl-fxb { --navy:#0e2a5e; --ink:#12203a; --line:#e1e3e6; background:#f4f5f7; color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+  .cl-fxb *{box-sizing:border-box}
+  .cl-fxb__ribbon{background:var(--navy);color:#fff;text-align:center;font-weight:700;font-size:13px;
+    letter-spacing:.04em;padding:11px 16px}
+  .cl-fxb__inner{max-width:620px;margin:0 auto;padding:22px 18px 40px;display:flex;flex-direction:column;gap:22px}
+  .cl-fxb__hero{text-align:center}
+  .cl-fxb__kicker{margin:0;font-weight:800;color:#4a5468;font-size:clamp(20px,5vw,30px);line-height:1.1}
+  .cl-fxb__headline{margin:4px 0 0;color:var(--navy);font-weight:900;font-size:clamp(34px,9vw,56px);line-height:1;letter-spacing:-.02em}
+  .cl-fxb__subhead{margin:12px auto 0;max-width:44ch;color:#3a4459;font-size:15px;line-height:1.45}
+  .cl-fxb__hats{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;align-items:end}
+  .cl-fxb__hat{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .cl-fxb__hat-img{width:100%;height:auto;object-fit:contain}
+  .cl-fxb__hat-label{font-size:11px;color:#5a6377;text-align:center;line-height:1.2}
+  .cl-fxb__pricing{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:10px 14px}
+  .cl-fxb__was{color:#8a92a3;font-size:26px;font-weight:600}
+  .cl-fxb__now{color:var(--navy);font-weight:900;font-size:52px;line-height:1}
+  .cl-fxb__perhat{flex-basis:100%;text-align:center;background:var(--navy);color:#fff;font-weight:800;
+    font-size:15px;letter-spacing:.03em;padding:8px 0;border-radius:999px;max-width:280px;margin:2px auto 0}
+  .cl-fxb__badges{list-style:none;margin:0;padding:16px 0;display:grid;grid-template-columns:repeat(4,1fr);
+    gap:8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center}
+  .cl-fxb__badges li{display:flex;flex-direction:column;gap:3px;font-size:11px;color:var(--ink);line-height:1.25}
+  .cl-fxb__badges strong{font-size:11px}
+  .cl-fxb__badges span{color:#5a6377}
+  .cl-fxb__foot{text-align:center;color:#5a6377;font-size:12.5px;margin:0}
+  @media (max-width:480px){ .cl-fxb__badges{grid-template-columns:repeat(2,1fr)} }
+</style>
+
+{% schema %}
+{
+  "name": "Fixed 3-Hat Bundle",
+  "settings": [
+    { "type": "text", "id": "ribbon_text", "label": "Top ribbon text", "default": "EXCLUSIVE OFFER FOR OUR CUSTOMERS" },
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "YOUR STYLE. MORE OPTIONS." },
+    { "type": "textarea", "id": "subhead", "label": "Subheadline", "default": "Choose your state and personalize its featured plate. The same design is applied to all 3 hats — we’ll choose the hat styles and colors." },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "CLAIM MY 3 HAT BUNDLE" }
+  ],
+  "presets": [{ "name": "Fixed 3-Hat Bundle" }]
+}
+{% endschema %}

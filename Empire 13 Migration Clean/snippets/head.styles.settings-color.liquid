@@ -1,0 +1,66 @@
+{% comment %}
+  Renders the typography styles for the given settings (expects base spacing and line height scales)
+
+  Accepts:
+
+  Usage:
+  {% render 'head.styles.color', type_base_spacing: settings.type_base_spacing, type_base_line_height_scale: settings.type_base_line_height_scale %}
+{% endcomment %}
+
+{%- liquid
+  assign color_root_primary = color_root_primary | default: settings.color_scheme_root.settings.primary
+  assign color_root_secondary = color_root_secondary | default: settings.color_scheme_root.settings.secondary
+  assign color_schemes = color_schemes | default: settings.color_schemes
+-%}
+
+{%- style -%}
+  :root {
+    {% # Root Colors %}
+    {%- if color_root_primary -%}
+      --root-color-primary: {{ color_root_primary }};
+    {%- endif -%}
+
+    {%- if color_root_secondary -%}
+      --root-color-secondary: {{ color_root_secondary }};
+    {%- endif -%}
+
+    {% # Create helper tokens for each color scheme %}
+    {% for scheme in color_schemes %}
+      --color-scheme-{{ forloop.index }}-primary: {{ scheme.settings.primary }};
+      --color-scheme-{{ forloop.index }}-secondary: {{ scheme.settings.secondary }};
+    {% endfor %}
+  }
+
+  {% for scheme in color_schemes %}
+    .color-scheme-{{ forloop.index }} {
+      --color-primary: var(--color-scheme-{{ forloop.index }}-primary);
+      --color-secondary: var(--color-scheme-{{ forloop.index }}-secondary);
+    }
+  {% endfor %}
+
+  {% if settings.color_scheme_button != blank %}
+    /* Global button colors */
+    .button:not(.color-scheme-1 *, .color-scheme-2 *, .color-scheme-3 *) {
+      --color-primary: {{ settings.color_scheme_button.settings.primary | default: "#000" }};
+      --color-secondary: {{ settings.color_scheme_button.settings.secondary | default: "#fff" }};
+    }
+  {% endif %}
+
+  /* LEGACY TOKENS THAT WE NEED TO KILLLLLLLLLLLLL */
+  /* --------------------------------------------- */
+
+  :root {
+    /* Fixed colors */
+    --color-price: {{ settings.color_scheme_price.settings.primary }};
+    --color-text-savings: {{ settings.color_scheme_savings_text.settings.primary }};
+
+    /* TODO: Move to component that uses this */
+    --color-button-primary: {{ settings.color_scheme_button.settings.primary | default: settings.color_button | default: "#000" }}; /* TODO: Remove this */
+    --color-button-primary-light: {{ settings.color_scheme_button.settings.primary | default: settings.color_button | default: "#000" | color_lighten: 10 }}; /* TODO: Remove this */
+    --color-button-primary-dim: {{ settings.color_scheme_button.settings.primary | default: settings.color_button | default: "#000" | color_darken: 5 }}; /* TODO: Remove this */
+    --color-button-primary-text: {{ settings.color_scheme_button.settings.secondary | default: settings.color_button_text | default: "#fff" }}; /* TODO: Remove this */
+
+    --color-sale-tag: {{ settings.color_scheme_sale_tag.settings.primary }};
+    --color-sale-tag-text: {{ settings.color_scheme_sale_tag.settings.secondary }};
+  }
+{%- endstyle -%}

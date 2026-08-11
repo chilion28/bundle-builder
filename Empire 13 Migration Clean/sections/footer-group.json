@@ -1,0 +1,71 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "footer": {
+      "type": "static-footer",
+      "blocks": {
+        "543500c2-753c-4365-b292-638df096184b": {
+          "type": "rich_text",
+          "disabled": true,
+          "settings": {
+            "title": "",
+            "text": ""
+          }
+        },
+        "6a340e15-1963-4d15-8d09-b84b32fc2cf5": {
+          "type": "rich_text",
+          "settings": {
+            "title": "Mission Statement",
+            "text": "<p>No matter your background or personal style, City Locs has a customized design that’s made just for you. We wholeheartedly believe in celebrating the individuality of our customers, and we think that everyone should represent their unique style and be their own brand. </p>"
+          }
+        },
+        "static-footer-0": {
+          "type": "menu",
+          "settings": {
+            "menu": "footer"
+          }
+        },
+        "static-footer-1": {
+          "type": "newsletter",
+          "settings": {
+            "title": "Subscribe",
+            "text": "<p>Get discount and early access!</p>"
+          }
+        },
+        "ac5d0df7-62e3-4307-ad01-471194d091e5": {
+          "type": "rich_text",
+          "settings": {
+            "title": "CityLocs",
+            "text": "<p>626-336-2303<br/><a href=\"mailto:%20info@citylocs.com\" title=\"mailto:info@citylocs.com\">info@citylocs.com</a><br/>Mon - Fri / 9am - 5pm PST</p>"
+          }
+        }
+      },
+      "block_order": [
+        "543500c2-753c-4365-b292-638df096184b",
+        "6a340e15-1963-4d15-8d09-b84b32fc2cf5",
+        "static-footer-0",
+        "static-footer-1",
+        "ac5d0df7-62e3-4307-ad01-471194d091e5"
+      ],
+      "settings": {
+        "payment_icons": true,
+        "show_locale_selector": true,
+        "show_currency_selector": true,
+        "additional_menu": ""
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

@@ -1,0 +1,572 @@
+/* Create Your AI Hat — storefront styling.
+   Loaded by sections/cl-ai-hat.liquid + snippets/cl-ai-hat-builder.liquid.
+   Behaviour: assets/cl-ai-hat.js */
+
+.cl-ai {
+  --green:#00a0ea;        /* CityLocs blue — primary accent (CTA, step chips) */
+  --green-dk:#0088c7;
+  --ink:#1a1f26;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --panel:#eef7fc;        /* soft blue-tinted panel */
+  --radius:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  max-width:1120px;
+  margin:0 auto;
+  padding:24px 18px 56px;
+}
+.cl-ai *{box-sizing:border-box}
+.cl-ai button{font-family:inherit;cursor:pointer}
+
+/* ---------- HERO ---------- */
+.cl-ai__hero{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;margin-bottom:40px}
+.cl-ai__hero-badge{display:inline-block;background:var(--green);color:#fff;font-weight:800;font-size:12px;
+  letter-spacing:.06em;padding:5px 12px;border-radius:6px;margin-bottom:14px}
+.cl-ai__hero-title{margin:0;font-weight:900;font-size:clamp(40px,7vw,78px);line-height:.94;letter-spacing:-.02em}
+.cl-ai__hero-accent{color:var(--green);display:block}
+.cl-ai__hero-tagline{margin:14px 0 0;font-family:Georgia,'Times New Roman',serif;font-style:italic;
+  color:var(--green);font-size:clamp(20px,3vw,28px);line-height:1.15}
+.cl-ai__hero-sub{margin:14px 0 0;color:#374151;font-size:16px;line-height:1.5;max-width:46ch}
+.cl-ai__hero-reviews{display:flex;align-items:center;gap:8px;margin-top:18px;font-size:14px;color:var(--muted)}
+.cl-ai__stars{color:#111;letter-spacing:2px;font-size:16px}
+.cl-ai__hero-usps{list-style:none;margin:22px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:22px}
+.cl-ai__hero-usps li{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.02em;color:#374151}
+.cl-ai__usp-icon{font-size:18px}
+
+.cl-ai__hero-media{display:flex;justify-content:center}
+.cl-ai__gallery{width:100%;max-width:520px}
+.cl-ai__gallery-main{display:block;width:100%;height:auto;border-radius:var(--radius);background:#f7f7f5;object-fit:cover;aspect-ratio:1/1}
+.cl-ai__gallery-main--empty{display:flex;align-items:center;justify-content:center;color:var(--muted);
+  border:2px dashed var(--line);min-height:340px;font-size:15px}
+.cl-ai__gallery-thumbs{list-style:none;display:flex;gap:10px;margin:12px 0 0;padding:0;flex-wrap:wrap}
+.cl-ai__thumb{width:66px;height:66px;padding:0;border:2px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.cl-ai__thumb.is-active{border-color:var(--green)}
+.cl-ai__thumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ---------- STEPS GRID ---------- */
+.cl-ai__grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;
+  border-top:1px solid var(--line);padding-top:34px}
+.cl-ai__col{display:flex;flex-direction:column;gap:26px}
+.cl-ai__step{background:#fff}
+.cl-ai__step-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.cl-ai__step-num{background:var(--green);color:#fff;font-weight:800;font-size:11px;letter-spacing:.05em;
+  padding:5px 11px;border-radius:6px;white-space:nowrap}
+.cl-ai__step-title{margin:0;font-size:19px;font-weight:800;letter-spacing:.01em}
+
+/* Step 1 — prompt */
+.cl-ai__prompt-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.cl-ai__prompt-label{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;color:#374151}
+.cl-ai__gpt-mark{color:var(--green);font-size:18px}
+.cl-ai__copy-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);
+  border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;letter-spacing:.03em;color:#374151;
+  transition:border-color .15s,background .15s}
+.cl-ai__copy-btn:hover{border-color:var(--green);color:var(--green)}
+.cl-ai__copy-btn.is-copied{background:var(--green);border-color:var(--green);color:#fff}
+.cl-ai__prompt{margin:0;background:var(--panel);border-radius:var(--radius);padding:18px 18px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.55;
+  color:#2b3440;white-space:pre-wrap;word-break:break-word;border:1px solid #d3e9f7}
+.cl-ai__prompt-hint{margin:14px 0 0;font-family:Georgia,serif;font-style:italic;color:var(--green);font-size:15px}
+.cl-ai__prompt-example{margin-top:12px;padding-left:14px}
+.cl-ai__example-tag{display:block;font-weight:800;font-size:11px;letter-spacing:.06em;color:var(--green);margin-bottom:4px}
+.cl-ai__prompt-example em{color:#4b5563;font-size:14px;line-height:1.5}
+
+/* ---------- Two-column builder layout ---------- */
+.cl-ai-b{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;
+  border-top:none;padding-top:34px}
+.cl-ai-b__left,.cl-ai-b__right{display:flex;flex-direction:column;gap:26px;min-width:0}
+/* Live preview block */
+.cl-ai-b__preview{display:flex;flex-direction:column;align-items:center;gap:14px}
+.cl-ai__step-num--alt{background:var(--ink)}
+.cl-ai-b__preview .cl-ai__step-head{align-self:stretch}
+.cl-ai-pf__hint{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:1;
+  max-width:60%;text-align:center;color:var(--muted);font-size:13px;line-height:1.35;pointer-events:none}
+
+/* ---------- STEP 2 — UPLOAD ---------- */
+.cl-ai-b__drop{position:relative;border:2px dashed #b6dcf4;border-radius:var(--radius);background:#f7fbfe;
+  padding:34px 18px;text-align:center;transition:border-color .15s,background .15s;outline:none}
+.cl-ai-b__drop:focus-visible,.cl-ai-b__drop.is-drag{border-color:var(--green);background:#e4f4fd}
+.cl-ai-b__drop-icon{display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;
+  border:2px solid var(--green);border-radius:50%;color:var(--green);font-size:24px;margin-bottom:8px}
+.cl-ai-b__drop-title{margin:8px 0 0;font-weight:700;font-size:16px}
+.cl-ai-b__drop-or{margin:6px 0;color:var(--muted);font-size:13px}
+.cl-ai-b__choose{background:#1a1f26;color:#fff;border:none;border-radius:8px;padding:9px 20px;font-weight:700;font-size:13px}
+.cl-ai-b__choose:hover{background:#000}
+.cl-ai-b__drop-note{margin:10px 0 0;color:var(--muted);font-size:12px}
+.cl-ai-b__drop-preview{display:flex;flex-direction:column;align-items:center;gap:10px}
+.cl-ai-b__drop-preview img{max-width:200px;max-height:130px;border-radius:8px;object-fit:contain;box-shadow:var(--shadow)}
+.cl-ai-b__drop-status{font-size:13px;font-weight:600}
+.cl-ai-b__drop-status.is-ok{color:var(--green)}
+.cl-ai-b__drop-status.is-warn{color:#b45309}
+.cl-ai-b__drop-status.is-err{color:#dc2626}
+.cl-ai-b__replace{background:none;border:none;color:var(--green);font-weight:700;font-size:13px;text-decoration:underline}
+
+/* ---------- Patch-frame preview (Step 2) — real PNG frames over the artwork ----------
+   Frames are 1200×1200 PNGs with transparent windows; the artwork sits behind,
+   positioned + clipped to each shape's window (measured from the PNGs). */
+.cl-ai-b__placed{display:flex;flex-direction:column;align-items:center;gap:12px}
+.cl-ai-pf{position:relative;width:100%;max-width:500px !important;aspect-ratio:1/1;margin:0 auto}
+/* Preview only: crop each square frame PNG to its tan-bezel bounds (object-fit:
+   cover, bezel is ~vertically centred) + a per-shape aspect ratio, so the patch
+   fills the preview with no empty margin. The editor-modal frames are untouched. */
+.cl-ai-pf[data-shape="rectangle"]{aspect-ratio:1.777/1}
+.cl-ai-pf[data-shape="square"]{aspect-ratio:1.24/1}
+.cl-ai-pf[data-shape="hexagon"]{aspect-ratio:1.746/1}
+/* Pendant: portrait. Frame is padded to a 950x950 square (engine assumes square
+   frames); cover-crop the transparent sides to show just the pendant. */
+.cl-ai-pf[data-shape="pendant"]{aspect-ratio:500/884}
+/* Single-shape products (pendant): smaller preview + tighter spacing. The extra
+   .cl-ai-b--single-shape class (spec 0,3,0) makes max-width WIN over the upload
+   layout's .cl-ai-b--upload .cl-ai-pf 460px (0,2,0) — without shrinking the separate
+   upload-hat product. Hats are otherwise unaffected. */
+.cl-ai-b--single-shape .cl-ai-pf[data-shape="pendant"]{max-width:265px !important}
+.cl-ai-b--single-shape .cl-ai-b__left{gap:12px}
+.cl-ai-b--single-shape .cl-ai-b__preview{gap:6px}
+.cl-ai-b--single-shape .cl-ai-b__preview .cl-ai__step-head{margin-bottom:2px}
+.cl-ai-b--upload .cl-ai-pf{max-width:460px !important}
+/* !important so a page-builder host (e.g. GemPages forcing img{display:block})
+   can't override the show-only-the-active-frame logic. */
+.cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none !important;pointer-events:none;z-index:2}
+.cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
+.cl-ai-pf[data-shape="square"]   .cl-ai-pf__frame[data-frame="square"],
+.cl-ai-pf[data-shape="circle"]    .cl-ai-pf__frame[data-frame="circle"],
+.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__frame[data-frame="hexagon"],
+.cl-ai-pf[data-shape="pendant"]   .cl-ai-pf__frame[data-frame="pendant"]{display:block !important}
+/* Artwork is clipped by a pixel-perfect mask PNG derived from each frame's window
+   (mask-image set per shape in JS). Positioned to each window's bbox, expressed
+   relative to the cropped preview container. */
+.cl-ai-pf__art{position:absolute;z-index:1;background:#f3f4f6 center/cover no-repeat;
+  -webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+.cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__art{left:3.42%;top:7.21%;width:93.17%;height:88.1%}
+.cl-ai-pf[data-shape="square"]   .cl-ai-pf__art{left:3.67%;top:4.33%;width:92.67%;height:91.2%}
+.cl-ai-pf[data-shape="circle"]    .cl-ai-pf__art{left:3.83%;top:3.83%;width:92.33%;height:92.33%}
+.cl-ai-pf[data-shape="hexagon"]   .cl-ai-pf__art{left:3.0%;top:4.75%;width:94%;height:89.6%}
+.cl-ai-pf[data-shape="pendant"]   .cl-ai-pf__art{left:12.2%;top:17.42%;width:75.8%;height:76.24%}
+.cl-ai-b__placed-actions{display:flex;gap:10px}
+.cl-ai-b__placed-btn{background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;
+  font-weight:700;font-size:13px;color:#374151;transition:.15s}
+.cl-ai-b__placed-btn:hover{border-color:var(--green);color:var(--green)}
+
+/* ---------- Crop / zoom / rotate editor (modal) ---------- */
+.cl-ai-ed{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:16px;
+  --green:#00a0ea;--green-dk:#0088c7;--line:#e5e7eb;--muted:#6b7280;  /* portaled to <body>: redeclare accents */
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+.cl-ai-ed[hidden]{display:none}
+.cl-ai-ed__backdrop{position:absolute;inset:0;background:rgba(15,20,26,.7)}
+.cl-ai-ed__panel{position:relative;background:#fff;border-radius:16px;padding:24px;width:100%;max-width:640px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);max-height:92vh;overflow:auto}
+.cl-ai-ed__title{margin:0;font-size:18px;font-weight:800}
+.cl-ai-ed__hint{margin:6px 0 14px;font-size:12.5px;color:var(--muted);line-height:1.4}
+.cl-ai-ed__stage{position:relative;width:100%;aspect-ratio:1/1;max-height:min(58vh,520px);background:
+  conic-gradient(#e9ebef 90deg,#f6f7f9 0 180deg,#e9ebef 0 270deg,#f6f7f9 0) 0 0/24px 24px;
+  border-radius:10px;overflow:hidden;touch-action:none;user-select:none;cursor:grab}
+.cl-ai-ed__stage:active{cursor:grabbing}
+.cl-ai-ed__canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* Mask element retained only for JS sizing; dimming/outline now drawn on canvas + frame PNG */
+.cl-ai-ed__mask{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:82%;aspect-ratio:4/2.25;border:0;pointer-events:none}
+/* Real patch frame overlaid in the editor, sized so its window matches the mask */
+.cl-ai-ed__frame{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  z-index:4;pointer-events:none;display:none}
+.cl-ai-ed__frame[src]{display:block}
+.cl-ai-ed__mask-safe{display:none}
+.cl-ai-ed__mask[data-shape="square"]{border-radius:18px}
+.cl-ai-ed__mask[data-shape="pendant"]{border-radius:16px}
+.cl-ai-ed__mask[data-shape="circle"]{aspect-ratio:1/1;width:70%;border-radius:50%}
+.cl-ai-ed__mask[data-shape="hexagon"]{aspect-ratio:1/1;width:72%;border-radius:0;
+  clip-path:polygon(25% 4%,75% 4%,100% 50%,75% 96%,25% 96%,0 50%)}
+.cl-ai-ed__mask-safe{position:absolute;inset:8px;border:1.5px dashed rgba(255,255,255,.85);border-radius:inherit}
+.cl-ai-ed__mask[data-shape="hexagon"] .cl-ai-ed__mask-safe{display:none}
+.cl-ai-ed__modes{display:flex;align-items:center;gap:8px;margin:14px 0 0;flex-wrap:wrap}
+.cl-ai-ed__mode{flex:1;min-width:120px;padding:9px 12px;border:1.5px solid var(--line);background:#fff;
+  border-radius:9px;font-size:13px;font-weight:600;color:#374151}
+.cl-ai-ed__mode:hover{border-color:var(--green);color:var(--green)}
+.cl-ai-ed__mode.is-active{border-color:var(--green);background:#e4f4fd;color:var(--green-dk)}
+.cl-ai-ed__bg{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.cl-ai-ed__bg[hidden]{display:none}
+.cl-ai-ed__bg input{width:38px;height:32px;padding:0;border:1.5px solid var(--line);border-radius:8px;background:none;cursor:pointer}
+
+.cl-ai-ed__controls{display:flex;align-items:center;gap:8px;margin:16px 0 4px}
+.cl-ai-ed__ctl{flex:none;min-width:40px;height:40px;padding:0 10px;border:1.5px solid var(--line);background:#fff;
+  border-radius:9px;font-size:17px;font-weight:700;color:#374151}
+.cl-ai-ed__ctl:hover{border-color:var(--green);color:var(--green)}
+.cl-ai-ed__zoom{flex:1;accent-color:var(--green)}
+.cl-ai-ed__actions{display:flex;gap:10px;margin-top:16px}
+.cl-ai-ed__btn{flex:1;border-radius:10px;padding:13px;font-weight:800;font-size:15px;border:1.5px solid var(--line)}
+.cl-ai-ed__btn--ghost{background:#fff;color:#374151}
+.cl-ai-ed__btn--primary{background:var(--green);border-color:var(--green);color:#fff}
+.cl-ai-ed__btn--primary:hover{background:var(--green-dk)}
+
+.cl-ai-b__tips{margin-top:20px;background:var(--panel);border-radius:var(--radius);padding:14px 16px;border:1px solid #d3e9f7}
+.cl-ai-b__tips-title{font-weight:800;font-size:12px;letter-spacing:.03em;display:block;margin-bottom:8px}
+.cl-ai-b__tips ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+.cl-ai-b__tips li{position:relative;padding-left:18px;font-size:12.5px;color:#4b5563}
+.cl-ai-b__tips li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800}
+
+/* ---------- STEP 3 — CUSTOMIZE ---------- */
+.cl-ai-b__form{margin:0}
+.cl-ai-b__field{margin-bottom:20px}
+.cl-ai-b__field--qty{max-width:170px}
+.cl-ai-b__label{display:block;font-weight:700;font-size:14px;margin-bottom:9px}
+.cl-ai-b__pills{display:flex;gap:10px;flex-wrap:wrap}
+.cl-ai-b__pill{flex:1;min-width:96px;background:#fff;border:1.5px solid var(--line);border-radius:10px;
+  padding:12px 10px;font-weight:600;font-size:14px;color:#374151;transition:.15s}
+.cl-ai-b__pill:hover{border-color:#9dd6f4}
+.cl-ai-b__pill.is-active{border-color:var(--green);background:#e4f4fd;color:var(--green-dk);box-shadow:inset 0 0 0 1px var(--green)}
+
+.cl-ai-b__swatches{display:flex;gap:12px;flex-wrap:wrap}
+.cl-ai-b__swatch{width:60px;height:60px;padding:0;border:2px solid var(--line);border-radius:12px;
+  background:#fff;display:flex;align-items:center;justify-content:center;transition:.15s}
+.cl-ai-b__swatch.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
+/* display:flex above beats the [hidden] attribute, so hide explicitly */
+.cl-ai-b__swatch[hidden]{display:none}
+.cl-ai-b__swatch.is-unavailable{opacity:.35;filter:grayscale(1)}
+.cl-ai-b__swatch--img{overflow:hidden;padding:0}
+.cl-ai-b__swatch-img{width:100%;height:100%;object-fit:cover;display:block}
+.cl-ai-b__swatch-chip{width:34px;height:34px;border-radius:50%;border:1px solid rgba(0,0,0,.12);background:#333}
+/* Known colour chips (extend as your palette grows) */
+.cl-ai-b__swatch-chip[data-color-name="Black"]{background:#1c1c1c}
+.cl-ai-b__swatch-chip[data-color-name="White"]{background:#f5f5f5}
+.cl-ai-b__swatch-chip[data-color-name="Brown"]{background:#6b4b2f}
+.cl-ai-b__swatch-chip[data-color-name="Olive"]{background:#5f6b3a}
+.cl-ai-b__swatch-chip[data-color-name="Navy"]{background:#1f2d4d}
+.cl-ai-b__swatch-chip[data-color-name="Grey"],.cl-ai-b__swatch-chip[data-color-name="Gray"]{background:#8a8f96}
+.cl-ai-b__swatch-chip[data-color-name="Red"]{background:#a83232}
+.cl-ai-b__swatch-chip[data-color-name="Camo"]{background:
+  repeating-linear-gradient(45deg,#6b6b3a 0 8px,#4a4a28 8px 16px,#8a8a5a 16px 24px)}
+
+.cl-ai-b__shapes{display:flex;gap:12px;flex-wrap:wrap}
+.cl-ai-b__shape{width:74px;height:60px;padding:6px;border:1.5px solid var(--line);border-radius:10px;background:#fff;
+  display:flex;align-items:center;justify-content:center;transition:.15s}
+.cl-ai-b__shape.is-active{border-color:var(--green);background:#e4f4fd}
+.cl-ai-b__shape-icon{max-width:100%;max-height:100%;object-fit:contain;display:block}
+
+/* ---- optional patch text ---- */
+.cl-ai-b__check{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700;cursor:pointer}
+.cl-ai-b__check input{width:17px;height:17px;accent-color:var(--green);cursor:pointer}
+.cl-ai-b__check em{font-style:normal;font-weight:500;color:var(--muted)}
+.cl-ai-b__text-group{margin-top:12px}
+.cl-ai-b__text-group[hidden]{display:none}
+.cl-ai-b__tc-row{display:flex;align-items:center;gap:12px;margin-top:10px}
+.cl-ai-b__tc-label{font-size:13px;color:var(--muted)}
+.cl-ai-b__tcs{display:flex;gap:8px}
+.cl-ai-b__tc{width:34px;height:34px;border-radius:8px;border:2px solid var(--line);padding:0;cursor:pointer;transition:.15s}
+.cl-ai-b__tc--black{background:#000}
+.cl-ai-b__tc--white{background:#fff}
+.cl-ai-b__tc.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
+
+.cl-ai-b__text-wrap{position:relative}
+.cl-ai-b__text{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:13px 70px 13px 14px;
+  font-size:15px;transition:border-color .15s}
+.cl-ai-b__text:focus{outline:none;border-color:var(--green)}
+.cl-ai-b__count{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--muted)}
+
+.cl-ai-b__qty{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content}
+.cl-ai-b__qty-btn{width:44px;height:46px;border:none;background:#fff;font-size:20px;color:#374151}
+.cl-ai-b__qty-btn:hover{background:#f3f4f6}
+.cl-ai-b__qty-input{width:56px;height:46px;border:none;border-left:1.5px solid var(--line);border-right:1.5px solid var(--line);
+  text-align:center;font-size:16px;font-weight:600;-moz-appearance:textfield}
+.cl-ai-b__qty-input::-webkit-outer-spin-button,.cl-ai-b__qty-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* Colour swatches kept only as a data layer for the gallery — the visible
+   picker is the quantity grid. */
+.cl-ai-b__field--colordata{display:none}
+
+/* Choose colours & quantities — one row per colour (thumbnail · name · stepper). */
+.cl-ai-b__grid{display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:12px;overflow:hidden}
+.cl-ai-b__row{display:flex;align-items:center;gap:14px;padding:10px 12px;border-top:1px solid #eef1f4}
+.cl-ai-b__row:first-child{border-top:0}
+.cl-ai-b__row-hat{flex:0 0 52px;width:52px;height:52px;padding:0;display:flex;align-items:center;justify-content:center;
+  background:#fbfbfb;border:1px solid var(--line);border-radius:8px;overflow:hidden;cursor:zoom-in}
+.cl-ai-b__row-hat img{width:100%;height:100%;object-fit:contain}
+.cl-ai-b__row-name{flex:1;font-size:15px;font-weight:600;color:var(--ink,#1a1f26)}
+.cl-ai-b__soldout{color:#b0453b;font-weight:700;font-size:12px;margin-left:6px}
+.cl-ai-b__row.is-soldout{opacity:.5}
+.cl-ai-b__row-qty{flex:0 0 auto;display:flex;align-items:center;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.cl-ai-b__row-qty .cl-ai-b__qty-btn{width:38px;height:40px;font-size:18px}
+.cl-ai-b__row-qty .cl-ai-b__qty-input{width:46px;height:40px;font-size:15px}
+
+.cl-ai-b__cta{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:17px;
+  font-size:17px;font-weight:800;letter-spacing:.02em;margin-top:6px;transition:background .15s;box-shadow:var(--shadow)}
+.cl-ai-b__cta:hover{background:var(--green-dk)}
+.cl-ai-b__cta:disabled{opacity:.6;cursor:not-allowed}
+.cl-ai-b__cta-price{font-weight:800}
+.cl-ai-b__reassure{list-style:none;display:flex;justify-content:center;gap:26px;margin:16px 0 0;padding:0;
+  font-size:13px;color:var(--muted)}
+
+/* ---------- STEP 4 — QUALITY CHECK ---------- */
+.cl-ai-b__qc-body{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius);padding:14px}
+.cl-ai-b__qc-thumb{width:130px;height:100px;border-radius:8px;object-fit:cover;flex:none;background:#f3f4f6}
+.cl-ai-b__qc-list{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;gap:9px}
+.cl-ai-b__qc-list li{display:flex;align-items:center;gap:10px;font-size:14px;color:#374151}
+.cl-ai-b__qc-list b{margin-left:auto;font-weight:700}
+.cl-ai-b__qc-dot{width:18px;height:18px;border-radius:50%;background:#d1d5db;flex:none;position:relative}
+.cl-ai-b__qc-dot.is-pass{background:var(--green)}
+.cl-ai-b__qc-dot.is-warn{background:#f59e0b}
+.cl-ai-b__qc-dot.is-fail{background:#dc2626}
+.cl-ai-b__qc-dot.is-pass::after{content:"✓";position:absolute;inset:0;color:#fff;font-size:11px;font-weight:800;
+  display:flex;align-items:center;justify-content:center}
+.cl-ai-b__qc-verdict{margin-top:14px;background:var(--panel);border:1px solid #d3e9f7;border-radius:var(--radius);
+  padding:18px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
+.cl-ai-b__qc-check{width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;margin-bottom:4px}
+.cl-ai-b__qc-verdict strong{font-size:16px}
+.cl-ai-b__qc-verdict span:last-child{font-size:13.5px;color:#4b5563}
+.cl-ai-b__qc-verdict.is-warn .cl-ai-b__qc-check{background:#f59e0b}
+
+/* ---------- INSPIRATION ---------- */
+.cl-ai__inspo{margin-top:48px;border-top:1px solid var(--line);padding-top:30px}
+.cl-ai__inspo-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:18px}
+.cl-ai__inspo-head h2{margin:0;font-size:22px;font-weight:900;letter-spacing:-.01em}
+.cl-ai__inspo-link{color:var(--green);font-weight:700;font-size:13px;text-decoration:none;white-space:nowrap}
+.cl-ai__inspo-link:hover{text-decoration:underline}
+.cl-ai__inspo-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.cl-ai__inspo-grid li{display:flex;flex-direction:column;gap:8px}
+/* Landscape thumb, matching the 4" x 2.25" patch proportion. The absolute-filled
+   image is immune to the theme's global img height rules. */
+.cl-ai__inspo-media{position:relative;width:100%;aspect-ratio:4/2.25;border-radius:10px;
+  overflow:hidden;background:#f3f4f6}
+.cl-ai__inspo-grid .cl-ai__inspo-media img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;display:block;border-radius:0;max-width:none}
+.cl-ai__inspo-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:12px;text-align:center;padding:8px}
+.cl-ai__inspo-label{font-size:13px;font-weight:600;text-align:center}
+
+/* ---------- FOOTER VALUE PROPS ---------- */
+.cl-ai__valueprops{list-style:none;margin:44px 0 0;padding:22px;display:grid;grid-template-columns:repeat(4,1fr);
+  gap:24px;background:var(--panel);border-radius:var(--radius);border:1px solid #d3e9f7}
+.cl-ai__valueprops li{display:flex;gap:12px;align-items:flex-start}
+.cl-ai__vp-icon{font-size:22px;color:var(--green);flex:none;line-height:1.2}
+.cl-ai__valueprops strong{display:block;font-size:13px;font-weight:800;margin-bottom:3px}
+.cl-ai__valueprops span{font-size:12.5px;color:#4b5563;line-height:1.4}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:900px){
+  .cl-ai__hero{grid-template-columns:1fr;gap:24px}
+  .cl-ai__hero-media{order:-1}
+  .cl-ai__grid{grid-template-columns:1fr;gap:32px}
+  .cl-ai-b{grid-template-columns:1fr;gap:32px}
+  .cl-ai__inspo-grid{grid-template-columns:repeat(3,1fr)}
+  .cl-ai__valueprops{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:520px){
+  .cl-ai{padding:18px 14px 44px}
+  .cl-ai__inspo-grid{grid-template-columns:repeat(2,1fr)}
+  .cl-ai-b__tips ul{grid-template-columns:1fr}
+  .cl-ai-b__reassure{gap:16px}
+}
+
+/* Editor: "artwork outside the dashed line" warning — sits BELOW the stage (so
+   the patch frame can never cover it) and reserves its own space via visibility,
+   so showing/hiding it never reflows the modal (no layout "glitch"). */
+.cl-ai-ed__warn{
+  margin:10px 0 0;
+  padding:9px 12px;
+  background:#fff4e5;
+  border:1px solid #f0c67d;
+  border-radius:8px;
+  color:#8a5300;
+  font-size:13px;
+  line-height:1.4;
+}
+.cl-ai-ed__warn[hidden]{display:block;visibility:hidden}
+/* Reserve the background picker's space so toggling it doesn't shift the row. */
+.cl-ai-ed__bg[hidden]{display:flex;visibility:hidden}
+
+/* Editor: show/hide transform-box toggle */
+.cl-ai-ed__boxtoggle{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer;margin-left:auto}
+.cl-ai-ed__boxtoggle input{width:15px;height:15px;cursor:pointer}
+
+/* In-modal caption controls — type here, then drag + resize the text on the patch. */
+.cl-ai-ed__textrow{display:flex;align-items:center;gap:12px;margin:10px 0 0;flex-wrap:wrap}
+.cl-ai-ed__textcheck{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink,#1a1f26);cursor:pointer;white-space:nowrap}
+.cl-ai-ed__textcheck input{width:16px;height:16px;cursor:pointer}
+.cl-ai-ed__text-group{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}
+.cl-ai-ed__text-group[hidden]{display:none}
+.cl-ai-ed__textinput{flex:1;min-width:140px;height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:9px;font-size:15px}
+.cl-ai-ed__textinput:focus{outline:none;border-color:var(--blue,#00a0ea)}
+.cl-ai-ed__tcs{display:flex;gap:8px;flex:0 0 auto}
+.cl-ai-ed__tcs .cl-ai-b__tc{width:30px;height:30px}
+/* Text fill (full picker) + outline (white / black / none) */
+.cl-ai-ed__tclabel{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);white-space:nowrap}
+.cl-ai-ed__tclabel input[type=color]{width:34px;height:30px;padding:0;border:1.5px solid var(--line);border-radius:8px;cursor:pointer;background:none}
+.cl-ai-ed__outline{display:inline-flex;align-items:center;gap:6px;flex:0 0 auto}
+.cl-ai-ed__ol{width:30px;height:30px;border-radius:8px;border:2px solid var(--line);padding:0;cursor:pointer;transition:.15s;font-size:11px;font-weight:600;color:#6b7280}
+.cl-ai-ed__ol--white{background:#fff}
+.cl-ai-ed__ol--black{background:#000}
+.cl-ai-ed__ol--none{background:#fff;
+  background-image:linear-gradient(to top right, transparent 0 calc(50% - 1.2px), #e0342a calc(50% - 1.2px) calc(50% + 1.2px), transparent calc(50% + 1.2px) 100%)}
+.cl-ai-ed__ol.is-active{border-color:var(--blue,#00a0ea);box-shadow:0 0 0 2px #e4f4fd}
+
+/* ---------- HAT IMAGE LIGHTBOX ---------- */
+.cl-ai-imgbox{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:24px}
+.cl-ai-imgbox[hidden]{display:none}
+.cl-ai-imgbox__backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(10,15,20,.78);padding:0}
+.cl-ai-imgbox__panel{position:relative;z-index:1;width:min(90vw,720px);max-height:90vh;padding:24px;background:#fff;
+  border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.4);display:flex;flex-direction:column;align-items:center}
+.cl-ai-imgbox__close{position:absolute;right:10px;top:8px;width:42px;height:42px;padding:0;border:0;border-radius:50%;
+  background:#fff;color:#1a1f26;font-size:32px;line-height:1;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.15)}
+.cl-ai-imgbox__image{display:block;width:100%;height:auto;max-width:640px;max-height:72vh;object-fit:contain}
+.cl-ai-imgbox__title{margin:14px 0 0;font-size:18px;font-weight:800;color:#1a1f26;text-align:center}
+
+/* Keep floating support launchers from covering the artwork modal actions on phones. */
+@media (max-width:768px){
+  body.cl-ai-editor-open #gorgias-chat-container,
+  body.cl-ai-editor-open #gorgias-chat-messenger-button,
+  body.cl-ai-editor-open iframe#chat-button,
+  body.cl-ai-editor-open #chat-button,
+  body.cl-ai-editor-open #shopify-chat,
+  body.cl-ai-editor-open #shopify-chat-container,
+  body.cl-ai-editor-open #tidio-chat,
+  body.cl-ai-editor-open #willdesk-button,
+  body.cl-ai-editor-open .willdesk-chat-button,
+  body.cl-ai-editor-open #richpanel-container,
+  body.cl-ai-editor-open .rp-widget-launcher,
+  body.cl-ai-editor-open .zsiq_floatmain,
+  body.cl-ai-editor-open #chat-widget-container{
+    display:none !important;
+  }
+}
+
+/* ---------- GEMPAGES COMPATIBILITY ----------
+   GemPages' Tailwind preflight is scoped with `.gps`, which makes rules such as
+   `.gps button` and `.gps img` more specific than the component classes above.
+   Repeat only the affected component declarations at a stronger, local scope. */
+.gps .cl-ai .cl-ai__step-title{font-size:19px;font-weight:800;letter-spacing:.01em;line-height:normal}
+
+.gps .cl-ai .cl-ai__copy-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#374151;
+  border:1.5px solid var(--line);border-radius:8px;padding:7px 12px;font-size:12px;font-weight:700;
+  letter-spacing:.03em;line-height:normal}
+.gps .cl-ai .cl-ai__copy-btn:hover{background:#fff;color:var(--green);border-color:var(--green)}
+.gps .cl-ai .cl-ai__copy-btn.is-copied{background:var(--green);border-color:var(--green);color:#fff}
+
+.gps .cl-ai .cl-ai-b__choose{background:#1a1f26;color:#fff;border:0;border-radius:8px;
+  padding:9px 20px;margin-bottom:8px;font-size:13px;font-weight:700;line-height:normal}
+.gps .cl-ai .cl-ai-b__choose:hover{background:#000;color:#fff}
+.gps .cl-ai .cl-ai-b__placed-btn{background:#fff;color:#374151;border:1.5px solid var(--line);
+  border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;line-height:normal}
+.gps .cl-ai .cl-ai-b__placed-btn:hover{background:#fff;color:var(--green);border-color:var(--green)}
+
+.gps .cl-ai .cl-ai-b__pills,
+.gps .cl-ai .cl-ai-b__shapes,
+.gps .cl-ai .cl-ai-b__placed-actions{margin-bottom:10px}
+.gps .cl-ai .cl-ai-b__pill{display:block;background:#fff;color:#374151;border:1.5px solid var(--line);
+  border-radius:10px;padding:12px 10px;font-size:14px;font-weight:600;line-height:normal}
+.gps .cl-ai .cl-ai-b__pill:hover{border-color:#9dd6f4}
+.gps .cl-ai .cl-ai-b__pill.is-active{background:#e4f4fd;color:var(--green-dk);border-color:var(--green);
+  box-shadow:inset 0 0 0 1px var(--green)}
+.gps .cl-ai .cl-ai-b__shape{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:6px}
+.gps .cl-ai .cl-ai-b__shape.is-active{background:#e4f4fd;border-color:var(--green)}
+.gps .cl-ai .cl-ai-b__tc{border:2px solid var(--line);padding:0}
+.gps .cl-ai .cl-ai-b__tc.is-active{border-color:var(--green);box-shadow:0 0 0 2px #e4f4fd}
+
+.gps .cl-ai .cl-ai-b__qty-btn{background:#fff;color:#374151;border:0;padding:0;font-size:20px;font-weight:400}
+.gps .cl-ai .cl-ai-b__row-hat{background:#fbfbfb;border:1px solid var(--line);padding:0}
+.gps .cl-ai .cl-ai-b__row-qty .cl-ai-b__qty-btn{font-size:18px}
+.gps .cl-ai .cl-ai-b__qty-btn:hover{background:#f3f4f6}
+.gps .cl-ai .cl-ai-imgbox__backdrop{position:absolute;background:rgba(10,15,20,.78);border:0;padding:0}
+.gps .cl-ai .cl-ai-imgbox__close{background:#fff;color:#1a1f26;border:0;padding:0;font-size:32px;font-weight:400}
+.gps .cl-ai .cl-ai-imgbox__image{display:block;width:100%;height:auto;max-width:640px;max-height:72vh;object-fit:contain}
+.gps .cl-ai .cl-ai-imgbox__title{margin:14px 0 0;font-size:18px;font-weight:800;color:#1a1f26}
+.gps .cl-ai .cl-ai-b__cta{display:block;width:100%;background:var(--green);color:#fff;border:0;
+  border-radius:12px;padding:17px;font-size:17px;font-weight:800;line-height:normal;letter-spacing:.02em;
+  margin-bottom:12px;box-shadow:var(--shadow)}
+.gps .cl-ai .cl-ai-b__cta:hover{background:var(--green-dk);color:#fff}
+.gps .cl-ai .cl-ai-b__reassure{margin:0;padding:0}
+
+.gps .cl-ai .cl-ai-pf{overflow:hidden}
+.gps .cl-ai .cl-ai-pf__frame{position:absolute;inset:0;width:100%;height:100%;max-width:none;
+  object-fit:cover;display:none !important}
+.gps .cl-ai .cl-ai-pf[data-shape="rectangle"] .cl-ai-pf__frame[data-frame="rectangle"],
+.gps .cl-ai .cl-ai-pf[data-shape="square"] .cl-ai-pf__frame[data-frame="square"],
+.gps .cl-ai .cl-ai-pf[data-shape="circle"] .cl-ai-pf__frame[data-frame="circle"],
+.gps .cl-ai .cl-ai-pf[data-shape="hexagon"] .cl-ai-pf__frame[data-frame="hexagon"],
+.gps .cl-ai .cl-ai-pf[data-shape="pendant"] .cl-ai-pf__frame[data-frame="pendant"]{display:block !important}
+.gps .cl-ai .cl-ai-b__swatch-img,
+.gps .cl-ai .cl-ai-b__row-hat img,
+.gps .cl-ai .cl-ai-b__shape-icon{height:100%;width:100%;object-fit:contain}
+.gps .cl-ai .cl-ai-b__qc-thumb{width:130px;height:100px;object-fit:cover}
+.gps .cl-ai .cl-ai__inspo-grid .cl-ai__inspo-media img{position:absolute;inset:0;width:100%;height:100%;
+  max-width:none;object-fit:cover}
+
+/* ---------- MOBILE "HOW IT WORKS" CARDS ----------
+   GemPages stacks each image, heading, and blurb vertically on phones. Keep the
+   desktop three-column layout intact, but use a compact 30/70 media/text row on
+   the Image Hat product page at the mobile breakpoint. */
+@media (max-width:767px){
+  .gps-630538012308013725 #gYBB4R3xw1{
+    row-gap:10px !important;
+  }
+
+  .gps-630538012308013725 #gveIcjWlwZ,
+  .gps-630538012308013725 #geJkJ2QgOc,
+  .gps-630538012308013725 #gUtjzQBWEY{
+    padding:12px 8px !important;
+  }
+
+  .gps-630538012308013725 #gveIcjWlwZ > [data-same-height-display-contents],
+  .gps-630538012308013725 #geJkJ2QgOc > [data-same-height-display-contents],
+  .gps-630538012308013725 #gUtjzQBWEY > [data-same-height-display-contents]{
+    display:grid !important;
+    grid-template-columns:minmax(0,3fr) minmax(0,7fr) !important;
+    grid-template-rows:auto auto;
+    column-gap:14px;
+    align-items:center;
+  }
+
+  .gps-630538012308013725 [data-id="gu1V6Oyr3h"],
+  .gps-630538012308013725 [data-id="grM7158fWG"],
+  .gps-630538012308013725 [data-id="gESRilCoD7"]{
+    grid-column:1;
+    grid-row:1 / 3;
+    align-self:center;
+    margin-bottom:0 !important;
+  }
+
+  .gps-630538012308013725 [data-id="gu1V6Oyr3h"] img,
+  .gps-630538012308013725 [data-id="grM7158fWG"] img,
+  .gps-630538012308013725 [data-id="gESRilCoD7"] img{
+    width:100% !important;
+    max-width:100% !important;
+  }
+
+  .gps-630538012308013725 [data-id="gxKfzyqzCg"],
+  .gps-630538012308013725 [data-id="g9997_RSUw"]{
+    grid-column:2;
+    grid-row:1;
+    align-self:end;
+  }
+
+  .gps-630538012308013725 [data-id="gDZe75wan2"],
+  .gps-630538012308013725 [data-id="gq_vtH_r3m"]{
+    grid-column:2;
+    grid-row:2;
+    align-self:start;
+  }
+
+  .gps-630538012308013725 #gSNAPDskPA{
+    grid-column:2;
+    grid-row:1 / 3;
+    align-self:center;
+    margin-bottom:0 !important;
+  }
+
+  .gps-630538012308013725 [data-id="gxKfzyqzCg"] [data-gp-text],
+  .gps-630538012308013725 [data-id="g9997_RSUw"] [data-gp-text],
+  .gps-630538012308013725 [data-id="g5Ba3XaYOU"] [data-gp-text]{
+    padding:0 0 5px !important;
+    text-align:left !important;
+    font-size:18px !important;
+    line-height:1.2 !important;
+  }
+
+  .gps-630538012308013725 [data-id="gDZe75wan2"] [data-gp-text],
+  .gps-630538012308013725 [data-id="gq_vtH_r3m"] [data-gp-text],
+  .gps-630538012308013725 [data-id="g--hUw84D7"] [data-gp-text]{
+    text-align:left !important;
+    font-size:13px !important;
+    line-height:1.45 !important;
+  }
+}

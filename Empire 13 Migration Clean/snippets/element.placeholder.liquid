@@ -1,0 +1,26 @@
+{% comment %}
+  Renders a placeholder SVG.
+
+  Accepts:
+  - name {string} - The name of the placeholder SVG as listed https://shopify.dev/docs/api/liquid/filters#placeholder_svg_tag
+  - no_padding {boolean} - Whether to remove padding from the placeholder SVG
+  - classlist {string} - The classes of the placeholder SVG
+
+  Usage:
+  {% render 'element.placeholder', name: 'lifestyle-1' %}
+{% endcomment %}
+
+{%- liquid
+  assign name = name | default: 'image'
+  assign no_padding = no_padding | default: false, allow_false: true
+  assign classlist = classlist | default: ''
+
+  assign classlist = classlist | append: ' placeholder-svg' | strip
+
+  if no_padding
+    assign classlist = classlist | append: ' placeholder-svg--no-padding' | strip
+  endif
+
+  echo name | placeholder_svg_tag: classlist
+-%}
+{% render 'utility.stylesheet', name: 'element.placeholder.css' %}

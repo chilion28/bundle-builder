@@ -1,0 +1,70 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_593265160160805679": {
+      "settings": {
+        "checksum": "bd07b700029d596658392e1278ba52568b957d46f746311fd47f63ac8f61164f_1_1_0_0__1",
+        "gg-c7_cDBux_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "gg-c7_cDBux_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_05_1200x-100.jpg",
+        "gg1OMh94trk_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Product-Page-baners-4.jpg",
+        "gg1OMh94trk_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Product-Page-baners-4.jpg",
+        "ggC8ElxlQ8m_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggDtZxiW65K_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggDtZxiW65K_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_03_1200x-100.jpg",
+        "ggT_YiG1SOj_text": "Quantity",
+        "ggX8uHwcsqO_text": "<p><strong>Select Your Hat</strong></p>",
+        "gg_AsLbmc-O_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Product-Page-baners-2.jpg",
+        "ggelfIBzvLX_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggelfIBzvLX_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_01_1200x-100.jpg",
+        "ggeypHYfEgM_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggeypHYfEgM_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_04_1200x-100.jpg",
+        "gggDytWQF0y_text": "<p><strong>•&nbsp;Trucker:</strong>&nbsp;Breathable mesh back, mid profile, snap closure</p><p><strong>• Snapback:</strong>&nbsp;Flat brim, high crown, adjustable snap—one size</p><p><strong>• Pro Five:</strong>&nbsp;5-panel A-frame; water-resistant; laser-cut vents; adjustable fit</p>",
+        "ggooUDdSnrl_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggooUDdSnrl_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image_Patch_Steps_02_1200x-100.jpg",
+        "ggoxTSXX0eQ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Product-Page-baners-1.jpg",
+        "ggyqi1b_OGF_errorMessage": "Cannot add product to cart",
+        "ggyqi1b_OGF_label": "ADD TO CART",
+        "ggyqi1b_OGF_outOfStockLabel": "Out of stock",
+        "ggyqi1b_OGF_successMessage": "Add product to cart successfully",
+        "ggyqi1b_OGF_unavailableLabel": "Unavailable"
+      },
+      "type": "gp-section-593265160160805679"
+    },
+    "gp_section_593557263067644719": {
+      "settings": {
+        "checksum": "1cb96ccfd5473cfdb346ebd82f62d0a5f00e8facd9f19f2e1d8fee5add3d05a6_1_1_0_0__1"
+      },
+      "type": "gp-section-593557263067644719"
+    },
+    "gp_section_594741752837964561": {
+      "settings": {
+        "checksum": "da74336b21c5c5893039a4389d8d2e71df76a723c08e1c56933d09268a8fa959_1_1_0_0__1",
+        "ggoGHXJPpo3_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Image-Patch-Steps_9af566b5-6d36-4a57-a92d-c4df1f5f3914.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-594741752837964561"
+    },
+    "gp_section_594748895939003153": {
+      "settings": {
+        "checksum": "97323c8c82b46bbbdc7ec991faba63b223670e74f04d3ab8efc9ce49bdc7e0e1_1_1_0_0__1",
+        "ggkzck7DtnL_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggkzck7DtnL_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Pet-Banner-MOBILE.jpg"
+      },
+      "type": "gp-section-594748895939003153"
+    }
+  },
+  "order": [
+    "gp_section_594741752837964561",
+    "gp_section_594748895939003153",
+    "gp_section_593265160160805679",
+    "gp_section_593557263067644719"
+  ]
+}

@@ -1,0 +1,385 @@
+.cl-native-mega,
+.cl-native-mega * {
+  box-sizing: border-box;
+}
+
+.cl-native-mega__top,
+.cl-native-mega__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cl-native-mega--desktop {
+  width: 100%;
+}
+
+.cl-native-mega--desktop .cl-native-mega__top {
+  align-items: stretch;
+  display: flex;
+  justify-content: space-around;
+  margin: auto;
+  max-width: 90%;
+}
+
+.cl-native-mega--desktop .cl-native-mega__top-item {
+  display: flex;
+}
+
+.cl-native-mega--desktop .cl-native-mega__top-link,
+.cl-native-mega--desktop .cl-native-mega__summary {
+  align-items: center;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font: inherit;
+  font-size: 14px !important;
+  gap: 6px;
+  min-height: 50px;
+  padding: 0 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cl-native-mega__summary {
+  list-style: none;
+}
+
+.cl-native-mega__summary::-webkit-details-marker {
+  display: none;
+}
+
+.cl-native-mega--desktop .cl-native-mega__details {
+  position: static;
+}
+
+.cl-native-mega--desktop .cl-native-mega__summary:hover,
+.cl-native-mega--desktop .cl-native-mega__top-link:hover,
+.cl-native-mega--desktop .cl-native-mega__details[open] > .cl-native-mega__summary {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cl-perso-caret {
+  align-self: center;
+  border-bottom: 1.5px solid #888;
+  border-right: 1.5px solid #888;
+  display: inline-block;
+  flex: 0 0 auto;
+  height: 6px;
+  margin: 0 2px;
+  transition: transform 150ms ease;
+  width: 6px;
+}
+
+.cl-perso-caret--down {
+  transform: rotate(45deg);
+}
+
+.cl-perso-caret--right {
+  transform: rotate(-45deg);
+}
+
+.cl-native-mega__details[open] > .cl-native-mega__summary .cl-perso-caret--down,
+.cl-native-mega__mobile-details[open] > .cl-native-mega__mobile-summary .cl-perso-caret--down {
+  transform: rotate(-135deg);
+}
+
+.cl-native-mega--desktop .cl-native-mega__panel {
+  background: #f5f6f7;
+  border-top: 1px solid #e5e5e5;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+  color: #222;
+  left: 0;
+  max-height: min(68vh, 620px);
+  overflow-y: auto;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 1000;
+}
+
+.cl-native-mega--desktop .cl-native-mega__panel-inner {
+  margin: 0 auto;
+  max-width: 1280px;
+  padding: 18px 28px 24px;
+}
+
+.cl-native-mega__shop-all {
+  align-items: center;
+  color: #087e9a;
+  display: flex;
+  font-weight: 700;
+  font-size: 14px;
+  gap: 8px;
+  margin-bottom: 14px;
+  text-decoration: none;
+}
+
+.cl-native-mega__shop-all::after {
+  content: '→';
+  font-size: 16px;
+  transition: transform 150ms ease;
+}
+
+.cl-native-mega__shop-all:hover::after {
+  transform: translateX(3px);
+}
+
+.cl-native-mega--desktop .cl-native-mega__grid {
+  align-items: start;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(var(--cl-native-columns), minmax(0, 1fr));
+}
+
+.cl-native-mega--desktop .cl-native-mega__lane {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cl-native-mega--desktop .cl-native-mega__column {
+  background: #fff;
+  border: 1px solid #e2e4e7;
+  border-radius: 6px;
+  margin: 0;
+  padding: 13px 14px 14px;
+  width: 100%;
+}
+
+.cl-native-mega__heading {
+  color: #1f1f1f;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+  margin-bottom: 8px;
+  text-decoration: none;
+}
+
+.cl-native-mega__links li + li {
+  margin-top: 5px;
+}
+
+.cl-native-mega__link {
+  color: #555;
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.cl-native-mega__heading:hover,
+.cl-native-mega__link:hover,
+.cl-native-mega__shop-all:hover {
+  color: #087e9a;
+  text-decoration: underline;
+}
+
+.cl-native-mega--mobile {
+  width: 100%;
+}
+
+.cl-native-mega--mobile .cl-native-mega__top-link,
+.cl-native-mega--mobile .cl-native-mega__summary {
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  color: inherit;
+  display: flex;
+  font-size: 16px;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 12px 20px;
+  text-decoration: none;
+  width: 100%;
+}
+
+.cl-native-mega--mobile .cl-native-mega__panel {
+  background: rgba(0, 0, 0, 0.035);
+}
+
+.cl-native-mega--mobile .cl-native-mega__panel-inner {
+  padding: 14px 20px 20px 32px;
+}
+
+.cl-native-mega--mobile .cl-native-mega__lane {
+  display: contents;
+}
+
+.cl-native-mega--mobile .cl-native-mega__shop-all {
+  margin-bottom: 14px;
+}
+
+.cl-native-mega--mobile .cl-native-mega__column + .cl-native-mega__column {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+.cl-native-mega--mobile .cl-native-mega__heading {
+  margin-bottom: 8px;
+}
+
+@media screen and (max-width: 1023px) {
+  .cl-native-mega--desktop {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .cl-native-mega--mobile {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1279px) {
+  .cl-native-mega--desktop .cl-native-mega__top-link,
+  .cl-native-mega--desktop .cl-native-mega__summary {
+    font-size: 13px;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  .cl-native-mega--desktop .cl-native-mega__grid {
+    gap: 10px;
+  }
+}
+
+/* Desktop cascading flyout — mirrors the former menu structure without Qikify. */
+.cl-native-mega__flyout-list,
+.cl-native-mega__mobile-list,
+.cl-native-mega__mobile-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cl-native-mega--desktop .cl-native-mega__details {
+  position: relative;
+}
+
+.cl-native-mega--desktop .cl-native-mega__flyout {
+  background: #fff;
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.2);
+  color: #222;
+  position: absolute;
+  width: 258px;
+  z-index: 1100;
+}
+
+.cl-native-mega--desktop .cl-native-mega__flyout--level-1 {
+  left: 0;
+  top: 100%;
+}
+
+.cl-native-mega--desktop .cl-native-mega__flyout--level-2 {
+  display: none;
+  left: 100%;
+  overflow-y: auto;
+  top: 0;
+}
+
+.cl-native-mega--desktop .cl-native-mega__flyout-item {
+  position: relative;
+}
+
+.cl-native-mega--desktop .cl-native-mega__flyout-item:hover > .cl-native-mega__flyout--level-2,
+.cl-native-mega--desktop .cl-native-mega__flyout-item:focus-within > .cl-native-mega__flyout--level-2 {
+  display: block;
+}
+
+.cl-native-mega__flyout-shop-all {
+  border-bottom: 1px solid #e6e6e6;
+  color: #087e9a;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 11px;
+  text-decoration: none;
+}
+
+.cl-native-mega__flyout-link {
+  align-items: center;
+  color: #262626;
+  display: grid !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  gap: 8px;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  line-height: 1.2;
+  min-height: 50px;
+  padding: 4px 9px;
+  text-decoration: none;
+}
+
+.cl-native-mega__flyout-title {
+  margin-left: 1.4em;
+}
+
+.cl-native-mega__flyout-item + .cl-native-mega__flyout-item {
+  border-top: 1px solid #f2f2f2;
+}
+
+.cl-native-mega__flyout-link:hover,
+.cl-native-mega__flyout-link:focus-visible {
+  background: #f2f3f4;
+  color: #087e9a;
+  outline: none;
+}
+
+.cl-native-mega__thumb {
+  align-items: center;
+  background: #f4f4f4;
+  border-radius: 3px;
+  display: flex;
+  height: 56px;
+  justify-content: center;
+  overflow: hidden;
+  width: 56px;
+}
+
+.cl-native-mega__thumb img {
+  height: 100%;
+  object-fit: contain;
+  width: 100%;
+}
+
+.cl-native-mega__thumb--empty::before {
+  color: #aaa;
+  content: 'CL';
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Mobile keeps the same hierarchy as nested, touch-friendly accordions. */
+.cl-native-mega--mobile .cl-native-mega__mobile-list {
+  background: rgba(0, 0, 0, 0.035);
+  padding: 4px 0;
+}
+
+.cl-native-mega--mobile .cl-native-mega__mobile-link,
+.cl-native-mega--mobile .cl-native-mega__mobile-summary {
+  align-items: center;
+  color: inherit;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  list-style: none;
+  min-height: 56px;
+  padding: 6px 18px 6px 28px;
+  text-decoration: none;
+}
+
+.cl-native-mega--mobile .cl-native-mega__mobile-summary::-webkit-details-marker {
+  display: none;
+}
+
+.cl-native-mega--mobile .cl-native-mega__thumb {
+  height: 44px;
+  width: 44px;
+}
+
+.cl-native-mega--mobile .cl-native-mega__mobile-children {
+  background: rgba(0, 0, 0, 0.035);
+  padding-left: 14px;
+}

@@ -1,0 +1,26 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "static-blog",
+      "settings": {
+        "show_rss_link": true,
+        "show_date": true,
+        "show_author": false,
+        "show_excerpt": true,
+        "posts_per_page_range": 9
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

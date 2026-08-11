@@ -1,0 +1,761 @@
+<!doctype html>
+<html class="no-js no-touch" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+
+    <link rel="preconnect" href="https://cdn.shopify.com">
+    <link rel="preconnect" href="https://fonts.shopifycdn.com">
+    <link rel="preconnect" href="https://v.shopify.com">
+    <link rel="preconnect" href="https://cdn.shopifycloud.com">
+
+    {% comment %}
+      CityLocs custom product and cart tools use Vue 3, Axios, jQuery, and
+      Fancybox. Keep these pinned to the same versions as the current live
+      storefront while the custom tools are migrated to Empire 13.
+    {% endcomment %}
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css">
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <title>
+      {{- page_title -}}
+
+      {%- if current_tags -%}
+        {% capture cat_array %}{%- render 'advanced-tag-loop' -%}{% endcapture %}
+        {% assign cat_array = cat_array | split: '|' %}
+        {% assign title_tags = '' %}
+        {% assign meta_tags = current_tags | join: ', ' %}
+        {%- for tag in current_tags -%}
+          {% assign is_advanced_tag = false %}
+          {% assign cat = tag | split: '_' | first %}
+
+          {%- unless cat == tag -%}
+            {%- if cat_array contains cat -%}
+              {% assign is_advanced_tag = true %}
+              {% assign title_tags = title_tags | append: ', ' | append: tag | replace_first: '_', ': ' %}
+            {%- endif -%}
+          {%- endunless -%}
+
+          {%- unless is_advanced_tag -%}
+            {% assign title_tags = title_tags | append: ', ' | append: tag %}
+          {%- endunless -%}
+        {%- endfor -%}
+        {{ 'general.title.tags' | t: tags: title_tags | remove_first: ', ' }}
+      {%- endif -%}
+
+      {%- if current_page != 1 -%}
+        {{- 'general.title.page' | t: page: current_page -}}
+      {%- endif -%}
+
+      {%- unless page_title contains shop.name -%}
+        {{- 'general.title.shop' | t: shop: shop.name -}}
+      {%- endunless -%}
+    </title>
+
+    {% if page_description != blank %}
+      <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {% if settings.favicon != blank %}
+      <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+    {% endif %}
+
+    {% if template contains 'collection' and current_tags %}
+      <meta name="robots" content="noindex" />
+      <link rel="canonical" href="{{ shop.url }}{{ collection.url }}" />
+    {% else %}
+      <link rel="canonical" href="{{ canonical_url }}" />
+    {% endif %}
+
+    <meta name="viewport" content="width=device-width">
+
+    {% assign x_handle = settings.social_x | split: 'x.com/' | last | split: 'twitter.com/' | last %}
+    {%
+      render 'social-meta-tags',
+      twitter_handle: x_handle,
+    %}
+
+    <link rel="preload" href="{{ settings.type_menu | font_url }}" as="font" crossorigin="anonymous">
+    <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
+    <link rel="preload" as="style" href="{{ 'citylocs.css' | asset_url }}">
+
+    {%- render 'head.import-map' -%}
+    {%- render 'head.es-module-shims' -%}
+    {%- render 'head.is-land' -%}
+
+    {%- render 'head.styles' -%}
+    {%- render 'head.styles.empire-legacy-settings-color' -%}
+    {%- render 'head.styles.empire-legacy-settings-font-face' -%}
+    {{ 'citylocs.css' | asset_url | stylesheet_tag }}
+
+    {{ content_for_header }}
+
+    <style>
+      :root {
+        /* ------------------------------------------------------------
+          Typography
+        ------------------------------------------------------------ */
+        /* Body */
+        --element-text-font-family--body: {{ settings.type_body.family }}, {{ settings.type_body.fallback_families }};
+        --element-text-font-weight--body: {{ settings.type_body.weight }};
+        --element-text-font-size--rte-body: 16px;
+        --element-text-line-height--body: var(--line-height-lg);
+        /* Headings */
+        --element-text-font-family--heading: {{ settings.type_heading.family }}, {{ settings.type_heading.fallback_families }};
+        --element-text-font-weight--heading: {{ settings.type_heading.weight }};
+        --element-text-letter-spacing--heading: {{ settings.type_heading_spacing | divided_by: 100.0 | append: 'em' }};
+        --element-text-text-transform--heading: {% if settings.type_heading_capitalize %}uppercase{% else %}none{% endif %};
+        
+        {%- case settings.type_heading_size -%}
+          {%- when '0.8' -%}
+            --element-text-font-size--heading-xl: 21px;
+            @media screen and (max-width: 719px) {
+              --element-text-font-size--heading-xl: 18px;
+            }
+          {%- when '1.0' -%}
+            --element-text-font-size--heading-xl: 26.25px;
+            @media screen and (max-width: 719px) {
+              --element-text-font-size--heading-xl: 22.5px;
+            }
+          {%- when '1.2' -%}
+            --element-text-font-size--heading-xl: 31.5px;
+            @media screen and (max-width: 719px) {
+              --element-text-font-size--heading-xl: 27px;
+            }
+          {%- else -%}
+            --element-text-font-size--heading-xl: 26.25px;
+            @media screen and (max-width: 719px) {
+              --element-text-font-size--heading-xl: 22.5px;
+            }
+        {%- endcase -%}
+        
+        /* Buttons */
+        --element-button-font-size: 13px;
+        --element-button-radius: 3px;
+        --element-badge-radius: 0px;
+        --element-badge-px: var(--size-2);
+        --element-badge-py: var(--size-0-5);
+        
+        /* ------------------------------------------------------------
+          Colors
+        ------------------------------------------------------------ */
+        --color-primary: {{ settings.color_text }}; 
+        --color-secondary: {{ settings.color_background }};
+        --root-color-primary: {{ settings.color_text}}; 
+        --root-color-secondary: {{ settings.color_background }};
+        --element-text-color: {{ settings.color_text }};
+        --color-sale-tag-text: #fff ;
+        --color-sale-tag: {{ settings.color_product_sale_accent }};
+      }
+
+      /* Override Shopify Payment Button styles */
+      .shopify-payment-button .shopify-payment-button__button--unbranded,
+      .shopify-payment-button .shopify-payment-button__button {
+        --element-text-line-height--body-md: 1;
+        --element-button-text-transform: {% if settings.type_button_capitalize %}uppercase{% else %}none{% endif %};
+        --element-button-letter-spacing: {{ settings.type_button_spacing | divided_by: 100.0 | append: 'em' }};
+        --element-button-font-family: {{ settings.type_button.family }}, {{ settings.type_button.fallback_families }};
+        --color-primary: {{ settings.color_button_background }};
+        border: none!important;
+      }
+
+      .add-to-cart-button{
+        --element-text-line-height--body-md: 1;
+        --element-button-font-size: var(--font-size-button-large);
+        --element-button-text-transform: {% if settings.type_button_capitalize %}uppercase{% else %}none{% endif %};
+        --element-button-letter-spacing: {{ settings.type_button_spacing | divided_by: 100.0 | append: 'em' }};
+        --element-button-font-family: {{ settings.type_button.family }}, {{ settings.type_button.fallback_families }};
+        --element-text-font-weight: 700;
+        --element-text-color: {{ settings.color_button_secondary_text }};
+        --element-button-color-secondary: {{ settings.color_button_secondary_background }};
+        box-shadow: inset 0 0 0 1px {{ settings.color_button_secondary_border }};
+      }
+
+      .add-to-cart-button:focus-visible{
+        box-shadow: 0 0 0 2px #fff, 0 0 0 5px #19f6, 0 3px 8px #0000001a;
+      }
+
+      .add-to-cart-button:not(.element-button--inverted) {
+        --element-button-color-primary: {{ settings.color_button_secondary_background }};
+        --element-button-color-secondary: {{ settings.color_text }};
+      }
+
+      .element-button{
+        box-sizing: border-box;
+      }
+
+      .product-title{
+        --element-text-color: {{ settings.color_headings }};
+      }
+        
+      .vendor{
+        --element-text-color: {{ settings.color_links }};
+        text-decoration: none;
+      }
+
+      .sale-price{
+        --element-text-color: {{ settings.color_product_sale_accent}};
+      }
+
+      .compare-at-price{
+        --element-text-color: {{ settings.color_text_light }};
+      }
+
+      .variant-option-value-name-selected{
+        --element-button-color-primary: white!important;
+        --element-button-color-secondary: {{ settings.color_links }}!important;
+      }
+
+      .sku{
+        --element-text-color: {{ settings.color_text_light }};
+      }
+
+      .inventory-status--low-stock {
+        --element-text-color: {{ settings.color_products_low_stock }};
+      }
+
+      .inventory-status--in-stock {
+        --element-text-color: {{ settings.color_products_in_stock }};
+      }
+
+      .inventory-status--sold-out {
+        --element-text-color: {{ settings.color_products_no_stock }};
+      }
+
+      .overlay-lightbox__overlay {
+        z-index: 10000;
+      }
+
+      .element-text--rte ul {
+        padding-left: 20px;
+        margin: 1rem 0;
+      }
+
+      .element-text--rte table {
+        display: block;
+        border-collapse: collapse;
+        width: fit-content;
+        max-width: 100%;
+        height: auto;
+        overflow: auto;
+        white-space: nowrap;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .element-text--rte table th,
+      .element-text--rte table td {
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .element-text--rte table th {
+        font-family: var(--element-text-font-family--heading);
+        font-weight: var(--element-text-font-weight--heading);
+        font-size: var(--element-text-font-size--rte-body);
+        padding: 8px;
+        text-align: left;
+        color: var(--color-primary);
+      }
+
+      .element-text--rte table td {
+        font-size: var(--element-text-font-size--rte-body);
+        padding: 0.75rem 1rem;
+      }
+    </style>
+
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+    {% if template.suffix == 'custom'
+      or template.suffix == 'pc-custom'
+      or template.suffix == 'gempages-builder'
+      or template.suffix == 'image-list-options'
+      or template.suffix == 'list-mandatory2nd-options-monogram'
+      or template.suffix == 'list-mandatory2nd-options'
+      or template.suffix == 'list-options-gempages'
+      or template.suffix == 'list-options'
+      or template.suffix == 'nocustom-list-options'
+      or template.suffix == 'swap-patch'
+      or template.suffix == 'swap-patch-redirect'
+    %}
+      {{ 'cl-legacy-product-compat.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+
+    {% unless settings.reduce_animations %}
+      {{ 'ripple.css' | asset_url | stylesheet_tag }}
+    {% endunless %}
+
+    {% comment %}Inject theme-object begin{% endcomment %}
+    <script>
+      window.Theme = window.Theme || {};
+      window.Theme.version = '13.0.0';
+      window.Theme.name = 'Empire';
+      window.Theme.routes = {
+        "root_url": "{{ routes.root_url }}",
+        "account_url": "{{ routes.account_url }}",
+        "account_login_url": "{{ routes.account_login_url }}",
+        "account_logout_url": "{{ routes.account_logout_url }}",
+        "account_register_url": "{{ routes.account_register_url }}",
+        "account_addresses_url": "{{ routes.account_addresses_url }}",
+        "collections_url": "{{ routes.collections_url }}",
+        "all_products_collection_url": "{{ routes.all_products_collection_url }}",
+        "search_url": "{{ routes.search_url }}",
+        "predictive_search_url": "{{ routes.predictive_search_url }}",
+        "cart_url": "{{ routes.cart_url }}",
+        "cart_add_url": "{{ routes.cart_add_url }}",
+        "cart_change_url": "{{ routes.cart_change_url }}",
+        "cart_clear_url": "{{ routes.cart_clear_url }}",
+        "product_recommendations_url": "{{ routes.product_recommendations_url }}",
+      };
+    </script>
+    {% comment %}Inject theme-object end{% endcomment %}
+
+    <!-- GemPages v6 header integration. Required by migrated GemPages templates. -->
+    {% render 'gem-app-header-scripts' %}
+  </head>
+
+  <body class="template-{{ template.name }}" data-instant-allow-query-string {% if settings.reduce_animations %}data-reduce-animations{% endif %}>
+    <script>
+      document.documentElement.className=document.documentElement.className.replace(/\bno-js\b/,'js');
+      if(window.Shopify&&window.Shopify.designMode)document.documentElement.className+=' in-theme-editor';
+      if(('ontouchstart' in window)||window.DocumentTouch&&document instanceof DocumentTouch)document.documentElement.className=document.documentElement.className.replace(/\bno-touch\b/,'has-touch');
+    </script>
+
+    {% comment %}Inject icon-star-symbol begin{% endcomment %}
+    <svg
+      class="icon-star-reference"
+      aria-hidden="true"
+      focusable="false"
+      role="presentation"
+      xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="3 3 17 17" fill="none"
+    >
+      <symbol id="icon-star">
+        <rect class="icon-star-background" width="20" height="20" fill="currentColor"/>
+        <path d="M10 3L12.163 7.60778L17 8.35121L13.5 11.9359L14.326 17L10 14.6078L5.674 17L6.5 11.9359L3 8.35121L7.837 7.60778L10 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </symbol>
+      <clipPath id="icon-star-clip">
+        <path d="M10 3L12.163 7.60778L17 8.35121L13.5 11.9359L14.326 17L10 14.6078L5.674 17L6.5 11.9359L3 8.35121L7.837 7.60778L10 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </clipPath>
+    </svg>
+    {% comment %}Inject icon-star-symbol end{% endcomment %}
+
+
+    <a class="skip-to-main" href="#site-main">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+    {% sections 'header-group' %}
+
+    <div style="--background-color: {{ settings.color_background }}">
+      {%
+        render 'age-gate',
+        id: 'page',
+        sections: content_for_layout,
+      %}
+    </div>
+
+    <div class="intersection-target" data-header-intersection-target></div>
+    <div class="site-main-dimmer" data-site-main-dimmer></div>
+    <main id="site-main" class="site-main" aria-label="Main content" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {%- if settings.enable_back_to_top_button -%}
+      {%- render 'back-to-top-button' -%}
+    {%- endif -%}
+
+    {% sections 'footer-group' %}
+
+    {% comment %}
+      Below are various templates used in JavaScript
+    {% endcomment %}
+    <div style="display: none;" aria-hidden="true" data-templates>
+      {% comment %}Inject message-banner begin{% endcomment %}
+      <div
+        class="message-banner--container"
+        role="alert"
+        data-message-banner
+      >
+        <div class="message-banner--outer">
+          <div class="message-banner--inner" data-message-banner-content></div>
+      
+          <button
+            class="message-banner--close"
+            type="button"
+            aria-label="{{ 'general.accessibility.close' | t }}"
+            data-message-banner-close
+          >
+            {%- render 'icon-menu-close' -%}
+          </button>
+        </div>
+      </div>
+      {% comment %}Inject message-banner end{% endcomment %}
+
+      {% comment %}Inject atc-banner begin{% endcomment %}
+      <section class="atc-banner--container" role="log" data-atc-banner>
+        <div class="atc-banner--outer">
+          <div class="atc-banner--inner">
+            <div class="atc-banner--product">
+              <h2 class="atc-banner--product-title">
+                <span class="atc-banner--product-title--icon">
+                  {%
+                    render 'icon-library',
+                    id: 'icon-checkmark',
+                  %}
+                </span>
+                {{ 'add_to_cart_banner.general.product_added' | t }}
+              </h2>
+      
+              <div class="atc--product">
+                <div class="atc--product-image" data-atc-banner-product-image>
+                  {{ 'image' | placeholder_svg_tag: 'placeholder--image' }}
+                </div>
+                <div class="atc--product-details">
+                  <h2 class="atc--product-details--title" data-atc-banner-product-title></h2>
+                  <span class="atc--product-details--options" data-atc-banner-product-options></span>
+                  <span class="atc--product-details--price">
+                    <span class="atc--product-details--price-quantity" data-atc-banner-product-price-quantity></span>
+                    <span class="atc--product-details--price-value money" data-atc-banner-product-price-value></span>
+                    <span class="atc--product-details--price-discounted money" data-atc-banner-product-price-discounted></span>
+                    <span class="atc--product-details--unit-price hidden" data-atc-banner-unit-price>
+                      {{ 'product.general.price_per_unit_html' | t: total_quantity: '** total_quantity **', unit_price: '** unit_price **', unit_measure: '** unit_measure **' }}
+                    </span>
+                  </span>
+                  <ul class="discount-list" data-atc-banner-product-discounts>
+                    <li class="discount-list-item">
+                      {% render 'icon-library', id: 'icon-sale-tag' %}
+                      <span class="discount-title"></span>
+                      (-<span class="money discount-amount"></span>)
+                    </li>
+                  </ul>
+                  <span class="atc--line-item-subscriptions" data-atc-banner-product-subscription-title></span>
+                </div>
+              </div>
+            </div>
+      
+            <div class="atc-banner--cart">
+              <div class="atc-banner--cart-subtotal">
+                <span class="atc-subtotal--label">
+                  {{ 'add_to_cart_banner.general.sub_total' | t }}
+                </span>
+                <span class="atc-subtotal--price money" data-atc-banner-cart-subtotal></span>
+              </div>
+      
+              {%-
+                render 'free-shipping-bar',
+                context: 'atc-banner',
+              -%}
+      
+              <footer class="atc-banner--cart-footer">
+                <a class="button-secondary atc-button--viewcart" href="{{ routes.cart_url }}" data-atc-banner-cart-button>
+                  {{ 'add_to_cart_banner.general.view_cart_html' | t: count: '<span></span>' }}
+                </a>
+                <form
+                  class="atc-banner__form"
+                  action="{{ routes.cart_url }}"
+                  method="post"
+                  aria-label="cart checkout"
+                >
+                  <button class="button-primary atc-button--checkout" type="submit" name="checkout">
+                    {% if settings.enable_checkout_lock_icon %}
+                      {% render 'icon-checkout-lock' %}
+                    {% endif %}
+                    <span>{{ 'add_to_cart_banner.general.checkout' | t }}</span>
+                  </button>
+                </form>
+              </footer>
+            </div>
+          </div>
+      
+          <button
+            class="atc-banner--close"
+            type="button"
+            aria-label="{{ 'general.accessibility.close' | t }}"
+            data-atc-banner-close
+          >
+            {%- render 'icon-menu-close' -%}
+          </button>
+        </div>
+      </section>
+      {% comment %}Inject atc-banner end{% endcomment %}
+
+    </div>
+
+    {% comment %}
+      Modal container, used on Collections, Password, and QuickShop
+    {% endcomment %}
+    {% comment %}Inject modal begin{% endcomment %}
+    <div class="modal" data-modal-container aria-label="modal window" data-trap-focus>
+      <div class="modal-inner" data-modal-inner>
+        <button
+          class="modal-close"
+          type="button"
+          aria-label="{{ 'general.accessibility.close' | t }}"
+          data-modal-close
+        >
+          {% render 'icon-menu-close' %}
+        </button>
+        <div class="modal-content" data-modal-content></div>
+      </div>
+    </div>
+    
+    <div class="modal-1" data-modal-container-1 aria-label="modal window">
+      <div class="modal-inner" data-modal-inner>
+        <button
+          class="modal-close"
+          type="button"
+          aria-label="{{ 'general.accessibility.close' | t }}"
+          data-modal-1-close
+        >
+          {% render 'icon-menu-close' %}
+        </button>
+        <div class="modal-content" data-modal-content></div>
+      </div>
+    </div>
+    {% comment %}Inject modal end{% endcomment %}
+
+
+    {% comment %}
+      Product compare drawer, shown when products are compared
+    {% endcomment %}
+    {% comment %}Inject template-allows-compare begin{% endcomment %}
+    {% assign template_allows_compare = settings.enable_product_compare %}
+    {% if template.name == 'cart' %}
+      {% assign template_allows_compare = false %}
+    {% elsif template.name == 'product' and template.suffix contains 'compare' %}
+      {% assign template_allows_compare = false %}
+    {% endif %}
+    {% comment %}Inject template-allows-compare end{% endcomment %}
+
+    {% if template_allows_compare %}
+      {% comment %}Inject product-compare-drawer begin{% endcomment %}
+      <div class="product-compare-drawer" data-product-compare-drawer>
+        <div class="product-compare-drawer__header" data-product-compare-drawer-header>
+          <h2 class="product-compare-drawer__title" data-product-compare-drawer-title>
+            {{ 'product_compare.drawer_title' | t }}
+          </h2>
+      
+          <p
+            class="product-compare-drawer__notification"
+            data-product-count-one="{{ 'product_compare.drawer_notification.one' | t }}"
+            data-product-count-other="{{ 'product_compare.drawer_notification.other' | t: count: '** count **' }}"
+            data-product-compare-drawer-notification
+          >
+            {{ 'product_compare.drawer_notification' | t: count }}
+          </p>
+      
+          <span class="product-compare-drawer__trigger">
+            {% render 'icon-chevron-down' %}
+          </span>
+        </div>
+      
+        <div class="product-compare-drawer__container">
+          <div class="product-compare-drawer__items" data-compare-drawer-items-container>
+            <template data-product-compare-drawer-item-template>
+              <div
+                class="
+                  product-compare-drawer__item
+                  imagestyle--{% if settings.product_grid_image_crop and settings.product_grid_image_style != 'natural' %}cropped-{% endif %}{{ settings.product_grid_image_style }}
+                "
+              >
+                <div class="product-compare-drawer__image">
+                  <figure class="productitem--image" data-product-compare-drawer-image></figure>
+                </div>
+                <a class="product-compare-drawer__item-title" data-product-compare-drawer-title></a>
+                <button class="product-compare-drawer__remove" data-product-compare-drawer-remove>
+                  {%
+                    render 'icon-library',
+                    id: 'icon-remove',
+                    icon_class: 'product-compare-drawer__remove-icon',
+                  %}
+                </button>
+              </div>
+            </template>
+      
+            {% for i in (1..3) %}
+              <div class="product-compare-drawer__item-placeholder" data-product-compare-drawer-item-placeholder>
+                <p class="product-compare-drawer__item-placeholder-text">
+                  {% if forloop.index == 1 %}
+                    {{ 'product_compare.drawer_notification_placeholder.first' | t }}
+                  {% elsif forloop.index == 2 %}
+                    {{ 'product_compare.drawer_notification_placeholder.second' | t }}
+                  {% elsif forloop.index == 3 %}
+                    {{ 'product_compare.drawer_notification_placeholder.third' | t }}
+                  {% endif %}
+                </p>
+              </div>
+            {% endfor %}
+          </div>
+      
+          <div class="product-compare-drawer__actions">
+            <a
+              class="
+                product-compare-drawer__link
+                button-primary
+                disabled
+              "
+              href="{{ routes.root_url }}"
+              data-product-compare-drawer-link
+              data-product-compare-drawer-link-text="{{ 'product_compare.compare' | t }}"
+            >
+              {{ 'product_compare.compare' | t }}
+            </a>
+      
+            <button class="product-compare-drawer__clear-all" data-product-compare-clear-all>
+              {{ 'product_compare.drawer_clear_all' | t }}
+            </button>
+          </div>
+        </div>
+      </div>
+      {% comment %}Inject product-compare-drawer end{% endcomment %}
+
+    {% endif %}
+
+    {% if settings.enable_product_compare %}
+      {% comment %}Inject product-compare-breadcrumb-data begin{% endcomment %}
+      {% assign compare_breadcrumb_title = nil %}
+      
+      {% case request.page_type %}
+        {% when 'product' %}
+          {% assign compare_breadcrumb_title = product.title %}
+        {% when 'collection' %}
+          {% assign compare_breadcrumb_title = collection.title %}
+        {% when 'index' %}
+          {% assign compare_breadcrumb_title = 'general.breadcrumbs.home' | t %}
+        {% when 'search' %}
+          {% assign compare_breadcrumb_title = 'general.accessibility.search' | t %}
+      {% endcase %}
+      
+      {% assign compare_breadcrumb_update = true %}
+      
+      {% if template.name == 'product' and template.suffix contains 'compare' %}
+        {% assign compare_breadcrumb_update = false %}
+      {% endif %}
+      
+      <script type="application/json" data-product-compare-breadcrumb-data>
+        {
+          "title": {{ compare_breadcrumb_title | json }},
+          "update": {{ compare_breadcrumb_update }}
+        }
+      </script>
+      {% comment %}Inject product-compare-breadcrumb-data end{% endcomment %}
+
+    {% endif %}
+
+    {%- if template contains 'customer' -%}
+      {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+      {{ 'customer_area.js' | shopify_asset_url | script_tag }}
+    {%- endif -%}
+
+    {% unless settings.reduce_animations %}
+      <script>
+        (
+          function () {
+            var classes = {
+              block: 'pxu-lia-block',
+              element: 'pxu-lia-element',
+            };
+
+            document
+              .querySelectorAll('[type="application/pxs-animation-mapping+json"]')
+              .forEach(function (mappingEl) {
+                const section = mappingEl.parentNode;
+                try {
+                  const mapping = JSON.parse(mappingEl.innerHTML);
+                  mapping.elements.forEach(function (elementSelector) {
+                    section
+                      .querySelectorAll(elementSelector)
+                      .forEach(function (element) { element.classList.add(classes.element); });
+                  });
+
+                  mapping.blocks.forEach(function (blockSelector) {
+                    section
+                      .querySelectorAll(blockSelector)
+                      .forEach(function (block) { block.classList.add(classes.block); });
+                  });
+                } catch (error) {
+                  console.warn('Unable to parse animation mapping', mappingEl, error);
+                }
+            });
+          }
+        )()
+      </script>
+    {% endunless %}
+
+    {%- if settings.minify_scripts -%}
+      <script
+        src="{{ 'empire.min.js' | asset_url }}"
+        data-scripts
+        data-shopify-api-url="{{ 'api.jquery.js' | shopify_asset_url }}"
+        data-shopify-countries="/services/javascripts/countries.js"
+        data-shopify-common="{{ 'shopify_common.js' | shopify_asset_url }}"
+        data-shopify-cart="{{ 'jquery.cart.js' | asset_url }}"
+        data-pxu-polyfills="{{ 'polyfills.min.js' | asset_url }}"
+        async
+      ></script>
+    {%- else -%}
+      <script
+        src="{{ 'empire.js' | asset_url }}"
+        data-scripts
+        data-shopify-api-url="{{ 'api.jquery.js' | shopify_asset_url }}"
+        data-shopify-countries="/services/javascripts/countries.js"
+        data-shopify-common="{{ 'shopify_common.js' | shopify_asset_url }}"
+        data-shopify-cart="{{ 'jquery.cart.js' | asset_url }}"
+        data-pxu-polyfills="{{ 'polyfills.min.js' | asset_url }}"
+        async
+      ></script>
+    {%- endif -%}
+
+    {% render 'structured-data' %}
+    {% render 'citylocs-scripts' %}
+
+    <script>
+    (function () {
+      function handleFirstTab(e) {
+        if (e.keyCode === 9) { // the "I am a keyboard user" key
+          document.body.classList.add('user-is-tabbing');
+          window.removeEventListener('keydown', handleFirstTab);
+        }
+      }
+      window.addEventListener('keydown', handleFirstTab);
+    })();
+    </script>
+
+    <script
+      src="{{ 'instantPage.min.js' | asset_url }}"
+      type="module"
+      defer
+    >
+    </script>
+    {% render 'cl-bundle-cart' %}
+    {% render 'cl-amp-milestone' %}
+    {% render 'cl-builder-product-guard' %}
+    <script src="{{ 'cl-mobile-image-zoom.js' | asset_url }}" defer></script>
+
+    {%- liquid
+      assign gp_template_suffix = template.suffix
+      assign gp_suffix_parts = gp_template_suffix | split: '-'
+      if gp_template_suffix contains 'gem-' and gp_template_suffix contains '-template' and gp_suffix_parts.size == 3
+        assign is_v6_gp_template = true
+      endif
+      assign gp_shop_meta = shop.metafields.gempages
+      if gp_shop_meta
+        if gp_shop_meta['productV6-default'] == 'true' and request.page_type == 'product'
+          assign is_gp_default = true
+        elsif gp_shop_meta['collectionV6-default'] == 'true' and request.page_type == 'collection'
+          assign is_gp_default = true
+        elsif gp_shop_meta['indexV6-default'] == 'true' and request.page_type == 'index'
+          assign is_gp_default = true
+        endif
+
+        if is_gp_default or isPreviewV6
+          assign is_v6_gp_template = true
+        endif
+      endif
+    -%}
+    {% if is_v6_gp_template %}
+      {% render 'gem-app-footer-scripts', GEM_FOOTER_SCRIPT: GEM_FOOTER_SCRIPT %}
+    {% endif %}
+
+    <script>(function(n, v) {/* eslint-disable-next-line max-len */if (window.Shopify && window.Shopify.theme && navigator && navigator.sendBeacon && window.Shopify.designMode) {if (sessionStorage.getItem('oots_beacon')) return;navigator.sendBeacon('https://app.outofthesandbox.com/beacon', new URLSearchParams({shop_domain: window.Shopify.shop.toLowerCase(),shop_id: '{{ shop.id }}',shop_email: '{{ shop.email }}',theme_name: n.toLowerCase(),theme_version: v.toLowerCase(),theme_store_id: window.Shopify.theme.theme_store_id,theme_id: window.Shopify.theme.id,theme_role: window.Shopify.theme.role,}));sessionStorage.setItem('oots_beacon', '');}}('empire','13.0.0'))</script>
+  </body>  
+</html>

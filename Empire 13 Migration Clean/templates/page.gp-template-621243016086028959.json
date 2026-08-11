@@ -1,0 +1,31 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_621243195300250211": {
+      "type": "gp-section-621243195300250211",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "cf1778cd6d9c6c36f3968af230ec6c568611b30739f074634fc025c33443028e_1_1_0_0__1",
+        "ggE6u_KCGsS_text": "Snapback Hat",
+        "ggSBapjXxkr_text": "A bold, modern look with a flat bill and structured fit",
+        "ggtGN2-EMKP_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bk-Snapback-Profile-Page.jpg"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_621243195300250211"
+  ]
+}

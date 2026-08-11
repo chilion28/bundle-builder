@@ -1,0 +1,128 @@
+{% stylesheet %}
+  .media {
+    --size-2: 0.5rem; /* 8px */
+    --size-3-5: 0.875rem; /* 14px */
+    --text-size-sm: var(--size-3-5); /* 14px */
+
+    position: relative;
+    aspect-ratio: var(--aspect-ratio);
+
+    &:has(.media__image) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drift-zoom-pane img {
+      width: calc(var(--zoom-width) * 3px) !important;
+      height: calc(var(--zoom-height) * 3px) !important;
+    }
+  }
+
+  .media__image {
+    max-width: var(--image-max-width);
+    max-height: var(--image-max-height);
+  }
+
+  .media__image,
+  .media__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+
+    .media--aspect-ratio-set & {
+      max-height: 100vh;
+    }
+
+    .media--image-crop & {
+      object-fit: cover;
+    }
+
+    .media:not(.media--image-crop) & {
+      object-position: initial !important;
+    }
+  }
+
+  .media__model {
+    width: 100%;
+    min-height: 33vh;
+
+    .media--aspect-ratio-set & {
+      height: 100%;
+    }
+  }
+
+  .media__lightbox-button {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    z-index: 501;
+    padding: 6px 10px 6px 9px;
+    margin: 0 var(--size-3) var(--size-3) 0;
+    font-size: var(--text-size-sm);
+    font-weight: normal;
+    color: var(--color-text);
+    cursor: pointer;
+    background: var(--color-background-alpha-90);
+    border: 0;
+    border-radius: 3px;
+    box-shadow: 0 0 0 1px var(--color-border-soft);
+
+    @media (width >= 720px) {
+      &.media__lightbox-button--mobile {
+        display: none;
+      }
+    }
+
+    @media (width < 720px) {
+      &.media__lightbox-button--desktop {
+        display: none;
+      }
+    }
+  }
+
+  .media__lightbox-button-text {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    outline: none;
+  }
+
+  .media__lightbox-button-text--click {
+    display: none;
+
+    @media (width >= 720px) {
+      display: flex;
+    }
+  }
+
+  .media__lightbox-button-text--tap {
+    display: flex;
+
+    @media (width >= 720px) {
+      display: none;
+    }
+  }
+
+  @media (pointer: coarse) {
+    .media__lightbox-button:not(.media__lightbox-button--desktop) {
+      .media__lightbox-button-text--click {
+        display: none;
+      }
+
+      .media__lightbox-button-text--tap {
+        display: flex;
+      }
+    }
+  }
+
+  .drift-zoom-pane {
+    &.drift-open,
+    &.drift-closing {
+      img {
+        height: auto !important;
+      }
+    }
+  }
+{% endstylesheet %}

@@ -1,0 +1,204 @@
+{% assign swatch = option %}
+{% assign found_option = false %}
+{% assign is_style = false %}
+{% assign option_index = 0 %}
+{% assign downcased_option = option | downcase %}
+{% assign snapback_page = product.metafields.custom.snapback_hat_long_description.value %}
+{% assign trucker_page = product.metafields.custom.trucker_hat_long_description.value %}
+{% assign profive_page = product.metafields.custom.pro_five_a_frame_long_description.value %}
+{% assign flexfit_page = product.metafields.custom.flex_fit_hat_long_description.value %}
+{% assign signature_page = product.metafields.custom.signature_series_hat_long_description.value %}
+
+{% for option in product.options %}
+  {% if option == swatch %}
+    {% assign found_option = true %}
+    {% assign option_index = forloop.index0 %}
+    {% assign downcased_option = swatch | downcase %}
+    {% if downcased_option contains 'style' %}
+      {% assign is_style = true %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+
+<div class="cl-style-slider swatch clearfix" data-option-index="{{ option_index }}">
+  {% if is_style %}
+   
+  {% endif %}
+
+  <div class="swatch_options cl-style-slider__track">
+    {% assign values = '' %}
+
+    {% for variant in product.variants %}
+      {% assign value = variant.options[option_index] %}
+
+      {% unless values contains value %}
+        {% assign values = values | join: ',' %}
+        {% assign values = values | append: ',' | append: value %}
+        {% assign values = values | split: ',' %}
+
+        {% if is_style %}
+          {% assign style_handle = value | handleize %}
+          {% assign style_image = '' %}
+          {% assign style_desc = '' %}
+          {% assign style_badge = '' %}
+
+          {% case value %}
+            {% when 'Snapback' %}
+              {% assign style_image = 'https://cdn.shopify.com/s/files/1/0519/6401/files/Snapback_liner.svg?v=1777580563' %}
+              
+              {% assign style_desc = 'Flat brim, classic fit' %}
+              {% assign style_badge = 'MOST POPULAR' %}
+            {% when 'Trucker' %}
+              {% assign style_image = 'https://cdn.shopify.com/s/files/1/0519/6401/files/trucker_lineart.svg?v=1778615583' %}
+              {% assign style_desc = 'Mesh back, breathable' %}
+            {% when 'Pro Five A Frame' %}
+              {% assign style_image = 'https://cdn.shopify.com/s/files/1/0519/6401/files/a-frame-lineart.svg?v=1779899012' %}
+              {% assign style_desc = 'Higher crown, structured' %}
+            {% when 'Flex Fit' %}
+              {% assign style_image = 'https://cdn.shopify.com/s/files/1/0519/6401/files/Flexfit.svg?v=1778615663' %}
+              {% assign style_desc = 'Stretch fit, two sizes' %}
+            {% when 'Signature Series' %}
+              {% assign style_image = 'https://cdn.shopify.com/s/files/1/0519/6401/files/trucker_lineart.svg?v=1778615583' %}
+              {% assign style_desc = 'Rope detail, premium fit' %}
+          {% endcase %}
+
+          <div class="selection-button-container cl-style-card-wrap">
+            <div
+              data-value="{{ value }}"
+              class="selection-button cl-style-card"
+              :class="selected == '{{ value }}' ? 'button-on is-active' : ''"
+              @click="selectionButton($event)"
+            >
+              {% if style_badge != blank %}
+                <div class="cl-style-card__badge">★ {{ style_badge }}</div>
+              {% endif %}
+
+              <div class="cl-style-card__image-wrap">
+                {% if style_image != blank %}
+                  <img class="cl-style-card__image" src="{{ style_image }}" alt="{{ value }}">
+                {% endif %}
+              </div>
+
+              <div class="cl-style-card__title">{{ value }}</div>
+
+              {% if style_desc != blank %}
+                <div class="cl-style-card__desc">{{ style_desc }}</div>
+              {% endif %}
+
+              <button
+                type="button"
+                class="cl-style-card__guide-trigger"
+                data-style="{{ value | escape }}"
+                onclick="event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation();"
+                >
+                View details
+                </button>
+
+            </div>
+          </div>
+        {% endif %}
+      {% endunless %}
+    {% endfor %}
+  </div>
+
+  
+
+
+<div class="cl-style-modal" aria-hidden="true" hidden>
+  <div class="cl-style-modal__overlay"></div>
+
+  <div class="cl-style-modal__panel" role="dialog" aria-modal="true">
+    <button type="button" class="cl-style-modal__close" aria-label="Close">×</button>
+
+    <div class="cl-style-modal__content">
+      <h2 class="cl-style-modal__title"></h2>
+      <div class="cl-style-modal__text"></div>
+
+      <div class="cl-style-modal__reviews">
+        <div
+          id="looxReviews"
+          data-product-id="{{ product.id }}"
+          class="loox-reviews-default"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+
+
+<style>
+
+</style>
+
+<script>
+window.CL_STYLE_CONTENT = {
+  'Snapback': {{ snapback_page.content | json }},
+  'Trucker': {{ trucker_page.content | json }},
+  'Pro Five A Frame': {{ profive_page.content | json }},
+  'Flex Fit': {{ flexfit_page.content | json }},
+  'Signature Series': {{ signature_page.content | json }}
+};
+
+document.addEventListener('mousedown', function (event) {
+  const trigger = event.target.closest('.cl-style-card__guide-trigger');
+  if (!trigger) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation();
+
+  const modal = document.querySelector('.cl-style-modal');
+  if (!modal) return;
+
+  const title = modal.querySelector('.cl-style-modal__title');
+  const text = modal.querySelector('.cl-style-modal__text');
+  const styleName = trigger.dataset.style;
+  const styleContent = window.CL_STYLE_CONTENT || {};
+
+  if (title) title.textContent = styleName;
+  if (text) text.innerHTML = styleContent[styleName] || '';
+
+  modal.hidden = false;
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('cl-style-modal-open');
+
+  setTimeout(function () {
+    if (window.Loox && typeof window.Loox.init === 'function') {
+      window.Loox.init();
+    }
+
+    window.dispatchEvent(new Event('resize'));
+  }, 300);
+}, true);
+
+document.addEventListener('click', function (event) {
+  const closeBtn = event.target.closest('.cl-style-modal__close');
+  const overlay = event.target.closest('.cl-style-modal__overlay');
+
+  if (!closeBtn && !overlay) return;
+
+  const modal = document.querySelector('.cl-style-modal');
+  if (!modal) return;
+
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('cl-style-modal-open');
+  modal.hidden = true;
+});
+
+document.addEventListener('keydown', function (event) {
+  const modal = document.querySelector('.cl-style-modal');
+
+  if (event.key === 'Escape' && modal && modal.classList.contains('is-open')) {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('cl-style-modal-open');
+    modal.hidden = true;
+  }
+});
+</script>

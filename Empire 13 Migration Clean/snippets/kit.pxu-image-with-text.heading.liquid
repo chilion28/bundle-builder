@@ -1,0 +1,13 @@
+{% doc %}
+  @param {string} heading - Heading on the text side of the section
+  @param {string} heading_size - Size variant: small, medium, or large
+  @param {string} base_name - BEM prefix for emitted classes (default: 'image-with-text')
+{% enddoc %}
+
+{%- assign base_name = base_name | default: 'image-with-text' -%}
+
+{%- if heading != blank -%}
+  <h2 class="{{ base_name }}__heading {{ base_name }}__heading--{{ heading_size | default: 'medium' }}">
+    {{- heading | escape -}}
+  </h2>
+{%- endif -%}

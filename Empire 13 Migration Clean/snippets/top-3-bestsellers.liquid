@@ -1,0 +1,45 @@
+{% assign best_sellers = collection.products %}
+{% assign featured_product = best_sellers[0] %}
+{% assign left_product = best_sellers[1] %}
+{% assign right_product = best_sellers[2] %}
+
+<div class="bundle-grid">
+
+  {% if left_product %}
+    {% assign product = left_product %}
+    {% render 'bundle-card', product: product, featured_product: featured_product %}
+  {% endif %}
+
+  {% if featured_product %}
+    {% assign product = featured_product %}
+    {% render 'bundle-card', product: product, featured_product: featured_product %}
+  {% endif %}
+
+  {% if right_product %}
+    {% assign product = right_product %}
+    {% render 'bundle-card', product: product, featured_product: featured_product %}
+  {% endif %}
+
+</div>
+
+<style>
+    .bundle-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+
+
+
+@media(max-width:768px){
+
+  .bundle-grid{
+    grid-template-columns:1fr;
+  }
+
+  .bundle-card.featured{
+    transform:none;
+  }
+
+}
+</style>

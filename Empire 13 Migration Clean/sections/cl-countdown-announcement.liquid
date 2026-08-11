@@ -1,0 +1,679 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="static-announcement">
+</script>
+
+{% assign show_everywhere = false %}
+{% assign homepage_only = false %}
+
+{% if section.settings.show_announcement and section.settings.homepage_announcement == false %}
+  {% assign show_everywhere = true %}
+{% endif %}
+
+{% if section.settings.show_announcement and section.settings.homepage_announcement and template == 'index' %}
+  {% assign homepage_only = true %}
+{% endif %}
+
+{% if show_everywhere or homepage_only %}
+  {% if section.settings.announcement_text != blank or section.settings.announcement_text_mobile != blank %}
+    <div
+      class="
+        announcement-bar
+        {% if section.settings.announcement_text == blank and section.settings.announcement_text_mobile != blank %}
+          only-mobile
+        {% endif %}
+        {% if section.settings.enable_countdown %}
+          announcement-bar--countdown
+        {% endif %}
+      "
+      style="
+        color: {{ section.settings.announcement_color }};
+        background: {{ section.settings.announcement_background }};
+      ">
+
+      {% if section.settings.announcement_link != blank %}
+        <a
+          class="announcement-bar-link"
+          href="{{ section.settings.announcement_link }}"
+          aria-label="Announcement link"
+        ></a>
+      {% endif %}
+
+      <div class="announcement-bar__inner">
+        {% if section.settings.announcement_text != blank %}
+          <div class="announcement-bar-text">
+            {{ section.settings.announcement_text }}
+          </div>
+        {% endif %}
+
+        <div class="announcement-bar-text-mobile">
+          {% if section.settings.announcement_text_mobile != blank %}
+            {{ section.settings.announcement_text_mobile }}
+          {% else %}
+            {{ section.settings.announcement_text }}
+          {% endif %}
+        </div>
+
+        {% if section.settings.enable_countdown and section.settings.countdown_deadline != blank %}
+          <div
+            class="cl-announcement-countdown"
+            data-cl-announcement-countdown
+            data-deadline="{{ section.settings.countdown_deadline | escape }}"
+          >
+            <div class="cl-countdown-box">
+              <strong data-days>00</strong>
+              <span>Day</span>
+            </div>
+            <div class="cl-countdown-box">
+              <strong data-hours>00</strong>
+              <span>Hour</span>
+            </div>
+            <div class="cl-countdown-box">
+              <strong data-minutes>00</strong>
+              <span>Minute</span>
+            </div>
+            <div class="cl-countdown-box">
+              <strong data-seconds>00</strong>
+              <span>Second</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+{% endif %}
+
+<style>
+  .announcement-bar--countdown {
+    border-bottom:1px solid #191919;
+    position: relative;
+    padding:0;
+  }
+
+  .announcement-bar--countdown .announcement-bar__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 8px 24px;
+     display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto;
+  width: fit-content;
+  }
+
+  .announcement-bar--countdown .announcement-bar-text {
+    font-size: 20px;
+    font-weight:600;
+    line-height: 1.4;
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  .announcement-bar--countdown .announcement-bar-text-mobile {
+    display: none;
+  }
+
+  .cl-announcement-countdown {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+     flex: 0 0 auto;
+  }
+
+  .cl-countdown-box {
+    min-width: 58px;
+    padding: 6px 8px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 8px;
+    text-align: center;
+    background: rgba(255, 255, 255, 1);
+  }
+
+  .cl-countdown-box strong {
+    display: block;
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color:#1d1d1d !important;
+  }
+
+  .cl-countdown-box span {
+    color:#1d1d1d !important;
+    display: block;
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  @media screen and (max-width: 749px) {
+    .announcement-bar--countdown .announcement-bar__inner {
+      padding: 12px 14px;
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .announcement-bar--countdown .announcement-bar-text {
+      display: none;
+    }
+
+    .announcement-bar--countdown .announcement-bar-text-mobile {
+      display: block;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .cl-announcement-countdown {
+      gap: 8px;
+    }
+
+    .cl-countdown-box {
+      min-width: 62px;
+      padding: 8px 6px;
+    }
+
+    .cl-countdown-box strong {
+      font-size: 16px;
+    }
+
+    .cl-countdown-box span {
+      font-size: 11px;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const timers = document.querySelectorAll('[data-cl-announcement-countdown]');
+    if (!timers.length) return;
+
+    timers.forEach(timer => {
+      if (timer.dataset.initialized === 'true') return;
+      timer.dataset.initialized = 'true';
+
+      const deadlineRaw = timer.dataset.deadline;
+      const deadline = new Date(deadlineRaw).getTime();
+
+      if (Number.isNaN(deadline)) return;
+
+      const daysEl = timer.querySelector('[data-days]');
+      const hoursEl = timer.querySelector('[data-hours]');
+      const minutesEl = timer.querySelector('[data-minutes]');
+      const secondsEl = timer.querySelector('[data-seconds]');
+
+      function pad(num) {
+        return String(num).padStart(2, '0');
+      }
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = deadline - now;
+
+        if (distance <= 0) {
+          daysEl.textContent = '00';
+          hoursEl.textContent = '00';
+          minutesEl.textContent = '00';
+          secondsEl.textContent = '00';
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((distance / (1000 * 60)) % 60);
+        const seconds = Math.floor((distance / 1000) % 60);
+
+        daysEl.textContent = pad(days);
+        hoursEl.textContent = pad(hours);
+        minutesEl.textContent = pad(minutes);
+        secondsEl.textContent = pad(seconds);
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    });
+  })();
+</script>
+
+<style>
+  :root {
+    --cl-countdown-sticky-height: 0px;
+    --cl-header-sticky-height: 0px;
+  }
+
+  /* Global countdown sticky for all pages */
+  #shopify-section-cl-countdown-announcement {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 999 !important;
+  }
+
+  /* Product / collection / normal pages */
+  body:not(.template-index) .site-header.site-header-sticky--scrolled {
+    top: var(--cl-countdown-sticky-height) !important;
+  }
+
+  /* Homepage forced sticky */
+  body.template-index.cl-home-sticky-active #shopify-section-cl-countdown-announcement {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+
+  body.template-index.cl-home-sticky-active .site-header {
+    position: fixed !important;
+    top: var(--cl-countdown-sticky-height) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 998 !important;
+  }
+
+  body.template-index.cl-home-sticky-active {
+    padding-top: calc(var(--cl-countdown-sticky-height) + var(--cl-header-sticky-height));
+  }
+
+  body.template-index.cl-home-sticky-active:not(.cl-home-menu-open) .site-navigation-wrapper {
+    display: none !important;
+  }
+
+  body.template-index.cl-home-sticky-active.cl-home-menu-open .site-navigation-wrapper {
+    display: block !important;
+  }
+
+{% comment %} @media screen and (max-width: 1023px) {
+  /* Keep countdown on top */
+  #shopify-section-cl-countdown-announcement {
+    top: 0 !important;
+    z-index: 1000 !important;
+  }
+
+  /* Keep sticky header below countdown */
+  .site-header.site-header-sticky--scrolled,
+  body.template-index.cl-home-sticky-active .site-header {
+    top: var(--cl-countdown-sticky-height) !important;
+    z-index: 999 !important;
+  }
+
+  /* Push opened mobile nav below countdown + header */
+  .site-mobile-nav,
+  #site-mobile-nav,
+  [data-mobile-nav],
+  [data-site-mobile-nav] {
+    top: calc(
+      var(--cl-countdown-sticky-height) + var(--cl-header-sticky-height)
+    ) !important;
+    max-height: calc(
+      100vh - var(--cl-countdown-sticky-height) - var(--cl-header-sticky-height)
+    ) !important;
+    overflow-y: auto !important;
+    z-index: 998 !important;
+  }
+} {% endcomment %}
+
+{% comment %} @media screen and (max-width: 1023px) {
+  /* Mobile order: header first */
+  .site-header.site-header-sticky--scrolled,
+  body.template-index.cl-home-sticky-active .site-header {
+    top: 0 !important;
+    z-index: 1001 !important;
+  }
+
+  /* Countdown goes below header */
+  #shopify-section-cl-countdown-announcement,
+  body.template-index.cl-home-sticky-active #shopify-section-cl-countdown-announcement {
+    top: var(--cl-header-sticky-height) !important;
+    z-index: 1000 !important;
+  }
+
+  /* Mobile drawer starts below header only */
+  .site-mobile-nav,
+  #site-mobile-nav,
+  [data-mobile-nav],
+  [data-site-mobile-nav] {
+    top: var(--cl-header-sticky-height) !important;
+    max-height: calc(100vh - var(--cl-header-sticky-height)) !important;
+    overflow-y: auto !important;
+    z-index: 999 !important;
+  }
+}
+
+@media screen and (max-width: 1023px) {
+  body #shopify-section-cl-countdown-announcement {
+    position: sticky !important;
+    top: var(--cl-header-sticky-height) !important;
+    z-index: 1000 !important;
+  }
+
+  body .site-header.site-header-sticky--scrolled,
+  body.site-header-sticky .site-header.site-header-sticky--scrolled,
+  body.template-index.cl-home-sticky-active .site-header {
+    top: 0 !important;
+    z-index: 1001 !important;
+  }
+
+  body .site-mobile-nav,
+  body #site-mobile-nav,
+  body [data-mobile-nav],
+  body [data-site-mobile-nav] {
+    top: var(--cl-header-sticky-height) !important;
+    max-height: calc(100vh - var(--cl-header-sticky-height)) !important;
+    overflow-y: auto !important;
+    z-index: 999 !important;
+  }
+} {% endcomment %}
+
+{% comment %} @media screen and (max-width: 1023px) {
+  /* Mobile: main header stays fixed at very top */
+  .site-header,
+  .site-header.site-header-sticky--scrolled,
+  body.template-index.cl-home-sticky-active .site-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 3000 !important;
+  }
+
+  /* Mobile: countdown sits below fixed header */
+  #shopify-section-cl-countdown-announcement,
+  body.template-index.cl-home-sticky-active #shopify-section-cl-countdown-announcement {
+    position: sticky !important;
+    top: var(--cl-header-sticky-height) !important;
+    z-index: 2500 !important;
+  }
+
+  /* Mobile drawer should sit above countdown */
+  .site-mobile-nav,
+  #site-mobile-nav,
+  [data-mobile-nav],
+  [data-site-mobile-nav] {
+    position: fixed !important;
+    top: var(--cl-header-sticky-height) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    max-height: calc(100vh - var(--cl-header-sticky-height)) !important;
+    overflow-y: auto !important;
+    z-index: 4000 !important;
+  }
+
+  body {
+    padding-top: var(--cl-header-sticky-height);
+  }
+} {% endcomment %}
+
+@media screen and (max-width: 1023px) {
+  .site-header,
+  .site-header.site-header-sticky--scrolled,
+  body.template-index.cl-home-sticky-active .site-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 5000 !important;
+  }
+
+  #shopify-section-cl-countdown-announcement,
+  body.template-index.cl-home-sticky-active #shopify-section-cl-countdown-announcement {
+    position: fixed !important;
+    top: var(--cl-header-sticky-height) !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 4990 !important;
+  }
+
+  body {
+    padding-top: calc(
+      var(--cl-header-sticky-height) + var(--cl-countdown-sticky-height)
+    ) !important;
+  }
+
+  .site-mobile-nav,
+  #site-mobile-nav,
+  [data-mobile-nav],
+  [data-site-mobile-nav] {
+    position: fixed !important;
+    top: var(--cl-header-sticky-height) !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    max-height: calc(100vh - var(--cl-header-sticky-height)) !important;
+    overflow-y: auto !important;
+    z-index: 6000 !important;
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .announcement-bar--countdown .announcement-bar__inner {
+    padding: 10px 14px !important;
+    gap: 8px !important;
+  }
+
+  .announcement-bar--countdown .announcement-bar-text-mobile {
+    font-size: 14px !important;
+    line-height: 1.25 !important;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .cl-announcement-countdown {
+    display: flex !important;
+    justify-content: center;
+    gap: 6px !important;
+  }
+
+  .cl-countdown-box {
+    min-width: auto !important;
+    width: auto !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+  }
+
+  .cl-countdown-box strong {
+    display: inline !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+  }
+
+  .cl-countdown-box span {
+    display: inline !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    margin-left: 2px;
+  }
+
+  .cl-countdown-box span::after {
+    content: "";
+  }
+
+  .cl-countdown-box:nth-child(1) span {
+    font-size: 0 !important;
+  }
+
+  .cl-countdown-box:nth-child(1) span::after {
+    content: "D";
+    font-size: 13px;
+  }
+
+  .cl-countdown-box:nth-child(2) span {
+    font-size: 0 !important;
+  }
+
+  .cl-countdown-box:nth-child(2) span::after {
+    content: "H";
+    font-size: 13px;
+  }
+
+  .cl-countdown-box:nth-child(3) span {
+    font-size: 0 !important;
+  }
+
+  .cl-countdown-box:nth-child(3) span::after {
+    content: "M";
+    font-size: 13px;
+  }
+
+  .cl-countdown-box:nth-child(4) span {
+    font-size: 0 !important;
+  }
+
+  .cl-countdown-box:nth-child(4) span::after {
+    content: "S";
+    font-size: 13px;
+  }
+}
+</style>
+
+<script>
+  (() => {
+    let isManualMenuOpen = false;
+    let isBound = false;
+
+    function getEls() {
+      return {
+        header: document.querySelector('.site-header'),
+        toggle: document.querySelector('.site-header-menu-toggle'),
+        nav: document.querySelector('.site-navigation-wrapper'),
+        bar: document.querySelector('#shopify-section-cl-countdown-announcement .announcement-bar')
+      };
+    }
+
+    function setStickyHeights() {
+      const { header, bar } = getEls();
+
+      document.documentElement.style.setProperty(
+        '--cl-countdown-sticky-height',
+        `${bar ? Math.round(bar.getBoundingClientRect().height) : 0}px`
+      );
+
+      document.documentElement.style.setProperty(
+        '--cl-header-sticky-height',
+        `${header ? Math.round(header.getBoundingClientRect().height) : 0}px`
+      );
+    }
+
+    function syncHomeSticky() {
+      if (!document.body.classList.contains('template-index')) return;
+
+      const { header, toggle, nav } = getEls();
+      if (!header || !nav) return;
+
+      const isActive = window.scrollY > 5;
+
+      if (!isActive) isManualMenuOpen = false;
+
+      document.body.classList.toggle('cl-home-sticky-active', isActive);
+      document.body.classList.toggle('cl-home-menu-open', isActive && isManualMenuOpen);
+      header.classList.toggle('site-header-sticky--scrolled', isActive);
+
+      if (!isActive) nav.style.display = '';
+
+      if (toggle) {
+        toggle.classList.toggle('active', isActive && isManualMenuOpen);
+        toggle.setAttribute('aria-expanded', isActive && isManualMenuOpen ? 'true' : 'false');
+      }
+    }
+
+    function initStickyFix() {
+      const { toggle } = getEls();
+
+      setStickyHeights();
+      syncHomeSticky();
+
+      if (toggle && !isBound) {
+        isBound = true;
+
+        toggle.addEventListener('click', () => {
+          if (!document.body.classList.contains('cl-home-sticky-active')) return;
+
+          isManualMenuOpen = !isManualMenuOpen;
+
+          requestAnimationFrame(syncHomeSticky);
+          setTimeout(syncHomeSticky, 50);
+          setTimeout(syncHomeSticky, 150);
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', initStickyFix);
+    window.addEventListener('load', initStickyFix);
+    window.addEventListener('scroll', syncHomeSticky, { passive: true });
+    window.addEventListener('resize', () => {
+      setStickyHeights();
+      syncHomeSticky();
+    });
+
+    setTimeout(initStickyFix, 250);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "CityLocs Promo Bar",
+  "class": "site-announcement",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.announcement_bar.header_1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "t:sections.announcement_bar.show_announcement.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "homepage_announcement",
+      "label": "t:sections.announcement_bar.homepage_announcement.label"
+    },
+    {
+      "id": "announcement_text",
+      "type": "textarea",
+      "label": "t:sections.announcement_bar.announcement_text.label",
+      "default": "Don't wait — order by June 14 to get your gift delivered before Father's Day"
+    },
+    {
+      "id": "announcement_text_mobile",
+      "type": "textarea",
+      "label": "t:sections.announcement_bar.announcement_text_mobile.label",
+      "info": "t:sections.announcement_bar.announcement_text_mobile.info"
+    },
+    {
+      "id": "announcement_link",
+      "type": "url",
+      "label": "t:sections.announcement_bar.announcement_link.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_countdown",
+      "label": "Enable countdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "countdown_deadline",
+      "label": "Countdown deadline",
+      "default": "2026-06-14T23:59:59-07:00",
+      "info": "Use format: YYYY-MM-DDTHH:MM:SS-07:00"
+    },
+    {
+      "id": "announcement_color",
+      "type": "color",
+      "label": "t:sections.announcement_bar.announcement_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "id": "announcement_background",
+      "type": "color",
+      "label": "t:sections.announcement_bar.announcement_background.label",
+      "default": "#0d0d0d"
+    }
+  ]
+}
+{% endschema %}

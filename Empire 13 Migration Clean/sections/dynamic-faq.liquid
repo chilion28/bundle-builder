@@ -1,0 +1,526 @@
+{%- liquid
+  assign section = section
+  assign section_width = section.settings.section_width
+  assign section_heading = section.settings.heading
+  assign show_categories = section.settings.enable_category_cards
+  assign category_card_image_crop = section.settings.category_card_image_crop
+  assign category_heading_size = section.settings.category_heading_size
+  assign summary_id = 'question'
+  assign content_id = 'answer'
+  assign category_id = 'category'
+  assign category_heading_id = 'heading'
+  assign category_image_id = 'image'
+  assign show_category_card_id =  'show_category_card'
+  assign icon = 'icon-chevron-down'
+  assign custom_icon_id = 'icon'
+  assign custom_icon_color = section.settings.icon_color
+  assign summary_image_id = 'image'
+  assign heading_id = 'heading'
+
+  if section_width == 'regular'
+    assign section_classes = section_classes | append: 'faq--regular'
+  elsif section_width == 'wide'
+    assign section_classes = section_classes | append: ' faq--wide'
+  endif
+
+  if category_card_image_crop == 'square'
+    assign section_classes = section_classes | append: ' faq--image-crop-square'
+  elsif category_card_image_crop == 'circle'
+    assign section_classes = section_classes | append: ' faq--image-crop-circle'
+  elsif category_card_image_crop == 'original'
+    assign section_classes = section_classes | append: ' faq--image-crop-original'
+  endif
+
+  if category_heading_size == 'small'
+    assign section_classes = section_classes | append: ' faq--heading-size-small'
+  elsif category_heading_size == 'medium'
+    assign section_classes = section_classes | append: ' faq--heading-size-medium'
+  elsif category_heading_size == 'large'
+    assign section_classes = section_classes | append: ' faq--heading-size-large'
+  endif
+-%}
+
+{% comment %}Inject @pixelunion/pxs-faq/faq begin{% endcomment %}
+{% comment %}
+  @param category_heading_id {String}
+    The block setting ID for the category heading
+
+  @param category_id {String}
+    The block setting ID for the category
+
+  @param category_image_id {String}
+    The block setting ID for the category image
+
+  @param content_id {String}
+    The block setting ID for the answer/accordion content field
+
+  @param custom_icon_color {Color}
+    The custom icon color
+
+  @param custom_icon_color_alpha {Color}
+    The alpha component of the custom icon color
+
+  @param custom_icon_id {String}
+    The block setting ID for the custom icon
+
+  @param heading_id {String}
+    The block setting ID for the heading
+
+  @param icon {String}
+    The summary icon
+
+  @param section {Object}
+    Section object
+
+  @param section_attributes {String}
+    Space-separated attributes to apply to the section element
+
+  @param section_classes {String}
+    Space-separated classes to apply to the section element
+
+  @param section_heading {String}
+    Section heading
+
+  @param section_subheading {String}
+    Section subheading
+
+  @param show_categories {Boolean}
+    If true, show categories list
+
+  @param show_category_card_id {String}
+    The block setting ID for showing individual category cards
+
+  @param summary_id {String}
+    The block setting ID for the question/summary content
+
+  @param summary_image_id {String}
+    The block setting ID for a custom image
+
+  @param wrapper_attributes {String}
+    Space-separated attributes to apply to the wrapper class
+
+  @param wrapper_classes {String}
+    Space-separated classes to apply to the wrapper class
+{% endcomment %}
+
+{%- liquid
+  assign category_heading_id = category_heading_id | default: nil
+  assign category_id = category_id | default: nil
+  assign category_image_id = category_image_id | default: nil
+  assign content_id = content_id | default: nil
+  assign custom_icon_color = custom_icon_color | default: 'rgba(0,0,0,0)'
+  assign custom_icon_color_alpha = custom_icon_color | color_extract: 'alpha'
+  assign custom_icon_id = custom_icon_id | default: nil
+  assign heading_id = heading_id | default: nil
+  assign icon = icon | default: nil
+  assign section_attributes = section_attributes | default: ''
+  assign section_classes = section_classes | default: ''
+  assign section_heading = section_heading | default: ''
+  assign section_subheading = section_subheading | default: ''
+  assign show_categories = show_categories | default: false
+  assign show_category_card_id = show_category_card_id | default: nil
+  assign summary_id = summary_id | default: nil
+  assign summary_image_id = summary_image_id | default: nil
+  assign wrapper_attributes = wrapper_attributes | default: ''
+  assign wrapper_classes = wrapper_classes | default: ''
+-%}
+
+<script
+  type="application/json"
+  data-section-type="pxs-faq"
+  data-section-id="{{ section.id }}"
+>
+</script>
+
+<section
+  class="
+    faq
+    {{ section_classes }}
+  "
+  {{ section_attributes }}
+  aria-label="{{ section_heading }}"
+  {% if custom_icon_color_alpha != 0 %}
+    style="--faq-custom-icon-color: {{ custom_icon_color }};"
+  {% endif %}
+>
+  {%- if section_heading != blank or section_subheading != blank -%}
+    <div class="faq__section-header section-header">
+      {%- if section_heading != blank -%}
+        <h2 class="faq__section-heading section-header__heading">
+          {{- section_heading | escape -}}
+        </h2>
+      {%- endif -%}
+
+      {%- if section_subheading != blank -%}
+        <div class="faq__section-subheading section-header__subheading">
+          {{- section_subheading -}}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  <div
+    class="
+      faq__section-wrapper
+      section-wrapper
+      {{ wrapper_classes }}
+    "
+    {{ wrapper_attributes }}
+    data-faq
+  >
+    <div class="faq__section-content section-content">
+      {%- if show_categories -%}
+        {%-
+          render 'faq-categories',
+          category_id: category_id,
+          category_heading_id: category_heading_id,
+          show_category_card_id: show_category_card_id,
+          category_image_id: category_image_id,
+        -%}
+      {%- endif -%}
+
+      <div class="faq__items">
+        {%-
+          render 'faq-items',
+          icon: icon,
+          category_id: category_id,
+          summary_image_id: summary_image_id,
+          custom_icon_id: custom_icon_id,
+          heading_id: heading_id,
+          content_id: content_id,
+          summary_id: summary_id,
+        -%}
+      </div>
+    </div>
+  </div>
+</section>
+{% comment %}Inject @pixelunion/pxs-faq/faq end{% endcomment %}
+
+
+{% schema %}
+{
+  "name": "t:sections.faq.name",
+  "class": "shopify-section--faq",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "t:sections.faq.section_width.label",
+      "options": [
+        {
+          "value": "regular",
+          "label": "t:sections.faq.section_width.option_1"
+        },
+        {
+          "value": "wide",
+          "label": "t:sections.faq.section_width.option_2"
+        },
+        {
+          "value": "full-width",
+          "label": "t:sections.faq.section_width.option_3"
+        }
+      ],
+      "default": "regular"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.faq.heading.label",
+      "default": "FAQ"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.faq.header_1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_category_cards",
+      "label": "t:sections.faq.enable_category_cards.label",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "category_card_image_crop",
+      "label": "t:sections.faq.category_card_image_crop.label",
+      "options": [
+        {
+          "value": "original",
+          "label": "t:sections.faq.category_card_image_crop.option_1"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.faq.category_card_image_crop.option_2"
+        },
+        {
+          "value": "circle",
+          "label": "t:sections.faq.category_card_image_crop.option_3"
+        }
+      ],
+      "default": "original"
+    },
+    {
+      "type": "select",
+      "id": "category_heading_size",
+      "label": "t:sections.faq.category_heading_size.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.faq.category_heading_size.option_1"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.faq.category_heading_size.option_2"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.faq.category_heading_size.option_3"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.faq.header_2.content"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "t:sections.faq.icon_color.label",
+      "default": "rgba(0,0,0,0)"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "t:sections.faq.blocks.category.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.faq.blocks.category.heading.label",
+          "default": "Category"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.faq.blocks.category.header_1.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_category_card",
+          "label": "t:sections.faq.blocks.category.show_category_card.label",
+          "default": true
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.faq.blocks.category.image.label",
+          "info": "t:sections.faq.blocks.category.image.info"
+        }
+      ]
+    },
+    {
+      "type": "question",
+      "name": "t:sections.faq.blocks.question.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "t:sections.faq.blocks.question.question.label",
+          "default": "Frequently asked question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "t:sections.faq.blocks.question.answer.label",
+          "default": "<p>Use this text to provide answers for your most commonly asked questions.</p>"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:sections.faq.blocks.question.icon.label",
+          "options": [
+            {
+              "value": "none",
+              "label": "t:sections.faq.blocks.question.icon.option_1"
+            },
+            {
+              "value": "icon-award-trophy",
+              "label": "t:sections.faq.blocks.question.icon.option_2"
+            },
+            {
+              "value": "icon-car",
+              "label": "t:sections.faq.blocks.question.icon.option_3"
+            },
+            {
+              "value": "icon-cell-phone",
+              "label": "t:sections.faq.blocks.question.icon.option_4"
+            },
+            {
+              "value": "icon-chat",
+              "label": "t:sections.faq.blocks.question.icon.option_5"
+            },
+            {
+              "value": "icon-chat-alternate",
+              "label": "t:sections.faq.blocks.question.icon.option_6"
+            },
+            {
+              "value": "icon-credit-card",
+              "label": "t:sections.faq.blocks.question.icon.option_7"
+            },
+            {
+              "value": "icon-delivery",
+              "label": "t:sections.faq.blocks.question.icon.option_8"
+            },
+            {
+              "value": "icon-delivery-cart",
+              "label": "t:sections.faq.blocks.question.icon.option_9"
+            },
+            {
+              "value": "icon-delivery-door",
+              "label": "t:sections.faq.blocks.question.icon.option_10"
+            },
+            {
+              "value": "icon-delivery-handoff",
+              "label": "t:sections.faq.blocks.question.icon.option_11"
+            },
+            {
+              "value": "icon-delivery-package",
+              "label": "t:sections.faq.blocks.question.icon.option_12"
+            },
+            {
+              "value": "icon-discount",
+              "label": "t:sections.faq.blocks.question.icon.option_13"
+            },
+            {
+              "value": "icon-email",
+              "label": "t:sections.faq.blocks.question.icon.option_14"
+            },
+            {
+              "value": "icon-envelope",
+              "label": "t:sections.faq.blocks.question.icon.option_15"
+            },
+            {
+              "value": "icon-gift-card",
+              "label": "t:sections.faq.blocks.question.icon.option_16"
+            },
+            {
+              "value": "icon-heart",
+              "label": "t:sections.faq.blocks.question.icon.option_17"
+            },
+            {
+              "value": "icon-information",
+              "label": "t:sections.faq.blocks.question.icon.option_18"
+            },
+            {
+              "value": "icon-label-tag",
+              "label": "t:sections.faq.blocks.question.icon.option_19"
+            },
+            {
+              "value": "icon-lock",
+              "label": "t:sections.faq.blocks.question.icon.option_20"
+            },
+            {
+              "value": "icon-number-14",
+              "label": "t:sections.faq.blocks.question.icon.option_21"
+            },
+            {
+              "value": "icon-number-24",
+              "label": "t:sections.faq.blocks.question.icon.option_22"
+            },
+            {
+              "value": "icon-number-30",
+              "label": "t:sections.faq.blocks.question.icon.option_23"
+            },
+            {
+              "value": "icon-people",
+              "label": "t:sections.faq.blocks.question.icon.option_24"
+            },
+            {
+              "value": "icon-pin",
+              "label": "t:sections.faq.blocks.question.icon.option_25"
+            },
+            {
+              "value": "icon-question-mark",
+              "label": "t:sections.faq.blocks.question.icon.option_26"
+            },
+            {
+              "value": "icon-rating-five-star",
+              "label": "t:sections.faq.blocks.question.icon.option_27"
+            },
+            {
+              "value": "icon-rating-star",
+              "label": "t:sections.faq.blocks.question.icon.option_28"
+            },
+            {
+              "value": "icon-smile",
+              "label": "t:sections.faq.blocks.question.icon.option_29"
+            },
+            {
+              "value": "icon-store",
+              "label": "t:sections.faq.blocks.question.icon.option_30"
+            },
+            {
+              "value": "icon-tape-measure",
+              "label": "t:sections.faq.blocks.question.icon.option_31"
+            },
+            {
+              "value": "icon-thumbs-up",
+              "label": "t:sections.faq.blocks.question.icon.option_32"
+            },
+            {
+              "value": "icon-transfer",
+              "label": "t:sections.faq.blocks.question.icon.option_33"
+            }
+          ],
+          "default": "none"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.faq.blocks.question.image.label",
+          "info": "t:sections.faq.blocks.question.image.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.faq.presets.name",
+      "category": "t:sections.categories.info_trust",
+      "blocks": [
+        {
+          "type": "category",
+          "settings": {
+            "heading": "Orders and Shipping"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "How long does standard shipping take?",
+            "answer": "<p>Standard shipping takes 5 to 7 business days. Express (2 to 3 days) and overnight options are available at checkout. Orders over $50 ship free.<\/p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Can I order online and pick up in store?",
+            "answer": "<p>Yes. Select \"Pick up in store\" at checkout and choose your nearest location. Most orders are ready within 2 hours.<\/p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "What if my order arrives damaged?",
+            "answer": "<p>Contact us within 7 days of delivery with your order number and a photo. We'll arrange a replacement or refund, no return shipping required.<\/p>"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["*"]
+  }
+}
+
+{% endschema %}

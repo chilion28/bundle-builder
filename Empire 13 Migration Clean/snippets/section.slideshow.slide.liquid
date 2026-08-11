@@ -1,0 +1,384 @@
+{% doc %}
+  Slideshow slide component that handles the rendering of an individual slide.
+  @param {object} block - The slide block object
+  @param {number} block_index - The index of the current block
+  @param {object} section - The parent section object
+  @param {number} total_blocks - Total number of slides
+  @param {object} [background_image] - Main image for the slide
+  @param {object} [mobile_background_image] - Optional mobile-specific image for the slide
+  @param {string} [title] - Heading text for the slide
+  @param {string} [text] - Subheading text for the slide
+  @param {string} [subtitle] - Subtitle text for the slide
+  @param {string} [color] - Text color for the slide content
+  @param {string} [link] - Optional background link for the entire slide
+  @param {string} [text_alignment] - Alignment of text ('left', 'center', 'right')
+  @param {string} [mobile_text_alignment] - Alignment of text for mobile layouts ('none', 'left', 'center', 'right')
+  @param {string} [text_horizontal_position] - Position of text ('left', 'center', 'right')
+  @param {number} [text_width] - Width of the text (40-100%)
+  @param {string} [button_one_label] - Label for the first button
+  @param {string} [button_one_link] - Link for the first button
+  @param {string} [button_one_style] - Style for the first button ('primary', 'secondary')
+  @param {string} [button_two_label] - Label for the second button
+  @param {string} [button_two_link] - Link for the second button
+  @param {string} [button_two_style] - Style for the second button ('primary', 'secondary')
+  @param {boolean} [show_overlay] - If set to true, a colored overlay will be displayed over the slide image
+  @param {string} [overlay_color] - Color of the overlay
+  @param {number} [overlay_opacity] - Opacity of the overlay (1-100%)
+  @param {boolean} [enable_text_background] - If set to true, a background will be displayed behind the text content
+  @param {string} [text_background_color] - Color of the text background
+  @param {number} [text_background_opacity] - Opacity of the text background (1-100%)
+  @param {string} [border_color] - Color of the border around the text content
+  @param {number} [border_width] - Width of the border around the text content (0-20px)
+  @example
+  {% render 'section.slideshow.slide', block: block, block_index: 0, section: section, total_blocks: 5 %}
+{% enddoc %}
+
+{% liquid
+  if block.settings.background_image != blank
+    assign block_slide_image = block.settings.background_image
+  elsif block.settings.image != blank
+    assign block_slide_image = block.settings.image
+  else
+    assign block_slide_image = blank
+  endif
+
+  if block.settings.mobile_background_image != blank
+    assign block_slide_image_mobile = block.settings.mobile_background_image
+  elsif block.settings.mobile_image != blank
+    assign block_slide_image_mobile = block.settings.mobile_image
+  else
+    assign block_slide_image_mobile = blank
+  endif
+
+  assign block_slide_title = block.settings.title | escape
+  assign block_mobile_slide_title = block.settings.mobile_title | escape
+
+  if block.settings.pretext != blank
+    assign block_preheading = block.settings.pretext
+    # Check if richtext or not
+    if block_preheading contains '<p>' and block_preheading contains '</p>'
+      assign block_preheading = block_preheading | replace: '<p>', '' | replace: '</p>', ''
+    endif
+  endif
+
+  if block.settings.mobile_pretext != blank
+    assign block_mobile_preheading = block.settings.mobile_pretext
+    # Check if richtext or not
+    if block_mobile_preheading contains '<p>' and block_mobile_preheading contains '</p>'
+      assign block_mobile_preheading = block_mobile_preheading | replace: '<p>', '' | replace: '</p>', ''
+    endif
+  endif
+
+  if block.settings.text != blank
+    assign block_subheading = block.settings.text
+    # Check if richtext or not
+    if block_subheading contains '<p>' and block_subheading contains '</p>'
+      assign block_subheading = block_subheading | replace: '<p>', '' | replace: '</p>', ''
+    endif
+  elsif block.settings.subtitle != blank
+    assign block_subheading = block.settings.subtitle
+    if block_subheading contains '<p>' and block_subheading contains '</p>'
+      assign block_subheading = block_subheading | replace: '<p>', '' | replace: '</p>', ''
+    endif
+  endif
+
+  if block.settings.mobile_subtitle != blank
+    assign block_mobile_subheading = block.settings.mobile_subtitle
+    # Check if richtext or not
+    if block_mobile_subheading contains '<p>' and block_mobile_subheading contains '</p>'
+      assign block_mobile_subheading = block_mobile_subheading | replace: '<p>', '' | replace: '</p>', ''
+    endif
+  endif
+
+  if block.settings.button_one_label != blank
+    assign block_button_label = block.settings.button_one_label | escape
+  elsif block.settings.button_1 != blank
+    assign block_button_label = block.settings.button_1 | escape
+  else
+    assign block_button_label = blank
+  endif
+
+  if block.settings.button_one_link != blank
+    assign block_button_link = block.settings.button_one_link
+  elsif block.settings.button_1_link != blank
+    assign block_button_link = block.settings.button_1_link
+  else
+    assign block_button_link = blank
+  endif
+
+  if block.settings.button_two_label != blank
+    assign block_button_label_2 = block.settings.button_two_label | escape
+  elsif block.settings.button_2 != blank
+    assign block_button_label_2 = block.settings.button_2 | escape
+  else
+    assign block_button_label_2 = blank
+  endif
+
+  if block.settings.button_two_link != blank
+    assign block_button_link_2 = block.settings.button_two_link
+  elsif block.settings.button_2_link != blank
+    assign block_button_link_2 = block.settings.button_2_link
+  else
+    assign block_button_link_2 = blank
+  endif
+
+  assign block_text_alignment = block.settings.text_alignment
+  assign block_mobile_text_alignment = block.settings.mobile_text_alignment
+
+  if block_mobile_text_alignment == 'none'
+    assign block_effective_mobile_text_alignment = block_text_alignment
+  else
+    assign block_effective_mobile_text_alignment = block_mobile_text_alignment
+  endif
+
+  assign block_text_color = block.settings.color
+  assign block_background_link = block.settings.link
+  assign block_text_horizontal_position = block.settings.text_horizontal_position
+  assign block_text_width = block.settings.text_width
+
+  assign enable_text_background = block.settings.enable_text_background | default: false
+  assign text_background_color = block.settings.background_color
+  assign text_background_opacity = block.settings.background_opacity | default: 0
+  assign border_color = block.settings.border_color
+  assign border_width = block.settings.border_width | default: 0
+
+  assign bg_opacity = 0
+  if text_background_opacity > 0
+    assign bg_opacity = text_background_opacity | times: 0.01
+  endif
+
+  assign loading_attribute = 'lazy'
+  if block_index == 0
+    assign loading_attribute = 'eager'
+  endif
+
+  assign block_crop_images = 'center'
+  if section.settings.slideshow_height == 'original'
+    assign block_crop_images = false
+  endif
+
+  if block.settings.show_overlay
+    assign block_overlay_color = block.settings.overlay_color
+    assign block_overlay_opacity = block.settings.overlay_opacity
+  endif
+
+  if block.settings.button_one_style != blank
+    assign block_button_1_class = 'slideshow-slide__button--' | append: block.settings.button_one_style
+  elsif block.settings.button_1_style != blank
+    assign block_button_1_class = 'slideshow-slide__button--' | append: block.settings.button_1_style
+  endif
+
+  if block.settings.button_two_style != blank
+    assign block_button_2_class = 'slideshow-slide__button--' | append: block.settings.button_two_style
+  elsif block.settings.button_2_style != blank
+    assign block_button_2_class = 'slideshow-slide__button--' | append: block.settings.button_2_style
+  endif
+
+  assign placeholder_number = block_index | modulo: 2 | plus: 1
+  assign placeholder = 'lifestyle-' | append: placeholder_number
+  assign slide_number = block_index | plus: 1
+  assign overlay_opacity = 0
+  if block_overlay_opacity > 0
+    assign overlay_opacity = block_overlay_opacity | times: 0.01
+  endif
+
+  assign slide_counter_label = 'Slide ' | append: slide_number
+  assign slide_counter_translated = 'sections.slideshow.slide_counter' | t: count: slide_number, total: total_blocks
+%}
+
+<div
+  class="slideshow-slide {% if block_slide_image_mobile != blank %}slideshow-slide--mobile{% endif %} {{ block_class }}"
+  aria-label="{% render 'utility.translate', t: slide_counter_translated, fallback: slide_counter_label %}"
+  tabindex="-1"
+  {% if block_text_color != blank %}
+    data-text-color="{{ block_text_color }}"
+  {% endif %}
+  data-slide-index="{{ block_index }}"
+  data-slideshow-slide
+  {{ block.shopify_attributes }}
+>
+  {% if block_background_link != blank %}
+    <a
+      href="{{ block_background_link }}"
+      class="slideshow-slide__background-link"
+      aria-label="{{ block_slide_title }}"
+    >
+  {% endif %}
+
+  <div
+    class="
+      slideshow-slide__image-wrapper
+      {% if block_image_position %}
+        slideshow-slide__image-wrapper--position-{ block_image_position }
+      {% endif %}
+    "
+    data-slide-image-wrapper
+  >
+    {% if block_slide_image != blank %}
+      <img
+        src="{{ block_slide_image | img_url: '2000x' }}"
+        alt="{{ block_slide_image.alt | escape }}"
+        class="slideshow-slide__image slideshow-slide__image--desktop"
+        loading="{{ loading_attribute }}"
+      >
+    {% else %}
+      {{
+        placeholder
+        | placeholder_svg_tag: 'slideshow-slide__image slideshow-slide__image--desktop slideshow-slide__placeholder'
+      }}
+    {% endif %}
+
+    {% if block_slide_image_mobile != blank %}
+      <img
+        src="{{ block_slide_image_mobile | img_url: '800x' }}"
+        alt="{{ block_slide_image_mobile.alt | escape }}"
+        class="slideshow-slide__image slideshow-slide__image--mobile"
+        loading="{{ loading_attribute }}"
+      >
+    {% endif %}
+
+    {% if block.settings.show_overlay and block_overlay_opacity != 0 and block_overlay_color != 'rgba(0,0,0,0)' %}
+      <div
+        class="
+          slideshow-slide__overlay
+          {% if block_overlay_style != blank %}
+            slideshow-slide__overlay--{{ block_overlay_style }}
+          {% endif %}
+        "
+        style="
+          {% if block_overlay_color != blank %}
+            background-color: {{ block_overlay_color }};
+          {% endif %}
+          opacity: {{ overlay_opacity }};
+        "
+      ></div>
+    {% endif %}
+  </div>
+
+  {% if block_background_link != blank %}
+    </a>
+  {% endif %}
+
+  {% if block_text_horizontal_position %}
+    <div
+      class="slideshow-slide__content-wrapper"
+      style="text-align: {{ block_text_horizontal_position }};"
+    >
+  {% endif %}
+
+  <div
+    class="
+      slideshow-slide__content
+      slideshow-slide__content--{{ block.id }}
+      {% if block_text_alignment %}slideshow-slide__content--text-{{ block_text_alignment }}{% endif %}
+      {% if block_effective_mobile_text_alignment %}slideshow-slide__content--mobile-{{ block_effective_mobile_text_alignment }}{% endif %}
+      {% if block_text_horizontal_position %}slideshow-slide__content--position-{{ block_text_horizontal_position }}{% endif %}
+    "
+    style="
+      {% if enable_text_background and text_background_color != blank %}
+        background-color: {% if bg_opacity < 1 %}{{ text_background_color | color_modify: 'alpha', bg_opacity }}{% else %}{{ text_background_color }}{% endif %};
+      {% endif %}
+      {% if enable_text_background and border_width > 0 and border_color != blank %}
+        border: {{ border_width }}px solid {{ border_color }};
+      {% endif %}
+    "
+    data-slide-content
+  >
+    {% if block_background_link != blank %}
+      <a
+        href="{{ block_background_link }}"
+        class="slideshow-slide__content-background-link"
+      ></a>
+    {% endif %}
+
+    <div class="slideshow-slide__content-desktop">
+      {%- if block_preheading != blank -%}
+        <div class="slideshow-slide__preheading">
+          {{ block_preheading }}
+        </div>
+      {%- endif -%}
+
+      {% if block_slide_title != blank %}
+        <h2 class="slideshow-slide__heading slide-element">
+          {{ block_slide_title }}
+        </h2>
+      {% endif %}
+
+      {%- if block_subheading != blank -%}
+        <div class="slideshow-slide__subheading slide-element">
+          {{ block_subheading }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="slideshow-slide__content-mobile">
+      {%- if block_mobile_preheading != blank -%}
+        <div class="slideshow-slide__preheading">
+          {{ block_mobile_preheading }}
+        </div>
+      {%- elsif block_preheading != blank -%}
+        <div class="slideshow-slide__preheading">
+          {{ block_preheading }}
+        </div>
+      {%- endif -%}
+
+      {% if block_mobile_slide_title != blank %}
+        <h2 class="slideshow-slide__heading slide-element">
+          {{ block_mobile_slide_title }}
+        </h2>
+      {% elsif block_slide_title != blank %}
+        <h2 class="slideshow-slide__heading slide-element">
+          {{ block_slide_title }}
+        </h2>
+      {% endif %}
+
+      {%- if block_mobile_subheading != blank -%}
+        <div class="slideshow-slide__subheading slide-element">
+          {{ block_mobile_subheading }}
+        </div>
+      {%- elsif block_subheading != blank -%}
+        <div class="slideshow-slide__subheading slide-element">
+          {{ block_subheading }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {% if block_button_label != blank or block_button_label_2 != blank %}
+      {% if button_wrapper %}
+        <div class="slideshow-slide__button-wrapper">
+      {% endif %}
+
+      {% if block_button_label != blank %}
+        {% if block_button_link != blank %}
+          <a href="{{ block_button_link }}" class="slideshow-slide__button slide-element {{ block_button_1_class }}">
+            {{ block_button_label | escape }}
+          </a>
+        {% else %}
+          <span class="slideshow-slide__button slide-element {{ block_button_1_class }}">
+            {{ block_button_label | escape }}
+          </span>
+        {% endif %}
+      {% endif %}
+
+      {% if block_button_label_2 != blank %}
+        {% if block_button_link_2 != blank %}
+          <a href="{{ block_button_link_2 }}" class="slideshow-slide__button slide-element {{ block_button_2_class }}">
+            {{ block_button_label_2 | escape }}
+          </a>
+        {% else %}
+          <span class="slideshow-slide__button slide-element {{ block_button_2_class }}">
+            {{ block_button_label_2 | escape }}
+          </span>
+        {% endif %}
+      {% endif %}
+
+      {% if button_wrapper %}
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  {% if block_text_horizontal_position %}
+    </div>
+  {% endif %}
+</div>

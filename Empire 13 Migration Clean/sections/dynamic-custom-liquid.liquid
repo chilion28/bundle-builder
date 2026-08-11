@@ -1,0 +1,33 @@
+<script
+  type="application/json"
+  data-section-id="{{ section.id }}"
+  data-section-type="dynamic-custom-liquid"
+>
+</script>
+
+<section class="custom-liquid--container">
+  <div class="rte" data-rte>
+    {{- section.settings.custom_liquid -}}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.custom_liquid.name",
+  "class": "custom-liquid--section",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "t:sections.custom_liquid.custom_liquid.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.custom_liquid.presets.custom_liquid.name",
+      "category": "t:sections.categories.storytelling"
+    }
+  ]
+}
+
+{% endschema %}

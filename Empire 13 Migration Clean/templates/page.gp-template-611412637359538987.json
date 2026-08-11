@@ -1,0 +1,49 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_611413004931564131": {
+      "type": "gp-section-611413004931564131",
+      "settings": {
+        "checksum": "eb9b5b3c29d47d3bc491a121ff0b7d011b3ee0e810a26e54faa3b8eb1e948761_1_1_0_0__1",
+        "gglTP9zeIfb_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/US-License-Plate-Hats.jpg",
+        "gg4l_Y-99Rc_label": "<p>Buy Now</p>",
+        "ggLvSUn4Pm2_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Monogram-Hats-01.jpg",
+        "gg_IAJAtYFT_label": "<p>Buy Now</p>"
+      }
+    },
+    "gp_section_611414366016766829": {
+      "type": "gp-section-611414366016766829",
+      "settings": {
+        "checksum": "ebc1921e23f4c427c4ea8b2346ced5c65288b0e760c3b294691053a465658f09_1_1_0_0__1",
+        "ggmCS13TXeq_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Work-Hats-Category_1.jpg",
+        "ggNl6uxfST0_label": "<p>Buy Now</p>"
+      }
+    },
+    "gp_section_611427213421576723": {
+      "type": "gp-section-611427213421576723",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "22feceda47cd03fbdf00bf1c349d99b2d9bc8dd19afa5f27f336c351447b470b_1_1_0_0__1",
+        "ggZG3ihIl_5_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Bandido-Landing-Page-New-Colorway.jpg"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_611427213421576723",
+    "gp_section_611413004931564131",
+    "gp_section_611414366016766829"
+  ]
+}

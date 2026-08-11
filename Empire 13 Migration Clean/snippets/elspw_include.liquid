@@ -1,0 +1,7 @@
+{% if shop.metafields.elspw['settings'].value.theme_app_extensions_enabled != 1 %}
+  {% if template contains 'product' %}
+    {% include 'elspw_product' %}
+  {% else %}
+    {% include 'elspw_cart' %}
+  {% endif %}
+{% endif %}

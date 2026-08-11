@@ -1,0 +1,139 @@
+
+
+.cart__discounts {
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+/* Cart page layout */
+@media only screen and (min-width: 769px) {
+  .cart__page {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .cart__page-col:first-child {
+    flex: 1 1 65%;
+    padding-right: 100px;
+  }
+
+  .cart__page-col:last-child {
+    --z-index-overlay: -1;
+    flex: 0 1 35%;
+    align-self: flex-start;
+    position: sticky;
+    top: 130px;
+    padding: 30px;
+
+    &:after {
+      background-color: var(--root-color-primary);
+      opacity: 0.03;
+    }
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .medium-up--overlay::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: var(--z-index-overlay, auto);
+  }
+}
+
+.cart__item-sub {
+  flex: 1 1 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart__item-row {
+  margin-bottom: 20px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.cart__item-row.cart-recommendations {
+  margin-bottom: 20px;
+}
+
+.cart__item-row--footer {
+  padding: 0 60px;
+}
+
+.cart__checkout,
+.cart__continue {
+  width: 100%;
+}
+
+/* Cart drawer popover */
+.site-header__cart {
+  right: 0;
+
+  @media only screen and (min-width: 769px) {
+    max-width: 450px;
+  }
+}
+
+.cart__checkout-wrapper {
+  --button-width: 100%;
+
+  & .additional-checkout-buttons,
+  & .cart__continue {
+    margin-top: 12px;
+  }
+}
+
+.site-header__cart .additional-checkout-buttons {
+  margin: 10px 0;
+
+  & [data-shopify-buttoncontainer] {
+    justify-content: center;
+
+    & > * {
+      height: auto !important;
+    }
+  }
+}
+
+/*Match additional cart button styles to theme*/
+.additional-checkout-buttons div[role='button'] {
+  border-radius: var(--button-radius) !important;
+}
+
+.cart__discount {
+  color: var(--color-text-savings);
+}
+
+.cart__item--subtotal {
+  font-weight: var(--heading-font-weight);
+  font-size: calc(var(--body-md-font-size) + 2px);
+}
+
+.cart__terms {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/*PayPal button has unhelpful z-index*/
+iframe.zoid-component-frame {
+  z-index: 1 !important;
+}
+
+/*Override header drawer general styles for cart drawer*/
+.site-header__cart {
+  padding: 0;
+  overflow: hidden;
+}

@@ -1,0 +1,471 @@
+/*
+  -------------------------------------
+  Slideshow
+  -------------------------------------
+*/
+
+/* TODO: Refactor to components */
+
+.slideshow-wrapper {
+  position: relative;
+}
+
+/*Pause button (focusable by keyboard only)*/
+.slideshow__pause:focus {
+  clip: auto;
+  width: auto;
+  height: auto;
+  margin: 0;
+  color: var(--color-button-primary-text);
+  background-color: var(--color-button-primary);
+  padding: 10px;
+  z-index: 10000;
+  transition: none;
+
+  .video-is-playing & {
+    display: none;
+  }
+}
+
+.slideshow__pause-stop {
+  display: block;
+
+  .is-paused & {
+    display: none;
+  }
+}
+
+.slideshow__pause-play {
+  display: none;
+
+  .is-paused & {
+    display: block;
+  }
+}
+
+.slideshow__slide {
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  &:first-child {
+    display: block;
+  }
+
+  .flickity-slider & {
+    display: block;
+  }
+
+  .hero--padded & {
+    border-radius: var(--roundness);
+    overflow: hidden;
+  }
+}
+
+/*
+  -------------------------------------
+  Hero Elements
+  -------------------------------------
+*/
+
+:root {
+  --z-index-hero-image: 1;
+  --z-index-hero-video: 2;
+  --z-index-hero-image-overlay: 3;
+  --z-index-hero-text: 4;
+  --slideshow-image-animation-amount: 200px;
+  --slideshow-image-animation-speed: 0.5s;
+}
+
+.hero--padded {
+  margin-top: var(--page-width-padding);
+  margin-bottom: var(--page-width-padding);
+
+  /*Required so box-shadow on .main-content doesn't appear
+  when this is the first section*/
+  .index-section--hero:first-child & {
+    margin-top: 0;
+    padding-top: var(--page-width-padding);
+  }
+}
+
+.hero {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--color-secondary) var(--shade-12), var(--color-primary));
+  color: #fff;
+
+  &.loaded {
+    background-color: transparent;
+    transition: background-color 0.2s ease 0.3s;
+  }
+
+  .hero--padded & {
+    border-radius: var(--roundness);
+    & .hero__media {
+      overflow: hidden;
+      border-radius: var(--roundness);
+    }
+  }
+}
+
+.hero__image-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.hero__image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: var(--z-index-hero-image);
+  object-fit: cover;
+}
+
+.hero__slide-link {
+  display: block;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: calc(var(--z-index-hero-text) + 1);
+
+  &:hover {
+    & ~ .hero__text-wrap .btn:not(.btn--secondary):not(.btn--inverse) {
+      background: var(--color-button-primary-light);
+      transition-delay: 0.25s;
+    }
+  }
+}
+
+.hero__text-wrap {
+  position: relative;
+  height: 100%;
+
+  .video-interactable & {
+    pointer-events: none;
+  }
+
+  & .page-width {
+    display: table;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.hero__text-content {
+  position: relative;
+  padding: calc(var(--gutter) / 2) 0;
+  z-index: var(--z-index-hero-text);
+  @media only screen and (min-width: 769px) {
+    padding: calc(var(--gutter) * 1.5) 0;
+  }
+
+  [data-dots='true'] & {
+    padding-bottom: 40px;
+  }
+}
+
+.hero__text-shadow {
+  --z-index-overlay: -1;
+  position: relative;
+  display: inline-block;
+  text-shadow: 0 3px 7px rgb(0, 0, 0, 0.15);
+
+  &:after {
+    background: radial-gradient(rgba(0, 0, 0, 0.3) 0%, transparent 60%);
+    margin: -100px -200px -100px -200px;
+  }
+
+  .horizontal-left & {
+    max-width: 500px;
+  }
+
+  .horizontal-right & {
+    max-width: 500px;
+    text-align: left;
+  }
+
+  @media only screen and (max-width: 768px) {
+    .horizontal-left & {
+      max-width: 85%;
+    }
+
+    .horizontal-right & {
+      max-width: 85%;
+    }
+  }
+}
+
+.hero__top-subtitle,
+.hero__title,
+.hero__subtitle {
+  margin-bottom: 10px;
+
+  @media only screen and (min-width: 769px) {
+    margin-bottom: 15px;
+  }
+}
+
+.hero__top-subtitle {
+  letter-spacing: 0.07em;
+  font-size: 1.1em;
+}
+
+.hero__title {
+  display: block;
+
+  & p {
+    margin-bottom: 0;
+  }
+}
+
+.hero__subtext {
+  margin-top: 20px;
+}
+
+.hero__subtitle {
+  display: block;
+  vertical-align: middle;
+
+  @media only screen and (min-width: 769px) {
+    font-size: 1.3em;
+  }
+}
+
+.hero__link {
+  position: relative;
+  display: block;
+
+  .video-interactable & {
+    pointer-events: auto;
+  }
+
+  & .btn {
+    margin: 4px 15px 15px 0;
+
+    @media only screen and (max-width: 768px) {
+      margin: 4px 10px 6px 0;
+
+      .small--text-center & {
+        margin: 4px 10px 6px;
+      }
+    }
+  }
+
+  /*Play icon in button*/
+  & .btn .icon-play {
+    position: relative;
+    top: -2px;
+    margin-right: 5px;
+  }
+
+  & .btn--inverse {
+    color: currentColor;
+    border-color: currentColor;
+  }
+}
+
+/*Text alignment*/
+.hero__text-content {
+  display: table-cell;
+
+  & .hero__link {
+    margin-top: calc(var(--gutter) / 4);
+
+    @media only screen and (min-width: 769px) {
+      margin-top: calc(var(--gutter) / 2);
+    }
+  }
+
+  &.horizontal-left {
+    text-align: left;
+  }
+
+  &.horizontal-center {
+    text-align: center;
+  }
+
+  &.horizontal-right {
+    text-align: right;
+  }
+
+  &.vertical-center {
+    vertical-align: middle;
+  }
+
+  &.vertical-bottom {
+    vertical-align: bottom;
+  }
+}
+
+/*Top padding adjustment to account for overlaid header*/
+.overlaid-header .index-section--hero:first-child .hero__text-content.vertical-center {
+  padding-top: 50px;
+  @media only screen and (min-width: 769px) {
+    padding-top: 90px;
+  }
+}
+
+.hero[data-natural] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/*Hero and slideshow shared starting animation*/
+.hero .slideshow__slide {
+  /*Default positioning pre-animation*/
+  & .hero__animation-contents {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: none;
+
+    .no-js & {
+      opacity: 1;
+    }
+
+    @media only screen and (max-width: 768px) {
+      transform: translateY(7px);
+    }
+  }
+
+  & .hero__text-shadow:after {
+    opacity: 0;
+  }
+
+  /*Override lazyload style*/
+  &:not(.animate-out) .hero__image {
+    opacity: 0;
+    transition: none;
+  }
+
+  & .hero__link .button {
+    opacity: 0;
+    transition: none;
+
+    .no-js & {
+      opacity: 1;
+    }
+  }
+
+  /*Disable animations when not active or fading out*/
+  & .hero__image-wrapper,
+  & .hero__text-wrap {
+    transform: scale(1.15);
+    opacity: 0;
+    transition: none;
+  }
+
+  & .hero__sidebyside {
+    opacity: 0;
+    transition: none;
+
+    .no-js & {
+      opacity: 1;
+    }
+  }
+
+  & .hero__sidebyside-image .hero__image {
+    opacity: 0;
+    transform: scale(1.15);
+    transition: none;
+
+    .no-js & {
+      opacity: 1;
+    }
+  }
+}
+
+/*Hero and slideshow shared active animation */
+.hero.loaded .slideshow__slide.is-selected {
+  & .hero__animation-contents {
+    opacity: 1;
+    transform: translateY(0px);
+    transition:
+      opacity 0.4s ease,
+      transform 0.6s cubic-bezier(0.26, 0.54, 0.32, 1);
+  }
+
+  & .hero__link .button {
+    opacity: 1;
+    transition: opacity 1s ease;
+  }
+
+  & .hero__text-shadow:after {
+    opacity: 1;
+    transition: all 0.4s ease 0.2s;
+  }
+
+  & .hero__title .hero__animation-contents {
+    transition-delay: 0.2s;
+  }
+
+  & .hero__subtitle .hero__animation-contents {
+    transition-delay: 0.4s;
+  }
+
+  & .hero__link .button {
+    transition-delay: 0.6s;
+  }
+
+  & .hero__link .button:nth-child(2) {
+    transition-delay: 0.8s;
+  }
+
+  & .hero__link .button:not(:first-child) {
+    margin-inline-start: var(--size-2-5);
+  }
+
+  & .hero__media,
+  & .hero__image,
+  & .hero__image--svg {
+    opacity: 1;
+    transition: none;
+  }
+
+  & .hero__image-wrapper,
+  & .hero__text-wrap {
+    opacity: 1;
+    transform: scale(1);
+    transition:
+      transform 1s cubic-bezier(0.18, 0.63, 0.25, 1),
+      opacity 0.7s ease;
+  }
+
+  & .hero__sidebyside {
+    opacity: 1;
+    transition: opacity calc(var(--slideshow-image-animation-speed) + 0.2s) ease;
+  }
+
+  & .hero__sidebyside-image .hero__image {
+    opacity: 1;
+    transform: scale(1);
+    animation: none;
+    transition: transform calc(var(--slideshow-image-animation-speed) + 0.2s) cubic-bezier(0.13, 0.55, 0.25, 1);
+  }
+}
+
+/*Slideshow fading out animation*/
+.hero .slideshow__slide.animate-out {
+  & .hero__animation-contents {
+    opacity: 0;
+    transition: none;
+  }
+
+  & .hero__image-wrapper,
+  & .hero__text-wrap {
+    opacity: 0;
+    transform: scale(1);
+    transition:
+      transform var(--slideshow-image-animation-speed) ease-in 0.05s,
+      opacity var(--slideshow-image-animation-speed) ease-in 0.05s;
+  }
+}

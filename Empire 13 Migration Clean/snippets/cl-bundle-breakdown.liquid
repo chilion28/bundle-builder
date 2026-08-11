@@ -1,0 +1,51 @@
+{%- comment -%}
+  Cosmetic bundle breakdown for the CART PAGE, styled to match Shopify checkout:
+  parent personalization + a collapsible "Show/Hide N items" accordion revealing
+  the component hats (from custom.bundle_components) as an indented tree.
+  Display-only — the cart line stays a single $60 item; checkout does the real
+  expansion. Usage: {% render 'cl-bundle-breakdown', item: item %}
+{%- endcomment -%}
+
+{%- assign bundle_components = item.product.metafields.custom.bundle_components.value -%}
+{%- if bundle_components and bundle_components.size > 0 -%}
+  <div class="cl-bd">
+    {%- for property in item.properties -%}
+      {%- assign property_name = property.first -%}
+      {%- assign property_value = property.last -%}
+      {%- assign property_prefix = property_name | slice: 0 -%}
+      {%- if property_value != blank and property_prefix != '_' -%}
+        <div class="cl-bd__prop">{{ property_name }}: {{ property_value }}</div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <button type="button" class="cl-bd__toggle" data-cl-bd-toggle aria-expanded="false">
+      <span class="cl-bd__toggle-text">Show {{ bundle_components.size }} items</span>
+      <svg class="cl-bd__chevron" width="14" height="14" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M5 7l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <ul class="cl-bd__list" data-cl-bd-list role="list" hidden>
+      {%- for v in bundle_components -%}
+        {%- assign img = v.image | default: v.product.featured_image -%}
+        <li class="cl-bd__item">
+          {%- if img -%}
+            <img class="cl-bd__img" src="{{ img | image_url: width: 96 }}" alt="" width="48" height="48" loading="lazy">
+          {%- endif -%}
+          <div class="cl-bd__info">
+            <span class="cl-bd__name">1 &times; {{ v.product.title }}</span>
+            <span class="cl-bd__variant">{{ v.title }}</span>
+            {%- for property in item.properties -%}
+              {%- assign property_name = property.first -%}
+              {%- assign property_value = property.last -%}
+              {%- assign property_prefix = property_name | slice: 0 -%}
+              {%- if property_value != blank and property_prefix != '_' -%}
+                <span class="cl-bd__sub">{{ property_name }}: {{ property_value }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

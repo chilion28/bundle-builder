@@ -1,0 +1,53 @@
+<div gp-el-wrapper style="--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--d:block;--d-mobile:block;--d-tablet:block;--mb:24px;--op:100%;--pageType:GP_PRODUCT;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px" class="gDjKVWCVHA ">
+      
+      {% assign app_blocks = section.blocks | where: "type", "@app" %}
+
+      {% assign filtered_block_ids_string = '' %}
+
+      {% for block in app_blocks %}
+        {% unless block.id contains 'gp_app' %}
+          {% unless filtered_block_ids_string == '' %}
+            {% assign filtered_block_ids_string = filtered_block_ids_string | append: ',' %}
+          {% endunless %}
+          {% assign filtered_block_ids_string = filtered_block_ids_string | append: block.id %}
+        {% endunless %}
+      {% endfor %}
+
+      {% assign filtered_block_ids = filtered_block_ids_string | split: ',' %}
+
+      {% if filtered_block_ids[0] %}
+        <div
+          class="third-party-slot gp-w-full"
+        >
+          {% for block in app_blocks %}
+            {% for filtered_block_id in filtered_block_ids %}
+              {% if block.type == '@app' and forloop.index0 == 0 and block.id == filtered_block_id %}
+                {% render block %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% elsif request.design_mode or request.visual_preview_mode %}
+          
+      <div
+        data-uid=gDjKVWCVHA
+        data-index=0
+        class="third-party-slot gp-bg-[#f4f4f4] gp-border gp-border-[#D6D6D6] gp-flex gp-h-[56px] gp-w-full gp-items-center gp-justify-center gp-border-box"
+      >
+        <div class="gp-h-[28px] gp-overflow-hidden gp-whitespace-nowrap gp-flex gp-justify-center gp-items-center gp-gap-2" style="[object Object]" >
+          <span>
+  <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M19.6475 5.16194C19.6416 5.1148 19.6197 5.0713 19.5857 5.03911C19.5516 5.00692 19.5076 4.9881 19.4614 4.98597C19.3835 4.98597 17.8469 4.95397 17.8469 4.95397C17.8469 4.95397 16.5588 3.67419 16.4342 3.5311C16.3104 3.40312 16.0619 3.43512 15.9684 3.46711L15.3166 3.67508C15.2361 3.40491 15.1323 3.14259 15.0067 2.89121C14.5566 1.99536 13.8727 1.51544 13.0659 1.51544C13.0044 1.51544 12.9577 1.51544 12.8954 1.53144C12.8642 1.49945 12.8486 1.46745 12.8175 1.45145C12.4608 1.06752 12.0107 0.875552 11.467 0.891549C10.4282 0.923543 9.38772 1.70741 8.53419 3.08318C7.94467 4.05901 7.49453 5.27392 7.3543 6.21776C6.15969 6.6017 5.32087 6.87365 5.29057 6.87365C4.68461 7.06562 4.66903 7.08161 4.59199 7.67351C4.56082 8.12144 2.97754 20.7415 2.97754 20.7415L16.2636 23.1091L22.022 21.6374C22.0064 21.6374 19.6631 5.27392 19.6475 5.16194ZM14.6492 3.89904C14.3062 4.00572 13.9648 4.11772 13.6251 4.23498C13.6251 3.69108 13.5472 2.92321 13.3143 2.28331C14.1064 2.41129 14.4942 3.33914 14.6492 3.89904ZM12.9265 4.44206C12.2279 4.66602 11.4679 4.90598 10.707 5.14594C10.9243 4.29808 11.3277 3.46623 11.8245 2.90632C12.033 2.66965 12.2863 2.47913 12.569 2.34641C12.8806 2.9712 12.9421 3.85105 12.9265 4.44206ZM11.4982 1.61143C11.7466 1.61143 11.9483 1.65942 12.1197 1.7874C11.8127 1.95192 11.5387 2.17444 11.3121 2.44329C10.6455 3.17916 10.1331 4.31408 9.93135 5.4179C9.29423 5.62586 8.67356 5.81783 8.11521 5.9938C8.48744 4.25009 9.89933 1.65942 11.4982 1.61143Z" fill="#95BF47"/>
+    <path d="M19.4652 4.94733C19.3856 4.94733 17.816 4.91527 17.816 4.91527C17.816 4.91527 16.4986 3.63266 16.3721 3.48837C16.3266 3.43975 16.264 3.41098 16.1978 3.4082V23.1096L22.0833 21.6346L19.6714 5.12369C19.6404 5.01147 19.5448 4.94733 19.4652 4.94733Z" fill="#5E8E3E"/>
+    <path d="M13.5575 8.51577L12.8029 10.8908C12.8029 10.8908 11.9602 10.5663 10.9599 10.6253C9.48595 10.6991 9.48595 11.4809 9.48595 11.6727C9.57404 12.7348 12.89 12.9709 13.0828 15.4631C13.2238 17.4251 11.8545 18.7675 9.85396 18.8708C7.46778 18.9733 6.15137 17.7939 6.15137 17.7939L6.66032 15.9794C6.66032 15.9794 7.99435 16.8203 9.0465 16.7613C9.73162 16.7318 9.9949 16.245 9.95967 15.9204C9.85396 14.5337 7.15165 14.6223 6.97645 12.3365C6.83551 10.4188 8.32712 8.48626 11.6265 8.30924C12.9076 8.23548 13.5575 8.51577 13.5575 8.51577Z" fill="white"/>
+  </svg>
+</span>
+          <div class="gp-font-[Inter] gp-text-[14px] gp-text-[#212121] gp-font-semibold gp-leading-[24px]">Shopify App</div>
+        </div>
+      </div>
+    
+      {% else %}
+        <div class="gp-hidden"></div>
+      {% endif %}
+    
+      </div>

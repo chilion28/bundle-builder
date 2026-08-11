@@ -1,0 +1,19 @@
+{%- liquid
+  # First we load primitives tokens that convert static values into CSS variables
+  render 'head.styles.primitives'
+
+  # Then we load global design tokens that control styles across components
+  render 'head.styles.tokens'
+
+  # Style components that set tokens to theme editor settings
+  # render 'head.styles.settings-font-face'
+  render 'head.styles.settings-font-scales'
+  render 'head.styles.settings-color'
+  # render 'head.styles.settings-elements'
+  render 'head.styles.legacy-settings-color'
+  render 'head.styles.legacy-settings-font-face'
+
+  # Then we load utilities that control styles across components
+  # render 'head.styles.utilities'
+  render 'head.styles.empire-legacy-utilities'
+-%}

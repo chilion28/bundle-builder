@@ -1,0 +1,92 @@
+{%- comment -%}
+  cl-ai-prompt-guide — standalone, self-contained "copy this prompt into your AI
+  image generator" box. Drop it ANYWHERE, including a GemPages Liquid element:
+
+      {% render 'cl-ai-prompt-guide' %}
+
+  No dependency on cl-ai-hat.css / cl-ai-hat.js. Styles are inlined and scoped to
+  .cl-ai-pg with two-class selectors so a page-builder host (GemPages .gps
+  preflight, e.g. `.gps button{…}`) can't override them. Copy uses a single
+  delegated, guard-flagged listener so multiple instances don't double-bind.
+
+  Optional overrides:
+    {% render 'cl-ai-prompt-guide', heading: '…', hint: '…', prompt_text: '…' %}
+{%- endcomment -%}
+
+<div class="cl-ai-pg" data-cl-ai-pg>
+  <style>
+    .cl-ai-pg{max-width:720px;margin:0 auto;font:15px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1a1f26;text-align:left}
+    .cl-ai-pg *{box-sizing:border-box}
+    .cl-ai-pg .cl-ai-pg__head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px;flex-wrap:wrap}
+    .cl-ai-pg .cl-ai-pg__label{font-size:13.5px;font-weight:700;color:#3f5163;display:flex;align-items:center;gap:7px;margin:0}
+    .cl-ai-pg .cl-ai-pg__mark{color:#00a0ea;font-size:16px;line-height:1}
+    .cl-ai-pg .cl-ai-pg__copy{display:inline-flex;align-items:center;gap:7px;background:#00a0ea;color:#fff;border:0;border-radius:8px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1;transition:.15s}
+    .cl-ai-pg .cl-ai-pg__copy:hover{filter:brightness(.94)}
+    .cl-ai-pg .cl-ai-pg__copy.is-done{background:#1a7f45}
+    .cl-ai-pg .cl-ai-pg__box{margin:0;white-space:pre-wrap;word-break:break-word;background:#f7f9fb;border:1.5px solid #e5e7eb;border-radius:10px;padding:16px;font:13.5px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#1a1f26}
+    .cl-ai-pg .cl-ai-pg__hint{margin:9px 2px 0;font-size:12.5px;color:#6b7280;font-style:italic}
+  </style>
+
+  <div class="cl-ai-pg__head">
+    <span class="cl-ai-pg__label"><span class="cl-ai-pg__mark" aria-hidden="true">◍</span>{{ heading | default: 'Copy this prompt into your favorite AI image generator (ChatGPT, Gemini, etc.)' }}</span>
+    <button type="button" class="cl-ai-pg__copy" data-cl-ai-pg-copy><span data-cl-ai-pg-copy-label>COPY PROMPT</span> ⧉</button>
+  </div>
+
+  <pre class="cl-ai-pg__box" data-cl-ai-pg-text>{{ prompt_text | default: 'Create artwork for a custom patch.
+
+IMPORTANT — image size:
+Make a WIDE LANDSCAPE image, about 1792 x 1024 pixels (roughly 16:9).
+Fill the ENTIRE rectangle, edge to edge. Do NOT make a square image.
+
+Make a normal, full-bleed RECTANGULAR image (like a poster or photo).
+It is NOT a badge, sticker, or shaped patch — do not draw the patch outline.
+The artwork must completely fill the whole rectangle, edge to edge.
+DO NOT include:
+- Any text, words, letters, numbers, titles, or captions
+- A hexagon, circle, oval, or any patch/badge shape or outline
+- Stitching
+- Embroidery texture
+- Leather texture
+- Borders
+- Mockups
+- Shadows
+- White frames or empty margins
+
+Keep the main subject centered.
+Leave a 10% safe margin.
+Use bold shapes and strong contrast.
+Avoid tiny details.
+Now create:' }}</pre>
+
+  <p class="cl-ai-pg__hint">↳ {{ hint | default: 'Add your idea after “Now create:”, generate, then upload the result above.' }}</p>
+
+  <script>
+  (function () {
+    if (window.__clAiPgInit) return;   // one delegated listener for all instances
+    window.__clAiPgInit = true;
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('[data-cl-ai-pg-copy]');
+      if (!btn) return;
+      var root = btn.closest('[data-cl-ai-pg]'); if (!root) return;
+      var box = root.querySelector('[data-cl-ai-pg-text]');
+      var lbl = root.querySelector('[data-cl-ai-pg-copy-label]');
+      var text = box ? box.textContent : '';
+      var done = function () {
+        if (lbl) lbl.textContent = 'COPIED!';
+        btn.classList.add('is-done');
+        setTimeout(function () { if (lbl) lbl.textContent = 'COPY PROMPT'; btn.classList.remove('is-done'); }, 1800);
+      };
+      var fallback = function () {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        try { document.execCommand('copy'); } catch (err) { /* ignore */ }
+        document.body.removeChild(ta); done();
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+    });
+  })();
+  </script>
+</div>

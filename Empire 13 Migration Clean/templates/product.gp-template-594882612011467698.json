@@ -1,0 +1,77 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_594882612078576562": {
+      "settings": {
+        "checksum": "e29062333a8fb1fa466bc59df1765dc2066d533b9063d834d5868b5782fc60ff_1_1_0_0__1",
+        "ggoGHXJPpo3_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Image-Patch-Steps_70a8a6d3-fdb6-4228-a6e6-74a4f360f73f.jpg",
+        "section_preload": "true"
+      },
+      "type": "gp-section-594882612078576562"
+    },
+    "gp_section_594882612078642098": {
+      "settings": {
+        "checksum": "1cdd21e902e9fe71adb8dfdc20bed3e7ea75c2765efbdb00bc2230da896d286e_1_1_0_0__1",
+        "ggkzck7DtnL_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggkzck7DtnL_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Car-Image-Hat-Home-Banner-MOBILE.jpg"
+      },
+      "type": "gp-section-594882612078642098"
+    },
+    "gp_section_594882612078707634": {
+      "settings": {
+        "checksum": "bff0adcdfee394b1ca335f9987d07a73f112f9bc3fee41da53ff53c5552b7dee_1_1_0_0__1"
+      },
+      "type": "gp-section-594882612078707634"
+    },
+    "gp_section_594882612078773170": {
+      "settings": {
+        "checksum": "6a86cde51e8213e9ec6d0110c8d496e3f99ae4fadfbd751e5d8f9ac475452ad7_1_1_0_0__1",
+        "gg-c7_cDBux_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "gg-c7_cDBux_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Image_Patch_Steps_05_1200x-100.jpg",
+        "gg1OMh94trk_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Product-Page-baner-01.jpg",
+        "gg1OMh94trk_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/PET-Product-Page-baners-4.jpg",
+        "ggC8ElxlQ8m_text": "<p>2,500+ Verified Reviews!</p>",
+        "ggDtZxiW65K_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggDtZxiW65K_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Image_Patch_Steps_03_1200x-100.jpg",
+        "ggT_YiG1SOj_text": "Quantity",
+        "ggX8uHwcsqO_text": "<p><strong>Select Your Hat</strong></p>",
+        "gg_AsLbmc-O_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Product-Page-baner-02.jpg",
+        "ggelfIBzvLX_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggelfIBzvLX_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Image_Patch_Steps_01_1200x-100.jpg",
+        "ggeypHYfEgM_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggeypHYfEgM_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Image_Patch_Steps_04_1200x-100.jpg",
+        "gggDytWQF0y_text": "<p><strong>•&nbsp;Trucker:</strong>&nbsp;Breathable mesh back, mid profile, snap closure</p><p><strong>• Snapback:</strong>&nbsp;Flat brim, high crown, adjustable snap—one size</p><p><strong>• Pro Five:</strong>&nbsp;5-panel A-frame; water-resistant; laser-cut vents; adjustable fit</p>",
+        "ggooUDdSnrl_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggooUDdSnrl_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Image_Patch_Steps_02_1200x-100.jpg",
+        "ggoxTSXX0eQ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Product-Page-baner-03.jpg",
+        "ggyqi1b_OGF_errorMessage": "Cannot add product to cart",
+        "ggyqi1b_OGF_label": "ADD TO CART",
+        "ggyqi1b_OGF_outOfStockLabel": "Out of stock",
+        "ggyqi1b_OGF_successMessage": "Add product to cart successfully",
+        "ggyqi1b_OGF_unavailableLabel": "Unavailable"
+      },
+      "type": "gp-section-594882612078773170"
+    },
+    "gp_section_594895934379262737": {
+      "settings": {
+        "checksum": "a9207082a7e86258c50720757ac255703f225cb8e18a020d3e83d0672321871f_1_1_0_0__1"
+      },
+      "type": "gp-section-594895934379262737"
+    }
+  },
+  "order": [
+    "gp_section_594882612078576562",
+    "gp_section_594882612078642098",
+    "gp_section_594882612078773170",
+    "gp_section_594895934379262737",
+    "gp_section_594882612078707634"
+  ]
+}

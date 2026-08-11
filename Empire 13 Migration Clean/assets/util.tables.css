@@ -1,0 +1,23 @@
+table {
+  width: 100%;
+  border-spacing: 1px;
+  position: relative;
+  border: 0 none;
+}
+
+td,
+th {
+  border: 0 none;
+  text-align: left;
+  padding: 10px 15px;
+  background: var(--root-color-secondary);
+
+  html[dir='rtl'] & {
+    text-align: right;
+  }
+}
+
+th,
+.table__title {
+  font-weight: var(--heading-font-weight);
+}

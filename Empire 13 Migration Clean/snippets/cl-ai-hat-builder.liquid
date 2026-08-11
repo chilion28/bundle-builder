@@ -1,0 +1,455 @@
+{%- comment -%}
+  cl-ai-hat-builder — Steps 2–4 of the Create-Your-AI-Hat flow.
+  Reusable: rendered by sections/cl-ai-hat.liquid, and safe to drop into a
+  GemPages custom-code block (it loads its own CSS/JS).
+
+  Params:
+    cta_label     — add-to-cart button label
+    price_display — product price in cents (for the button)
+
+  Options model (see memory [[pack-builder-project]] conventions):
+    · Style + Color  → real Shopify variants (option names matched case-insensitively)
+    · Patch Shape / Custom Text / Artwork URL / Quality Score → line-item properties
+  If the product has no matching Style/Color options (e.g. not built yet), we fall
+  back to the mockup defaults and the JS resolves the first available variant.
+{%- endcomment -%}
+
+{{ 'cl-ai-hat.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} Locate Style / Color options on the product {%- endcomment -%}
+{%- assign style_opt = null -%}
+{%- assign color_opt = null -%}
+{%- for opt in product.options_with_values -%}
+  {%- assign dn = opt.name | downcase -%}
+  {%- if dn contains 'style' -%}{%- assign style_opt = opt -%}{%- endif -%}
+  {%- if dn contains 'color' or dn contains 'colour' -%}{%- assign color_opt = opt -%}{%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Patch shapes → real frame PNGs in assets/ (transparent windows) {%- endcomment -%}
+{%- comment -%} `shapes` param lets a product override the patch shapes (e.g. a
+  single-shape product like the pendant passes shapes:'Pendant'). Default = the hat's
+  four. `show_variants` (default true) toggles the Style/Colour/quantity grid; false =
+  a single-variant product (pendant) → the JS uses SIMPLE add. {%- endcomment -%}
+{%- assign shape_list = shapes | default: 'Rectangle,Square,Circle,Hexagon' | split: ',' -%}
+
+<div class="cl-ai cl-ai-b{% if show_prompt == false %} cl-ai-b--upload{% endif %}{% if shape_list.size == 1 %} cl-ai-b--single-shape{% endif %}" data-cl-ai-builder
+     data-cl-ai-default-shape="{{ shape_list[0] }}"
+     data-cl-ai-file-prefix="{{ file_prefix | default: 'image-hat' }}"
+     data-patch-font="{{ 'AkzidenzGrotesk-Black.woff2' | asset_url }}">
+
+  {%- comment -%} ========== LEFT COLUMN — Step 1 prompt + Step 2 upload ========== {%- endcomment -%}
+  <div class="cl-ai-b__left">
+    {%- comment -%} show_prompt:false (non-AI upload template) drops Step 1 and
+      renumbers the rest. {%- endcomment -%}
+    {%- if show_prompt == false -%}{%- assign n_upload = 1 -%}{%- assign n_qc = 2 -%}{%- assign n_cust = 3 -%}
+    {%- else -%}{%- assign n_upload = 2 -%}{%- assign n_qc = 3 -%}{%- assign n_cust = 4 -%}{%- endif -%}
+
+    {%- comment -%} Live patch preview — captured once, then placed in the RIGHT
+      column (AI template) or here in the LEFT column under Step 1 (upload template,
+      show_prompt:false), which lets the right column's Customize shift up. {%- endcomment -%}
+    {%- capture cl_preview_block -%}
+    <div class="cl-ai__step cl-ai-b__preview">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
+        <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>
+      </div>
+      {%- comment -%} Frame/mask images: default to the theme-asset convention
+        (cl-patch-<shape>.png / cl-patch-mask-<shape>.png). A config-driven product
+        (single shape) may override the FIRST shape's frame/mask via `frame_url` /
+        `mask_url` (e.g. Shopify Files URLs from the customizer metaobject) so a new
+        product needs no theme-asset upload. Blank override → convention. {%- endcomment -%}
+      {%- comment -%} Shape SLUG (lowercase, spaces/punctuation stripped) is the key
+        used in the data-mask-<shape> attribute name and data-frame value. The engine
+        (cl-ai-hat.js `sh()`) slugs the shape identically for lookups, so a display
+        name with a space (e.g. "Swap Patch") can never break the attribute. {%- endcomment -%}
+      {%- assign shape0_slug = shape_list[0] | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
+      <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="{{ shape0_slug }}"
+           {%- for sh in shape_list %}{%- assign sh_slug = sh | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' %} data-mask-{{ sh_slug }}="{% if forloop.first and mask_url != blank %}{{ mask_url }}{% else %}{{ 'cl-patch-mask-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}" data-frame-{{ sh_slug }}="{% if forloop.first and frame_url != blank %}{{ frame_url }}{% else %}{{ 'cl-patch-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}"{% endfor %}>
+        <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
+        <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
+        {%- for sh in shape_list -%}
+          {%- assign sh_slug = sh | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
+          <img class="cl-ai-pf__frame" data-frame="{{ sh_slug }}"
+               src="{% if forloop.first and frame_url != blank %}{{ frame_url }}{% else %}{{ 'cl-patch-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}"
+               alt="{{ sh }} patch frame" loading="lazy">
+        {%- endfor -%}
+      </div>
+      <div class="cl-ai-b__placed-actions" data-cl-ai-actions hidden>
+        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
+        <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-replace>↻ Replace</button>
+      </div>
+      <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
+    </div>
+    {%- endcapture -%}
+
+    {%- comment -%} ===== STEP 1 — PROMPT (AI only) ===== {%- endcomment -%}
+    {%- if show_prompt != false -%}
+    <div class="cl-ai__step">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP 1</span>
+        <h2 class="cl-ai__step-title">{{ step1_title | default: 'GENERATE YOUR AI ARTWORK' }}</h2>
+      </div>
+      <div class="cl-ai__prompt-head">
+        <span class="cl-ai__prompt-label">
+          <span class="cl-ai__gpt-mark" aria-hidden="true">◍</span>
+          Copy this prompt into ChatGPT
+        </span>
+        <button type="button" class="cl-ai__copy-btn" data-cl-ai-copy>
+          <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
+        </button>
+      </div>
+      {%- comment -%} [[SIZE]] is swapped by cl-ai-hat.js for the ASPECT RATIO matching
+        the selected shape. The AI always makes a plain rectangle; the builder crops it
+        into the patch shape (so the prompt never describes the shape itself). {%- endcomment -%}
+      <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork for a custom hat patch.
+
+IMPORTANT — image size:
+[[SIZE]]
+
+Make a normal, full-bleed RECTANGULAR image (like a poster or photo).
+It is NOT a badge, sticker, or shaped patch — do not draw the patch outline.
+The artwork must completely fill the whole rectangle, edge to edge.
+DO NOT include:
+- Any text, words, letters, numbers, titles, or captions
+- A hexagon, circle, oval, or any patch/badge shape or outline
+- Stitching
+- Embroidery texture
+- Leather texture
+- Borders
+- Mockups
+- Shadows
+- White frames or empty margins
+
+Keep the main subject centered.
+Leave a 10% safe margin.
+Use bold shapes and strong contrast.
+Avoid tiny details.
+Now create:' }}</pre>
+      <p class="cl-ai__prompt-hint">↳ {{ prompt_hint | default: 'Add your idea after “Now create:”' }}</p>
+      {%- if prompt_example != blank -%}
+        <div class="cl-ai__prompt-example">
+          <span class="cl-ai__example-tag">EXAMPLE</span>
+          <em>{{ prompt_example }}</em>
+        </div>
+      {%- endif -%}
+    </div>
+    {%- endif -%}
+
+    {%- comment -%} ===== STEP 2 — UPLOAD ===== {%- endcomment -%}
+    <div class="cl-ai__step">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP {{ n_upload }}</span>
+        {%- if show_prompt == false -%}{%- assign upl_default = 'UPLOAD YOUR IMAGE, ARTWORK OR LOGO' -%}{%- else -%}{%- assign upl_default = 'UPLOAD YOUR AI ARTWORK' -%}{%- endif -%}
+        <h2 class="cl-ai__step-title">{{ upload_title | default: upl_default }}</h2>
+      </div>
+
+      <input type="file" class="cl-ai-b__file" data-cl-ai-file
+             accept="image/png,image/jpeg,image/webp" hidden>
+
+      <div class="cl-ai-b__drop" data-cl-ai-drop tabindex="0" role="button"
+           aria-label="Upload your artwork — drag and drop or choose a file">
+        <div class="cl-ai-b__drop-idle" data-cl-ai-drop-idle>
+          <span class="cl-ai-b__drop-icon" aria-hidden="true">⤒</span>
+          <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
+          <p class="cl-ai-b__drop-or">or</p>
+          <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
+          <p class="cl-ai-b__drop-note">{{ upload_note | default: 'JPG, PNG, WEBP up to 25MB' }}</p>
+        </div>
+      </div>
+
+      <div class="cl-ai-b__tips">
+        <span class="cl-ai-b__tips-title">💡 TIPS FOR BEST RESULTS</span>
+        <ul role="list">
+          {%- if show_prompt != false -%}<li>Use the prompt above</li>{%- endif -%}
+          <li>Keep main subject centered</li>
+          <li>Avoid small text</li>
+          <li>High detail works best</li>
+          <li>We'll check it before printing!</li>
+        </ul>
+      </div>
+    </div>
+
+    {%- comment -%} Upload template (multi-shape hat): preview sits here under Step 1.
+      Single-shape products (pendant) move it to the RIGHT column to fill that space —
+      see below. {%- endcomment -%}
+    {%- if show_prompt == false and shape_list.size > 1 -%}{{ cl_preview_block }}{%- endif -%}
+
+    {%- comment -%} ===== STEP 4 — QUALITY CHECK (grouped with the upload) ===== {%- endcomment -%}
+    <div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP {{ n_qc }}</span>
+        <h2 class="cl-ai__step-title">{{ qc_title | default: 'PRINT QUALITY CHECK' }}</h2>
+      </div>
+
+      <div class="cl-ai-b__qc-body">
+        <img class="cl-ai-b__qc-thumb" data-cl-ai-qc-thumb alt="Artwork being checked">
+        <ul class="cl-ai-b__qc-list" role="list">
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="resolution"></span> Resolution <b data-cl-ai-qc-resolution>—</b></li>
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="margins"></span> Safe Margins <b data-cl-ai-qc-margins>—</b></li>
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="quality"></span> Print Quality <b data-cl-ai-qc-quality>—</b></li>
+          <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="filetype"></span> File Type <b data-cl-ai-qc-filetype>—</b></li>
+        </ul>
+      </div>
+
+      <div class="cl-ai-b__qc-verdict" data-cl-ai-qc-verdict hidden>
+        <span class="cl-ai-b__qc-check" aria-hidden="true">✓</span>
+        <strong data-cl-ai-qc-verdict-title>READY TO PRINT!</strong>
+        <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} ========== RIGHT COLUMN — Live preview + Step 3 ========== {%- endcomment -%}
+  <div class="cl-ai-b__right">
+
+    {%- comment -%} ===== LIVE PREVIEW — shown here for the AI template AND for
+      single-shape products (pendant), so the otherwise-sparse right column is filled.
+      The multi-shape upload hat keeps it in the left column (above). ===== {%- endcomment -%}
+    {%- if show_prompt != false or shape_list.size == 1 -%}{{ cl_preview_block }}{%- endif -%}
+
+  {%- comment -%} ===== STEP 3 — CUSTOMIZE (form) ===== {%- endcomment -%}
+  {% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form' %}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-cl-ai-variant-id>
+    <input type="hidden" name="properties[Patch Shape]" value="Rectangle" data-cl-ai-prop-shape>
+    {%- comment -%} Fulfilment needs: the print-ready composite (customer's exact
+      crop), the untouched original for Photoshop, and a PDF of the composite. {%- endcomment -%}
+    <input type="hidden" name="properties[_Artwork Print]" value="" data-cl-ai-prop-art>
+    <input type="hidden" name="properties[_Artwork Original]" value="" data-cl-ai-prop-orig>
+    <input type="hidden" name="properties[_Artwork PDF]" value="" data-cl-ai-prop-pdf>
+    <input type="hidden" name="properties[_Artwork Preview]" value="" data-cl-ai-prop-preview>
+    <input type="hidden" name="properties[Custom Text]" value="" data-cl-ai-prop-text>
+    <input type="hidden" name="properties[Text Color]" value="" data-cl-ai-prop-textcolor>
+    <input type="hidden" name="properties[_Quality Score]" value="" data-cl-ai-prop-score>
+
+    <div class="cl-ai__step">
+      <div class="cl-ai__step-head">
+        <span class="cl-ai__step-num">STEP {{ n_cust }}</span>
+        <h2 class="cl-ai__step-title">{{ customize_title | default: 'CUSTOMIZE YOUR HAT' }}</h2>
+      </div>
+
+      {%- comment -%} Patch shape (line-item property) — shown first so the customer
+        picks the patch before choosing style + colours. {%- endcomment -%}
+      {%- comment -%} Shape selector — only when the product offers more than one. {%- endcomment -%}
+      {%- if shape_list.size > 1 -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Patch Shape</label>
+        <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
+          {%- for sh in shape_list -%}
+            <button type="button" class="cl-ai-b__shape cl-ai-b__shape--{{ sh | downcase }}{% if forloop.first %} is-active{% endif %}"
+                    data-cl-ai-shape data-value="{{ sh }}" role="radio" aria-label="{{ sh }}"
+                    aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+              <img class="cl-ai-b__shape-icon"
+                   src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+                   alt="{{ sh }}" loading="lazy">
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+
+      {%- comment -%} Style + Colour + quantity grid — only for multi-variant products.
+        Single-variant products (pendant) show a simple qty instead (JS SIMPLE add). {%- endcomment -%}
+      {%- if show_variants != false -%}
+
+      {%- comment -%} Style {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Style: <span data-cl-ai-style-label>{% if style_opt %}{{ style_opt.selected_value }}{% else %}Trucker{% endif %}</span></label>
+        <div class="cl-ai-b__pills" data-cl-ai-styles role="radiogroup" aria-label="Style">
+          {%- if style_opt -%}
+            {%- for val in style_opt.values -%}
+              <button type="button" class="cl-ai-b__pill{% if val == style_opt.selected_value %} is-active{% endif %}"
+                      data-cl-ai-style data-value="{{ val | escape }}" role="radio"
+                      aria-checked="{% if val == style_opt.selected_value %}true{% else %}false{% endif %}">{{ val }}</button>
+            {%- endfor -%}
+          {%- else -%}
+            {%- assign defaults = 'Snapback,Trucker,Flex Fit' | split: ',' -%}
+            {%- for val in defaults -%}
+              <button type="button" class="cl-ai-b__pill{% if val == 'Trucker' %} is-active{% endif %}"
+                      data-cl-ai-style data-value="{{ val }}" role="radio"
+                      aria-checked="{% if val == 'Trucker' %}true{% else %}false{% endif %}">{{ val }}</button>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Colour swatches — kept (hidden) as the data layer for the hero
+        gallery + per-colour images; the visible picker is the quantity grid below. {%- endcomment -%}
+      <div class="cl-ai-b__field cl-ai-b__field--colordata" aria-hidden="true">
+        <label class="cl-ai-b__label">Color: <span data-cl-ai-color-label>{% if color_opt %}{{ color_opt.selected_value }}{% else %}Black{% endif %}</span></label>
+        <div class="cl-ai-b__swatches" data-cl-ai-colors role="radiogroup" aria-label="Color">
+          {%- if color_opt -%}
+            {%- for val in color_opt.values -%}
+              {%- comment -%} Find a representative variant image for this colour (theme's `variant_image` swatch pattern) {%- endcomment -%}
+              {%- assign swatch_img = null -%}
+              {%- for v in product.variants -%}
+                {%- if v.options contains val and v.image -%}{%- assign swatch_img = v.image -%}{%- break -%}{%- endif -%}
+              {%- endfor -%}
+              <button type="button" class="cl-ai-b__swatch{% if swatch_img %} cl-ai-b__swatch--img{% endif %}{% if val == color_opt.selected_value %} is-active{% endif %}"
+                      data-cl-ai-color data-value="{{ val | escape }}" role="radio" title="{{ val | escape }}"
+                      {% if swatch_img %}data-swatch-img="{{ swatch_img | image_url: width: 900 }}"{% endif %}
+                      aria-checked="{% if val == color_opt.selected_value %}true{% else %}false{% endif %}">
+                {%- if swatch_img -%}
+                  <img class="cl-ai-b__swatch-img" src="{{ swatch_img | image_url: width: 120 }}" alt="{{ val | escape }}" width="120" height="120" loading="lazy">
+                {%- else -%}
+                  <span class="cl-ai-b__swatch-chip" data-color-name="{{ val | escape }}"></span>
+                {%- endif -%}
+              </button>
+            {%- endfor -%}
+          {%- else -%}
+            {%- assign defaults = 'Black,White,Brown,Camo,Olive' | split: ',' -%}
+            {%- for val in defaults -%}
+              <button type="button" class="cl-ai-b__swatch{% if forloop.first %} is-active{% endif %}"
+                      data-cl-ai-color data-value="{{ val }}" role="radio" title="{{ val }}"
+                      aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+                <span class="cl-ai-b__swatch-chip" data-color-name="{{ val }}"></span>
+              </button>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- comment -%} Choose colours & quantities — one line item per colour, all
+        sharing the same artwork. Rows are built by JS from the colour swatches so
+        the customer can order the design across several colours at once. {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Choose colours &amp; quantities</label>
+        <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
+      </div>
+
+      {%- else -%}
+      {%- comment -%} Single-variant (pendant): a −/+ quantity stepper matching the
+        hat grid rows; the JS SIMPLE-add path uses data-cl-ai-simple-qty. {%- endcomment -%}
+      <div class="cl-ai-b__field">
+        <label class="cl-ai-b__label">Quantity</label>
+        <div class="cl-ai-b__qty">
+          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-simple-minus aria-label="Decrease quantity">−</button>
+          <input class="cl-ai-b__qty-input" id="cl-ai-simple-qty" type="text" inputmode="numeric"
+                 value="1" data-cl-ai-simple-qty aria-label="Quantity">
+          <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-simple-plus aria-label="Increase quantity">+</button>
+        </div>
+      </div>
+      {%- endif -%}
+
+      {%- comment -%} Patch text now lives INSIDE the artwork editor modal, where the
+        customer can drag + resize it on the patch. See the modal below. {%- endcomment -%}
+
+      <button type="submit" class="cl-ai-b__cta" data-cl-ai-cta>
+        <span data-cl-ai-cta-label>{{ cta_label | default: 'ADD TO CART' }}</span>
+        <span class="cl-ai-b__cta-price"> · <span data-cl-ai-cta-price>{{ price_display | money }}</span></span>
+      </button>
+    </div>
+  {% endform %}
+
+  </div>{%- comment -%} /.cl-ai-b__right {%- endcomment -%}
+
+  {%- comment -%} ===== CROP / ZOOM / ROTATE EDITOR (modal) ===== {%- endcomment -%}
+  <div class="cl-ai-ed" data-cl-ai-editor hidden role="dialog" aria-modal="true" aria-label="Position your artwork">
+    <div class="cl-ai-ed__backdrop" data-cl-ai-ed-backdrop></div>
+    <div class="cl-ai-ed__panel">
+      <p class="cl-ai-ed__title">Position your artwork</p>
+      <p class="cl-ai-ed__hint">Drag to move · scroll or slider to zoom · buttons to rotate. Keep the subject inside the dashed line.</p>
+
+      <div class="cl-ai-ed__stage" data-cl-ai-ed-stage>
+        <canvas class="cl-ai-ed__canvas" data-cl-ai-ed-canvas></canvas>
+        <div class="cl-ai-ed__mask" data-cl-ai-ed-mask data-shape="rectangle" aria-hidden="true">
+          <div class="cl-ai-ed__mask-safe"></div>
+        </div>
+        <img class="cl-ai-ed__frame" data-cl-ai-ed-frame alt="" aria-hidden="true">
+      </div>
+      <p class="cl-ai-ed__warn" data-cl-ai-ed-warn hidden>⚠ Part of your artwork is outside the dashed line and may be trimmed when printed. Zoom out, drag it, or switch to “Fit whole image” to keep it inside.</p>
+
+      {%- comment -%} Fill crops to the patch; Fit keeps the whole image and pads
+        with its own background colour — so square artwork doesn't lose anything
+        and production doesn't have to rebuild the background by hand. {%- endcomment -%}
+      <div class="cl-ai-ed__modes">
+        <button type="button" class="cl-ai-ed__mode is-active" data-cl-ai-ed-mode="fill">Fill patch</button>
+        <button type="button" class="cl-ai-ed__mode" data-cl-ai-ed-mode="fit">Fit whole image</button>
+        <label class="cl-ai-ed__bg" data-cl-ai-ed-bgwrap hidden>
+          Background
+          <input type="color" data-cl-ai-ed-bg value="#ffffff" aria-label="Background colour">
+        </label>
+        <label class="cl-ai-ed__boxtoggle"><input type="checkbox" data-cl-ai-ed-box checked> Show box</label>
+      </div>
+
+      <div class="cl-ai-ed__controls">
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-l aria-label="Rotate left">⟲</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-out aria-label="Zoom out">−</button>
+        <input type="range" class="cl-ai-ed__zoom" data-cl-ai-ed-zoom min="0.4" max="4" step="0.01" value="1" aria-label="Zoom">
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-in aria-label="Zoom in">+</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-r aria-label="Rotate right">⟳</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-center aria-label="Center artwork">Center</button>
+        <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-reset aria-label="Reset">Reset</button>
+      </div>
+
+      {%- comment -%} Optional patch text — typed here, then dragged + resized on the
+        patch. Baked into the print file / PDF / preview at the placed position. {%- endcomment -%}
+      <div class="cl-ai-ed__textrow">
+        <label class="cl-ai-ed__textcheck"><input type="checkbox" data-cl-ai-text-toggle> Add text</label>
+        <div class="cl-ai-ed__text-group" data-cl-ai-text-group hidden>
+          <input type="text" class="cl-ai-ed__textinput" maxlength="30"
+                 placeholder="Type text, then drag &amp; resize it on the patch" data-cl-ai-text autocomplete="off">
+          <label class="cl-ai-ed__tclabel">Text
+            <input type="color" data-cl-ai-text-fill value="#000000" aria-label="Text colour">
+          </label>
+          <div class="cl-ai-ed__outline" data-cl-ai-text-outline role="radiogroup" aria-label="Text outline">
+            <span class="cl-ai-ed__tclabel">Outline</span>
+            <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--white is-active" data-cl-ai-outline data-value="white" role="radio" aria-checked="true" aria-label="White outline"></button>
+            <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--black" data-cl-ai-outline data-value="black" role="radio" aria-checked="false" aria-label="Black outline"></button>
+            <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--none" data-cl-ai-outline data-value="none" role="radio" aria-checked="false" aria-label="No outline" title="No outline"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cl-ai-ed__actions">
+        <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--ghost" data-cl-ai-ed-cancel>Cancel</button>
+        <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--primary" data-cl-ai-ed-confirm>Use this image</button>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Hat image lightbox — populated by the quantity-grid thumbnail buttons. {%- endcomment -%}
+  <div class="cl-ai-imgbox" data-cl-ai-imgbox hidden role="dialog" aria-modal="true" aria-labelledby="cl-ai-imgbox-title">
+    <button type="button" class="cl-ai-imgbox__backdrop" data-cl-ai-imgbox-close aria-label="Close image preview"></button>
+    <div class="cl-ai-imgbox__panel">
+      <button type="button" class="cl-ai-imgbox__close" data-cl-ai-imgbox-close aria-label="Close image preview">×</button>
+      <img class="cl-ai-imgbox__image" data-cl-ai-imgbox-image src="" alt="">
+      <p class="cl-ai-imgbox__title" id="cl-ai-imgbox-title" data-cl-ai-imgbox-title></p>
+    </div>
+  </div>
+
+  {%- comment -%} Variant data for the JS (Style|Color → variant id) {%- endcomment -%}
+  <script type="application/json" data-cl-ai-hat-data>
+  {
+    "productId": {{ product.id | json }},
+    "styleOptionIndex": {% if style_opt %}{{ style_opt.position }}{% else %}0{% endif %},
+    "colorOptionIndex": {% if color_opt %}{{ color_opt.position }}{% else %}0{% endif %},
+    "moneyFormat": {{ shop.money_format | json }},
+    "variants": [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id }},
+          "available": {{ v.available }},
+          "price": {{ v.price }},
+          "option1": {{ v.option1 | json }},
+          "option2": {{ v.option2 | json }},
+          "option3": {{ v.option3 | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+
+  {%- comment -%} Optional config-driven geometry: the `config_json` param → this
+    JSON block → cl-ai-hat.js merges it OVER its hardcoded per-shape maps
+    (window/frame_aspect/safe/patch_in/usable/text_y/text_maxw). Lets a product
+    carry its own patch geometry with no engine edit — the seam a Shopify
+    metaobject/metafield will feed later. Absent = the engine's built-in maps
+    (the hat) are used unchanged. {%- endcomment -%}
+  {%- if config_json != blank -%}
+  <script type="application/json" data-cl-ai-config>
+  {{ config_json }}
+  </script>
+  {%- endif -%}
+</div>
+
+<script src="{{ 'cl-ai-hat.js' | asset_url }}" defer></script>

@@ -1,0 +1,132 @@
+{% capture slot_gallery %}
+  {% content_for 'block', type: '_section-flex-pdp-media-gallery', id: 'section-flex-pdp-media-gallery' %}
+{% endcapture %}
+
+{% capture slot_details %}
+  {% content_for 'blocks' %}
+{% endcapture %}
+
+{%- render 'section.flex-pdp', slot_gallery: slot_gallery, slot_details: slot_details -%}
+
+<script>
+  window.CART_REDIRECTION_ENABLED = {{ settings.enable_cart_redirection | json }};
+  window.SHOP_MONEY_FORMAT = {{ shop.money_format | json }};
+</script>
+
+{% javascript %}
+  document.addEventListener('product-form:cart:request', async (event) => {
+    if (window.CART_REDIRECTION_ENABLED) {
+      return; 
+    }
+
+    // Cancel default cart addition processing
+    event.preventDefault();
+
+    try {
+      // Convert FormData to array format (expected by AddToCartFlyout)
+      const formData = event.detail.form;
+      const formDataArray = [];
+      for (let [key, value] of formData.entries()) {
+        formDataArray.push({ name: key, value: value });
+      }
+
+      const submitButton = document.querySelector('button[type="submit"], input[type="submit"]');
+      
+        const addToCartFlyout = new window.AddToCartFlyout(formDataArray, {
+          atcButton: submitButton,
+          settings: {
+            moneyFormat: window.SHOP_MONEY_FORMAT
+          }
+        });
+
+        // Wait for AddToCartFlyout completion and return actual response data
+        const handleComplete = (completeEvent) => {
+          document.removeEventListener('addToCartFlyout:complete', handleComplete);
+          document.removeEventListener('addToCartFlyout:error', handleError);
+          event.detail.resolve(completeEvent.detail.responseData);
+        };
+
+        const handleError = (errorEvent) => {
+          document.removeEventListener('addToCartFlyout:complete', handleComplete);
+          document.removeEventListener('addToCartFlyout:error', handleError);
+          event.detail.reject(errorEvent.detail.error);
+        };
+
+        document.addEventListener('addToCartFlyout:complete', handleComplete);
+        document.addEventListener('addToCartFlyout:error', handleError);
+
+    } catch (error) {
+      console.error('AddToCartFlyout error:', error);
+      event.detail.reject(error);
+    }
+  });
+
+  document.addEventListener('product-form:cart:navigate', (event) => {
+    if (!window.CART_REDIRECTION_ENABLED) {
+      event.preventDefault();
+    }
+  });
+
+  document.addEventListener('product-form:submit:success', (event) => {
+    if (window.CART_REDIRECTION_ENABLED) {
+      window.location.href = window.Theme.routes.cart_url;
+    }
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:flex_pdp.section.high_variant.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "padding",
+      "label": "t:flex_pdp.section.high_variant.settings.padding.label",
+      "default": "both",
+      "options": [
+        { "value": "none", "label": "t:flex_pdp.section.high_variant.settings.padding.options.none.label" },
+        { "value": "top", "label": "t:flex_pdp.section.high_variant.settings.padding.options.top.label" },
+        { "value": "bottom", "label": "t:flex_pdp.section.high_variant.settings.padding.options.bottom.label" },
+        { "value": "both", "label": "t:flex_pdp.section.high_variant.settings.padding.options.both.label" }
+      ]
+    }
+  ],
+  "blocks": [
+    {"type": "@app"},
+    {"type": "@theme"},
+    {"type": "_section-flex-pdp-buy-buttons"},
+    {"type": "_section-flex-pdp-description"},
+    {"type": "_section-flex-pdp-divider"},
+    {"type": "_section-flex-pdp-policies"},
+    {"type": "_section-flex-pdp-price"},
+    {"type": "_section-flex-pdp-quantity-picker"},
+    {"type": "_section-flex-pdp-sku"},
+    {"type": "_section-flex-pdp-title"},
+    {"type": "_section-flex-pdp-variant-picker"},
+    {"type": "_section-flex-pdp-vendor"},
+    {"type": "_section-flex-pdp-pick-up"},
+    {"type": "_section-flex-pdp-installments"},
+    {"type": "_section-flex-pdp-inventory"}
+  ],
+  "presets": [
+    {
+      "name": "t:flex_pdp.section.high_variant.name",
+      "blocks": [
+        {"type": "_section-flex-pdp-title"},
+        {"type": "_section-flex-pdp-vendor"},
+        {"type": "_section-flex-pdp-price"},
+        {"type": "_section-flex-pdp-installments"},
+        {"type": "_section-flex-pdp-divider"},
+        {"type": "_section-flex-pdp-variant-picker"},
+        {"type": "_section-flex-pdp-quantity-picker"},
+        {"type": "_section-flex-pdp-buy-buttons"},
+        {"type": "_section-flex-pdp-pick-up"},
+        {"type": "_section-flex-pdp-description"},
+      ]
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

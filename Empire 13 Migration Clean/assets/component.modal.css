@@ -1,0 +1,224 @@
+/*
+  -------------------------------------
+  Modals
+  -------------------------------------
+*/
+
+/* TODO: Refactor to components */
+
+.modal {
+  display: none;
+  bottom: 0;
+  left: 0;
+  opacity: 1;
+  overflow: hidden;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: var(--z-index-modal);
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+
+  &.modal--quick-shop {
+    align-items: flex-start;
+  }
+
+  & a:not(.btn),
+  & a:not(.btn):hover {
+    color: inherit;
+  }
+
+  .modal-open & {
+    & .modal__inner {
+      animation: modal-open 0.3s forwards;
+    }
+
+    &:before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: color-mix(in srgb, var(--color-secondary) var(--shade-60), transparent);
+      animation: overlay-on 0.3s forwards;
+      cursor: pointer;
+    }
+  }
+
+  .modal-closing & {
+    & .modal__inner {
+      animation: modal-closing 0.15s forwards;
+    }
+
+    &:before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: color-mix(in srgb, var(--color-secondary) var(--shade-60), transparent);
+      animation: overlay-off 0.15s forwards;
+    }
+  }
+
+  .modal-open--solid &:before {
+    background-color: color-mix(in srgb, var(--color-secondary) var(--shade-60), transparent);
+  }
+}
+
+.modal--is-closing {
+  display: flex !important; /*override .is-transitioning styles*/
+  overflow: hidden;
+}
+
+.modal--is-active {
+  display: flex !important; /*override .is-transitioning styles*/
+  overflow: hidden;
+}
+
+/*Class on body element when modal open.
+Only medium-up because iOS jumps to top otherwise*/
+@media only screen and (min-width: 769px) {
+  .modal-open {
+    overflow: hidden;
+    /*Reserves space for the scrollbar, even when hidden, to maintain a consistent layout.*/
+    scrollbar-gutter: stable;
+  }
+}
+
+.modal__inner {
+  transform-style: preserve-3d;
+  flex: 0 1 auto;
+  margin: calc(var(--gutter) / 2);
+  max-width: calc(100% - 30px);
+  display: flex;
+  align-items: center;
+  box-shadow: 0 12px 25px rgb(0 0 0 / 15%);
+  border-radius: var(--roundness);
+
+  @media only screen and (min-width: 769px) {
+    margin: 40px;
+    max-width: calc(100% - 80px);
+  }
+
+  .modal--square & {
+    background-color: var(--root-color-secondary);
+    color: var(--root-color-primary);
+    border-radius: var(--roundness);
+  }
+
+  & .scheme-image {
+    border-radius: calc(var(--roundness) + 2px);
+  }
+}
+
+/*No max height on product images*/
+.modal__inner {
+  & .image-wrap img {
+    max-height: none;
+  }
+}
+
+.modal__centered {
+  position: relative;
+  flex: 0 1 auto;
+  min-width: 1px; /*ie10 thing*/
+  max-width: 100%;
+}
+
+.modal__centered-content {
+  .modal--square & {
+    max-height: 80vh;
+    padding: 30px;
+    min-width: 200px;
+    min-height: 200px;
+    border-radius: var(--roundness);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+
+    @media only screen and (min-width: 769px) {
+      padding: calc(var(--gutter) * 1.5);
+      max-height: 90vh;
+      max-width: 1200px;
+    }
+  }
+}
+
+.modal--square .modal__centered-content--padded {
+  padding: 60px;
+}
+
+.modal__close {
+  --button-radius: var(--radius-full);
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(25%, -25%);
+  z-index: 2;
+
+  .modal--is-closing & {
+    display: none;
+  }
+}
+
+/*Ajax page adjustments*/
+.modal {
+  & .page-content,
+  & .page-width {
+    padding: 0;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .modal--mobile-friendly {
+    top: auto;
+    bottom: 20px;
+    overflow: auto;
+
+    &.modal--square .modal__centered-content {
+      padding: 30px;
+    }
+
+    &.modal--is-active {
+      overflow: visible;
+    }
+
+    .modal-open & {
+      &:before {
+        display: none;
+      }
+    }
+
+    & .modal__inner {
+      margin: 0;
+    }
+
+    & .heading-xl {
+      padding-right: 25px;
+    }
+
+    & input {
+      font-size: 16px !important;
+    }
+
+    & .text-close {
+      display: none;
+    }
+  }
+}
+
+/*Always sits on modal overlay (light), so hardcode black*/
+.modal__footer-text {
+  padding: calc(var(--gutter) / 2) var(--gutter);
+  text-align: center;
+
+  & a {
+    color: currentColor;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}

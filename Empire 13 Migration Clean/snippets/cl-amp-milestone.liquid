@@ -1,0 +1,307 @@
+{% comment %}
+  Volume-pricing nudge banners injected at the top of the AMP cart drawer.
+  One mini banner per tiered product family in the cart, e.g.
+  "Add 3 more enamel pins for $14.99 each!". Reuses /apps/citylocs/discount-info.
+  Chains AMP_CART_UPDATED / AMP_CART_LOADED / AMP_CART_OPENED.
+{% endcomment %}
+<script>
+(function () {
+  var tagsByHandle = {};   // handle -> Promise<tags[]>
+  var tiersByKey   = {};   // JSON(tags) -> Promise<{qtys,amounts,name}|null>
+
+  function getTags(handle) {
+    if (tagsByHandle[handle]) return tagsByHandle[handle];
+    tagsByHandle[handle] = fetch('/products/' + handle + '.js')
+      .then(function (r) { return r.json(); })
+      .then(function (p) { return (p && p.tags) || []; })
+      .catch(function () { return []; });
+    return tagsByHandle[handle];
+  }
+
+  function getTiers(tags) {
+    var key = JSON.stringify(tags);
+    if (tiersByKey[key]) return tiersByKey[key];
+    tiersByKey[key] = fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(key))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.discountBreak && d.discountAmount) {
+          return {
+            qtys:    [1].concat(d.discountBreak.map(Number)),
+            amounts: [0].concat(d.discountAmount.map(Number)),
+            name:    (d.discountMessage || d.name || 'items')
+          };
+        }
+        return null;
+      })
+      .catch(function () { return null; });
+    return tiersByKey[key];
+  }
+
+  function pluralize(name) {
+    var n = (name || 'items').trim().toLowerCase();
+    return /s$/.test(n) ? n : n + 's';
+  }
+
+  function tierIndex(tiers, qty) {
+    var idx = 0;
+    for (var i = 0; i < tiers.qtys.length; i++) {
+      if (qty === tiers.qtys[i]) { idx = i; break; }
+      else if (qty < tiers.qtys[i]) { idx = i - 1; break; }
+      else { idx = tiers.qtys.length - 1; }
+    }
+    return Math.max(0, idx);
+  }
+
+  // AMP's rewards block reserves ~40px even when empty — collapse it if it has no content.
+  function tidyRewards() {
+    var rw = document.querySelector('.amp-cart__rewards');
+    if (rw) rw.style.display = rw.textContent.trim() ? '' : 'none';
+  }
+
+  function cartCount(cart) {
+    if (cart && typeof cart.item_count === 'number') return cart.item_count;
+    if (cart && cart.items) return cart.items.reduce(function (s, i) { return s + i.quantity; }, 0);
+    return 0;
+  }
+
+  function money(cents) { return '$' + (cents / 100).toFixed(2); }
+
+  // Current unit price under each line's total, e.g. "$27.99 each".
+  function decorateUnitPrices(cart) {
+    if (!cart || !cart.items) return;
+    var lines = document.querySelectorAll('.amp-cart__cart-line');
+    cart.items.forEach(function (item, i) {
+      var line = lines[i];
+      if (!line) return;
+      var cur = (item.final_price != null) ? item.final_price : item.price;
+      var orig = (item.original_price != null) ? item.original_price : cur;
+
+      // Regular (original) unit price under the item name.
+      var titleEl = line.querySelector('.amp-cart__cart-line-title');
+      if (titleEl) {
+        var reg = line.querySelector('.cl-reg-price');
+        if (!reg) {
+          reg = document.createElement('div');
+          titleEl.insertAdjacentElement('afterend', reg);
+        }
+        // Strike the regular price only when the bulk/bundle discount is active.
+        reg.className = 'cl-reg-price' + (cur < orig ? ' is-discounted' : '');
+        reg.innerHTML = 'Regular Price: <strong>' + money(orig) + '</strong>';
+      }
+
+      // Current unit price under the line total.
+      var el = line.querySelector('.cl-unit-price');
+      if (!el) {
+        el = document.createElement('div');
+        el.className = 'cl-unit-price';
+        var priceEl = line.querySelector('.amp-cart__cart-line-price');
+        if (priceEl) priceEl.appendChild(el);           // under the discounted total
+        else line.appendChild(el);
+      }
+      el.textContent = money(cur) + ' each';
+    });
+  }
+
+  var TAG_SVG = '<svg class="cl-pill-ic" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>';
+
+  // Per-line nudge pill: "Bundle N to save — $X each" for the item's family next tier.
+  function decorateLinePills(cart, map) {
+    if (!cart || !cart.items) return;
+    var lines = document.querySelectorAll('.amp-cart__cart-line');
+    cart.items.forEach(function (item, i) {
+      var line = lines[i];
+      if (!line) return;
+      var t = map[item.handle];
+      var el = line.querySelector('.cl-line-pill');
+      if (!t) { if (el) el.remove(); return; }
+      if (!el) {
+        el = document.createElement('div');
+        el.className = 'cl-line-pill';
+        var details = line.querySelector('.amp-cart__cart-line-details');
+        var bottom = line.querySelector('.amp-cart__cart-line-details-bottom');
+        if (details && bottom) details.insertBefore(el, bottom); // full-width row above qty/price
+        else line.appendChild(el);
+      }
+      el.innerHTML = TAG_SVG + ' Order ' + t.qty + ' to get it for <strong>$' + t.price + '</strong> each';
+    });
+  }
+
+  // Keep the theme header cart badge in sync with the real cart (AJAX adds don't update it).
+  function updateHeaderBadge(count) {
+    document.querySelectorAll('[data-header-cart-count]').forEach(function (el) {
+      el.setAttribute('data-header-cart-count', count > 0 ? count : '');
+      el.classList.toggle('visible', count > 0);
+    });
+  }
+
+  function render(cart) {
+    tidyRewards();
+    if (!cart || !cart.items || !cart.items.length) { removeBar(); return; }
+
+    var handles = [];
+    cart.items.forEach(function (it) {
+      if (it.handle && handles.indexOf(it.handle) === -1) handles.push(it.handle);
+    });
+
+    Promise.all(handles.map(getTags)).then(function (tagLists) {
+      var tagsFor = {};
+      handles.forEach(function (h, i) { tagsFor[h] = tagLists[i]; });
+      return Promise.all(handles.map(function (h) {
+        return getTiers(tagsFor[h]).then(function (t) { return { handle: h, tiers: t }; });
+      }));
+    }).then(function (results) {
+      // Group tiered products by their tier signature.
+      var groups = {};
+      results.forEach(function (r) {
+        if (!r.tiers) return;
+        var sig = JSON.stringify(r.tiers.qtys) + '|' + r.tiers.name;
+        groups[sig] = groups[sig] || { tiers: r.tiers, qty: 0, base: 0, handles: [] };
+        groups[sig].handles.push(r.handle);
+      });
+      if (!Object.keys(groups).length) { decorateLinePills(cart, {}); removeBar(); return; }
+
+      cart.items.forEach(function (it) {
+        for (var sig in groups) {
+          if (groups[sig].handles.indexOf(it.handle) !== -1) {
+            groups[sig].qty += it.quantity;
+            if (!groups[sig].base && it.original_price) groups[sig].base = it.original_price / 100;
+          }
+        }
+      });
+
+      // Per-line pill: map each family's handles to its next tier (qty + price).
+      var handleTier = {};
+      for (var psig in groups) {
+        var pg = groups[psig];
+        if (pg.qty <= 0 || !pg.base) continue;
+        var pidx = tierIndex(pg.tiers, pg.qty);
+        if (pidx === pg.tiers.qtys.length - 1) continue;
+        var pNextQty = pg.tiers.qtys[pidx + 1];
+        var pNextPrice = (pg.base - pg.tiers.amounts[pidx + 1]).toFixed(2);
+        pg.handles.forEach(function (h) { handleTier[h] = { qty: pNextQty, price: pNextPrice }; });
+      }
+      decorateLinePills(cart, handleTier);
+
+      // One nudge banner per family that still has a higher tier to reach.
+      var banners = [];
+      for (var sig in groups) {
+        var g = groups[sig];
+        if (g.qty <= 0 || !g.base) continue;
+        var idx = tierIndex(g.tiers, g.qty);
+        if (idx === g.tiers.qtys.length - 1) continue; // already at the best price
+        var more = g.tiers.qtys[idx + 1] - g.qty;
+        var nextPrice = (g.base - g.tiers.amounts[idx + 1]).toFixed(2);
+        banners.push(
+          '<div class="cl-amp-banner">Add <strong>' + more + ' more</strong> ' +
+          pluralize(g.tiers.name) + ' for <span class="cl-amp-hl">$' + nextPrice + ' each</span></div>'
+        );
+      }
+
+      if (!banners.length) { removeBar(); return; }
+      injectBar(banners.join(''));
+    });
+  }
+
+  function removeBar() {
+    var el = document.getElementById('cl-amp-milestone');
+    if (el) el.remove();
+  }
+
+  function injectBar(inner) {
+    var lines = document.querySelector('.amp-cart__cart-lines');
+    if (!lines || !lines.parentNode) return;
+    var bar = document.getElementById('cl-amp-milestone');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'cl-amp-milestone';
+      bar.className = 'cl-amp-banners';
+      lines.parentNode.insertBefore(bar, lines);
+    }
+    bar.innerHTML = inner;
+  }
+
+  function paint(cart) { requestAnimationFrame(function () { render(cart); decorateUnitPrices(cart); }); }
+
+  // ---- Native "Add to cart" safety net (personalized products) ----
+  // The customizer's add can bypass AMP, so the drawer never opens and the user
+  // re-clicks, silently stacking quantity. Here we (a) scroll to the required
+  // custom-text field if empty, and (b) poll the cart after a click and open the
+  // drawer as soon as an item actually lands — giving clear feedback either way.
+  function ctField() {
+    return document.querySelector('input[name="properties[Custom Text]"]')
+        || document.querySelector('#user_input');
+  }
+
+  // Best-effort: clear the customizer's leftover red/invalid styling once the field is filled.
+  function clearFieldError() {
+    var f = ctField();
+    if (!f || !(f.value || '').trim()) return;
+    f.style.border = ''; f.style.borderColor = ''; f.style.outline = '';
+    (f.className.match(/\S+/g) || []).forEach(function (c) {
+      if (/invalid|error/i.test(c)) f.classList.remove(c);
+    });
+  }
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.matches && e.target.matches('#user_input, input[name="properties[Custom Text]"]')) clearFieldError();
+  }, true);
+  document.addEventListener('keyup', function (e) {
+    if (e.target && e.target.matches && e.target.matches('#user_input, input[name="properties[Custom Text]"]')) clearFieldError();
+  }, true);
+  function watchForAdd() {
+    fetch('/cart.js').then(function (r) { return r.json(); }).then(function (before) {
+      var start = before.item_count, tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        fetch('/cart.js').then(function (r) { return r.json(); }).then(function (now) {
+          if (now.item_count > start) {
+            clearInterval(iv);
+            updateHeaderBadge(now.item_count);
+            clearFieldError(); // clear any stale validation outline after a good add
+            if (window.AMP_API && AMP_API.OPEN_CART) AMP_API.OPEN_CART();
+          } else if (tries >= 10) { clearInterval(iv); }
+        });
+      }, 700);
+    }).catch(function () {});
+  }
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-product-atc]');
+    if (!btn) return;
+    var ct = ctField();
+    if (ct && !(ct.value || '').trim()) {
+      ct.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      try { ct.focus(); } catch (x) {}
+      return; // add will be blocked by the customizer — don't poll
+    }
+    watchForAdd();
+  }, true);
+
+  var _prevUpdated = window.AMP_CART_UPDATED;
+  window.AMP_CART_UPDATED = function (cart, cartTarget) {
+    var result = cartTarget;
+    if (typeof _prevUpdated === 'function') result = _prevUpdated(cart, cartTarget) || cartTarget;
+    updateHeaderBadge(cartCount(cart));
+    paint(cart);
+    return result;
+  };
+
+  var _prevLoaded = window.AMP_CART_LOADED;
+  window.AMP_CART_LOADED = function (cart) {
+    if (typeof _prevLoaded === 'function') _prevLoaded(cart);
+    updateHeaderBadge(cartCount(cart));
+    paint(cart);
+  };
+
+  var _prevOpened = window.AMP_CART_OPENED;
+  window.AMP_CART_OPENED = function () {
+    if (typeof _prevOpened === 'function') _prevOpened();
+    fetch('/cart.js').then(function (r) { return r.json(); }).then(function (cart) {
+      updateHeaderBadge(cartCount(cart));
+      paint(cart);
+    }).catch(function () {});
+  };
+
+  // Sync the header badge on initial load (independent of AMP's init timing).
+  fetch('/cart.js').then(function (r) { return r.json(); })
+    .then(function (cart) { updateHeaderBadge(cartCount(cart)); }).catch(function () {});
+})();
+</script>

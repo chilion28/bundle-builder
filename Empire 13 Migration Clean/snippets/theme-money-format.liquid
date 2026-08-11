@@ -1,0 +1,13 @@
+{%- doc -%}
+  Renders the money format for the current context.
+  @param {string} context - The context of the money format (product|total)
+{%- enddoc -%}
+{%- liquid
+  assign use_with_currency = false
+  if context == 'product' and settings.show_currency_code_product_prices
+    assign use_with_currency = true
+  elsif context == 'total' and settings.show_currency_code_totals
+    assign use_with_currency = true
+  endif
+-%}
+{%- if use_with_currency -%}{{ shop.money_with_currency_format | strip_html }}{%- else -%}{{ shop.money_format | strip_html }}{%- endif -%}

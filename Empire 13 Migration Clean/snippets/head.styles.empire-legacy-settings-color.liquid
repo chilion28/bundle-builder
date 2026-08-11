@@ -1,0 +1,609 @@
+{%- comment -%}
+  Renders a empire-colors component.
+
+  Usage:
+  {% render 'empire-colors' %}
+{%- endcomment -%}
+
+{%- comment -%}
+  These CSS variables are not present in Devkit's color tokens and serve as a temporary
+  solution until a long-term standardized approach can be implemented. This is a legacy
+  kludge that should be replaced with proper Devkit color tokens in the future.
+{%- endcomment -%}
+
+{% liquid
+  assign settings_color_background = settings.color_background | default: '#ffffff'
+  assign settings_color_headings = settings.color_headings | default: '#1d1d1d'
+  assign settings_color_text = settings.color_text | default: '#1d1d1d'
+  assign settings_color_links = settings.color_links | default: '#046e82'
+  assign settings_color_text_light = settings.color_text_light | default: '#949494'
+  assign settings_color_products_in_stock = settings.color_products_in_stock | default: '#268c0b'
+  assign settings_color_products_low_stock = settings.color_products_low_stock | default: '#cc1313'
+  assign settings_color_products_no_stock = settings.color_products_no_stock | default: '#121212'
+  assign settings_color_button_text = settings.color_button_text | default: '#ffffff'
+  assign settings_color_button_background = settings.color_button_background | default: '#f04f36'
+  assign settings_color_button_secondary_text = settings.color_button_secondary_text | default: '#f04f36'
+  assign settings_color_button_secondary_background = settings.color_button_secondary_background | default: '#ffffff'
+  assign settings_color_button_secondary_border = settings.color_button_secondary_border | default: '#dddddd'
+  assign settings_color_header_text = settings.color_header_text | default: '#1d1d1d'
+  assign settings_color_header_background = settings.color_header_background | default: '#ffffff'
+  assign settings_color_input_text = settings.color_input_text | default: '#4d4d4d'
+  assign settings_color_input_background = settings.color_input_background | default: '#ffffff'
+  assign settings_color_input_border = settings.color_input_border | default: '#dddddd'
+  assign settings_color_product_sale_accent = settings.color_product_sale_accent | default: '#f04f36'
+  assign settings_color_product_review_star = settings.color_product_review_star | default: '#ffab41'
+  assign settings_color_footer_text = settings.color_footer_text | default: '#1d1d1d'
+  assign settings_color_footer_background = settings.color_footer_background | default: '#f5f3ed'
+  assign settings_overlay_opacity = settings.overlay_opacity | default: 50
+  assign settings_color_overlay = settings.color_overlay | default: '#000000'
+%}
+
+{% style %}
+  :root {
+    /* Backgrounds */
+    {% assign color_transparent = settings_color_background %}
+    {% capture color_background %}
+      {% comment %}inject 'color-transparent'{% endcomment %}
+      {%- liquid
+        assign color_transparent_alpha = color_transparent | color_extract: 'alpha'
+        assign color_red = color_transparent | color_extract: 'red'
+        assign color_green = color_transparent | color_extract: 'green'
+        assign color_blue = color_transparent | color_extract: 'blue'
+        if color_transparent_alpha == 0 and color_red == 0 and color_green == 0 and color_blue == 0
+          assign color_transparent_result = 'rgba(255, 255, 255, 1)'
+        else
+          assign color_transparent_result = color_transparent | color_to_rgb
+        endif
+      -%}
+      {{ color_transparent_result }}
+    {% endcapture %}
+
+    --color-background: {{ color_background }};
+    --color-background-alpha-0: {{ color_background | color_modify: 'alpha', 0 }};
+    --color-background-alpha-90: {{ color_background | color_modify: 'alpha', 0.9 }};
+
+    /* Typography */
+    --color-headings: {{ settings_color_headings }};
+    --color-text: {{ settings_color_text }};
+
+    --color-text-05: {{ settings_color_text | color_mix: color_background, 5 }};
+    --color-text-05-alpha-0: {{ settings_color_text | color_mix: color_background, 5 | color_modify: 'alpha', 0 }};
+
+    {% assign color_text_encoded = settings_color_text | color_to_hex | replace: '#', '' %}
+    {% assign color_links_encoded = settings_color_links | color_to_hex | replace: '#', '' %}
+
+    {% assign morph_color = settings_color_text %}
+    {% assign morph_adjustment = 5 %}
+    {% capture color_text_hover %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+    {% assign color_links = settings_color_links %}
+
+    --color-text-hover: {{ color_text_hover }};
+    --color-text-light: {{ settings_color_text_light }};
+    --color-links: {{ color_links }};
+
+    {% assign morph_color = color_links %}
+    {% assign morph_adjustment = 3 %}
+    {% capture color_link_hover %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-link-hover: {{ color_link_hover }};
+
+    /* Products */
+    --color-products-in-stock: {{ settings_color_products_in_stock }};
+    --color-products-low-stock: {{ settings_color_products_low_stock }};
+    --color-products-no-stock: {{ settings_color_products_no_stock }};
+
+    /* Buttons */
+    --color-button-text: {{ settings_color_button_text }};
+    --color-button-background: {{ settings_color_button_background }};
+    --color-button-background-hover: {{ color_background | color_mix: settings_color_button_background, 10 }};
+
+    {% assign morph_color = settings_color_button_background %}
+    {% capture color_button_background_focus %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-button-background-focus: {{ color_button_background_focus }};
+    --color-button-disable: {{ settings_color_button_background | color_desaturate: 100 }};
+
+    --color-button-secondary-text: {{ settings_color_button_secondary_text }};
+    --color-button-secondary-background: {{ settings_color_button_secondary_background }};
+    --color-button-secondary-background-hover: {{ color_background | color_mix: settings_color_button_secondary_background, 20 }};
+
+    {% assign morph_color = settings_color_button_secondary_background %}
+    {% capture color_button_secondary_background_focus %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-button-secondary-background-focus: {{ color_button_secondary_background_focus }};
+    --color-button-secondary-border: {{ settings_color_button_secondary_border }};
+
+    {% assign morph_color = settings_color_button_secondary_border %}
+    {% capture color_button_secondary_border_hover %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-button-secondary-border-hover: {{ color_button_secondary_border_hover }};
+
+    /* Header */
+    --color-header-text: {{ settings_color_header_text }};
+
+    {% assign color_transparent = settings_color_header_background %}
+    {% capture color_header_background %}
+      {% comment %}inject 'color-transparent'{% endcomment %}
+      {%- liquid
+        assign color_transparent_alpha = color_transparent | color_extract: 'alpha'
+        assign color_red = color_transparent | color_extract: 'red'
+        assign color_green = color_transparent | color_extract: 'green'
+        assign color_blue = color_transparent | color_extract: 'blue'
+        if color_transparent_alpha == 0 and color_red == 0 and color_green == 0 and color_blue == 0
+          assign color_transparent_result = 'rgba(255, 255, 255, 1)'
+        else
+          assign color_transparent_result = color_transparent | color_to_rgb
+        endif
+      -%}
+      {{ color_transparent_result }}
+    {% endcapture %}
+
+    --color-header-background: {{ color_header_background }};
+
+    /* Forms */
+    --color-input-text: {{ settings_color_input_text }};
+
+    {% assign morph_color = settings_color_input_text %}
+    {% capture color_input_text_hover %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-input-text-hover: {{ color_input_text_hover }};
+
+    --color-input-background: {{ settings_color_input_background }};
+    --color-input-background-hover: {{ settings_color_text | color_mix: color_background, 5 }};
+
+    --color-input-border: {{ settings_color_input_border }};
+    --color-input-border-alpha-25: {{ settings_color_input_border | color_modify: 'alpha', 0.25 }};
+
+    {% assign morph_color = settings_color_input_border %}
+
+    {% assign morph_adjustment = 2 %}
+    {% capture color_input_border_morph_2 %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    {% assign morph_adjustment = 4 %}
+    {% capture color_input_border_morph_4 %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    {% assign morph_adjustment = 10 %}
+    {% capture color_input_border_morph_10 %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    {% assign morph_adjustment = 12 %}
+    {% capture color_input_border_morph_12 %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-input-border-morph-2: {{ color_input_border_morph_2 }};
+    --color-input-border-morph-4: {{ color_input_border_morph_4 }};
+    --color-input-border-morph-10: {{ color_input_border_morph_10 }};
+    --color-input-border-morph-12: {{ color_input_border_morph_12 }};
+
+    --color-input-border-hover: {{ color_input_border_morph_2 }};
+
+    --color-product-sale-accent: {{ settings_color_product_sale_accent }};
+    --color-product-review-star: {{ settings_color_product_review_star }};
+
+    /* Footer */
+    --color-footer-text: {{ settings_color_footer_text }};
+
+    {% assign color_transparent = settings_color_footer_background %}
+    {% capture color_footer_background %}
+      {% comment %}inject 'color-transparent'{% endcomment %}
+      {%- liquid
+        assign color_transparent_alpha = color_transparent | color_extract: 'alpha'
+        assign color_red = color_transparent | color_extract: 'red'
+        assign color_green = color_transparent | color_extract: 'green'
+        assign color_blue = color_transparent | color_extract: 'blue'
+        if color_transparent_alpha == 0 and color_red == 0 and color_green == 0 and color_blue == 0
+          assign color_transparent_result = 'rgba(255, 255, 255, 1)'
+        else
+          assign color_transparent_result = color_transparent | color_to_rgb
+        endif
+      -%}
+      {{ color_transparent_result }}
+    {% endcapture %}
+
+    --color-footer-background: {{ color_footer_background }};
+
+    {% assign morph_color = settings_color_footer_text %}
+    {% capture color_footer_link %}
+      {% comment %}inject 'morph'{% endcomment %}
+      {%- liquid
+        if morph_adjustment == blank
+          assign morph_adjustment = 2
+        endif
+        assign color_lightness = morph_color | color_extract: 'lightness'
+        if color_lightness > 20
+          if color_lightness > 50
+            assign light_adjustment = color_lightness | divided_by: 25 | times: morph_adjustment
+          else
+            assign light_adjustment = color_lightness | divided_by: 15 | times: morph_adjustment
+          endif
+          assign new_color = morph_color | color_darken: light_adjustment
+        else
+          if color_lightness < 7
+            assign light_adjustment = 3 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 45
+          elsif color_lightness < 12
+            assign light_adjustment = 2.25 | times: morph_adjustment
+            assign new_color = morph_color | color_desaturate: 15
+          else
+            assign light_adjustment = 1.75 | times: morph_adjustment
+            assign new_color = morph_color
+          endif
+          assign new_color = new_color | color_lighten: light_adjustment
+        endif
+        assign morph_adjustment = blank
+      -%}
+      {{ new_color }}
+    {% endcapture %}
+
+    --color-footer-link: {{ color_footer_link }};
+    --color-footer-color-alt: {{ settings_color_footer_text | color_modify: 'alpha', 0.8 }};
+    --color-additional-accent: {{ settings_color_footer_text | color_modify: 'alpha', 0.5 }};
+
+    /* Placeholders */
+    --color-placeholder-background: {{ settings_color_text | color_mix: color_background, 8 }};
+    --color-placeholder-fill: {{ settings_color_text | color_mix: color_background, 35 }};
+
+    /* General */
+    {% assign color_black = '#000' %}
+    {% assign color_white = '#fff' %}
+
+    --color-black: #000;
+    --color-white: #fff;
+
+    {% assign border_mix_local_background = color_background %}
+    {% assign border_mix_local_dark = color_black %}
+    {% assign border_mix_local_light = color_white %}
+    {% capture border_mix %}
+      {% comment %}inject 'border-mix'{% endcomment %}
+        {%- liquid
+          assign border_mix_lightness = border_mix_local_background | color_extract: 'lightness'
+          if border_mix_lightness >= 50
+            assign border_mix_result = border_mix_local_dark
+          else
+            assign border_mix_result = border_mix_local_light
+          endif
+        -%}
+      {{ border_mix_result }}
+    {% endcapture %}
+
+    {% assign color_border = color_background | color_mix: border_mix, 50 %}
+    {% assign color_border_mix_encoded = border_mix | color_to_hex | replace: '#', '' %}
+
+    --color-border: {{ color_border }};
+    --color-border-modify: {{ color_border | color_modify: 'alpha', 0.3 }};
+    --color-border-less-soft: rgba(0, 0, 0, 0.25);
+    --color-border-soft: {{ border_mix | color_modify: 'alpha', 0.15 }};
+    --color-border-softer: rgba(0, 0, 0, 0.1);
+
+    {% assign overlay_opacity = settings_overlay_opacity | divided_by: 100.00 %}
+
+    --color-overlay-background: {{ settings_color_overlay | color_modify: 'alpha', overlay_opacity }};
+
+    {% assign color_background_light = settings_color_text | color_mix: color_background, 5 %}
+
+    --color-background-8: {{ settings_color_text | color_mix: color_background, 8 }};
+    --color-background-4: {{ settings_color_text | color_mix: color_background, 4 }};
+
+    --color-background-light: {{ color_background_light }};
+    --color-search-category-background: {{ settings_color_text | color_mix: color_background, 10 }};
+
+    --color-box-shadow-border: {{ color_border | color_modify: 'alpha', 0.16 }};
+    --color-box-shadow-shadow: {{ color_border | color_modify: 'alpha', 0.11 }};
+    --color-box-shadow-border-focused: {{ color_border | color_modify: 'alpha', 0.5 }};
+    --color-box-shadow-shadow-focused: {{ color_border | color_modify: 'alpha', 0.5 }};
+
+    --color-box-shadow-shadow-headings: {{ color_border | color_modify: 'alpha', 0.05 }};
+
+    --color-error: #f05d5d;
+    --color-success: #51a551;
+    --color-warning: #dfa354;
+    --color-highlight: #fffbd9;
+    --color-notice: --color-text;
+    --color-sale: --color-product-sale-accent;
+    --color-star: --color-product-review-star;
+    --color-star-empty: {{ settings_color_text | color_mix: color_background, 50 }};
+
+    --color-facebook: #425dab;
+    --color-x: #000;
+    --color-pinterest: #bd1c1c;
+    --color-linkedin: #0077B5;
+  }
+{% endstyle %}

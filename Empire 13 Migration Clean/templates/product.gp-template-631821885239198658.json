@@ -1,0 +1,86 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_631821885323084738": {
+      "settings": {
+        "checksum": "1474e048ea508fba00217e00ea2e9c44d024ed64d5a09abccd19e4acef07716c_1_1_1_0__1",
+        "gg4sg0QzR7I_text": "Custom image Pendant",
+        "gg6uWSoBmap_text": "<p>Perfect for everyday wear or as a thoughtful gift that will be treasured for years to come.</p>",
+        "gg7Qu-Ybr55_label": "<p>How it works</p>",
+        "gg8dW5HMC7B_text": "<p>Turn Your Favorite Photo Into a Personalized Pendant</p>",
+        "ggQ-azcdT75_text": "<p>Upload your favorite photo, and we'll transform it into a beautifully detailed custom pendant that's made just for you. Whether it's a loved one, your dog, a special place, a meaningful memory, or your own AI-generated artwork, every pendant is created to celebrate what matters most.</p>",
+        "ggRY4fkkYIy_label": "<p>Upload your image</p>",
+        "ggsWVezVewA_text": "<p><strong>Carry What Matters Most</strong></p>",
+        "ggz3j1BMG4T_text": "<p>Keep the people, pets, and moments that mean the most to you close wherever you go.</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-631821885323084738"
+    },
+    "gp_section_631821885323150274": {
+      "settings": {
+        "checksum": "6472b344c792a68c72ed8860315994e9c350c47acdccf89a4417418f45a74c61_1_1_1_0__1",
+        "ggAVTiMYe3T_text": "<p>Built tough for everyday use</p>",
+        "ggLTEuViiPB_text": "over 5,000 5-star reviews",
+        "ggODxtp_Yl3_text": "<p>Made in 5-7 days and delivered in 10-12 business days</p>",
+        "ggVe_o3PjjN_text": "Printed and shipped from the USA",
+        "gggGYkdAwVU_text": "fast custom production",
+        "ggkVRhPhQnk_text": "<p>Loved by thousands of happy customers</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-631821885323150274"
+    },
+    "gp_section_631821885323215810": {
+      "settings": {
+        "checksum": "41cb8766df64835a65276d506649533ef521396cb34c41534dfdb2fdc583ce3b_1_1_1_0__1",
+        "gg7DUaMjbEf_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_24_2026_09_54_37_AM.png",
+        "ggBzRWb0CNO_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_20_2026_02_32_49_PM_4ef7d37d-b4a3-4a0b-bf8c-e21967145496.png",
+        "ggF9LVNgAzP_text": "<p>Already created an amazing image with ChatGPT, Midjourney, Gemini, Grok, or another AI image generator?</p><p>&nbsp;</p><p>Upload your AI-generated artwork and we'll transform it into a premium custom leather patch hat. Whether it's a logo, character, landscape, pet portrait, or original artwork, if you can generate it, we can print it.</p>",
+        "ggJd4diYRQI_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_20_2026_02_12_28_PM_51b3e348-382d-4429-a623-ab0fb009ffc2.png",
+        "ggM8oWrJ8MJ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_21_2026_01_09_27_PM_eb9e1740-12e9-4ba8-9236-d47ac8a6d03c.png",
+        "gghEQlosl88_text": "Bring Your AI Art to Life",
+        "gguRNF-DQWb_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/ChatGPT_Image_Jul_20_2026_10_37_35_AM_25d59810-e66b-44b2-8446-e323175699bb.png",
+        "section_preload": "true"
+      },
+      "type": "gp-section-631821885323215810"
+    },
+    "gp_section_631821885323281346": {
+      "settings": {
+        "checksum": "d2be2aace9317cc3ea3f64fcba75c9b616ceff796d2e76fe2338363586b0cc47_1_1_1_0__1",
+        "gg--hUw84D7_text": "<p>We'll create your custom pendant and carefully package it before shipping it to your door.</p>",
+        "gg5Ba3XaYOU_text": "We craft and ship it",
+        "gg9997_RSUw_text": "Customize your pendant",
+        "ggDZe75wan2_text": "<p>Choose any photo, artwork, or design you'd like to turn into a pendant.</p>",
+        "ggESRilCoD7_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/image-pendant-2bx3.png",
+        "gg_67feZG-6_text": "How Our Custom Image Pendant Works",
+        "ggq_vtH_r3m_text": "<p>Preview your design and make sure everything looks just the way you want.</p>",
+        "ggrM7158fWG_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/image-pendant-3x3.jpg",
+        "ggu1V6Oyr3h_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/image-pendant-1bx3.png",
+        "ggxKfzyqzCg_text": "Upload your image",
+        "section_preload": "true"
+      },
+      "type": "gp-section-631821885323281346"
+    },
+    "gp_section_631821885323346882": {
+      "settings": {
+        "checksum": "d0bba1d86d18ff7da8b23715bc3f733191eb665064dad7b1aadef798158458f8_1_1_1_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-631821885323346882"
+    }
+  },
+  "order": [
+    "gp_section_631821885323084738",
+    "gp_section_631821885323150274",
+    "gp_section_631821885323281346",
+    "gp_section_631821885323346882",
+    "gp_section_631821885323215810"
+  ]
+}

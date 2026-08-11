@@ -1,0 +1,227 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "1662673809e78777a2": {
+      "type": "dynamic-promo-grid",
+      "blocks": {
+        "f96b9df6-f39e-4e77-8a02-b7346bcb0586": {
+          "type": "promotion",
+          "disabled": true,
+          "settings": {
+            "image": "shopify://shop_images/Stockings-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://products/custom-sarape-stocking",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-0": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Metal-License-Plates-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/metal-license-plate",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "00ef4ef9-9cae-4733-95d5-c968c4cc3c32": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/MX-Custom-Metal-License-Plates-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/mexico-metal-license-plates",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "5336cae7-6a42-4b08-8943-00a0451a7105": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/LED-Lights-US-License-Plates-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/led-license-plates",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-1": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/LED-Lights-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/led-custom-sign",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "95df82a9-1615-4979-9d8d-6abfce3e18ea": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/License-Plate-Ornaments-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/license-plate-ornament",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-3": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Custom-Wood-Prints-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/wood-prints",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "78cf6eef-ed8d-4612-af63-7b9323f3a4f5": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Wood-Gift-Boxes-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/gift-boxes",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "d0d72608-f74a-478b-8b44-a4845e91754f": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/US-License-Plate-Key-Racks-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/us-license-plate-keyracks",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "37531be8-f04f-4bcf-b71a-3900ac2e8fa7": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/MX-License-Plate-Key-Racks-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/mexico-license-plate-key-racks",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-2": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Custom-Wood-Signs-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/bar-signs",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "90c09d13-5dfb-4668-8c56-1c0a4221840e": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Tin-Signs-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/tin-signs",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        }
+      },
+      "block_order": [
+        "f96b9df6-f39e-4e77-8a02-b7346bcb0586",
+        "16626738096a7b65a8-0",
+        "00ef4ef9-9cae-4733-95d5-c968c4cc3c32",
+        "5336cae7-6a42-4b08-8943-00a0451a7105",
+        "16626738096a7b65a8-1",
+        "95df82a9-1615-4979-9d8d-6abfce3e18ea",
+        "16626738096a7b65a8-3",
+        "78cf6eef-ed8d-4612-af63-7b9323f3a4f5",
+        "d0d72608-f74a-478b-8b44-a4845e91754f",
+        "37531be8-f04f-4bcf-b71a-3900ac2e8fa7",
+        "16626738096a7b65a8-2",
+        "90c09d13-5dfb-4668-8c56-1c0a4221840e"
+      ],
+      "settings": {
+        "title": "",
+        "section_height": "natural",
+        "section_columns": 3,
+        "text_alignment": "top-left"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1662673809e78777a2"
+  ]
+}

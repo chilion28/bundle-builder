@@ -1,0 +1,77 @@
+.clearfix::after {
+  clear: both;
+  content: '';
+  display: table;
+}
+
+.is-transitioning {
+  display: block !important;
+  visibility: visible !important;
+}
+
+.visually-hidden {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.overlay::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-index-overlay, auto);
+}
+
+/*Keep dimensions but hide visually*/
+.visually-invisible {
+  opacity: 0 !important;
+}
+
+.show {
+  display: block !important;
+}
+.hide {
+  display: none !important;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
+}
+.text-center {
+  text-align: center !important;
+}
+
+@media only screen and (max-width: 768px) {
+  .small--show {
+    display: block !important;
+  }
+  .small--hide {
+    display: none !important;
+  }
+  .small--text-left {
+    text-align: left !important;
+  }
+  .small--text-right {
+    text-align: right !important;
+  }
+  .small--text-center {
+    text-align: center !important;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .medium-up--hide {
+    display: none !important;
+  }
+}

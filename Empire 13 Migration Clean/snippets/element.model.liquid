@@ -1,0 +1,52 @@
+{% doc %}
+  Renders a 3D model
+
+  @param {object} media - Media object
+  @param {string} [aspect_ratio] - Aspect ratio of the model
+  @param {boolean} [autoplay] - Whether the model should autoplay
+  @param {string} [hydration] - Hydration strategy ('on:visible', 'on:idle', 'on:interaction', 'on:media')
+
+  @example
+  {% render 'element.model', media: media %}
+{% enddoc %}
+
+{% liquid
+  assign media = media
+  assign aspect_ratio = aspect_ratio | default: section.settings.aspect_ratio | default: '1 / 1'
+  assign autoplay = autoplay | default: section.settings.autoplay, allow_false: true | default: true, allow_false: true
+  assign hydration = hydration | default: 'on:visible'
+%}
+
+{% render 'utility.stylesheet', name: 'element.model.css' %}
+
+<is-land {{ hydration }}>
+  {% if media %}
+    <link
+      rel="stylesheet"
+      href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
+      media="print"
+      onload="this.media='all'; this.onload = null"
+    >
+
+    <model-media
+      {% if aspect_ratio %}
+        style="--aspect-ratio: {{ aspect_ratio }};"
+      {% endif %}
+      {% if autoplay %}
+        autoplay
+      {% endif %}
+      defer-hydration
+    >
+      {{
+        media
+        | model_viewer_tag: image_size: '2048x', reveal: 'interaction', toggleable: true, defer-hydration: true
+      }}
+    </model-media>
+  {% endif %}
+
+  <template data-island>
+    <script type="module">
+      import 'element.model';
+    </script>
+  </template>
+</is-land>

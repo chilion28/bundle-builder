@@ -1,0 +1,48 @@
+{% comment %}
+  @param context {String}
+    The snippet context.
+{% endcomment %}
+
+{%- if settings.enable_free_shipping_bar
+  and settings.free_shipping_minimum_amount != blank
+  and cart.currency.iso_code == shop.currency
+-%}
+  {%- liquid
+    assign multiplier = 100
+    assign currencies_without_subunits = 'JPY,KRW,ISK,CLP,PYG,CRC,TWD,RWF,UGX'
+    if currencies_without_subunits contains shop.currency
+      assign multiplier = 1
+    endif
+
+    assign free_shipping_minimum_amount = settings.free_shipping_minimum_amount | times: multiplier
+    assign free_shipping_remainder = free_shipping_minimum_amount | minus: cart.items_subtotal_price
+    assign free_shipping_progress = cart.items_subtotal_price | times: 100 | divided_by: free_shipping_minimum_amount | at_most: 100
+  -%}
+
+  <div
+    class="
+      free-shipping-bar
+      {% if context != blank %}
+        free-shipping-bar--{{ context }}
+      {% endif %}
+    "
+    data-free-shipping-bar
+    data-html="free_shipping_bar"
+  >
+    <p class="free-shipping-bar__status">
+      {%- capture amount -%}{% render 'theme-money', amount: free_shipping_remainder, context: 'total' %}{%- endcapture -%}
+      {%- liquid
+        if cart.items_subtotal_price == 0 and template.name == 'cart'
+          echo 'cart.free_shipping_bar.free_shipping_empty_html' | t: amount: amount
+        elsif free_shipping_remainder > 0
+          echo 'cart.free_shipping_bar.free_shipping_ineligible_html' | t: amount: amount
+        else
+          echo 'cart.free_shipping_bar.free_shipping_eligible_html' | t
+        endif
+      -%}
+    </p>
+    <div class="free-shipping-bar__meter">
+      <div class="free-shipping-bar__progress" style="--width: {{ free_shipping_progress }}%"></div>
+    </div>
+  </div>
+{%- endif -%}

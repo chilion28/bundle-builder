@@ -1,0 +1,182 @@
+/* Compatibility for CityLocs product templates migrated from Empire 7. */
+.product--section {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.product--section .product--container {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1400px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin: 1.25rem auto 0;
+}
+
+.product--section .product--outer {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  font-size: 0;
+}
+
+.product--section .product-gallery,
+.product--section .product-main {
+  box-sizing: border-box;
+  display: inline-block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  vertical-align: top;
+}
+
+.product--section .product-gallery {
+  position: relative;
+  min-width: 0;
+}
+
+.product--section .product-gallery--viewer {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  transition: height 200ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.product--section .product-gallery--viewer.product-gallery--has-media
+  .product-gallery--media:not([data-gallery-selected="true"]) {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.product--section .product-gallery--media {
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  outline: 0;
+  opacity: 0;
+  transition: opacity 100ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.product--section .product-gallery--media[data-gallery-selected="true"],
+.product--section .product-gallery--media.is-selected,
+.product--section .product-gallery--media.product-gallery--image-placeholder {
+  position: relative;
+  z-index: 1;
+  visibility: visible;
+  width: 100%;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.product--section [data-product-gallery-aspect-ratio="natural"]
+  .product-gallery--media img,
+.product--section .product-gallery--media svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.product--section .product-gallery--media video,
+.product--section .product-gallery--media .video,
+.product--section .product-gallery--media .shopify-model-viewer-ui {
+  display: none;
+}
+
+.product--section .product-gallery--media[data-gallery-selected="true"] video,
+.product--section .product-gallery--media[data-gallery-selected="true"] .video,
+.product--section .product-gallery--media[data-gallery-selected="true"]
+  .shopify-model-viewer-ui {
+  display: block;
+}
+
+.product--section .product-gallery--navigation {
+  position: relative;
+  width: 100%;
+  padding-bottom: .125rem;
+  margin-top: .5rem;
+  font-size: 0;
+  text-align: left;
+}
+
+.product--section .gallery-navigation--scroller {
+  padding: .25rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+}
+
+.product--section .product-gallery--media-thumbnail {
+  position: relative;
+  display: inline-block;
+  height: 4rem;
+  padding: 2px;
+  margin: .1875rem;
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 2px;
+  box-shadow: 0 0 2px transparent;
+}
+
+.product--section .product-gallery--media-thumbnail[data-gallery-selected="true"] {
+  box-shadow: 0 0 0 1.5px #818181;
+}
+
+.product--section .product-gallery--media-thumbnail-img-wrapper,
+.product--section .product-gallery--media-thumbnail-img {
+  display: block;
+  height: 100%;
+}
+
+.product--section .product-gallery--media-thumbnail-img {
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+@media screen and (min-width: 720px) {
+  .product--section .product--container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-top: 1.75rem;
+  }
+
+  .product--section .product--outer {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .product--section .product-gallery {
+    flex: 0 1 51.5%;
+    width: 51.5%;
+  }
+
+  .product--section .product-main {
+    flex: 0 1 46%;
+    width: 46%;
+    margin-left: 2.5%;
+  }
+
+  .product--section .gallery-navigation--scroller {
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .product--section .product-gallery--media-thumbnail {
+    margin-top: .375rem;
+  }
+}
+
+@media screen and (min-width: 1080px) {
+  .product--section .product--container {
+    padding-right: 25px;
+    padding-left: 25px;
+  }
+
+  .product--section .product-gallery--media-thumbnail {
+    height: 4.9375rem;
+  }
+}

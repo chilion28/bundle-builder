@@ -1,0 +1,153 @@
+{% doc %}
+  Renders a product gallery.
+  @param {string} product - The product object in question or false. Onboards if false or blank.
+  @param {string} select_first_available_variant - Whether to auto-select first available variant. Defaults to false.
+  @param {string} aspect_ratio - This is the gallery aspect ratio. Defaults to 'natural'.
+  @param {string} image_crop - Whether to crop images. Defaults to true.
+  @param {string} thumbnail_position - This is the gallery thumbnail position. Defaults to 'below'.
+  @param {string} thumbnail_layout - Layout of the thumbnails. Defaults to 'grid'.
+  @param {string} video_autoplay - Whether to autoplay videos. Defaults to false.
+  @param {string} video_looping - Whether to loop videos. Defaults to false.
+  @param {string} image_hover_zoom - This is the hover zoom setting. Defaults to 'disabled'.
+  @param {string} image_click_to_zoom - This is the click to zoom setting. Defaults to 'always'.
+  @example
+  {% render 'product.gallery',
+  product: product,
+  select_first_available_variant: true,
+  aspect_ratio: 'natural',
+  image_crop: true,
+  thumbnail_position: 'below',
+  thumbnail_layout: 'carousel',
+  video_autoplay: true,
+  video_looping: true,
+  image_hover_zoom: 'separate',
+  image_click_to_zoom: 'always'
+  %}
+{% enddoc %}
+
+{% render 'utility.stylesheet', name: 'vendor.photoswipe.css' %}
+{% render 'utility.stylesheet', name: 'vendor.photoswipe-default-skin.css' %}
+{% render 'css.product-gallery' %}
+
+{% liquid
+  assign product = product | default: false
+  assign select_first_available_variant = select_first_available_variant | default: true
+  assign aspect_ratio = aspect_ratio | default: blank
+  assign image_crop = image_crop | default: false, allow_false: true
+  assign thumbnail_position = thumbnail_position | default: 'below'
+  assign thumbnail_layout = thumbnail_layout | default: 'grid'
+  assign video_autoplay = video_autoplay | default: true, allow_false: true
+  assign video_looping = video_looping | default: true, allow_false: true
+  assign image_hover_zoom = image_hover_zoom | default: 'disabled'
+  assign image_click_to_zoom = image_click_to_zoom | default: 'always'
+  assign selected_media = product.featured_media
+
+  if select_first_available_variant
+    assign selected_variant = product.selected_or_first_available_variant
+    assign selected_media = selected_variant.featured_media | default: product.featured_media
+  endif
+
+  case aspect_ratio
+    when 'short'
+      assign aspect_ratio = '4/3'
+    when 'square'
+      assign aspect_ratio = '1/1'
+    when 'tall'
+      assign aspect_ratio = '2/3'
+    else
+      assign aspect_ratio = blank
+      assign image_crop = false
+  endcase
+
+  for media in product.media
+    if selected_media.id == media.id
+      assign selected_media_index = forloop.index0
+      break
+    endif
+  endfor
+%}
+
+{% if image_click_to_zoom != 'disabled' and product.media.size > 0 %}
+  {%- render 'vendor.photoswipe-template' -%}
+{% endif %}
+
+<product-gallery
+  class="
+    product-gallery
+    product-gallery--{{ thumbnail_position }}
+    product-gallery--{{ thumbnail_layout }}
+    {% if image_crop %}product-gallery--image-crop{% endif %}
+  "
+  thumbnail-position="{{ thumbnail_position }}"
+  thumbnail-layout="{{ thumbnail_layout }}"
+  image-hover-zoom="{{ image_hover_zoom }}"
+  image-click-to-zoom="{{ image_click_to_zoom }}"
+  initial-slide="{{ selected_media_index }}"
+  {% if image_crop %}
+    image-crop
+  {% endif %}
+  {% if product.media.size == 0 %}
+    placeholder
+  {% elsif product.media.size > 1 %}
+    carousel
+  {% endif %}
+>
+  {% if product.media.size > 0 %}
+    <div class="swiper product-gallery__viewer" data-swiper-viewer>
+      <div class="swiper-wrapper">
+        {% for media in product.media %}
+          <div
+            class="swiper-slide"
+            data-media-id="{{ media.id }}"
+            data-media-type="{{ media.media_type }}"
+          >
+            <div
+              class="
+                swiper-slide__inner
+                {% if media.media_type == 'image' %}
+                  {% if image_click_to_zoom == 'always' %}
+                    swiper-slide__inner--cursor-pointer--always
+                  {% elsif image_click_to_zoom == 'mobile' %}
+                    swiper-slide__inner--cursor-pointer--mobile
+                  {% elsif image_click_to_zoom == 'desktop' %}
+                    swiper-slide__inner--cursor-pointer--desktop
+                  {% endif %}
+
+                  {% if image_click_to_zoom == 'disabled' and image_hover_zoom != 'disabled' %}
+                    swiper-slide__inner--cursor-crosshair
+                  {% endif %}
+                {% endif %}
+              "
+              {% if media.media_type == 'image' and image_click_to_zoom != 'disabled' %}
+                data-photoswipe-trigger-for="{{ media.id }}"
+              {% endif %}
+            >
+              {% render 'element.media',
+                media: media,
+                autoplay: video_autoplay,
+                loop: video_looping,
+                aspect_ratio: aspect_ratio,
+                image_crop: image_crop,
+                image_click_to_zoom: image_click_to_zoom
+              %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    {% if product.media.size > 1 %}
+      {% render 'product.gallery-navigation', product: product, aspect_ratio: aspect_ratio, image_crop: image_crop %}
+    {% endif %}
+  {% else %}
+    <div class="product-gallery__placeholder">
+      {{ 'product-1' | placeholder_svg_tag: 'product-gallery__placeholder-image' }}
+    </div>
+  {% endif %}
+
+  <div class="product-gallery__zoom-container" data-zoom-container></div>
+</product-gallery>
+
+<script type="module">
+  import 'product.gallery';
+</script>

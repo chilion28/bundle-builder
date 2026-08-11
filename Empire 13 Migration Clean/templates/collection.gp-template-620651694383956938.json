@@ -1,0 +1,78 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_620651694484620234": {
+      "settings": {
+        "checksum": "57a1c28b2b080348163e7a6d75f19521d2405b9b3815437186a0487b87f37ddf_1_1_0_0__1",
+        "ggLnWvVNR_u_text": "Shop All Bottle openers",
+        "ggdIVrSVBR1_label": "Get this"
+      },
+      "type": "gp-section-620651694484620234"
+    },
+    "gp_section_620651694484816842": {
+      "settings": {
+        "checksum": "5e35b6346b5f1a030bde5604afded05cb549933c9bd1ffd16607e32715954256_1_1_0_0__1",
+        "gg-f470O_8C_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bottle-opener-hero-1-hires-6.png",
+        "gg-f470O_8C_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/bottle-opener-hero-4-mobile.png",
+        "gg0MGbODAyf_text": "<p>Custom bottle-shaped openers inspired by your favorite brew.</p>",
+        "ggFI-ifEOxO_text": "PERSONALIZED FOR EVERY POUR",
+        "gghXa6GbEo1_label": "<p>shop all</p>",
+        "ggkK8sQjj1y_text": "INSPIRED BY Your FAVORITE BEER",
+        "section_preload": "true"
+      },
+      "type": "gp-section-620651694484816842"
+    },
+    "gp_section_620651694484882378": {
+      "settings": {
+        "checksum": "50718c48a98644094a6893ec3202a60443d1775c84cac143658682cebde4c51d_1_1_0_0__1",
+        "gg38hNOx9NY_text": "over 5,000 5-star reviews",
+        "gg7Jfj60NhS_text": "fast custom production",
+        "ggdE-5rI6lA_text": "<p>Made in 5-7 days and delivered in 10-12 business days</p>",
+        "gggvLzMrwHZ_text": "Printed and shipped from the USA",
+        "ggjY5AfXYl2_text": "easy to mount",
+        "ggmWUwBiWJj_text": "<p>Loved by thousands of happy customers</p>",
+        "ggolQX1eFYU_text": "<p>Hardware included</p>",
+        "ggtM1UIxeku_text": "<p>Built tough for everyday use</p>"
+      },
+      "type": "gp-section-620651694484882378"
+    },
+    "gp_section_620651694484947914": {
+      "settings": {
+        "checksum": "01937686b44294ac3aa0f9eb5e0af49eb39c3404e98229fad664e50cc5d83b69_1_1_0_0__1",
+        "gg1qMGaJhSq_text": "<span style=\"background-color:transparent;color:#000000;\">BEST SELLERS</span>",
+        "ggOq6GvW93q_label": "<p>View All</p>",
+        "ggs76IFIyzc_label": "Get this"
+      },
+      "type": "gp-section-620651694484947914"
+    },
+    "gp_section_621410496104367079": {
+      "settings": {
+        "checksum": "8cac74c9ddea2fc52132badbceea2396152c2919fe16e4ff4a0f10f865292525_1_1_0_0__1",
+        "ggkJst4GCSo_text": "loved by many customers"
+      },
+      "type": "gp-section-621410496104367079"
+    },
+    "gp_section_621527046148850663": {
+      "settings": {
+        "checksum": "5160fe410b2be519d2949f1de540b7b8f4cbb0282c07e6f2148e9df545f0f788_1_1_0_0__1"
+      },
+      "type": "gp-section-621527046148850663"
+    }
+  },
+  "order": [
+    "gp_section_620651694484816842",
+    "gp_section_620651694484882378",
+    "gp_section_620651694484947914",
+    "gp_section_620651694484620234",
+    "gp_section_621410496104367079",
+    "gp_section_621527046148850663"
+  ]
+}

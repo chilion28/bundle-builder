@@ -1,0 +1,141 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "static-faq",
+      "settings": {}
+    },
+    "dynamic-faq": {
+      "type": "dynamic-faq",
+      "blocks": {
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "heading": "Orders and Shipping",
+            "show_category_card": true
+          }
+        },
+        "question_1": {
+          "type": "question",
+          "settings": {
+            "question": "How long does standard shipping take?",
+            "answer": "<p>Standard shipping takes 5 to 7 business days. Express (2 to 3 days) and overnight options are available at checkout. Orders over $50 ship free.</p>",
+            "icon": "none"
+          }
+        },
+        "question_2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I order online and pick up in store?",
+            "answer": "<p>Yes. Select \"Pick up in store\" at checkout and choose your nearest location. Most orders are ready within 2 hours of purchase.</p>",
+            "icon": "none"
+          }
+        },
+        "question_3": {
+          "type": "question",
+          "settings": {
+            "question": "What if my order arrives damaged?",
+            "answer": "<p>Contact us within 7 days of delivery with your order number and a photo. We'll arrange a replacement or refund with no return shipping required.</p>",
+            "icon": "none"
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "heading": "Returns and Refunds",
+            "show_category_card": true
+          }
+        },
+        "question_4": {
+          "type": "question",
+          "settings": {
+            "question": "What is your return policy?",
+            "answer": "<p>Most items can be returned within 30 days of delivery, unused and in original packaging. Some categories, including final sale items and select electronics, are non-returnable. Check the product page for specifics.</p>",
+            "icon": "none"
+          }
+        },
+        "question_5": {
+          "type": "question",
+          "settings": {
+            "question": "How do I start a return?",
+            "answer": "<p>Visit our returns portal, enter your order number and email address, and follow the prompts. A prepaid return label will be emailed to you within 24 hours.</p>",
+            "icon": "none"
+          }
+        },
+        "question_6": {
+          "type": "question",
+          "settings": {
+            "question": "When will I receive my refund?",
+            "answer": "<p>Refunds are processed within 5 business days of receiving your return. You'll get a confirmation email once it's been issued. Allow an additional 3 to 5 business days for your bank to post it.</p>",
+            "icon": "none"
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "heading": "Products and Stock",
+            "show_category_card": true
+          }
+        },
+        "question_7": {
+          "type": "question",
+          "settings": {
+            "question": "How do I know if a product is in stock?",
+            "answer": "<p>Stock levels are shown on every product page. If an item is low in stock or out of stock, it will be labelled accordingly. Use the \"Notify Me\" option to get an alert when it's available again.</p>",
+            "icon": "none"
+          }
+        },
+        "question_8": {
+          "type": "question",
+          "settings": {
+            "question": "Do you price match?",
+            "answer": "<p>Yes. If you find the same product at a lower price from an eligible retailer, contact us before purchasing and we'll match it. Price matching is available for in-stock items only.</p>",
+            "icon": "none"
+          }
+        },
+        "question_9": {
+          "type": "question",
+          "settings": {
+            "question": "Can I buy online and return in store?",
+            "answer": "<p>Yes. Bring your order confirmation and the item to any store location and we'll process the return on the spot.</p>",
+            "icon": "none"
+          }
+        }
+      },
+      "block_order": [
+        "category_1",
+        "question_1",
+        "question_2",
+        "question_3",
+        "category_2",
+        "question_4",
+        "question_5",
+        "question_6",
+        "category_3",
+        "question_7",
+        "question_8",
+        "question_9"
+      ],
+      "settings": {
+        "section_width": "regular",
+        "heading": "",
+        "enable_category_cards": true,
+        "category_card_image_crop": "original",
+        "category_heading_size": "medium",
+        "icon_color": "rgba(0,0,0,0)"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "dynamic-faq"
+  ]
+}

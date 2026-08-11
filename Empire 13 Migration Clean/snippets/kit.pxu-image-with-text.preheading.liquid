@@ -1,0 +1,10 @@
+{% doc %}
+  @param {string} preheading - Preheading on the text side of the section
+  @param {string} base_name - BEM prefix for emitted classes (default: 'image-with-text')
+{% enddoc %}
+
+{%- assign base_name = base_name | default: 'image-with-text' -%}
+
+{%- if preheading != blank -%}
+  <div class="{{ base_name }}__preheading">{{ preheading | escape }}</div>
+{%- endif -%}

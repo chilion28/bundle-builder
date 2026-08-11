@@ -1,0 +1,289 @@
+{% render 'section.slideshow', slideshow_text_animation: 'fadeInUp' %}
+{% schema %}
+{
+  "name": "t:sections.slideshow.name",
+  "class": "slideshow--section",
+  "settings": [
+    {
+      "id": "slideshow_width",
+      "type": "select",
+      "label": "t:sections.slideshow.slideshow_width.label",
+      "options": [
+        {
+          "value": "full",
+          "label": "t:sections.slideshow.slideshow_width.option_1"
+        },
+        {
+          "value": "content",
+          "label": "t:sections.slideshow.slideshow_width.option_2"
+        }
+      ],
+      "default": "full"
+    },
+    {
+      "id": "enable_autoplay",
+      "type": "checkbox",
+      "label": "t:sections.slideshow.enable_autoplay.label",
+      "default": true
+    },
+    {
+      "id": "autoplay_duration",
+      "type": "range",
+      "label": "t:sections.slideshow.autoplay_duration.label",
+      "min": 5,
+      "max": 12,
+      "step": 1,
+      "unit": "s",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "t:sections.slideshow.header_1.content"
+    },
+    {
+      "id": "slideshow_height",
+      "type": "select",
+      "label": "t:sections.slideshow.slideshow_height.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.slideshow.slideshow_height.option_1"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.slideshow.slideshow_height.option_2"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.slideshow.slideshow_height.option_3"
+        },
+        {
+          "value": "fit-screen",
+          "label": "t:sections.slideshow.slideshow_height.option_4"
+        },
+        {
+          "value": "adapt",
+          "label": "t:sections.slideshow.slideshow_height.option_5"
+        },
+        {
+          "value": "original",
+          "label": "t:sections.slideshow.slideshow_height.option_6"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_navigation_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.slideshow.header_2.content"
+    },
+    {
+      "id": "slideshow_height_mobile",
+      "type": "select",
+      "label": "t:sections.slideshow.slideshow_height_mobile.label",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_1"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_2"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_3"
+        },
+        {
+          "value": "x-large",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_4"
+        },
+        {
+          "value": "fit-screen",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_5"
+        },
+        {
+          "value": "adapt",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_6"
+        },
+        {
+          "value": "original",
+          "label": "t:sections.slideshow.slideshow_height_mobile.option_7"
+        }
+      ],
+      "default": "medium"
+    },
+    {
+      "type": "checkbox",
+      "id": "slideshow_text_below_image",
+      "label": "t:sections.slideshow.slideshow_text_below_image.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "t:sections.slideshow.blocks.slide.name",
+      "settings": [
+        {
+          "id": "background_image",
+          "type": "image_picker",
+          "label": "t:sections.slideshow.blocks.slide.background_image.label",
+          "info": "t:sections.slideshow.blocks.slide.background_image.info"
+        },
+        {
+          "id": "mobile_background_image",
+          "type": "image_picker",
+          "label": "t:sections.slideshow.blocks.slide.mobile_background_image.label",
+          "info": "t:sections.slideshow.blocks.slide.mobile_background_image.info"
+        },
+        {
+          "id": "title",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.title.label",
+          "default": "Slide"
+        },
+        {
+          "id": "text",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.text.label",
+          "default": "Introduce customers to your shop with lifestyle and product imagery"
+        },
+        {
+          "id": "color",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.color.label",
+          "default": "#FFFFFF"
+        },
+        {
+          "id": "link",
+          "type": "url",
+          "label": "t:sections.slideshow.blocks.slide.link.label"
+        },
+        {
+          "id": "text_alignment",
+          "type": "text_alignment",
+          "label": "t:sections.slideshow.blocks.slide.text_alignment.label",
+          "default": "center"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.slideshow.blocks.slide.header_1.content"
+        },
+        {
+          "id": "button_one_label",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.button_one_label.label",
+          "default": "Button"
+        },
+        {
+          "id": "button_one_link",
+          "type": "url",
+          "label": "t:sections.slideshow.blocks.slide.button_one_link.label"
+        },
+        {
+          "id": "button_one_style",
+          "type": "select",
+          "label": "t:sections.slideshow.blocks.slide.button_one_style.label",
+          "options": [
+            {
+              "value": "primary",
+              "label": "t:sections.slideshow.blocks.slide.button_one_style.option_1"
+            },
+            {
+              "value": "secondary",
+              "label": "t:sections.slideshow.blocks.slide.button_one_style.option_2"
+            }
+          ],
+          "default": "primary"
+        },
+        {
+          "id": "button_two_label",
+          "type": "text",
+          "label": "t:sections.slideshow.blocks.slide.button_two_label.label"
+        },
+        {
+          "id": "button_two_link",
+          "type": "url",
+          "label": "t:sections.slideshow.blocks.slide.button_two_link.label"
+        },
+        {
+          "id": "button_two_style",
+          "type": "select",
+          "label": "t:sections.slideshow.blocks.slide.button_two_style.label",
+          "options": [
+            {
+              "value": "primary",
+              "label": "t:sections.slideshow.blocks.slide.button_two_style.option_1"
+            },
+            {
+              "value": "secondary",
+              "label": "t:sections.slideshow.blocks.slide.button_two_style.option_2"
+            }
+          ],
+          "default": "primary"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.slideshow.blocks.slide.header_2.content"
+        },
+        {
+          "id": "show_overlay",
+          "type": "checkbox",
+          "label": "t:sections.slideshow.blocks.slide.show_overlay.label",
+          "default": true
+        },
+        {
+          "id": "overlay_color",
+          "type": "color",
+          "label": "t:sections.slideshow.blocks.slide.overlay_color.label",
+          "default": "#000000"
+        },
+        {
+          "id": "overlay_opacity",
+          "type": "range",
+          "label": "t:sections.slideshow.blocks.slide.overlay_opacity.label",
+          "min": 1,
+          "max": 100,
+          "step": 1,
+          "unit": "%",
+          "default": 50
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.slideshow.presets.slideshow.name",
+      "category": "t:sections.categories.banners",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "title": "Everything You Need. One Place to Find It.",
+            "text": "From apparel to appliances, sporting goods to skincare, it's all here. Free shipping on orders over $50.",
+            "button_one_label": "Shop Now"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "title": "New Arrivals Every Week",
+            "text": "Thousands of products across dozens of departments. Use our filters to find exactly what you're looking for.",
+            "button_one_label": "Browse What's New"
+          }
+        }
+      ]
+    }
+  ],
+  "disabled_on": {
+    "groups": ["*"]
+  }
+}
+
+{% endschema %}

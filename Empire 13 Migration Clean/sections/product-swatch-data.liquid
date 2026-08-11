@@ -1,0 +1,51 @@
+<head>
+  <meta name="format-detection" content="telephone=no">
+</head>
+
+{% comment %}
+  Pick which option drives swatches: prefer the option whose name matches the
+  merchant's trigger (e.g. "Color"); otherwise fall back to the first option
+  carrying native (metafield) swatches.
+{% endcomment %}
+{%- assign swatch_trigger = settings.swatches_swatch_trigger | strip | downcase -%}
+{%- assign matched_option = blank -%}
+{%- assign matched_option_index = 0 -%}
+{%- assign fallback_option = blank -%}
+{%- assign fallback_option_index = 0 -%}
+{% for option in product.options_with_values %}
+  {% assign option_name = option.name | downcase %}
+  {%- assign has_native_swatch = false -%}
+  {%- for swatch_value in option.values -%}
+    {%- if swatch_value.swatch != blank -%}
+      {%- assign has_native_swatch = true -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if option_name == swatch_trigger -%}
+    {%- assign matched_option = option -%}
+    {%- assign matched_option_index = forloop.index -%}
+    {%- break -%}
+  {%- elsif has_native_swatch and fallback_option == blank -%}
+    {%- assign fallback_option = option -%}
+    {%- assign fallback_option_index = forloop.index -%}
+  {%- endif -%}
+{% endfor %}
+{%- if matched_option == blank and fallback_option != blank -%}
+  {%- assign matched_option = fallback_option -%}
+  {%- assign matched_option_index = fallback_option_index -%}
+{%- endif -%}
+{%- if matched_option != blank -%}
+  {%- assign swatch_values = matched_option.values -%}
+  {%- assign swatch_option_key = 'option' | append: matched_option_index -%}
+{%- endif -%}
+
+<template data-data>
+  {
+    {%
+      render 'swatch-data',
+      product: product,
+      swatch_values: swatch_values,
+      swatch_option_key: swatch_option_key,
+    %}
+  }
+</template>

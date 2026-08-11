@@ -1,0 +1,510 @@
+{% comment %}
+  cl-pack-grid.liquid — custom Pack Builder product grid (Phase A).
+  Rendered on the GemPages collection template via a Custom Code block:
+    {% render 'cl-pack-grid' %}
+
+  Replaces the GemPages "Product List". The builder section
+  (gp-section-626317142307963757) reads these cards through the stable
+  data-cl-* hooks below — its initCards()/getCardData() detect
+  [data-cl-card] markup and wire pack logic (summary, milestones,
+  discounts, cart) onto it.
+
+  Card contract (read by the builder):
+    [data-cl-card]              card root
+    data-cl-handle              product handle
+    data-cl-title               product title
+    data-cl-variant-id          currently resolved variant id   (kept live by this file's JS)
+    data-cl-price               resolved variant price in cents (live)
+    data-cl-variant-title       resolved variant title          (live)
+    data-cl-image               resolved image URL              (live)
+    data-cl-personalized        present when the product takes custom text
+    [data-cl-add]               the Add button (behavior wired by the builder)
+    card.__clPerso              { values, config, valid, reset() } for personalized cards
+  Events: card dispatches 'cl:variant-change' after each re-resolution.
+{% endcomment %}
+
+<div class="cl-pack-grid" data-cl-pack-grid>
+  {%- for product in collection.products -%}
+    {%- assign cl_pf = product.metafields.custom.personalization_fields.value -%}
+    {%- assign first_variant = product.selected_or_first_available_variant | default: product.variants.first -%}
+    <article
+      class="cl-grid-card{% if cl_pf and cl_pf.size > 0 %} is-personalized{% endif %}"
+      data-cl-card
+      data-cl-handle="{{ product.handle }}"
+      data-cl-title="{{ product.title | escape }}"
+      data-cl-product-type="{{ product.type | escape }}"
+      data-cl-variant-id="{{ first_variant.id }}"
+      data-cl-price="{{ first_variant.price }}"
+      data-cl-variant-title="{{ first_variant.title | escape }}"
+      data-cl-image="{{ first_variant.featured_image | default: product.featured_image | image_url: width: 600 }}"
+      {% if cl_pf and cl_pf.size > 0 %}data-cl-personalized data-cl-perso-fields='{{ cl_pf | json | escape }}'{% endif %}
+    >
+      <script type="application/json" data-cl-variants>
+        [
+          {%- for variant in product.variants -%}
+            {
+              "id": {{ variant.id }},
+              "price": {{ variant.price }},
+              "available": {{ variant.available }},
+              "title": {{ variant.title | json }},
+              "options": {{ variant.options | json }},
+              "image": {% if variant.featured_image %}{{ variant.featured_image | image_url: width: 600 | json }}{% else %}null{% endif %}
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      </script>
+
+      <div class="cl-grid-media">
+        <img
+          data-cl-card-image
+          src="{{ first_variant.featured_image | default: product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.title | escape }}"
+          width="600"
+          height="600"
+          loading="lazy"
+        >
+      </div>
+
+      <div class="cl-grid-body">
+        <h3 class="cl-grid-title">{{ product.title }}</h3>
+        <div class="cl-grid-price" data-cl-card-price>{{ first_variant.price | money }}</div>
+
+        {%- for option in product.options_with_values -%}
+          <div class="cl-grid-option" data-cl-option-group data-cl-option-index="{{ forloop.index0 }}" data-cl-option-name="{{ option.name | escape }}">
+            <div class="cl-grid-option-label">
+              {{ option.name }}: <span data-cl-option-current>{{ option.selected_value | default: option.values.first }}</span>
+            </div>
+            <div class="cl-grid-option-values">
+              {%- for value in option.values -%}
+                <button type="button" class="cl-grid-swatch" data-cl-value="{{ value | escape }}">{{ value }}</button>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endfor -%}
+
+        {%- if cl_pf and cl_pf.size > 0 -%}
+          <div class="cl-grid-perso" data-cl-perso>
+            <div class="cl-grid-perso-preview" data-cl-perso-preview></div>
+            <div class="cl-grid-perso-fields">
+              {%- for field_label in cl_pf -%}
+                <label class="cl-grid-perso-field">
+                  <span class="cl-grid-perso-head">
+                    <span>{{ field_label }}</span>
+                    <span class="cl-grid-perso-count" data-cl-perso-count="{{ field_label | escape }}"></span>
+                  </span>
+                  <input type="text" data-cl-perso-input="{{ field_label | escape }}" autocomplete="off">
+                </label>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <button type="button" class="cl-grid-add" data-cl-add>
+          {%- if cl_pf and cl_pf.size > 0 -%}Personalize &amp; Add{%- else -%}Add to Pack{%- endif -%}
+        </button>
+      </div>
+    </article>
+  {%- endfor -%}
+</div>
+
+<style>
+  .cl-pack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 8px;
+  }
+  .cl-grid-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow .15s ease, border-color .15s ease;
+  }
+  .cl-grid-card.cl-in-pack {
+    border-color: #1a7f37;
+    box-shadow: 0 0 0 2px rgba(26, 127, 55, .25);
+  }
+  .cl-grid-media {
+    aspect-ratio: 1 / 1;
+    background: #f6f6f6;
+  }
+  .cl-grid-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .cl-grid-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    flex: 1;
+  }
+  .cl-grid-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .cl-grid-price {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .cl-grid-option-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .cl-grid-option-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cl-grid-swatch {
+    position: relative;
+    padding: 6px 12px;
+    border: 1px solid #d5d5d5;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color .1s ease, background .1s ease;
+  }
+  .cl-grid-swatch:hover { border-color: #999; }
+  .cl-grid-swatch.is-selected {
+    border-color: #111;
+    background: #111;
+    color: #fff;
+  }
+  .cl-grid-swatch.is-unavailable {
+    opacity: .4;
+    text-decoration: line-through;
+  }
+  .cl-grid-swatch .cl-swatch-badge {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #1a7f37;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+  }
+  .cl-grid-option[hidden] { display: none; }
+  .cl-grid-perso {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border: 1px dashed #d5d5d5;
+    border-radius: 10px;
+    background: #fafafa;
+  }
+  .cl-grid-perso-preview .cl-plate { transform-origin: top center; }
+  .cl-grid-perso-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cl-grid-perso-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .cl-grid-perso-count { color: #999; font-weight: 400; }
+  .cl-grid-perso-field input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #d5d5d5;
+    border-radius: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+  .cl-grid-perso-field input:focus {
+    outline: none;
+    border-color: #111;
+  }
+  .cl-grid-add {
+    margin-top: auto;
+    padding: 12px;
+    border: none;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .1s ease;
+  }
+  .cl-grid-add:hover:not(:disabled) { opacity: .85; }
+  .cl-grid-add:disabled { cursor: default; opacity: .55; }
+  .cl-grid-add.is-added { background: #1a7f37; }
+  .cl-grid-add.is-invalid { background: #888; }
+  .cl-grid-card .cl-pack-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #1a7f37;
+    color: #fff;
+    font-size: 15px;
+    line-height: 26px;
+    text-align: center;
+    z-index: 2;
+  }
+  @media (max-width: 767px) {
+    .cl-pack-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .cl-grid-body { padding: 10px; gap: 8px; }
+  }
+</style>
+
+<script>
+(function () {
+  'use strict';
+
+  // Mirrors the builder section's per-label defaults (labels are the Zepto contract).
+  var FIELD_DEFAULTS = {
+    'Month':           { maxLength: 3,  placeholder: 'MONTH' },
+    'Year':            { maxLength: 4,  placeholder: 'YEAR' },
+    'Custom Text':     { maxLength: 20, placeholder: 'CUSTOM' },
+    'Custom Text One': { maxLength: 20, placeholder: '' },
+    'Custom Text Two': { maxLength: 26, placeholder: '' }
+  };
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function moneyFromCents(cents) {
+    return '$' + (cents / 100).toFixed(2);
+  }
+
+  function initCard(card) {
+    var variants;
+    try {
+      variants = JSON.parse(card.querySelector('[data-cl-variants]').textContent);
+    } catch (e) {
+      return;
+    }
+    if (!variants.length) return;
+
+    var groups = Array.prototype.slice.call(card.querySelectorAll('[data-cl-option-group]'));
+    var imageEl = card.querySelector('[data-cl-card-image]');
+    var priceEl = card.querySelector('[data-cl-card-price]');
+
+    // Selected value per option index, seeded from the first available variant.
+    var seed = variants.filter(function (v) { return v.available; })[0] || variants[0];
+    var selection = seed.options.slice();
+
+    function variantsMatching(depth) {
+      // Variants matching the selection for option indexes < depth.
+      return variants.filter(function (v) {
+        for (var i = 0; i < depth; i++) {
+          if (v.options[i] !== selection[i]) return false;
+        }
+        return true;
+      });
+    }
+
+    function resolve() {
+      var exact = variants.filter(function (v) {
+        return v.options.every(function (o, i) { return o === selection[i]; });
+      });
+      return exact.filter(function (v) { return v.available; })[0] || exact[0] || null;
+    }
+
+    function render() {
+      groups.forEach(function (group, gi) {
+        var idx = Number(group.getAttribute('data-cl-option-index'));
+        var candidates = variantsMatching(idx);
+        var values = [];
+        candidates.forEach(function (v) {
+          if (values.indexOf(v.options[idx]) === -1) values.push(v.options[idx]);
+        });
+
+        // If the current selection is no longer valid at this level, snap to
+        // the first value (prefer one with stock further down).
+        if (values.indexOf(selection[idx]) === -1) {
+          var availableFirst = candidates.filter(function (v) { return v.available; })[0];
+          selection[idx] = availableFirst ? availableFirst.options[idx] : values[0];
+        }
+
+        // Data-driven show/hide: a group with a single effective value (e.g.
+        // "One Size Fits All" for non-Flex-Fit styles) is auto-selected and
+        // hidden. Flex-Fit exposes multiple sizes, so its group shows.
+        group.hidden = values.length <= 1;
+
+        var currentLabel = group.querySelector('[data-cl-option-current]');
+        if (currentLabel) currentLabel.textContent = selection[idx];
+
+        group.querySelectorAll('[data-cl-value]').forEach(function (btn) {
+          var value = btn.getAttribute('data-cl-value');
+          var visible = values.indexOf(value) !== -1;
+          btn.style.display = visible ? '' : 'none';
+          btn.classList.toggle('is-selected', value === selection[idx]);
+          var anyAvailable = candidates.some(function (v) {
+            return v.options[idx] === value && v.available;
+          });
+          btn.classList.toggle('is-unavailable', visible && !anyAvailable);
+        });
+      });
+
+      var variant = resolve();
+      if (!variant) return;
+
+      card.setAttribute('data-cl-variant-id', variant.id);
+      card.setAttribute('data-cl-price', variant.price);
+      card.setAttribute('data-cl-variant-title', variant.title);
+      if (variant.image) {
+        card.setAttribute('data-cl-image', variant.image);
+        if (imageEl && imageEl.src !== variant.image) imageEl.src = variant.image;
+      }
+      if (priceEl) priceEl.textContent = moneyFromCents(variant.price);
+
+      card.dispatchEvent(new CustomEvent('cl:variant-change', { bubbles: true }));
+    }
+
+    card.addEventListener('click', function (event) {
+      var btn = event.target.closest('[data-cl-value]');
+      if (!btn || !card.contains(btn)) return;
+      var group = btn.closest('[data-cl-option-group]');
+      var idx = Number(group.getAttribute('data-cl-option-index'));
+      selection[idx] = btn.getAttribute('data-cl-value');
+      render();
+    });
+
+    initPersonalization(card);
+    render();
+  }
+
+  function initPersonalization(card) {
+    if (!card.hasAttribute('data-cl-personalized')) return;
+
+    var labels;
+    try {
+      labels = JSON.parse(card.getAttribute('data-cl-perso-fields'));
+    } catch (e) {
+      labels = [];
+    }
+
+    var config = {
+      productType: card.getAttribute('data-cl-product-type') || '',
+      fields: labels.map(function (label) {
+        var d = FIELD_DEFAULTS[label] || { maxLength: 30, placeholder: '' };
+        return { label: label, maxLength: d.maxLength, placeholder: d.placeholder };
+      })
+    };
+
+    var values = {};
+    var previewEl = card.querySelector('[data-cl-perso-preview]');
+
+    function get(label) { return (values[label] || '').trim(); }
+
+    function isValid() {
+      return config.fields.every(function (f) { return get(f.label).length > 0; });
+    }
+
+    function renderPreview() {
+      if (!previewEl) return;
+      if (/plate/i.test(config.productType)) {
+        var state = (card.getAttribute('data-cl-title') || '').trim().split(/\s+/)[0] || 'CUSTOM';
+        previewEl.innerHTML =
+          '<div class="cl-plate">' +
+            '<div class="cl-plate-top">' +
+              '<span class="cl-plate-mini">' + escapeHtml(get('Month') || 'MO') + '</span>' +
+              '<span class="cl-plate-state">' + escapeHtml(state.toUpperCase()) + '</span>' +
+              '<span class="cl-plate-mini">' + escapeHtml(get('Year') || 'YR') + '</span>' +
+            '</div>' +
+            '<div class="cl-plate-main">' + escapeHtml(get('Custom Text') || 'CUSTOM') + '</div>' +
+            '<div class="cl-plate-sub">' + escapeHtml(get('Custom Text Two')) + '</div>' +
+          '</div>';
+      } else {
+        var lines = config.fields.map(function (f) { return get(f.label); }).filter(Boolean);
+        previewEl.innerHTML = '<div class="cl-perso-generic">' +
+          (lines.length
+            ? lines.map(function (l) { return '<div>' + escapeHtml(l) + '</div>'; }).join('')
+            : '<div class="cl-perso-empty">Your text preview</div>') +
+          '</div>';
+      }
+    }
+
+    function syncField(label) {
+      var field = config.fields.filter(function (f) { return f.label === label; })[0];
+      var counter = card.querySelector('[data-cl-perso-count="' + CSS.escape(label) + '"]');
+      if (counter && field) {
+        counter.textContent = (field.maxLength - (values[label] || '').length) + ' characters left';
+      }
+    }
+
+    config.fields.forEach(function (f) {
+      var input = card.querySelector('[data-cl-perso-input="' + CSS.escape(f.label) + '"]');
+      if (!input) return;
+      input.maxLength = f.maxLength;
+      input.placeholder = f.placeholder;
+      values[f.label] = '';
+      syncField(f.label);
+      input.addEventListener('input', function () {
+        values[f.label] = input.value;
+        syncField(f.label);
+        renderPreview();
+        card.dispatchEvent(new CustomEvent('cl:perso-change', { bubbles: true }));
+      });
+    });
+
+    card.__clPerso = {
+      config: config,
+      get values() {
+        var out = {};
+        config.fields.forEach(function (f) {
+          var v = get(f.label);
+          if (v) out[f.label] = v;   // omit empties, mirroring Zepto
+        });
+        return out;
+      },
+      get valid() { return isValid(); },
+      reset: function () {
+        config.fields.forEach(function (f) {
+          values[f.label] = '';
+          var input = card.querySelector('[data-cl-perso-input="' + CSS.escape(f.label) + '"]');
+          if (input) input.value = '';
+          syncField(f.label);
+        });
+        renderPreview();
+        card.dispatchEvent(new CustomEvent('cl:perso-change', { bubbles: true }));
+      }
+    };
+
+    renderPreview();
+  }
+
+  function boot() {
+    document.querySelectorAll('[data-cl-pack-grid] [data-cl-card]').forEach(initCard);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
+})();
+</script>

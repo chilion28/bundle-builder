@@ -1,0 +1,126 @@
+<!doctype html>
+  <html class="no-js no-touch" lang="{{ request.locale.iso_code }}">
+    <head>{% render 'pagefly-head' %}
+      <meta charset="utf-8">
+      <meta http-equiv="x-ua-compatible" content="IE=edge">
+  
+      <link rel="preconnect" href="https://cdn.shopify.com">
+      <link rel="preconnect" href="https://fonts.shopifycdn.com">
+      <link rel="preconnect" href="https://v.shopify.com">
+      <link rel="preconnect" href="https://cdn.shopifycloud.com">
+  
+      <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@4.0/dist/fancybox.css" />
+      <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+
+
+        <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
+        {% comment %} <script src="https://unpkg.com/v3-infinite-loading@1.0.6/lib/v3-infinite-loading.umd.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/v3-infinite-loading@1.0.6/lib/style.css" /> {% endcomment %}
+   
+  
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+      <meta name="ahrefs-site-verification" content="f672d9822dccdc7192405a28ed7b1e50b2118eee231c7bafb65e313de4c489d7">
+      
+      <title>
+        {{- page_title -}}
+  
+        {%- if current_tags -%}
+          {% capture cat_array %}{%- render 'advanced-tag-loop' -%}{% endcapture %}
+          {% assign cat_array = cat_array | split: '|' %}
+          {% assign title_tags = '' %}
+          {% assign meta_tags = current_tags | join: ', ' %}
+          {%- for tag in current_tags -%}
+            {% assign is_advanced_tag = false %}
+            {% assign cat = tag | split: '_' | first %}
+  
+            {%- unless cat == tag -%}
+              {%- if cat_array contains cat -%}
+                {% assign is_advanced_tag = true %}
+                {% assign title_tags = title_tags | append: ', ' | append: tag | replace_first: '_', ': ' %}
+              {%- endif -%}
+            {%- endunless -%}
+  
+            {%- unless is_advanced_tag -%}
+              {% assign title_tags = title_tags | append: ', ' | append: tag %}
+            {%- endunless -%}
+          {%- endfor -%}
+          {{ 'general.title.tags' | t: tags: title_tags | remove_first: ', ' }}
+        {%- endif -%}
+  
+        {%- if current_page != 1 -%}
+          {{- 'general.title.page' | t: page: current_page -}}
+        {%- endif -%}
+  
+        {%- unless page_title contains shop.name -%}
+          {{- 'general.title.shop' | t: shop: shop.name -}}
+        {%- endunless -%}
+      </title>
+  
+      {% if page_description != blank %}
+        <meta name="description" content="{{ page_description | escape }}">
+      {% endif %}
+  
+      {% render 'favicon' %}
+  
+      {% if template contains 'collection' and current_tags %}
+        <meta name="robots" content="noindex" />
+        <link rel="canonical" href="{{ shop.url }}{{ collection.url }}" />
+      {% else %}
+        <link rel="canonical" href="{{ canonical_url }}" />
+      {% endif %}
+  
+      <meta name="viewport" content="width=device-width">
+  
+      {% assign twitter_handle = settings.social_twitter | split: 'twitter.com/' | last %}
+      {%
+        render 'social-meta-tags',
+        twitter_handle: twitter_handle
+      %}
+  
+      <link rel="preload" href="{{ settings.type_menu | font_url }}" as="font" crossorigin="anonymous">
+      <link rel="preload" as="style" href="{{ 'theme.css' | asset_url }}">
+      <link rel="preload" as="style" href="{{ 'citylocs.css' | asset_url }}">
+      {{ content_for_header }}
+  
+      {{ 'theme.css' | asset_url | stylesheet_tag }}
+      {{ 'citylocs.css' | asset_url | stylesheet_tag }}
+  
+      {% comment %}Inject theme-object begin{% endcomment %}
+      <script>
+        window.Theme = window.Theme || {};
+        window.Theme.version = '7.0.1';
+        window.Theme.name = 'Empire';
+        window.Theme.routes = {
+          "root_url": "{{ routes.root_url }}",
+          "account_url": "{{ routes.account_url }}",
+          "account_login_url": "{{ routes.account_login_url }}",
+          "account_logout_url": "{{ routes.account_logout_url }}",
+          "account_register_url": "{{ routes.account_register_url }}",
+          "account_addresses_url": "{{ routes.account_addresses_url }}",
+          "collections_url": "{{ routes.collections_url }}",
+          "all_products_collection_url": "{{ routes.all_products_collection_url }}",
+          "search_url": "{{ routes.search_url }}",
+          "cart_url": "{{ routes.cart_url }}",
+          "cart_add_url": "{{ routes.cart_add_url }}",
+          "cart_change_url": "{{ routes.cart_change_url }}",
+          "cart_clear_url": "{{ routes.cart_clear_url }}",
+          "product_recommendations_url": "{{ routes.product_recommendations_url }}",
+        };
+      </script>
+      {% comment %}Inject theme-object end{% endcomment %}
+  
+    
+    {% render 'qikify-apps' %}
+  
+	{{ shop.metafields.loox["global_html_head"] }}
+<!--Gem_Page_Header_Script-->
+{% render 'gem-app-header-scripts' %}
+<!--End_Gem_Page_Header_Script-->
+    <script async defer src="https://tools.luckyorange.com/core/lo.js?site-id=f577bf44"></script>
+
+</head>
+  
+    <body class="template-{{ template.name }}" data-instant-allow-query-string {% if settings.reduce_animations %}data-reduce-animations{% endif %}>{% capture ICART_FULL_PAGE_LAYOUT %}{{ content_for_layout }}{% endcapture %}{% render 'cl-builder-product-guard' %}</body>
+  </html>

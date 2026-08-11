@@ -1,0 +1,106 @@
+{% doc %}
+  @param {object} section - Section object
+  @param {string} content_image - Rendered image content; typically rendered by the parent section file and passed in as a variable
+  @param {string} content_text - Rendered text content; typically rendered by the parent section file and passed in as a variable
+
+  @param {string} [base_name] - BEM prefix for all emitted classes (default: 'image-with-text')
+  @param {string} [section_classes] - Space-separated classes to apply to the section element
+  @param {string} [section_styles] - Inline styles to place on the section element; useful for CSS variables
+
+  @param {string} [section_heading] - Section heading above the image
+  @param {string} [section_style] - Style variant (e.g. accent or contrast)
+  @param {boolean} [show_border] - Show section border
+  @param {string} [desktop_height] - Section/image height on desktop
+  @param {string} [mobile_height] - Section/image height on mobile
+  @param {boolean} [treat_as_banner] - Adds an attribute to treat this as a banner; important for transparent headers
+
+  @param {string} [desktop_image_alignment] - Image position relative to text content on desktop; applied as a CSS class
+  @param {string} [mobile_image_alignment] - Image position relative to text content on mobile; applied as a CSS class
+  @param {number} [overlay_opacity] - Overlay opacity for image-with-text overlay; used for inline style
+  @param {string} [overlay_color] - Overlay color; used for inline style
+
+  @param {string} [text_color] - Color of text content and heading (does not apply to section heading)
+  @param {string} [text_alignment] - Left, center, or right alignment of text content
+  @param {boolean} [text_shadow] - Shadow effect on text content
+  @param {string} [content_position] - Position of text content in the container, e.g. top-left, top-center, top-right
+
+
+{% enddoc %}
+
+{% liquid
+  assign base_name = base_name | default: 'image-with-text'
+  assign treat_as_banner = treat_as_banner | default: false
+%}
+
+{%- if overlay_opacity > 0 and overlay_color -%}
+  {%- assign overlay_opacity = overlay_opacity | times: 0.01 -%}
+  {%- assign overlay_color = overlay_color | color_modify: 'alpha', overlay_opacity -%}
+{%- endif -%}
+
+{% capture text_classes %}
+  {% if text_alignment != blank %}
+    {{ base_name }}-text-alignment-{{ text_alignment }}
+  {% endif %}
+  {% if text_shadow %}
+   {{ base_name }}--text-shadow
+  {% endif %}
+{% endcapture %}
+
+<section
+  class="
+    {{ base_name }}
+    {% if section_style != blank %}
+      {{ base_name }}--section-style-{{ section_style }}
+    {% endif %}
+    {% if show_border %}
+      {{ base_name }}--section-show-border
+    {% endif %}
+    {% if desktop_height != blank %}
+      {{ base_name }}--desktop-height-{{ desktop_height }}
+    {% endif %}
+    {% if mobile_height != blank %}
+      {{ base_name }}--mobile-height-{{ mobile_height }}
+    {% endif %}
+    {% if desktop_image_alignment != blank %}
+      {{ base_name }}--desktop-image-alignment-{{ desktop_image_alignment }}
+    {% endif %}
+    {% if mobile_image_alignment != blank %}
+      {{ base_name }}--mobile-image-alignment-{{ mobile_image_alignment }}
+    {% endif %}
+    {% if content_position != blank %}
+      {{ base_name }}--content-position-{{ content_position }}
+    {% endif %}
+    {% if section_classes != blank %}
+      {{ section_classes }}
+    {% endif %}
+  "
+  {% if section_styles %}
+    style="{{ section_styles }}"
+  {% endif %}
+  data-section-id="{{ section.id }}"
+  data-banner="{{ treat_as_banner }}"
+>
+  {%- if section_heading != blank -%}
+    <h2 class="{{ base_name }}__section-heading">{{ section_heading | escape }}</h2>
+  {%- endif -%}
+  <div class="{{ base_name }}__container">
+    <div class="{{ base_name }}__image-wrapper">
+      {{ content_image }}
+    </div>
+    <div
+      class="{{ base_name }}__content"
+      {% if overlay_color or text_color %}
+        style="
+          {% if overlay_color %}background-color: {{ overlay_color }};{% endif %}
+          {% if text_color %}color: {{ text_color }};{% endif %}
+        "
+      {% endif %}
+    >
+      {%- if content_text != blank -%}
+       <div class="{{ base_name }}__content-wrapper {{ text_classes }}">
+          {{ content_text }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>

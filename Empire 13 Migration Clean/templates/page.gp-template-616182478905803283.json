@@ -1,0 +1,180 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_617186639659139744": {
+      "type": "gp-section-617186639659139744",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "04b45c55a6a5363f724ee8b0e2d9c2cadc92ff1c60fc8c36f2ac2b497f5aaa0a_1_1_1_0__1",
+        "ggfzn2nXOtT_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/CL-Hero-Desktop-2.png",
+        "ggfzn2nXOtT_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-section-bg-mobile-4.png",
+        "ggCqiCnC42J_text": "custom U.s. License plate hats",
+        "ggaOp2S9lDp_text": "Build Your Custom Hat in 3 easy steps",
+        "gguCqTvDMZs_text": "1",
+        "ggPwadsvV-W_text": "Select Your State"
+      }
+    },
+    "gp_section_617206376292156064": {
+      "type": "gp-section-617206376292156064",
+      "settings": {
+        "checksum": "e2c2007f51f1d00c08f7f11792cafccec4e4a273d4ef54afa0eaa58f420aaedd_1_1_1_0__1",
+        "ggqhtOkAg0a_text": "2",
+        "ggaLHaJIQ7E_text": "Type your text",
+        "ggy6kfmErkQ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggy6kfmErkQ_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/type-your-text-2mobile.png",
+        "ggECy3pMX7u_text": "3",
+        "ggVUA0jFtdt_text": "choose hat color",
+        "ggXFCeMQY1U_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggXFCeMQY1U_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/3_-_Choose_your_color_c57cbdab-2e9c-4ce8-a112-0f37f992e0c6.png"
+      }
+    },
+    "gp_section_617209446170362859": {
+      "type": "gp-section-617209446170362859",
+      "settings": {
+        "checksum": "8fc9e506c3c29f580d1b22ba9d7ed6946838bc6295531b38f419c6aeeecafc36_1_1_1_0__1",
+        "gg2g-hvI9WC_text": "promote your business",
+        "ggWbPclE99M_text": "&nbsp;Your business gets free exposure all around town",
+        "gg8MUKEUR3n_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/troy-plumbing-3.jpg",
+        "ggpUUTftsQT_text": "troy brown plumbing",
+        "ggO4KVW5rbd_text": "&nbsp;Each hat I ordered fit perfectly and the design of them all were impeccable.",
+        "ggr677Mq3-X_text": "donavons electrical",
+        "ggApF3uYAGG_text": "Loved mine! Will definitely be ordering more.",
+        "ggl9yfNYk2f_text": "–donovan d., la",
+        "ggCSXii4Av-_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggCSXii4Av-_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/LA-Donavons-2.png",
+        "ggZM7f1VlZE_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggZM7f1VlZE_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/jeres-everything-v2.png",
+        "ggbryFqB0GY_text": "jere's everything",
+        "ggTcc2sv0Gr_text": "“Love it!”",
+        "ggODhX-f9Nu_text": "–jere g., WA"
+      }
+    },
+    "gp_section_617216845476266689": {
+      "type": "gp-section-617216845476266689",
+      "settings": {
+        "checksum": "8bead82ecd28f16fa17e1e7a4e8e90d44435dcb5182439bbc019db657ff60ba4_1_1_1_0__1",
+        "gglyNF1f7SE_text": "<p>Free Advertising Built Into Every Hat</p>",
+        "ggfwgTHgPvm_text": "<p>These are personalized, state-pride hats your team wants to wear around town.</p>"
+      }
+    },
+    "gp_section_617218438892356548": {
+      "type": "gp-section-617218438892356548",
+      "settings": {
+        "checksum": "0bffc23a859eff95e03e9bac119dd04b0f5e12051847a0de188bfed6f33c12e3_1_1_1_0__1",
+        "ggjppom56nC_text": "Your crew will wear it for state pride",
+        "ggJ_YnN_PD7_text": "<p>Turn your team into walking billboards with personalized license plate hats people wear on and off the job.</p>"
+      }
+    },
+    "gp_section_617218584149492715": {
+      "type": "gp-section-617218584149492715",
+      "settings": {
+        "checksum": "aa33fe0e2d6c1f42525c9da91ac335078962af025bc01da7d8c94c6c9658dd13_1_1_1_0__1",
+        "ggMr79hwAZM_text": "promote your business",
+        "ggW33v0_Bqr_text": "&nbsp;Outfit Your Entire Crew and Save"
+      }
+    },
+    "gp_section_617345720801821675": {
+      "type": "gp-section-617345720801821675",
+      "settings": {
+        "checksum": "55378ee3d6b3eddb3bf735ab922c573080bc735f604a9ec39c3b7cd16b367ffe_1_1_1_0__1",
+        "ggz0oANnMfP_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/lifestyle-1-mask.png",
+        "gg7zstYWE_p_text": "<br>trusted by more than<br><span style=\"color:#AFAFAF;\">250,000 customers</span>"
+      }
+    },
+    "gp_section_617347273315058628": {
+      "type": "gp-section-617347273315058628",
+      "settings": {
+        "checksum": "7cbc157acdd36c7d06d1fbb43dafd86a41b4c5dc158c12c62d3d96f7c858cc7c_1_1_1_0__1"
+      }
+    },
+    "gp_section_617349903764423328": {
+      "type": "gp-section-617349903764423328",
+      "settings": {
+        "checksum": "9eac7f5e721f8c1db68db484056c45f173675a79eb3036cf23cf9e32d8e25360_1_1_1_0__1"
+      }
+    },
+    "gp_section_617465678013661889": {
+      "type": "gp-section-617465678013661889",
+      "settings": {
+        "checksum": "71eee91a6dd26b284c8c0d52a77c26a3537a12a44d731eae83ee0669d7a117e7_1_1_1_0__1",
+        "ggV6JC1YgrP_text": "&nbsp;Frequently asked questions",
+        "ggzYEQVkl6l_text": "Have more questions? Find answers in ouR <a href=\"https://citylocs.com/pages/faq\"><span style=\"color:#3976A3;\"><u>help center</u></span></a>.",
+        "ggD4BPLc0Dm_childItem_0": "<p>&nbsp;How long does it take to receive my order?</p>",
+        "ggD4BPLc0Dm_childItem_1": "<p>Where is my order made?</p>",
+        "ggD4BPLc0Dm_childItem_2": "<p>Can I order just 1 hat?</p>",
+        "ggD4BPLc0Dm_childItem_3": "<p>Do you offer discounts on large orders?</p>",
+        "ggwKrAs_PqV_text": "<p><span style=\"background-color:rgba(255, 255, 255, 0);color:rgb(29,29,29);\">When considering production and shipping time, most orders arrive within eight business days. This excludes weekends and holidays. If your order does not require production, because it isn't being customized, it should arrive sooner than eight business days.&nbsp;</span></p>",
+        "ggOSRTFQu9Z_text": "<p><span style=\"background-color:rgba(255,255,255,0);color:rgb(29,29,29);\">All CityLocs hats are designed and produced in the United States. Each custom hat is made to order, allowing us to ensure quality and attention to detail before it ships to you.&nbsp;</span></p>",
+        "ggJZslADCQD_text": "<p><span style=\"background-color:rgba(255,255,255,0);color:rgb(29,29,29);\">Yes, absolutely. There is no minimum order requirement — you can order as little as one hat or as many as you’d like.</span></p>",
+        "ggyo8HZuMnx_text": "<p><span style=\"background-color:rgba(255,255,255,0);color:rgb(29,29,29);\">Yes, we offer discounted pricing for larger quantities. The more hats you order, the lower the price per piece. Bulk pricing is automatically applied on eligible products, or you can contact us for custom orders.</span></p>",
+        "gg4ASsyzJTO_label": "<p>view more</p>"
+      }
+    },
+    "gp_section_617465777200562881": {
+      "type": "gp-section-617465777200562881",
+      "settings": {
+        "checksum": "6806c61c61ca8b146e3358c278f173bcf8bbc041d1c1d334c6184d363bed1dfb_1_1_1_0__1",
+        "ggLsiZ-zRPZ_text": "Custom Hats Made Simple",
+        "ggfGEd7Prs1_text": "<p>Pick your state. Type your text. Preview instantly. Done.</p>",
+        "ggG_ewFTTQk_childItem_0": "<p>How to Customize</p>",
+        "ggG_ewFTTQk_childItem_1": "<p>Hat Styles</p>",
+        "gg0E4e013xz_childItem_0": "<p>Snapback</p>",
+        "gg0E4e013xz_childItem_1": "<p>Trucker</p>",
+        "gg0E4e013xz_childItem_2": "<p>Flexfit</p>",
+        "gg0E4e013xz_childItem_3": "<p>A-Frame</p>",
+        "gg0E4e013xz_childItem_4": "<p>6-Panel</p>",
+        "ggRTHyczHWU_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg",
+        "ggRTHyczHWU_srcSet_mobile_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Snapback_liner.svg",
+        "ggjvL_PjJj7_text": "Snapback",
+        "gg-__Llz-UA_text": "<p>A classic everyday hat known for comfort and breathability.</p><ul><li>Adjustable snapback closure for a perfect fit&nbsp;</li><li>Made with 6 structured panels for a traditional shape&nbsp;</li><li>Features a mesh back that allows air to flow and keeps you cool, especially outdoors.&nbsp;</li><li>Lightweight and available in a wide variety of colors</li></ul>"
+      }
+    },
+    "gp_section_617482410921034692": {
+      "type": "gp-section-617482410921034692",
+      "settings": {
+        "checksum": "1bb54c3385b8645a13183628fd5f2095ced68c5714f2b8bbf3228ca84a903f00_1_1_1_0__1"
+      }
+    },
+    "gp_section_617484253495558816": {
+      "type": "gp-section-617484253495558816",
+      "settings": {
+        "checksum": "26c8499c7e05c6f4916ee112bf70c583fa16d445ec6b0f15679e074a21dc66a7_1_1_1_0__1"
+      }
+    },
+    "gp_section_617484649320415937": {
+      "type": "gp-section-617484649320415937",
+      "settings": {
+        "checksum": "5c7a0c72fb05e0784b05f9d8b6792c74a453f87a640ed89cdbd02b2a0aacc1dc_1_1_1_0__1"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_617186639659139744",
+    "gp_section_617206376292156064",
+    "gp_section_617209446170362859",
+    "gp_section_617216845476266689",
+    "gp_section_617218584149492715",
+    "gp_section_617218438892356548",
+    "gp_section_617345720801821675",
+    "gp_section_617347273315058628",
+    "gp_section_617465678013661889",
+    "gp_section_617465777200562881",
+    "gp_section_617482410921034692",
+    "gp_section_617484253495558816",
+    "gp_section_617484649320415937",
+    "gp_section_617349903764423328"
+  ]
+}

@@ -1,0 +1,173 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "dynamic_rich_text_intro": {
+      "type": "dynamic-rich-text",
+      "blocks": {
+        "heading-established": {
+          "type": "heading",
+          "settings": {
+            "title": "Established in 1987",
+            "heading_size": "large"
+          }
+        },
+        "icon-store": {
+          "type": "icon",
+          "settings": {
+            "icon": "icon-store",
+            "icon_width": 30,
+            "icon_width_mobile": 30
+          }
+        },
+        "text-intro": {
+          "type": "text",
+          "settings": {
+            "text": "<p>What started as a single storefront has grown into one of the largest independent retailers in the country. Over the decades we've expanded our range, deepened our supplier relationships, and built a catalogue that covers everything from everyday essentials to specialty gear across dozens of departments.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading-established",
+        "icon-store",
+        "text-intro"
+      ],
+      "settings": {
+        "width": "wide",
+        "content_alignment": "center"
+      }
+    },
+    "dynamic_image_with_text_catalogue": {
+      "type": "dynamic-image-with-text",
+      "blocks": {
+        "text-catalogue": {
+          "type": "text",
+          "settings": {
+            "richtext": "<p>Today we operate stores across North America, ship to customers worldwide, and carry over 50,000 products across dozens of departments. Behind that is a buying team that evaluates every brand before it enters the catalogue, and a logistics operation built to get orders out fast and right the first time.</p>"
+          }
+        },
+        "button-catalogue": {
+          "type": "button",
+          "settings": {
+            "button_label": "Explore the Catalogue",
+            "button_link": "",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "text-catalogue",
+        "button-catalogue"
+      ],
+      "settings": {
+        "section_heading": "",
+        "desktop_image_alignment": "left",
+        "mobile_image_alignment": "top",
+        "text_alignment": "left"
+      }
+    },
+    "dynamic_image_with_text_team": {
+      "type": "dynamic-image-with-text",
+      "blocks": {
+        "text-team": {
+          "type": "text",
+          "settings": {
+            "richtext": "<p>Our team spans buying, logistics, customer service, and retail operations across every location we run. Over the years we've grown a lot, but we've stayed deliberate about who we hire and how we work. People who know the products, stand behind them, and treat customers like they matter. That part hasn't changed since day one.</p>"
+          }
+        },
+        "button-careers": {
+          "type": "button",
+          "settings": {
+            "button_label": "See Open Roles",
+            "button_link": "",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "text-team",
+        "button-careers"
+      ],
+      "settings": {
+        "section_heading": "",
+        "desktop_image_alignment": "right",
+        "mobile_image_alignment": "top",
+        "text_alignment": "left"
+      }
+    },
+    "dynamic_highlights_banner": {
+      "type": "dynamic-highlights-banner",
+      "blocks": {
+        "highlight-shipping": {
+          "type": "highlight",
+          "settings": {
+            "icon": "icon-delivery",
+            "title": "Free Shipping",
+            "text": "<p>On all orders over $50</p>",
+            "link": ""
+          }
+        },
+        "highlight-support": {
+          "type": "highlight",
+          "settings": {
+            "icon": "icon-chat",
+            "title": "Need Help?",
+            "text": "<p>Contact our support team today</p>",
+            "link": ""
+          }
+        },
+        "highlight-quality": {
+          "type": "highlight",
+          "settings": {
+            "icon": "icon-thumbs-up",
+            "title": "Quality Guaranteed",
+            "text": "<p>We stand behind every product we carry</p>",
+            "link": ""
+          }
+        },
+        "highlight-stores": {
+          "type": "highlight",
+          "settings": {
+            "icon": "icon-pin",
+            "title": "Find a Store",
+            "text": "<p>50+ locations across North America</p>",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "highlight-shipping",
+        "highlight-support",
+        "highlight-quality",
+        "highlight-stores"
+      ],
+      "settings": {
+        "section_spacing": false,
+        "section_width": "full-width",
+        "icon_layout": "left",
+        "color": "#4d4d4d",
+        "icon_color": "#4d4d4d",
+        "background_color": "#f8f8f8",
+        "mobile_layout": "slider"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "dynamic_rich_text_intro",
+    "dynamic_image_with_text_catalogue",
+    "dynamic_image_with_text_team",
+    "dynamic_highlights_banner"
+  ]
+}

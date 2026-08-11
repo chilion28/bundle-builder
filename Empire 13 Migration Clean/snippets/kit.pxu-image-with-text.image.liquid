@@ -1,0 +1,20 @@
+{% doc %}
+  @param {object} image - Section image
+  @param {string} base_name - BEM prefix for emitted classes (default: 'image-with-text')
+{% enddoc %}
+
+{%- assign base_name = base_name | default: 'image-with-text' -%}
+
+{%- if image != blank -%}
+  {%- capture image_classes -%}{{ base_name }}__image{%- endcapture -%}
+  {%
+    render 'kit.image',
+    src: image,
+    widths: '400,600,800,1000,1200,1500',
+    sizes: '(min-width: 700px) 50vw, 100vw',
+    classes: image_classes,
+  %}
+{%- else -%}
+  {%- capture placeholder_classes -%}{{ base_name }}__image {{ base_name }}__placeholder{%- endcapture -%}
+  {%- render 'kit.placeholder', name: 'lifestyle-1', classes: placeholder_classes -%}
+{%- endif -%}

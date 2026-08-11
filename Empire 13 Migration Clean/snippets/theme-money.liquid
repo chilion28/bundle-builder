@@ -1,0 +1,21 @@
+{%- doc -%}
+  Renders an amount with `money` or `money_with_currency` based on theme settings.
+  @param {number} amount - The amount in cents (e.g. product.price)
+  @param {string} context - 'product' or 'total'
+  @param {boolean} [html_wrap] - if true, wraps in <span class="money">
+{%- enddoc -%}
+{%- liquid
+  assign with_currency = false
+  if context == 'product' and settings.show_currency_code_product_prices
+    assign with_currency = true
+  elsif context == 'total' and settings.show_currency_code_totals
+    assign with_currency = true
+  endif
+
+  if with_currency
+    assign formatted = amount | money_with_currency
+  else
+    assign formatted = amount | money
+  endif
+-%}
+{%- if html_wrap -%}<span class="money">{{ formatted }}</span>{%- else -%}{{ formatted }}{%- endif -%}

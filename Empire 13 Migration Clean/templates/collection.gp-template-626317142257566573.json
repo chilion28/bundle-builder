@@ -1,0 +1,43 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_626317142307898221": {
+      "settings": {
+        "checksum": "6269146d07443371f71b303867e498a3822296e62d096120da7a7b3037695080_1_1_1_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-626317142307898221"
+    },
+    "gp_section_626317142307963757": {
+      "settings": {
+        "checksum": "d67c134a1a7338e0ed3056d52fa22bf3ea73a09538d0c40dbc1b26c44f2a1ee9_1_1_1_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-626317142307963757"
+    },
+    "gp_section_626317142308029293": {
+      "settings": {
+        "checksum": "9a0a3132ceb3c62b1954500312773d1067d21cd6bc2ec8c1859802b5f7dccbc9_1_1_1_0__1",
+        "ggBDQpPyzrf_text": "The More You Bundle, The More You Save",
+        "ggZOOMgUl2W_viewLessText": "Show less",
+        "ggZOOMgUl2W_viewMoreText": "Show more",
+        "ggj8TyayEvD_text": "<p>create your pack</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-626317142308029293"
+    }
+  },
+  "order": [
+    "gp_section_626317142308029293",
+    "gp_section_626317142307898221",
+    "gp_section_626317142307963757"
+  ]
+}

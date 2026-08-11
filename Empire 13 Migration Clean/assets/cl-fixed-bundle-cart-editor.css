@@ -1,0 +1,14 @@
+.cl-bd__edit {
+  align-self: flex-start;
+  margin: 5px 0 2px;
+  padding: 7px 12px;
+  border: 1px solid #00a0ea;
+  border-radius: 7px;
+  background: #fff;
+  color: #007bb5;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.cl-bd__edit:hover { background: #eef8fd; }

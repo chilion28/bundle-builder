@@ -1,0 +1,276 @@
+.flickity-enabled {
+  position: relative;
+}
+
+.flickity-enabled:focus {
+  outline: none;
+}
+
+.flickity-viewport {
+  overflow: hidden;
+  position: relative;
+  transition: height 0.35s;
+  height: 100%;
+}
+
+.flickity-slider {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.flickity-enabled.is-draggable {
+  user-select: none;
+}
+
+.flickity-enabled.is-draggable .flickity-viewport {
+  cursor: move;
+  cursor: grab;
+
+  &.is-pointer-down {
+    cursor: grabbing;
+  }
+}
+
+.flickity-enabled.is-draggable[data-arrows='true'] .flickity-viewport {
+  cursor: default;
+
+  &.is-pointer-down {
+    cursor: default;
+  }
+}
+
+.flickity-button {
+  position: absolute;
+  border: none;
+  color: var(--color-button-primary-text);
+  background: var(--color-button-primary);
+  border-radius: 50%;
+
+  .hero & {
+    color: var(--root-color-primary);
+    background-color: var(--root-color-secondary);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.flickity-button:hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.flickity-button:disabled {
+  display: none;
+  cursor: auto;
+  pointer-events: none;
+}
+
+.flickity-prev-next-button {
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translateY(-50%);
+
+  /*Smaller arrows on mobile*/
+  @media only screen and (max-width: 768px) {
+    width: 33px;
+    height: 33px;
+  }
+}
+
+.flickity-prev-next-button:hover {
+  transform: translateY(-50%) scale(1.12);
+}
+.flickity-prev-next-button:active {
+  transform: translateY(-50%) scale(1);
+  transition: transform 0.05s ease-out;
+}
+
+.flickity-previous {
+  left: 10px;
+}
+.flickity-next {
+  right: 10px;
+}
+.flickity-rtl .flickity-previous {
+  left: auto;
+  right: 10px;
+}
+.flickity-rtl .flickity-next {
+  right: auto;
+  left: 10px;
+}
+
+.flickity-button-icon {
+  position: absolute;
+  left: 35%;
+  top: 35%;
+  width: 30%;
+  height: 30%;
+  fill: currentColor;
+}
+
+.flickity-page-dots {
+  position: absolute;
+  width: 100%;
+  bottom: -25px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  text-align: center;
+  line-height: 1;
+  color: currentColor;
+  z-index: 2;
+
+  .hero & {
+    bottom: 20px;
+    color: #fff;
+  }
+}
+
+.flickity-rtl .flickity-page-dots {
+  direction: rtl;
+}
+
+.flickity-page-dots .dot {
+  display: inline-block;
+  vertical-align: middle;
+  width: 6px;
+  height: 6px;
+  margin: 0 5px;
+  border-radius: 100%;
+  cursor: pointer;
+  background-color: currentColor;
+  opacity: 0.2;
+
+  &:hover {
+    opacity: 0.6;
+  }
+}
+
+.flickity-page-dots .dot.is-selected {
+  opacity: 1;
+  background-color: currentColor;
+  width: 9px;
+  height: 9px;
+}
+
+.flickity-enabled.is-fade .flickity-slider > * {
+  pointer-events: none;
+  z-index: 0;
+}
+
+.flickity-enabled.is-fade .flickity-slider > .is-selected {
+  pointer-events: auto;
+  z-index: 1;
+}
+
+/*
+  Hero specific styles for flickity dots/arrows
+ */
+.hero[data-arrows='true'] {
+  overflow: visible;
+
+  & .flickity-prev-next-button {
+    top: auto;
+    bottom: -20px;
+    transform: none;
+    z-index: 2;
+  }
+
+  & .flickity-prev-next-button:hover {
+    transform: scale(1.12);
+  }
+  & .flickity-prev-next-button:active {
+    transform: scale(1);
+  }
+
+  & .flickity-previous {
+    left: auto;
+    right: 90px;
+  }
+  & .flickity-next {
+    right: 40px;
+  }
+  &.flickity-rtl .flickity-previous {
+    right: auto;
+    left: 90px;
+  }
+  &.flickity-rtl .flickity-next {
+    right: auto;
+    left: 40px;
+  }
+
+  @media only screen and (max-width: 768px) {
+    & .flickity-prev-next-button {
+      bottom: -16px;
+    }
+    & .flickity-previous {
+      right: 60px;
+    }
+    & .flickity-next {
+      right: 20px;
+    }
+    &.flickity-rtl .flickity-previous {
+      left: 60px;
+    }
+    &.flickity-rtl .flickity-next {
+      left: 20px;
+    }
+  }
+}
+
+/*Change dots to bars*/
+[data-bars='true'] {
+  &.hero .flickity-page-dots {
+    bottom: 0;
+    height: 6px;
+    line-height: 6px;
+    z-index: 2;
+  }
+
+  & .flickity-page-dots .dot {
+    position: relative;
+    border-radius: 0;
+    width: 120px;
+    height: 6px;
+    border: 0;
+    opacity: 1;
+    vertical-align: top;
+    background: none;
+    overflow: hidden;
+
+    @media only screen and (max-width: 768px) {
+      width: 45px;
+    }
+
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      left: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    &:before {
+      opacity: 0.1;
+      background-color: #000;
+    }
+
+    &:hover:before {
+      opacity: 0.2;
+    }
+
+    &:after {
+      transform: translateX(-100%);
+      transition: none;
+      background-color: currentColor;
+    }
+
+    &.is-selected:after {
+      animation: slideshowBars 0s linear forwards;
+    }
+  }
+}

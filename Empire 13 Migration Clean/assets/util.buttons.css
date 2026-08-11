@@ -1,0 +1,196 @@
+button {
+  overflow: visible;
+  color: currentColor;
+}
+
+button[disabled] {
+  cursor: default;
+}
+
+.btn,
+.rte .btn {
+  line-height: 1.42;
+  text-decoration: none;
+  text-align: center;
+  white-space: normal;
+
+  font-size: calc(var(--body-md-font-size) + 2px);
+  font-weight: var(--heading-font-weight);
+
+  display: inline-block;
+  padding: var(--button-padding);
+  margin: 0;
+  width: auto;
+  min-width: 90px;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  user-select: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border-radius: var(--button-radius);
+  color: var(--color-button-primary-text);
+  background: var(--color-button-primary);
+
+  &:hover {
+    color: var(--color-button-primary-text);
+    background-color: var(--color-button-primary);
+  }
+
+  &[disabled],
+  &.disabled {
+    cursor: default;
+    color: var(--disabled-grey-text);
+    background-color: var(--disabled-grey);
+
+    &:hover {
+      color: var(--disabled-grey-text);
+      background-color: var(--disabled-grey);
+    }
+  }
+}
+
+.btn--secondary,
+.block-buy-buttons[data-show-dynamic-checkout] .btn,
+.rte .btn--secondary {
+  border: 1px solid;
+  border-color: var(--root-color-primary);
+  color: var(--root-color-primary);
+  background-color: var(--root-color-secondary);
+
+  &:hover {
+    background-color: var(--root-color-secondary);
+    color: var(--root-color-primary);
+  }
+
+  &[disabled],
+  &.disabled {
+    cursor: default;
+    color: var(--disabled-grey-text);
+    background-color: var(--disabled-grey);
+    border-color: var(--disabled-border);
+  }
+}
+
+.btn--circle {
+  padding: 8px;
+  border-radius: 50%;
+  min-width: 0;
+  line-height: 1;
+
+  & .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:before,
+  &:after {
+    content: none;
+    background: none;
+    width: auto; /*for photoswipe close button*/
+  }
+
+  &.btn--large .icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  &.btn--large {
+    padding: 15px;
+  }
+
+  &.btn--loading {
+    text-indent: unset;
+
+    @media only screen and (max-width: 768px) {
+      &:before {
+        width: 18px;
+        height: 18px;
+        margin-left: -9px;
+        margin-top: -9px;
+        border-width: 2px;
+      }
+    }
+
+    & svg {
+      opacity: 0;
+    }
+  }
+}
+
+.btn--icon {
+  min-width: 0;
+  padding: 6px;
+
+  & .icon {
+    display: block;
+    width: 23px;
+    height: 23px;
+  }
+}
+
+.btn--small {
+  padding: 8px 14px;
+  font-size: calc(var(--body-md-font-size) - 2px);
+}
+
+.btn--large {
+  padding: 15px 20px;
+}
+
+.btn--full {
+  width: 100%;
+}
+
+.btn--inverse {
+  background-color: transparent;
+  color: #fff;
+  border: 2px solid #fff;
+
+  &:hover,
+  &:focus {
+    background-color: transparent;
+  }
+}
+
+.btn--loading {
+  position: relative;
+  text-indent: -9999px;
+  background-color: var(--color-button-primary-dim);
+  color: var(--color-button-primary-dim);
+
+  &:hover,
+  &:active {
+    background-color: var(--color-button-primary-dim);
+    color: var(--color-button-primary-dim);
+  }
+
+  &:before {
+    content: '';
+    display: block;
+    width: 22px;
+    height: 22px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -11px;
+    margin-top: -11px;
+    border-radius: 50%;
+    border: 3px solid;
+    border-color: var(--color-button-primary-text);
+    border-top-color: transparent;
+    animation: spin 1s infinite linear;
+  }
+}
+
+/*Alt loading state*/
+.btn--loading.btn--secondary,
+.block-buy-buttons[data-show-dynamic-checkout] .btn--loading {
+  color: var(--root-color-primary);
+  background: transparent;
+
+  &:before {
+    border-color: var(--root-color-primary);
+    border-top-color: transparent;
+  }
+}

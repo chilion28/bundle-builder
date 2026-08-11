@@ -1,0 +1,139 @@
+:root {
+  --animate-duration: 1s;
+}
+
+[data-animate] {
+  opacity: 0;
+  transition-property: opacity, transform;
+  transition-duration: var(--animate-duration), var(--animate-duration);
+  transition-timing-function: ease-in-out, ease-in-out;
+}
+
+.no-js [data-animate] {
+  opacity: 1;
+}
+
+[data-animate] {
+  opacity: 0;
+}
+[ready] [data-animate] {
+  opacity: 1;
+}
+
+[data-animate='fadein'] {
+  opacity: 0;
+}
+[ready] [data-animate='fadein'] {
+  opacity: 1;
+}
+
+[data-animate='fadeup'] {
+  transform: translateY(5rem);
+}
+[ready] [data-animate='fadeup'] {
+  transform: translateY(0);
+}
+
+[data-animate='fadedown'] {
+  transform: translateY(-5rem);
+}
+[ready] [data-animate='fadedown'] {
+  transform: translateY(0);
+}
+
+[data-animate='fadeleft'] {
+  transform: translateX(-5rem);
+}
+[ready] [data-animate='fadeleft'] {
+  transform: translateX(0);
+}
+
+[data-animate='faderight'] {
+  transform: translateX(5rem);
+}
+[ready] [data-animate='faderight'] {
+  transform: translateX(0);
+}
+
+[data-animate='zoomin'] {
+  transform: scale(0.8);
+}
+[ready] [data-animate='zoomin'] {
+  transform: scale(1);
+}
+
+[data-animate='zoomout'] {
+  transform: scale(1.2);
+}
+[ready] [data-animate='zoomout'] {
+  transform: scale(1);
+}
+
+[data-animate='rise-up'] {
+  opacity: 0;
+
+  [ready] [data-animate='rise-up'] {
+    animation: rise-up 0.8s cubic-bezier(0.26, 0.54, 0.32, 1) forwards;
+  }
+}
+
+.image-wrap {
+  overflow: hidden;
+}
+
+.image-wrap img:not([role='presentation']) {
+  display: block;
+}
+
+.unload:before,
+.unload:after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 3px;
+  background: var(--root-color-secondary);
+  left: 50%;
+  top: 30%;
+  margin: -1px 0 0 -50px;
+  z-index: var(--z-index-loader);
+  opacity: 0;
+
+  .no-js & {
+    display: none;
+  }
+}
+
+.unload:before {
+  background: var(--root-color-primary);
+  opacity: 1;
+}
+
+.unload:after {
+  opacity: 0;
+  animation: preloading 0.5s ease 0.3s infinite;
+}
+
+.loading {
+  animation: placeholder-shimmer 1.3s linear 0.5s infinite;
+  background-size: 300% 100%;
+  background-image: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--color-secondary) var(--shade-12), var(--color-primary)) 40%,
+    color-mix(in srgb, var(--color-secondary) var(--shade-30), var(--color-primary)) 63%,
+    color-mix(in srgb, var(--color-secondary) var(--shade-12), var(--color-primary)) 79%
+  );
+
+  &.loaded {
+    animation: none;
+    background-image: none;
+  }
+}
+
+.loading--delayed:before {
+  animation-delay: 0.8s !important;
+  animation-duration: 1s !important;
+}
+
+.loading--delayed:after {
+  animation-delay: 1.3s !important;
+}

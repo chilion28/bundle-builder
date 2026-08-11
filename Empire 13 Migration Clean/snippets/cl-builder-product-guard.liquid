@@ -1,0 +1,100 @@
+{% liquid
+  assign cl_builder_handle = ''
+
+  if template.name == 'product'
+    for tag in product.tags
+      assign cl_tag_parts = tag | split: 'builder:'
+      if cl_tag_parts.size > 1
+        assign cl_builder_handle = cl_tag_parts[1] | strip | handleize
+        break
+      endif
+    endfor
+  endif
+
+  assign cl_builder_collection = blank
+  assign cl_builder_url = ''
+  assign cl_builder_title = 'Build Your Pack'
+  assign cl_builder_text = 'Build your pack and unlock bundle savings.'
+  assign cl_builder_cta = 'Start Building'
+
+  if cl_builder_handle != blank
+    assign cl_builder_collection = collections[cl_builder_handle]
+    assign cl_builder_url = '/collections/' | append: cl_builder_handle
+
+    if cl_builder_collection.url != blank
+      assign cl_builder_url = cl_builder_collection.url
+    endif
+
+    if cl_builder_collection.metafields.custom.builder_title != blank
+      assign cl_builder_title = cl_builder_collection.metafields.custom.builder_title
+    elsif cl_builder_handle == 'golf-hats'
+      assign cl_builder_title = 'Build Your Golf Hat Pack'
+    elsif cl_builder_collection.title != blank
+      assign cl_builder_title = 'Build Your ' | append: cl_builder_collection.title | append: ' Pack'
+    endif
+
+    if cl_builder_collection.metafields.custom.builder_banner_text != blank
+      assign cl_builder_text = cl_builder_collection.metafields.custom.builder_banner_text
+    elsif cl_builder_handle == 'golf-hats'
+      assign cl_builder_text = 'Build a <strong>4-pack</strong>: hats drop to <strong>$29.99 each</strong>, plus get a <strong>FREE Fore Life Golf Ball Marker Hat Clip</strong>.'
+    elsif cl_builder_collection.metafields.custom.builder_item_singular != blank
+      assign cl_builder_item = cl_builder_collection.metafields.custom.builder_item_singular
+      assign cl_builder_text = 'Build your ' | append: cl_builder_item | append: ' pack and unlock bundle savings.'
+    endif
+
+    if cl_builder_collection.metafields.custom.builder_add_button_text != blank
+      assign cl_builder_cta = cl_builder_collection.metafields.custom.builder_add_button_text
+    endif
+  endif
+%}
+
+{% if cl_builder_handle != blank %}
+  <div class="cl-builder-offer-banner" data-cl-builder-banner hidden>
+    <a class="cl-builder-offer-banner__link" href="{{ cl_builder_url }}">
+      <span class="cl-builder-offer-banner__title">{{ cl_builder_title }}</span>
+      <span class="cl-builder-offer-banner__text">
+        {{ cl_builder_text }}
+      </span>
+      <span class="cl-builder-offer-banner__cta">{{ cl_builder_cta }}</span>
+    </a>
+  </div>
+
+  <script>
+    (function () {
+      function placeBuilderBanner() {
+        var banner = document.querySelector('[data-cl-builder-banner]');
+
+        if (!banner) return;
+
+        document.querySelectorAll('[data-cl-builder-link]').forEach(function (link) {
+          link.remove();
+        });
+
+        banner.hidden = false;
+
+        if (banner.hasAttribute('data-cl-builder-banner-placed')) return;
+
+        var main = document.querySelector('#site-main, main.site-main, .pagefly-container');
+        var header = document.querySelector('[data-site-header], .site-header, header');
+
+        if (main) {
+          main.insertBefore(banner, main.firstChild);
+        } else if (header && header.parentNode) {
+          header.parentNode.insertBefore(banner, header.nextSibling);
+        } else {
+          document.body.insertBefore(banner, document.body.firstChild);
+        }
+
+        banner.setAttribute('data-cl-builder-banner-placed', '');
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', placeBuilderBanner);
+      } else {
+        placeBuilderBanner();
+      }
+
+      setTimeout(placeBuilderBanner, 500);
+    })();
+  </script>
+{% endif %}

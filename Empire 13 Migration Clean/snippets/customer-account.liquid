@@ -1,0 +1,51 @@
+{% liquid
+  assign menu_id = settings.customer_accounts_menu
+%}
+
+{% if shop.customer_accounts_enabled %}
+  <shopify-account
+    {% if menu_id != blank %}
+      menu="{{ menu_id }}"
+    {% endif %}
+  >
+    <div slot="signed-out-avatar">
+      <div
+        class="site-header_account-link-anchor"
+        role="button"
+        tabindex="0"
+      >
+        <span class="site-header__account-icon">
+          {%
+            render 'icon-library',
+            id: 'icon-account',
+          %}
+        </span>
+
+        <span class="site-header_account-link-text">
+          {{ 'header.account.login' | t }}
+        </span>
+      </div>
+    </div>
+  </shopify-account>
+{% endif %}
+
+{% stylesheet %}
+  shopify-account {
+    --shopify-account-font-body: var(--element-text-font-family--body);
+    --shopify-account-font-heading: var(--element-text-font-family--heading);
+    --shopify-account-radius-base: 3px;
+    --shopify-account-color-background: var(--color-secondary);
+    --shopify-account-color-accent: var(--color-button-background);
+    --shopify-account-color-accent-text: var(--color-button-text);
+    --shopify-account-color-text: var(--color-text);
+  }
+
+  shopify-account::part(signed-out-avatar) {
+    font-family: var(--menu-font-family);
+    font-weight: var(--menu-font-weight);
+    font-style: var(--menu-font-style);
+    font-size: var(--font-size-menu-body-small);
+    letter-spacing: var(--menu-letter-spacing);
+    text-transform: var(--menu-font-capitalization);
+  }
+{% endstylesheet %}

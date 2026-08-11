@@ -1,0 +1,123 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "announcement-bar": {
+      "type": "static-announcement",
+      "settings": {
+        "show_announcement": false,
+        "homepage_announcement": false,
+        "announcement_text": "Halloween sale going on now! Use code: Hallow22 for 15% off site wide",
+        "announcement_text_mobile": "",
+        "announcement_link": "",
+        "announcement_color": "#000000",
+        "announcement_background": "#ffab41"
+      }
+    },
+    "cl-countdown-announcement": {
+      "type": "cl-countdown-announcement",
+      "settings": {
+        "show_announcement": false,
+        "homepage_announcement": false,
+        "announcement_text": "4th of July Sale! Get 15% OFF storewide with code JULY26 before the countdown ends.",
+        "announcement_text_mobile": "",
+        "announcement_link": "",
+        "enable_countdown": true,
+        "countdown_deadline": "2026-07-05T23:59:59-07:00",
+        "announcement_color": "#ffffff",
+        "announcement_background": "#000000"
+      }
+    },
+    "utility-bar": {
+      "type": "static-utility-bar",
+      "settings": {
+        "use_full_width": false,
+        "background_color": "#1b175d",
+        "link_color": "#ffffff",
+        "link_hover_color": "#ffffff",
+        "border_color": "#ffffff",
+        "menu": "",
+        "show_menu_mobile": true,
+        "mobile_layout": "below",
+        "show_locale_selector": true,
+        "show_currency_selector": true,
+        "show_social_icons": true
+      }
+    },
+    "header": {
+      "type": "static-header",
+      "blocks": {
+        "1517255946962": {
+          "type": "meganav_images",
+          "settings": {
+            "meganav_trigger": "",
+            "text_1": "",
+            "link_1": "",
+            "position_1": "last",
+            "size_1": "medium",
+            "text_2": "",
+            "link_2": "",
+            "position_2": "last",
+            "size_2": "medium"
+          }
+        },
+        "ff9e6854-1318-4c95-a027-c4108d1e961d": {
+          "type": "meganav_images",
+          "settings": {
+            "meganav_trigger": "",
+            "text_1": "",
+            "link_1": "",
+            "position_1": "last",
+            "size_1": "medium",
+            "text_2": "",
+            "link_2": "",
+            "position_2": "first",
+            "size_2": "small"
+          }
+        }
+      },
+      "block_order": [
+        "1517255946962",
+        "ff9e6854-1318-4c95-a027-c4108d1e961d"
+      ],
+      "settings": {
+        "sticky_header": true,
+        "full_width_header": false,
+        "logo": "shopify://shop_images/CityLocs-logo_151aed38-e3cc-4858-830c-2a204e5f4d80.png",
+        "logo_height": 70,
+        "logo_width": 250,
+        "filter_search_by": "disabled",
+        "enable_live_search": true,
+        "show_mobile_search_bar": false,
+        "enable_live_search_images": true,
+        "quick_links": "",
+        "menu": "main-menu",
+        "cl_use_editable_mega_menu": true,
+        "cl_editable_mega_menu": "citylocs-editable-mega-menu",
+        "cl_mega_menu_show_images": true,
+        "secondary_menu": "",
+        "small_promo_heading": "",
+        "small_promo_text": "",
+        "small_promo_text_mobile": "",
+        "small_promo_link": "",
+        "small_promo_icon": "none",
+        "cart_icon": "icon-cart"
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "cl-countdown-announcement",
+    "utility-bar",
+    "header"
+  ]
+}

@@ -1,0 +1,60 @@
+{%- comment -%}
+  cl-customizer-embed — drop the metaobject-driven customizer into ANY host
+  (a GemPages custom-Liquid block, a section, etc.) with a single line:
+
+      {% render 'cl-customizer-embed' %}
+
+  Reads the product's `custom.customizer_config` metaobject (same logic as
+  templates/product.customizer.liquid) and renders `cl-ai-hat-builder`, which
+  loads its own CSS/JS. Requires `product` in scope (a product page).
+
+  NOTE: don't ALSO assign the `customizer` theme template to the same product —
+  pick one host, or the builder renders twice.
+{%- endcomment -%}
+
+{%- assign cfg = product.metafields.custom.customizer_config.value -%}
+{%- if cfg != blank -%}
+
+  {%- assign shape_key = cfg.shape_name | default: 'Rectangle' -%}
+  {%- assign frame_url = '' -%}
+  {%- assign mask_url = '' -%}
+  {%- if cfg.frame_image != blank -%}{%- assign frame_url = cfg.frame_image | image_url: width: 2000 -%}{%- endif -%}
+  {%- if cfg.mask_image != blank -%}{%- assign mask_url = cfg.mask_image | image_url: width: 2000 -%}{%- endif -%}
+
+  {%- if cfg.shapes_json != blank -%}
+    {%- assign customizer_config = cfg.shapes_json -%}
+  {%- else -%}
+    {%- capture customizer_config -%}
+  {
+    "shapes": {
+      "{{ shape_key | downcase }}": {
+        "window":      { "l": {{ cfg.window_l | default: 0 }}, "t": {{ cfg.window_t | default: 0 }}, "w": {{ cfg.window_w | default: 1 }}, "h": {{ cfg.window_h | default: 1 }} },
+        "frame_aspect": {{ cfg.frame_aspect | default: 1 }},
+        "safe":        { "w": {{ cfg.safe_w | default: 0.95 }}, "h": {{ cfg.safe_h | default: 0.95 }} },
+        "patch_in":    { "w": {{ cfg.patch_in_w | default: 2 }}, "h": {{ cfg.patch_in_h | default: 2 }} },
+        "usable": {{ cfg.usable | default: 0.9 }},
+        "text_y": {{ cfg.text_y | default: 0.86 }},
+        "text_maxw": {{ cfg.text_maxw | default: 0.86 }}
+      }
+    }
+  }
+    {%- endcapture -%}
+  {%- endif -%}
+
+  {% render 'cl-ai-hat-builder',
+     shapes: shape_key,
+     config_json: customizer_config,
+     frame_url: frame_url,
+     mask_url: mask_url,
+     show_variants: cfg.show_variants,
+     show_prompt: cfg.show_prompt,
+     price_display: product.price,
+     cta_label: cfg.cta_label,
+     upload_title: cfg.upload_title,
+     upload_note: cfg.upload_note,
+     qc_title: cfg.qc_title,
+     preview_title: cfg.preview_title,
+     customize_title: cfg.customize_title,
+     file_prefix: cfg.file_prefix %}
+
+{%- endif -%}

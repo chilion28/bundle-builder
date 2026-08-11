@@ -1,0 +1,28 @@
+:where(a) {
+  color: currentColor;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  background: transparent;
+}
+
+/*Force an input/button to look like a text link*/
+.text-link {
+  display: inline;
+  border: 0 none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  color: currentColor;
+  background: transparent;
+
+  &:hover {
+    color: currentColor;
+  }
+}
+
+/*Links in RTE*/
+.rte a:not(.button),
+.shopify-policy__container a,
+.shopify-email-marketing-confirmation__container a {
+  color: var(--root-color-primary);
+}

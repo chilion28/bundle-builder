@@ -1,0 +1,123 @@
+{% doc %}
+  Renders a element.media component.
+  @param {object} media - Media object
+  @param {boolean} [autoplay] - Whether to autoplay the media
+  @param {boolean} [loop] - Whether to loop the media
+  @param {string} [aspect_ratio] - The gallery aspect ratio. Defaults to media aspect ratio or 1/1.
+  @param {boolean} [image_crop] - Whether to crop images. Defaults to true.
+  @param {string} [image_click_to_zoom] - The click to zoom setting. Defaults to 'always'.
+  @example
+  {% render 'element.media', media: media, aspect_ratio: '16/9' %}
+{% enddoc %}
+
+{% render 'css.element-media' %}
+
+{% liquid
+  assign media = media | default: false
+  assign autoplay = autoplay | default: false
+  assign loop = loop | default: false
+  assign aspect_ratio_is_set = false
+  unless aspect_ratio == blank
+    assign aspect_ratio_is_set = true
+  endunless
+  assign aspect_ratio = aspect_ratio | default: media.aspect_ratio | default: '1/1'
+  assign image_crop = image_crop | default: false
+  assign image_click_to_zoom = image_click_to_zoom | default: 'always'
+  assign max_zoom = 2400
+  assign zoom_height = media.height
+  assign zoom_width = media.width
+
+  if zoom_height > max_zoom or zoom_width > max_zoom
+    assign crop_aspect_ratio = zoom_width | times: 1000 | divided_by: zoom_height
+    if zoom_width > zoom_height
+      assign zoom_width = max_zoom
+      assign zoom_height = max_zoom | times: 1000 | divided_by: crop_aspect_ratio
+    else
+      assign zoom_height = max_zoom
+      assign zoom_width = max_zoom | times: crop_aspect_ratio | divided_by: 1000
+    endif
+  endif
+
+  assign image_dimensions = zoom_width | append: 'x' | append: zoom_height
+%}
+
+{% capture zoom_url %}{{ media | image_url: width: zoom_width, height: zoom_height }}{% endcapture %}
+
+<div
+  class="
+    media
+    {% if aspect_ratio_is_set %}media--aspect-ratio-set{% endif %}
+    {% if image_crop %}media--image-crop{% endif %}
+  "
+  style="
+    --aspect-ratio: {{ aspect_ratio }};
+    --image-max-width: {{ media.width }}px;
+    --image-max-height: {{ media.height }}px;
+  "
+>
+  {% if media.media_type == 'image' and image_click_to_zoom != 'disabled' %}
+    <button
+      class="
+        media__lightbox-button
+        media__lightbox-button--{{ image_click_to_zoom }}
+      "
+      aria-haspopup="true"
+    >
+      {% unless image_click_to_zoom == 'mobile' %}
+        <span
+          class="media__lightbox-button-text media__lightbox-button-text--click"
+          tabindex="-1"
+        >
+          {% render 'element.empire-icon', id: 'icon-zoom' %}
+          {%- render 'utility.translate', key: 'product.general.zoom', fallback: 'Click to expand' -%}
+        </span>
+      {% endunless %}
+
+      {% unless image_click_to_zoom == 'desktop' %}
+        <span
+          class="media__lightbox-button-text media__lightbox-button-text--tap"
+          tabindex="-1"
+        >
+          {% render 'element.empire-icon', id: 'icon-tap' %}
+          {%- render 'utility.translate', key: 'product.general.zoomTapMobile', fallback: 'Tap to expand' -%}
+        </span>
+      {% endunless %}
+    </button>
+  {% endif %}
+
+  {% case media.media_type %}
+    {% when 'image' %}
+      {{
+        media
+        | image_url: width: 800
+        | image_tag:
+          class: 'media__image photoswipe__image',
+          data-photoswipe-id: media.id,
+          data-photoswipe-image: true,
+          data-photoswipe-src: zoom_url,
+          data-photoswipe-width: zoom_width,
+          data-photoswipe-height: zoom_height,
+          data-zoom: zoom_url
+      }}
+    {% when 'external_video' %}
+      {% render 'element.video',
+        external_video: media,
+        autoplay: autoplay,
+        loop: loop,
+        aspect_ratio: aspect_ratio,
+        show_controls: true
+      %}
+    {% when 'video' %}
+      {% render 'element.video',
+        video: media,
+        autoplay: autoplay,
+        loop: loop,
+        aspect_ratio: aspect_ratio,
+        show_controls: true
+      %}
+    {% when 'model' %}
+      {% render 'element.model', media: media, autoplay: autoplay, aspect_ratio: aspect_ratio, show_controls: true %}
+    {% else %}
+
+  {% endcase %}
+</div>

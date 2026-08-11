@@ -1,0 +1,130 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product-high-variant",
+      "blocks": {
+        "section_flex_pdp_title": {
+          "type": "_section-flex-pdp-title",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_vendor": {
+          "type": "_section-flex-pdp-vendor",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_price": {
+          "type": "_section-flex-pdp-price",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_installments": {
+          "type": "_section-flex-pdp-installments",
+          "disabled": true,
+          "settings": {
+          }
+        },
+        "section_flex_pdp_divider": {
+          "type": "_section-flex-pdp-divider",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_variant_picker": {
+          "type": "_section-flex-pdp-variant-picker",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_quantity_picker": {
+          "type": "_section-flex-pdp-quantity-picker",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_buy_buttons": {
+          "type": "_section-flex-pdp-buy-buttons",
+          "settings": {
+          }
+        },
+        "section_flex_pdp_pick_up": {
+          "type": "_section-flex-pdp-pick-up",
+          "disabled": true,
+          "settings": {
+          }
+        },
+        "section_flex_pdp_description": {
+          "type": "_section-flex-pdp-description",
+          "settings": {
+          }
+        },
+        "loox-rating": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-rating/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "section_flex_pdp_title",
+        "section_flex_pdp_vendor",
+        "section_flex_pdp_price",
+        "loox-rating",
+        "section_flex_pdp_installments",
+        "section_flex_pdp_divider",
+        "section_flex_pdp_variant_picker",
+        "section_flex_pdp_quantity_picker",
+        "section_flex_pdp_buy_buttons",
+        "section_flex_pdp_pick_up",
+        "section_flex_pdp_description"
+      ],
+      "settings": {
+      }
+    },
+    "loox-product-reviews-app-section": {
+      "type": "apps",
+      "blocks": {
+        "loox-product-reviews": {
+          "type": "shopify://apps/loox-reviews/blocks/loox-dynamic-section/5c3b337f-fd14-4df5-b1d6-80ec13e6e28e",
+          "settings": {
+            "only_photos": false,
+            "aggregated": false,
+            "limit": 20,
+            "hide_thumbnails": false,
+            "maxwidth": 1080
+          }
+        }
+      },
+      "block_order": [
+        "loox-product-reviews"
+      ],
+      "settings": {
+        "include_padding": true
+      }
+    },
+    "recommendations": {
+      "type": "static-product-recommendations",
+      "settings": {
+        "show_product_recommendations": true,
+        "product_recommendations_heading": "You may also like"
+      }
+    },
+    "recently-viewed": {
+      "type": "static-recently-viewed",
+      "settings": {
+        "enable_recently_viewed_products": true
+      }
+    }
+  },
+  "order": [
+    "main",
+    "loox-product-reviews-app-section",
+    "recommendations",
+    "recently-viewed"
+  ]
+}

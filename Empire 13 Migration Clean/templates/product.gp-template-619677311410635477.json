@@ -1,0 +1,77 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_global_section_620221948646917066-1": {
+      "type": "gp-global-section-620221948646917066",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "",
+        "ggzzztw_vQU_text_-930784435": "<a href=\"https://citylocs.com/collections/fathers-day-2026-gift-bundles\">Limited Edition Father's Day Bundles</a>"
+      }
+    },
+    "gp_global_section_620222050887271071-2": {
+      "type": "gp-global-section-620222050887271071",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "",
+        "gg3BIx5TB8B_text_-1626405592": "Ready to gift",
+        "ggRlaMP2cKr_text_1980775957": "Thoughtful gifts made for every kind of dad.",
+        "gglql6N5KAt_text_-1304756567": "high quality",
+        "ggu_BHskwgI_text_-305684293": "Built tough for everyday use.",
+        "ggS5oXqy2HF_text_2045980016": "made for dads",
+        "ggQsNc8Pbbt_text_168988650": "Designed by dads. Approved by legends.",
+        "ggd1JnRUgjj_text_1987471783": "father's day delivery",
+        "ggmcCJeqycs_text_1736747719": "Order by JuNE 10th for DELIVERY BY FATHER's DAY",
+        "ggEryC9gmuA_text_2080919513": "Order by June 10th for delivery by Father's Day."
+      }
+    },
+    "gp_global_section_620254301947691619-3": {
+      "type": "gp-global-section-620254301947691619",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "",
+        "ggm0tDx5SYA_childItem_0_923613567": "Product Description",
+        "ggm0tDx5SYA_childItem_1_-1496460653": "Reviews",
+        "gg3Yj5tpf0Q_viewMoreText_-1361653502": "Show more",
+        "gg3Yj5tpf0Q_viewLessText_-164448351": "Show less"
+      }
+    },
+    "gp_section_619678127521530453": {
+      "type": "gp-section-619678127521530453",
+      "settings": {
+        "checksum": "950a835ee46f0083ce19440cdb33799fa603747f641d0d55a8b2501170621e26_1_1_0_0__1",
+        "gg5FwFMaYpp_text": "Quantity",
+        "ggATZmlxtEh_label": "Add to cart",
+        "ggATZmlxtEh_outOfStockLabel": "Out of stock",
+        "ggATZmlxtEh_unavailableLabel": "Unavailable",
+        "ggATZmlxtEh_variantSelectionRequiredMessage": "Please select a variant to add product to cart",
+        "ggATZmlxtEh_successMessage": "Add product to cart successfully",
+        "ggATZmlxtEh_errorMessage": "Cannot add product to cart"
+      }
+    },
+    "gp_section_620077452323979935": {
+      "type": "gp-section-620077452323979935",
+      "settings": {
+        "checksum": "4ec6b831b7c5b76c9dc3ced417302dc7cb85ec3f8c64b17ffaa7f1f4cd4c9dfe_1_1_0_0__1",
+        "ggXMG8HJvtN_text": "Find the bundle that's perfect for the dad in your life.",
+        "ggeedGGrtEp_label": "<p>Shop All Bundles</p>",
+        "ggUQGnsfOCj_label": "Shop this bundle"
+      }
+    }
+  },
+  "order": [
+    "gp_global_section_620221948646917066-1",
+    "gp_global_section_620222050887271071-2",
+    "gp_section_619678127521530453",
+    "gp_section_620077452323979935",
+    "gp_global_section_620254301947691619-3"
+  ]
+}

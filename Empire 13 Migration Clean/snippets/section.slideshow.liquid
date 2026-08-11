@@ -1,0 +1,1480 @@
+{%- comment -%}
+  A flexible section.slideshow component that displays image slides with customizable content, buttons, and responsive behavior.
+
+  Accepts:
+  - id {String} - ID of the component
+  - animation {String} - Types of animations for section appearance ('none', 'fadeIn', 'fadeInDown', 'fadeInLeft', 'fadeInRight', 'slideInLeft', 'slideInRight')
+  - enable_autoplay {Boolean} - If set to true, the slideshow will play automatically
+  - autoplay_duration {Number} - Duration in seconds between slides when autoplay is enabled
+  - slideshow_height {String} - Height of the slideshow on desktop ('small', 'medium', 'large', 'fit-screen', 'adapt', 'original')
+  - slideshow_height_mobile {String} - Height of the slideshow on mobile devices
+  - slideshow_animation {String} - Type of slide transition animations ('slide', 'fade')
+  - slideshow_text_animation {String} - Type of text animations ('none', 'fadeIn', 'fadeInUp', 'fadeInDown')
+  - show_navigation_arrows {Boolean} - If set to true, navigation arrows will be displayed
+  - navigation_arrows_style {String} - Style of navigation arrows ('normal','hover','circle')
+  - show_pagination {Boolean} - If set to true, pagination dots will be displayed
+  - show_pagination_below_image {Boolean} - If set to true, and Show text below image is disabled, pagination dots will appear below the image on mobile layouts.
+  - show_pagination_below_content {Boolean} - If set to true, and Show text below image is enabled, pagination dots will be placed below content on mobile layouts.
+  - pagination_color {Color} - Pagination dots color
+  - disable_timer_animation {Boolean} - If set to true, timer animation will be disabled
+  - placeholder_style {String} - Style to use for placeholders ('background_mix' or 'transparent_mix')
+  - slideshow_width {String} - Width of the slideshow ('full', 'content')
+  - slideshow_text_below_image {Boolean} - If set to true, text will appear below the image on mobile
+  - slide_attraction {String} - Controls how fast slides move into place
+  - slide_friction {String} - Controls slide friction when snapping into place
+  - slide_transition_speed {Number} - Controls the speed of slide transitions in milliseconds
+  - enable_grab_cursor {Boolean} - If set to true, the cursor will change to "grab" when hovering over the slideshow to indicate it's swipeable
+  - button_wrapper {Boolean} - If set to true, buttons will be wrapped in a flex container for horizontal layout
+  - mobile_breakpoint_size {String} - Size of the mobile breakpoint ('small' = 480px, 'standard' = 719px)
+  - padding_top {String} - Controls section padding top
+  - padding_bottom {String} - Controls section padding bottom
+  - padding_top_mobile {String} - Controls section padding top for mobile
+  - padding_bottom_mobile {String} - Controls section padding bottom for mobile
+  - slideshow_flex_spacing {Boolean} - If set to true, flex spacing will be applied
+
+  Usage:
+  {% render 'section.slideshow',
+    id: section.id,
+    enable_autoplay: section.settings.enable_autoplay,
+    autoplay_duration: section.settings.autoplay_duration,
+    slideshow_height: section.settings.slideshow_height,
+    slideshow_height_mobile: section.settings.slideshow_height_mobile,
+    show_navigation_arrows: section.settings.show_navigation_arrows,
+    slideshow_width: section.settings.slideshow_width,
+    slideshow_text_below_image: section.settings.slideshow_text_below_image
+  %}
+{%- endcomment -%}
+
+{% liquid
+  assign id = id | default: section.id
+  assign animation = animation | default: section.settings.animation | default: 'none'
+  assign enable_autoplay = enable_autoplay | default: section.settings.enable_autoplay
+  assign autoplay_interval = autoplay_duration | default: section.settings.autoplay_duration
+  assign autoplay_interval_css = autoplay_interval | append: 's'
+  assign slideshow_height = slideshow_height | default: section.settings.slideshow_height
+  assign slideshow_height_mobile = slideshow_height_mobile | default: section.settings.slideshow_height_mobile
+  assign slideshow_animation = slideshow_animation | default: section.settings.slideshow_animation | default: 'slide'
+  assign slideshow_text_animation = slideshow_text_animation | default: section.settings.slideshow_text_animation | default: 'none'
+
+  if show_pagination != null
+    assign show_pagination = show_pagination
+  elsif section.settings.show_pagination != null
+    assign show_pagination = section.settings.show_pagination
+  else
+    assign show_pagination = true
+  endif
+
+  assign show_pagination_below_image = show_pagination_below_image | default: false
+  assign show_pagination_below_content = show_pagination_below_content | default: false
+  assign pagination_color = pagination_color | default: ''
+  assign show_navigation_arrows = show_navigation_arrows | default: section.settings.show_navigation_arrows
+  assign navigation_arrows_style = navigation_arrows_style | default: 'normal'
+  assign disable_timer_animation = disable_timer_animation | default: false
+  assign mobile_navigation_adjust = mobile_navigation_adjust | default: true, allow_false: true
+  assign slideshow_width = slideshow_width | default: section.settings.slideshow_width
+  assign slideshow_text_below_image = slideshow_text_below_image | default: section.settings.slideshow_text_below_image
+  assign slide_attraction = slide_attraction | default: 0.03
+  assign slide_friction = slide_friction | default: 0.3
+  assign slide_transition_speed = slide_transition_speed | default: 400
+  assign slideshow_heading = slideshow_heading | default: ''
+  assign placeholder_aspect_ratio = 2.675
+  assign placeholder_style = placeholder_style | default: 'transparent_mix'
+  assign enable_grab_cursor = enable_grab_cursor | default: false
+  assign button_wrapper = button_wrapper | default: false
+
+  assign padding_top = padding_top | default: section.settings.padding_top
+  assign padding_bottom = padding_bottom | default: section.settings.padding_bottom
+  assign padding_top_mobile = padding_top_mobile | default: section.settings.padding_top_mobile
+  assign padding_bottom_mobile = padding_bottom_mobile | default: section.settings.padding_bottom_mobile
+
+  assign slideshow_flex_spacing = slideshow_flex_spacing | default: false
+
+  assign mobile_breakpoint_size = mobile_breakpoint_size | default: 'standard'
+
+  case mobile_breakpoint_size
+    when 'small'
+      assign mobile_breakpoint_max = 480
+    when 'standard'
+      assign mobile_breakpoint_max = 719
+    else
+      assign mobile_breakpoint_max = 719
+  endcase
+
+  assign tablet_breakpoint_min = mobile_breakpoint_max | plus: 1
+  assign desktop_breakpoint_min = 1024
+
+  if slideshow_height == 'adapt' or slideshow_height_mobile == 'adapt'
+    assign first_block = section.blocks[0]
+    if first_block.settings.background_image != blank
+      assign min_aspect_ratio_desktop = first_block.settings.background_image.aspect_ratio
+    else
+      assign min_aspect_ratio_desktop = placeholder_aspect_ratio
+    endif
+
+    assign slide_height = 100 | divided_by: min_aspect_ratio_desktop
+
+    if first_block.settings.mobile_background_image != blank
+      assign min_aspect_ratio_mobile = first_block.settings.mobile_background_image.aspect_ratio
+      assign slide_height_mobile = 100 | divided_by: min_aspect_ratio_mobile
+    else
+      assign slide_height_mobile = slide_height
+    endif
+  endif
+
+  assign slide_counter_fallback = 'Slide {{ count }} of {{ total }}'
+%}
+
+{% render 'utility.stylesheet', name: 'vendor.swiper.css' %}
+{% render 'utility.stylesheet', name: 'vendor.animate.css' %}
+
+{% if enable_autoplay %}
+  {% capture custom_pagination %}
+    <div class="circle-timer">
+      <svg class="circle-timer__svg">
+        <circle class="circle-timer__countdown" r="3.5" cx="50%" cy="50%"></circle>
+        <circle class="circle-timer__background" r="3.5" cx="50%" cy="50%"></circle>
+      </svg>
+    </div>
+  {% endcapture %}
+{% else %}
+  {% assign custom_pagination = false %}
+{% endif %}
+
+{% comment %} To prevent race conditions in the Theme Editor, use the stylesheet tag instead of utility.stylesheet.{% endcomment %}
+{% stylesheet %}
+  @keyframes slide-fade-y {
+    0% {
+      opacity: 0;
+      transform: translateY(var(--slide-fade-translate-y, 30px));
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes countdown {
+    from {
+      stroke-dashoffset: 22px;
+    }
+
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .slideshow {
+    --autoplay-interval: 8s;
+    --slide-text-color: #fff;
+    --slide-fade-translate-y: 30px;
+
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: var(--size-16);
+  }
+
+  .slideshow--flex-spacing.slideshow {
+    margin-top: 0;
+  }
+
+  .slideshow-slide__content-desktop a,
+  .slideshow-slide__content-mobile a {
+    color: var(--color-links);
+    text-decoration: none;
+    position: relative;
+    cursor: pointer;
+    transition: color 0.1s linear;
+  }
+
+  .slideshow-slide__content-desktop a:hover,
+  .slideshow-slide__content-mobile a:hover,
+  .slideshow-slide__content-desktop a:focus,
+  .slideshow-slide__content-mobile a:focus {
+    color: var(--color-link-hover);
+  }
+
+  [data-scroll-class] {
+    opacity: 0;
+    animation-delay: 0.2s;
+  }
+
+  .slideshow__wrapper {
+    display: flex;
+    overflow: hidden;
+  }
+
+  .slideshow--single-slide .slideshow__wrapper {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .slideshow-slide {
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+  }
+
+  .swiper-wrapper {
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    will-change: transform;
+  }
+
+  .slide-element {
+    opacity: 0;
+  }
+
+  /* Slide element animation */
+  .slide--active .slide-element {
+    --slide-fade-translate-y: 30px;
+
+    opacity: 1;
+    animation: slide-fade-y 0.75s cubic-bezier(0.4, 0, 0.2, 1) both paused;
+    animation-delay: calc(100ms * var(--slide-element-index, 0));
+  }
+
+  .slideshow--text-animation-none .slide-element {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  /* stylelint-disable selector-class-pattern */
+  .slideshow--text-animation-fadeIn .slide-element {
+    --slide-fade-translate-y: 0px;
+  }
+
+  .slideshow--text-animation-fadeInUp .slide-element {
+    --slide-fade-translate-y: 30px;
+  }
+
+  .slideshow--text-animation-fadeInDown .slide-element {
+    --slide-fade-translate-y: -30px;
+  }
+  /* stylelint-enable selector-class-pattern */
+
+  .slide {
+    opacity: 1;
+  }
+
+  /* Slide animation playback control */
+  .slideshow--animate .slide-element {
+    animation-play-state: running;
+  }
+
+  .slide--active .slide-element {
+    animation-play-state: running;
+  }
+
+  .shopify-section:first-child .slideshow {
+    margin-top: 0;
+  }
+
+  .slideshow--width-content {
+    max-width: 1400px;
+    padding-right: var(--size-1-5);
+    padding-left: var(--size-1-5);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .slideshow--width-standard {
+    width: 95%;
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .slideshow-slide__image-wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .slideshow-slide__content-background-link {
+    color: var(--slide-text-color);
+    text-decoration: none;
+  }
+
+  .slideshow-slide__background-link:focus::before {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    content: '';
+    border: 2px solid var(--slide-text-color, #fff);
+  }
+
+  .slideshow-slide__content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    width: 80%;
+    padding: var(--size-4);
+    color: var(--slide-text-color);
+    text-align: center;
+    transform: translate(-50%, -50%);
+    transition: none !important;
+  }
+
+  .slideshow-slide__content--mobile-left {
+    text-align: left;
+  }
+
+  .slideshow-slide__content--mobile-center {
+    text-align: center;
+  }
+
+  .slideshow-slide__content--mobile-right {
+    text-align: right;
+  }
+
+  .slideshow-slide__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .slideshow-slide__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .slideshow--content-hidden .slideshow-slide__content {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+
+  .slideshow-slide__content-desktop {
+    display: none;
+  }
+
+  .slideshow-slide__content-mobile {
+    display: block;
+  }
+
+  .slideshow-slide__heading {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: var(--heading-font-family);
+    font-size: calc(var(--heading-font-scale, 1) * var(--text-size-6-5));
+    font-style: var(--heading-font-style);
+    font-weight: var(--heading-font-weight);
+    line-height: var(--line-height-md);
+    text-transform: var(--heading-font-capitalization, initial);
+    letter-spacing: var(--heading-letter-spacing, initial);
+    word-wrap: break-word;
+  }
+
+  .slideshow-slide__subheading {
+    margin-top: var(--size-3);
+    margin-bottom: 0;
+    font-family: var(--subheading-font-family);
+    font-size: var(--text-size-4);
+    line-height: var(--line-height-lg);
+    word-wrap: break-word;
+  }
+
+  .slideshow-slide__preheading {
+    margin-top: 0;
+    margin-bottom: var(--size-2-5);
+    font-family: var(--subheading-font-family);
+    font-size: var(--text-size-4);
+    line-height: var(--line-height-lg);
+    word-wrap: break-word;
+  }
+
+  /* Base button styles */
+  .slideshow-slide__button {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: var(--size-5);
+    margin-bottom: 0;
+    padding: var(--size-2-5) var(--size-4);
+    word-break: break-word;
+    font-family: var(--button-font-family);
+    font-size: var(--body-md-font-size); /* 720px - 1024px */
+    font-weight: var(--button-font-weight);
+    font-style: var(--button-font-style);
+    text-align: center;
+    text-decoration: none;
+    text-transform: var(--button-font-capitalization, initial);
+    letter-spacing: var(--button-letter-spacing, initial);
+    cursor: pointer;
+    border-radius: var(--radius-xs);
+    transition: all 0.2s ease;
+  }
+
+  .slideshow-slide__button + .slideshow-slide__button {
+    margin-left: var(--size-1-5);
+  }
+
+  .slideshow-slide__button:hover,
+  .slideshow-slide__button:focus {
+    outline: none;
+  }
+
+  .slideshow-slide__button:focus,
+  .slideshow-slide__button:focus:hover {
+    box-shadow:
+      0 0 0 2px var(--color-secondary),
+      0 0 0 5px rgb(17 153 255 / 40%),
+      0 3px 8px var(--color-border-softer);
+  }
+
+  .slideshow-slide__button:not(.disabled):hover {
+    box-shadow: 0 3px 8px var(--color-border-softer);
+  }
+
+  .slideshow-slide__button--primary {
+    color: var(--color-button-text);
+    background-color: var(--color-button-background);
+    border: 1px solid var(--color-button-background);
+  }
+
+  .slideshow-slide__button--primary:active {
+    background: var(--color-button-background-focus);
+    border: 1px solid var(--color-button-background-focus);
+  }
+
+  .slideshow-slide__button--primary.disabled,
+  .slideshow-slide__button--primary:disabled {
+    color: var(--color-button-text);
+    cursor: default;
+    background-color: var(--color-button-disable);
+    border: 1px solid var(--color-button-disable);
+  }
+
+  .slideshow-slide__button--primary:not(.disabled):hover {
+    background: var(--color-button-background-hover);
+    border: 1px solid var(--color-button-background-hover);
+  }
+
+  .slideshow-slide__button--secondary {
+    color: var(--color-button-secondary-text);
+    background-color: var(--color-button-secondary-background);
+    border: 1px solid var(--color-button-secondary-border);
+  }
+
+  .slideshow-slide__button--secondary:active {
+    background-color: var(--color-button-secondary-background-focus);
+    border-color: var(--color-button-secondary-border);
+  }
+
+  .slideshow-slide__button--secondary.disabled,
+  .slideshow-slide__button--secondary:disabled {
+    color: rgb(255 255 255 / 50%);
+    cursor: default;
+    background-color: transparent;
+    border: 1px solid rgb(255 255 255 / 30%);
+  }
+
+  .slideshow-slide__button--secondary:not(.disabled):hover {
+    background: var(--color-button-secondary-background-hover);
+    border: 1px solid var(--color-button-secondary-border-hover);
+  }
+
+  /* stylelint-disable */
+  .slideshow-slide__button-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+  }
+
+  .slideshow-slide__button-wrapper .slideshow-slide__button {
+    flex: 1 1 0;
+  }
+
+  .slideshow-slide__button--button--primary,
+  .slideshow-slide__button--button--secondary,
+  .slideshow-slide__button--button--link-style {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--button-font-weight);
+    letter-spacing: var(--button-letter-spacing);
+    text-transform: var(--button-font-capitalization);
+    font-style: var(--button-font-style);
+    box-sizing: border-box;
+    margin: var(--size-2) 0 0 0 !important;
+  }
+
+  .slideshow-slide__button--button--primary {
+    font-size: var(--button-primary-font-size) !important;
+    line-height: var(--button-primary-line-height);
+    border-radius: var(--button-primary-border-radius);
+    height: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: normal;
+    transition: all var(--button-transition-speed) ease-in-out;
+    padding: calc(0.375em - 1px) 1em !important;
+    color: var(--button-primary-text-color);
+    background-color: var(--button-primary-bg-color);
+    border: 1px solid var(--button-primary-border-color);
+  }
+
+  .slideshow-slide__button--button--primary:hover,
+  .slideshow-slide__button--button--primary:focus {
+    color: var(--button-primary-text-color-highlight);
+    background-color: var(--button-primary-bg-color-highlight);
+    border: 1px solid var(--button-primary-border-color-highlight);
+  }
+
+  .slideshow-slide__button--button--secondary {
+    font-size: var(--button-secondary-font-size) !important;
+    line-height: var(--button-secondary-line-height);
+    border-radius: var(--button-secondary-border-radius);
+    height: auto;
+    max-width: 100%;
+    white-space: normal;
+    transition: all var(--button-transition-speed) ease-in-out;
+    padding: calc(0.375em - 1px) 1em !important;
+    color: var(--button-secondary-text-color);
+    background-color: var(--button-secondary-bg-color);
+    border: 1px solid var(--button-secondary-border-color);
+  }
+
+  .slideshow-slide__button--button--secondary:hover,
+  .slideshow-slide__button--button--secondary:focus {
+    color: var(--button-secondary-text-color-highlight);
+    background-color: var(--button-secondary-bg-color-highlight);
+    border: 1px solid var(--button-secondary-border-color-highlight);
+  }
+
+  .slideshow-slide__button--button--link-style {
+    border: none;
+    border-bottom: var(--button-link-underline-thickness) var(--button-link-underline-style);
+    border-radius: 0;
+    font-size: var(--button-link-style-font-size) !important;
+    line-height: var(--button-link-style-line-height);
+    padding: 0 !important;
+    height: auto;
+    max-width: 100%;
+    white-space: normal;
+    background: transparent;
+    transition: all var(--button-transition-speed) linear;
+    text-align: center;
+    color: var(--button-link-text-color);
+    border-bottom-color: var(--button-link-text-color);
+  }
+
+  .slideshow-slide__button--button--link-style:hover,
+  .slideshow-slide__button--button--link-style:focus {
+    color: var(--button-link-text-color-highlight);
+    border-bottom-color: var(--button-link-text-color-highlight) !important;
+    background: transparent;
+    box-shadow: none !important;
+  }
+
+  @media screen and (max-width: 480px) {
+    .slideshow-slide__button-wrapper {
+      flex-direction: column;
+      width: 100%;
+      gap: 10px;
+    }
+
+    .slideshow-slide__button-wrapper .slideshow-slide__button {
+      width: 100%;
+    }
+  }
+  /* stylelint-enable selector-class-pattern */
+
+  /* Styling for when the grab cursor is enabled */
+  .slideshow--grab-cursor .slideshow-slide {
+    cursor: grab;
+  }
+
+  .slideshow--grab-cursor .slideshow-slide:active {
+    cursor: grabbing;
+  }
+
+  .slideshow--grab-cursor .slideshow-slide__content-background-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    text-decoration: none;
+    display: block;
+  }
+
+  .slideshow--grab-cursor .slideshow-slide__button,
+  .slideshow--grab-cursor .slideshow-slide__content a:not(.slideshow-slide__content-background-link),
+  .slideshow--grab-cursor .slideshow-slide__content button {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  .slideshow--grab-cursor .slideshow-slide__preheading a,
+  .slideshow--grab-cursor .slideshow-slide__heading a,
+  .slideshow--grab-cursor .slideshow-slide__subheading a {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+  }
+
+  /* Pagination styles */
+  .slideshow-pagination {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    padding: 0 !important;
+    list-style: none;
+    opacity: 0;
+  }
+
+  .slideshow--pagination-color .slideshow-pagination__button {
+    background-color: var(--pagination-color) !important;
+  }
+
+  .slideshow-pagination__dot {
+    margin: 0;
+  }
+
+  .slideshow-pagination__button {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    margin: 0 7.5px;
+    cursor: pointer;
+    outline: none;
+    background-color: var(--slide-text-color, #fff) !important;
+    border: none;
+    border-radius: 50%;
+    opacity: 0.25;
+    transition:
+      transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .slideshow-pagination__button:focus-visible {
+    outline: 2px solid var(--slide-text-color, #fff);
+    outline-offset: 2px;
+  }
+
+  .slideshow-pagination__button[data-selected='true'],
+  .swiper-pagination-bullet-active {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+
+  /* Base navigation arrow styles for all types */
+  .slideshow .swiper-button-prev,
+  .slideshow .swiper-button-next {
+    position: absolute;
+    top: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    margin-top: 0;
+    color: var(--slide-text-color);
+    cursor: pointer;
+    background-color: transparent;
+  }
+
+  .slideshow .swiper-button-prev {
+    right: auto;
+    left: 35px;
+  }
+
+  .slideshow .swiper-button-next {
+    right: 35px;
+    left: auto;
+  }
+
+  .slideshow .swiper-button-prev:disabled,
+  .slideshow .swiper-button-next:disabled {
+    cursor: default;
+    opacity: 0.25;
+  }
+
+  .slideshow .swiper-button-prev::after,
+  .slideshow .swiper-button-next::after {
+    content: '';
+  }
+
+  /* Normal arrow style */
+  .slideshow--arrow-style-normal .swiper-button-prev {
+    opacity: 0;
+    transform: translate(-10px, -50%);
+  }
+
+  .slideshow--arrow-style-normal .swiper-button-next {
+    opacity: 0;
+    transform: translate(10px, -50%);
+  }
+
+  .slideshow--arrow-style-normal .swiper-button-prev::before,
+  .slideshow--arrow-style-normal .swiper-button-next::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    content: '';
+    border-color: var(--slide-text-color);
+    border-style: solid;
+    border-width: 2px 2px 0 0;
+    transition: transform 0.2s ease;
+  }
+
+  .slideshow--arrow-style-normal .swiper-button-prev::before {
+    transform: translate(-30%, -50%) rotate(-135deg);
+  }
+
+  .slideshow--arrow-style-normal .swiper-button-next::before {
+    transform: translate(-70%, -50%) rotate(45deg);
+  }
+
+  .slideshow--arrow-style-normal .swiper-button-prev:hover::before {
+    transform: translate(-30%, -50%) rotate(-135deg) scale(1.2);
+  }
+
+  .slideshow--arrow-style-normal .swiper-button-next:hover::before {
+    transform: translate(-70%, -50%) rotate(45deg) scale(1.2);
+  }
+
+  /* Circle arrow style */
+  .slideshow--arrow-style-circle .swiper-button-prev,
+  .slideshow--arrow-style-circle .swiper-button-next {
+    top: auto;
+    bottom: 25px;
+    z-index: 100;
+    width: 44px;
+    height: 44px;
+    pointer-events: auto;
+    background: hsla(0, 0%, 100%, 0.75);
+    border-radius: 50%;
+    opacity: 1;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .slideshow--arrow-style-circle .swiper-button-prev {
+    left: 35px;
+    transform: translateY(0);
+  }
+
+  .slideshow--arrow-style-circle .swiper-button-next {
+    right: 35px;
+    transform: translateY(0);
+  }
+
+  .slideshow--arrow-style-circle .swiper-button-prev svg,
+  .slideshow--arrow-style-circle .swiper-button-next svg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+  }
+
+  .slideshow--arrow-style-circle .swiper-button-prev svg .arrow,
+  .slideshow--arrow-style-circle .swiper-button-next svg .arrow {
+    fill: #333;
+  }
+
+  .slideshow--arrow-style-circle .swiper-button-prev:hover,
+  .slideshow--arrow-style-circle .swiper-button-next:hover {
+    background-color: #fff;
+  }
+
+  .slideshow--arrow-style-circle .slideshow-pagination {
+    pointer-events: none;
+  }
+
+  .slideshow--arrow-style-circle .slideshow-pagination__button {
+    pointer-events: auto;
+  }
+
+  /* Animation only for normal style */
+  .slideshow--animate.slideshow--arrow-style-normal .swiper-button-prev,
+  .slideshow--animate.slideshow--arrow-style-normal .swiper-button-next,
+  .slideshow--animate .slideshow-pagination {
+    opacity: 1;
+    transform: translate(0, -50%);
+    transition:
+      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.4s;
+  }
+
+  .slideshow .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+  }
+
+  .circle-timer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    transform: translate(-50%, -50%);
+  }
+
+  .circle-timer__svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+    transform: rotateZ(270deg);
+  }
+
+  .circle-timer__background {
+    opacity: 0.4;
+    fill: none;
+    stroke: var(--slide-text-color);
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-dasharray: 22px; /* Circumference of the circle */
+  }
+
+  .circle-timer__countdown {
+    fill: none;
+    stroke: var(--slide-text-color);
+    stroke-width: 2px;
+    stroke-linecap: round;
+    stroke-dasharray: 22px; /* Circumference of the circle */
+    animation: countdown var(--autoplay-interval) linear infinite;
+  }
+
+  /* Styles related to autoplay. */
+  [data-autoplay='true'] .slideshow-pagination__button {
+    background-color: var(--slide-text-color, #fff);
+    opacity: 0.25;
+  }
+
+  /* Hide the timer when autoplay is disabled. */
+  [data-autoplay='false'] .circle-timer {
+    display: none !important;
+  }
+
+  /* When autoplay is paused. */
+  [data-autoplay-active='false'] .circle-timer,
+  [data-autoplay-active='false'] .circle-timer__svg,
+  [data-autoplay-active='false'] .circle-timer__background,
+  [data-autoplay-active='false'] .circle-timer__countdown {
+    display: none !important;
+  }
+
+  /* Support for themes that don't have the timer animation. */
+  .slideshow--timer-disabled .circle-timer {
+    display: none !important;
+  }
+
+  /* Hide the timer for inactive dots. */
+  .slideshow-pagination__button:not([data-selected='true']) .circle-timer,
+  .slideshow-pagination__button:not(.swiper-pagination-bullet-active) .circle-timer {
+    display: none !important;
+  }
+
+  /* Dot style when autoplay is active. */
+  [data-autoplay='true'][data-autoplay-active='true'] .slideshow-pagination__button[data-selected='true'],
+  [data-autoplay='true'][data-autoplay-active='true'] .swiper-pagination-bullet-active {
+    background-color: transparent !important;
+    opacity: 1;
+  }
+
+  /* Dot style when autoplay is paused */
+  [data-autoplay='true'][data-autoplay-active='false'] .slideshow-pagination__button[data-selected='true'],
+  [data-autoplay='true'][data-autoplay-active='false'] .swiper-pagination-bullet-active {
+    background-color: var(--slide-text-color, #fff);
+    opacity: 1;
+  }
+
+  /* Support for themes that don't have the timer animation. */
+  .slideshow--timer-disabled[data-autoplay='true'][data-autoplay-active='true']
+    .slideshow-pagination__button[data-selected='true'],
+  .slideshow--timer-disabled[data-autoplay='true'][data-autoplay-active='true'] .swiper-pagination-bullet-active {
+    background-color: var(--pagination-color, #fff) !important;
+    opacity: 1;
+  }
+
+  /* Pause animation on hover */
+  [data-autoplay='true'][data-hover='true'] .circle-timer__countdown {
+    animation-play-state: paused !important;
+  }
+
+  /* Fit screen height */
+
+  /* Desktop with first-child */
+  .slideshow--height-fit-screen.slideshow--section:first-child .slideshow-slide__image-wrapper {
+    height: calc(100vh - var(--header-height, 0px));
+  }
+{% endstylesheet %}
+
+{% style %}
+  #shopify-section-{{ id }} .slideshow-slide__placeholder {
+    display: block;
+    {% if placeholder_style == 'background_mix' %}
+      background-color: color-mix(
+        in srgb,
+        var(--color-text) 8%,
+        var(--color-background) 92%
+      );
+      fill: color-mix(in srgb, var(--color-text) 35%, var(--color-background) 65%);
+    {% else %}
+      background-color: color-mix(in srgb, var(--color-text) 10%, transparent);
+      fill: color-mix(in srgb, var(--color-text) 35%, transparent);
+    {% endif %}
+  }
+
+  @media screen and (max-width: {{ mobile_breakpoint_max }}px) {
+    {% if padding_top_mobile != blank or padding_bottom_mobile != blank %}
+      #shopify-section-{{ id }} {
+        {% if padding_top_mobile != blank %}
+          padding-top: {{ padding_top_mobile }}px;
+        {% endif %}
+        {% if padding_bottom_mobile != blank %}
+          padding-bottom: {{ padding_bottom_mobile }}px;
+        {% endif %}
+      }
+    {% endif %}
+
+    .slideshow--show-pagination.slideshow--pagination-below-image {
+      margin-bottom: var(--size-10);
+    }
+
+    .slideshow--show-pagination.slideshow--pagination-below-image.slideshow--text-below-image-true {
+      margin-bottom: var(--size-6);
+    }
+
+    .slideshow--single-slide.slideshow--pagination-below-image {
+      margin-bottom: 0;
+    }
+
+    .slideshow--height-adapt-mobile .slideshow-slide__image-wrapper {
+      height: var(--slide-height-mobile);
+    }
+
+    .slideshow--height-adapt-mobile .slideshow-slide__placeholder {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: var(--slide-placeholder-aspect-ratio);
+    }
+
+    /* Mobile height */
+    .slideshow--height-small-mobile .slideshow-slide__image-wrapper {
+      height: 250px;
+    }
+
+    .slideshow--height-medium-mobile .slideshow-slide__image-wrapper {
+      height: 300px;
+    }
+
+    .slideshow--height-large-mobile .slideshow-slide__image-wrapper {
+      height: 350px;
+    }
+
+    .slideshow--height-x-large-mobile .slideshow-slide__image-wrapper {
+      height: 400px;
+    }
+
+    .slideshow--height-original-mobile .slideshow-slide__image-wrapper {
+      height: auto;
+      transition: height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: height;
+    }
+
+    .slideshow--height-fit-screen-mobile.slideshow--text-below-image-false
+      .slideshow-slide__image-wrapper {
+      height: 100vh;
+    }
+
+    .slideshow--height-fit-screen-mobile.slideshow--text-below-image-true
+      .slideshow-slide__image-wrapper {
+      height: calc(100vh - var(--content-height, 0px));
+    }
+
+    .slideshow-slide--mobile .slideshow-slide__image--desktop {
+      display: none;
+    }
+
+    .slideshow--height-original-mobile .slideshow-slide__image {
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .slideshow--pagination-below-image .slideshow-pagination {
+      top: 100% !important;
+      bottom: initial !important;
+    }
+
+    .slideshow--text-below-image-true .slideshow-slide__content {
+      position: relative;
+      top: auto;
+      left: auto;
+      display: block !important;
+      padding: 0;
+      margin: calc(var(--size-6) * 2) auto;
+      color: var(--color-text);
+      transform: none;
+    }
+
+    .slideshow--text-below-image-true
+      .slideshow-slide__content-wrapper
+      .slideshow-slide__content {
+      width: auto;
+      padding: var(--size-7-5);
+      margin: var(--size-5) auto;
+      margin-top: 0;
+    }
+
+    .slideshow--text-below-image-true .slideshow-pagination {
+      position: absolute !important;
+      inset: var(--image-height, 300px) 0 auto 0 !important;
+      z-index: 10 !important;
+      height: 18px;
+    }
+
+    .slideshow--text-below-image-true.slideshow--pagination-below
+      .slideshow-pagination {
+      inset: auto !important;
+      bottom: 0 !important;
+      margin: 0;
+    }
+
+    .slideshow .swiper-button-prev,
+    .slideshow .swiper-button-next {
+      display: none;
+    }
+
+    .slideshow--text-below-image-true .slideshow-pagination__button {
+      background-color: var(--color-text) !important;
+    }
+
+    .slideshow--text-below-image-true.slideshow--timer-disabled[data-autoplay='true'][data-autoplay-active='true']
+      .slideshow-pagination__button[data-selected='true'],
+    .slideshow--text-below-image-true.slideshow--timer-disabled[data-autoplay='true'][data-autoplay-active='true']
+      .swiper-pagination-bullet-active {
+      background-color: var(--color-text) !important;
+    }
+
+    .slideshow--text-below-image-true .circle-timer__background,
+    .slideshow--text-below-image-true .circle-timer__countdown {
+      stroke: var(--color-text) !important;
+    }
+
+    /* Mobile styles with site-header-sticky */
+    .slideshow--height-fit-screen-mobile.slideshow--text-below-image-false
+      .site-header-sticky
+      .slideshow-slide__image-wrapper {
+      height: calc(100vh - var(--header-height, 0px));
+    }
+
+    .slideshow--height-fit-screen-mobile.slideshow--text-below-image-true
+      .site-header-sticky
+      .slideshow-slide__image-wrapper {
+      height: calc(
+        100vh - var(--header-height, 0px) - var(--content-height, 0px)
+      );
+    }
+
+    /* Mobile with first-child */
+    .slideshow--height-fit-screen-mobile.slideshow--text-below-image-false.slideshow--section:first-child
+      .slideshow-slide__image-wrapper {
+      height: calc(100vh - var(--header-height, 0px));
+    }
+
+    .slideshow--height-fit-screen-mobile.slideshow--text-below-image-true.slideshow--section:first-child
+      .slideshow-slide__image-wrapper {
+      height: calc(
+        100vh - var(--header-height, 0px) - var(--content-height, 0px)
+      );
+    }
+  }
+
+  @media screen and (min-width: {{ tablet_breakpoint_min }}px) {
+    {% if padding_top != blank or padding_bottom != blank %}
+      #shopify-section-{{ id }} {
+        {% if padding_top != blank %}
+          padding-top: {{ padding_top }}px;
+        {% endif %}
+        {% if padding_bottom != blank %}
+          padding-bottom: {{ padding_bottom }}px;
+        {% endif %}
+      }
+    {% endif %}
+
+    .slideshow-slide__content {
+      width: 50%;
+      max-width: 1200px;
+    }
+
+    /* When text_horizontal_position is present - wrapper */
+    .slideshow-slide__content-wrapper {
+      position: absolute;
+      top: 50%;
+      right: 0;
+      left: 0;
+      z-index: 2;
+      padding: 0 20px;
+      transform: translateY(-50%);
+    }
+
+    .slideshow-slide__content-wrapper .slideshow-slide__content {
+      position: static;
+      box-sizing: border-box;
+      display: inline-block;
+      min-width: 350px;
+      max-width: none;
+      padding: var(--size-7-5);
+      color: var(--slide-text-color);
+      transform: none;
+    }
+
+    /* When text_horizontal_position is not present - no wrapper */
+    .slideshow-slide > .slideshow-slide__content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      z-index: 2;
+      box-sizing: border-box;
+      width: 50%;
+      padding: var(--size-4);
+      color: var(--slide-text-color);
+      text-align: center;
+      transform: translate(-50%, -50%);
+    }
+
+    .slideshow-slide
+      > .slideshow-slide__content.slideshow-slide__content--text-left {
+      right: auto;
+      left: 100px;
+      text-align: left;
+      transform: translateY(-50%);
+    }
+
+    .slideshow-slide
+      > .slideshow-slide__content.slideshow-slide__content--text-right {
+      right: 100px;
+      left: auto;
+      text-align: right;
+      transform: translateY(-50%);
+    }
+
+    /* When text_horizontal_position is present - wrapper */
+    .slideshow-slide__content-wrapper
+      .slideshow-slide__content.slideshow-slide__content--text-left {
+      text-align: left;
+    }
+
+    .slideshow-slide__content-wrapper
+      .slideshow-slide__content.slideshow-slide__content--text-center {
+      text-align: center;
+    }
+
+    .slideshow-slide__content-wrapper
+      .slideshow-slide__content.slideshow-slide__content--text-right {
+      text-align: right;
+    }
+
+    .slideshow--height-adapt .slideshow-slide__image-wrapper {
+      height: var(--slide-height);
+    }
+
+    .slideshow--height-adapt .slideshow-slide__placeholder {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: var(--slide-placeholder-aspect-ratio);
+    }
+
+    .slideshow-slide__image--mobile {
+      display: none;
+    }
+
+    .slideshow-slide__content-desktop {
+      display: block;
+    }
+
+    .slideshow-slide__content-mobile {
+      display: none;
+    }
+
+    .slideshow-slide__heading {
+      font-size: calc(var(--heading-font-scale, 1) * var(--text-size-8));
+    }
+
+    .slideshow-slide__subheading {
+      font-size:var(--text-size-4-5);
+    }
+
+    .slideshow-slide__preheading {
+      font-size: var(--text-size-4-5);
+    }
+
+    .slideshow-slide__button {
+      padding: var(--size-3) var(--size-4-5);
+      font-size: var(--body-sm-font-size); /* < 720px */
+    }
+
+    .slideshow--width-content {
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .slideshow--flex-spacing .swiper-pagination-bullets.slideshow-pagination {
+      bottom: 25px;
+      margin: var(--size-3) 0;
+    }
+
+    /* Desktop height */
+    .slideshow--height-small .slideshow-slide__image-wrapper {
+      height: 400px;
+    }
+
+    .slideshow--height-medium .slideshow-slide__image-wrapper {
+      height: 500px;
+    }
+
+    .slideshow--height-large .slideshow-slide__image-wrapper {
+      height: 600px;
+    }
+
+    .slideshow--height-fit-screen .slideshow-slide__image-wrapper {
+      height: 100vh;
+    }
+
+    .slideshow--height-original .slideshow-slide__image-wrapper {
+      height: auto;
+      transition: height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: height;
+    }
+
+    .slideshow--height-original .slideshow-slide__image {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .slideshow:not(.slideshow--height-original) .slideshow-slide__image {
+      aspect-ratio: 2.675;
+    }
+
+    .swiper-button-prev,
+    .swiper-button-next {
+      display: flex;
+    }
+  }
+
+  @media screen and (min-width: {{ desktop_breakpoint_min }}px) {
+    .slideshow {
+      margin-top: var(--size-20);
+    }
+
+    .slideshow--width-content {
+      padding-right: 25px;
+      padding-left: 25px;
+    }
+
+    .slideshow-slide__subheading {
+      font-size: var(--text-size-5);
+    }
+
+    .slideshow-slide__button {
+      padding: var(--size-3-5) var(--size-7);
+      margin-top: var(--size-7-5);
+      font-size: var(--body-lg-font-size); /* > 1024px */
+    }
+  }
+
+  {% for block in section.blocks %}
+    {% liquid
+      assign heading_alpha = block.settings.heading_color | color_extract: 'alpha'
+      assign preheading_alpha = block.settings.pretext_color | color_extract: 'alpha'
+      assign subheading_alpha = block.settings.subheading_color | color_extract: 'alpha'
+      assign mobile_headline_alpha = block.settings.heading_color_mobile | color_extract: 'alpha'
+      assign mobile_preheading_alpha = block.settings.pretext_color_mobile | color_extract: 'alpha'
+      assign mobile_subtitle_alpha = block.settings.subheading_color_mobile | color_extract: 'alpha'
+    %}
+
+    {% if block.settings.text_width != blank %}
+      @media screen and (min-width: 720px) {
+        .slideshow .slideshow-slide__content--{{ block.id }} {
+          width: {{ block.settings.text_width }}%!important;
+        }
+      }
+    {% endif %}
+
+    {% if preheading_alpha != 0 and block.settings.pretext_color != blank %}
+      .slideshow .slideshow-slide__content--{{ block.id }} .slideshow-slide__preheading {
+        color: {{ block.settings.pretext_color }};
+      }
+    {% endif %}
+
+    {% if heading_alpha != 0 and block.settings.heading_color != blank %}
+      .slideshow .slideshow-slide__content--{{ block.id }} .slideshow-slide__heading {
+        color: {{ block.settings.heading_color }};
+      }
+    {% endif %}
+
+    {% if subheading_alpha != 0 and block.settings.subheading_color != blank %}
+      .slideshow .slideshow-slide__content--{{ block.id }} .slideshow-slide__subheading {
+        color: {{ block.settings.subheading_color }};
+      }
+    {% endif %}
+
+    {% if mobile_preheading_alpha != 0 or mobile_headline_alpha != 0 or mobile_subtitle_alpha != 0 %}
+      @media screen and (max-width: 719px) {
+        {% if mobile_preheading_alpha != 0 and block.settings.pretext_color_mobile != blank %}
+          .slideshow .slideshow-slide__content--{{ block.id }} .slideshow-slide__preheading {
+            color: {{ block.settings.pretext_color_mobile }};
+          }
+        {% endif %}
+
+        {% if mobile_headline_alpha != 0 and block.settings.heading_color_mobile != blank %}
+          .slideshow .slideshow-slide__content--{{ block.id }} .slideshow-slide__heading {
+            color: {{ block.settings.heading_color_mobile }};
+          }
+        {% endif %}
+
+        {% if mobile_subtitle_alpha != 0 and block.settings.subheading_color_mobile != blank %}
+          .slideshow .slideshow-slide__content--{{ block.id }} .slideshow-slide__subheading {
+            color: {{ block.settings.subheading_color_mobile }};
+          }
+        {% endif %}
+      }
+    {% endif %}
+  {% endfor %}
+{% endstyle %}
+
+<noscript>
+  <style>
+    .slide-element {
+      opacity: 1;
+    }
+  </style>
+</noscript>
+
+<section-slideshow
+  class="
+    slideshow
+    slideshow--height-{{ slideshow_height }}
+    slideshow--height-{{ slideshow_height_mobile }}-mobile
+    slideshow--width-{{ slideshow_width }}
+    slideshow--text-below-image-{{ slideshow_text_below_image }}
+    slideshow--arrow-style-{{ navigation_arrows_style }}
+    {% if disable_timer_animation %}slideshow--timer-disabled{% endif %}
+    {% if show_pagination %}slideshow--show-pagination{% endif %}
+    {% if show_pagination_below_image %}slideshow--pagination-below-image{% endif %}
+    {% if show_pagination_below_content %}slideshow--pagination-below{% endif %}
+    {% if pagination_color != blank %}slideshow--pagination-color{% endif %}
+    {% if enable_grab_cursor %}slideshow--grab-cursor{% endif %}
+    {% if section.blocks.size <= 1 %}slideshow--single-slide{% endif %}
+    {% if slideshow_flex_spacing %}slideshow--flex-spacing{% endif %}
+  "
+  {% if section.settings.animation != blank and section.settings.animation != 'none' %}
+    data-scroll-class="{{ section.settings.animation }}"
+  {% endif %}
+  aria-label="{% render 'utility.translate', key: 'sections.slideshow.slideshow', fallback: 'Slideshow' %}"
+  section-id="{{ id }}"
+  enable-autoplay="{{ enable_autoplay }}"
+  autoplay-interval="{{ autoplay_interval }}"
+  mobile-navigation-adjust="{{ mobile_navigation_adjust }}"
+  slideshow-animation="{{ slideshow_animation }}"
+  slide-attraction="{{ slide_attraction }}"
+  slide-friction="{{ slide_friction }}"
+  slide-transition-speed="{{ slide_transition_speed }}"
+  show-navigation-arrows="{{ show_navigation_arrows }}"
+  navigation-arrows-style="{{ navigation_arrows_style }}"
+  slideshow-text-animation="{{ slideshow_text_animation }}"
+  style="
+    --autoplay-interval: {{ autoplay_interval_css }};
+     {% if pagination_color != blank %}
+      --pagination-color: {{ pagination_color }};
+    {% endif %}
+    {% if slideshow_height == 'adapt' %}
+      --slide-height: {{ slide_height | append: 'vw' }};
+      {% if first_block.settings.background_image != blank %}
+        --slide-placeholder-aspect-ratio: {{ min_aspect_ratio_desktop }};
+      {% endif %}
+    {% endif %}
+    {% if slideshow_height_mobile == 'adapt' %}
+      --slide-height-mobile: {{ slide_height_mobile | append: 'vw' }};
+      {% if first_block.settings.mobile_background_image != blank %}
+        --slide-placeholder-aspect-ratio-mobile: {{ min_aspect_ratio_mobile }};
+      {% endif %}
+    {% endif %}
+  "
+>
+  {%- if slideshow_heading != blank -%}
+    <h2 class="slideshow__heading">
+      {{ slideshow_heading }}
+    </h2>
+  {%- endif -%}
+
+  <div
+    class="slideshow__wrapper"
+    data-slideshow-wrapper
+  >
+    {%- for block in section.blocks -%}
+      {% render 'section.slideshow.slide',
+        block: block,
+        block_index: forloop.index0,
+        section: section,
+        total_blocks: section.blocks.size,
+        button_wrapper: button_wrapper
+      %}
+    {%- endfor -%}
+  </div>
+
+  {%- if section.blocks.size > 1 and show_pagination -%}
+    <ol
+      class="slideshow-pagination"
+      data-slideshow-pagination
+    >
+      {%- for block in section.blocks -%}
+        {% liquid
+          assign slide_index_label = 'Slide ' | append: forloop.index
+          assign slide_index_translated = 'sections.slideshow.slide_index' | t: count: forloop.index
+        %}
+        <li class="slideshow-pagination__dot">
+          <button
+            class="slideshow-pagination__button"
+            data-selected="{% if forloop.index == 1 %}true{% else %}false{% endif %}"
+            data-slide-button="{{ forloop.index0 }}"
+          >
+            {% if custom_pagination %}
+              {{ custom_pagination }}
+            {% endif %}
+            <span class="visually-hidden">
+              {% render 'utility.translate', t: slide_index_translated, fallback: slide_index_label %}
+            </span>
+          </button>
+        </li>
+      {%- endfor -%}
+    </ol>
+  {%- endif -%}
+
+  <div
+    class="slideshow__current-slide visually-hidden"
+    aria-live="polite"
+    aria-atomic="true"
+    data-slide-counter
+    data-counter-template="{% render 'utility.translate', key: 'sections.slideshow.slide_counter', fallback: slide_counter_fallback %}"
+  ></div>
+</section-slideshow>
+
+<script type="module">
+  import 'section.slideshow';
+</script>

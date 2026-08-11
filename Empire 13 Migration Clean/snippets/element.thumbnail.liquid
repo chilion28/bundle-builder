@@ -1,0 +1,60 @@
+{% doc %}
+  Renders a element.thumbnail component.
+  @param {object} media - Media object
+  @param {string} [aspect_ratio] - The aspect ratio value to apply
+  @param {boolean} [image_crop] - Whether to crop the image
+  @example
+  {% render 'element.thumbnail', media: media, aspect_ratio: aspect_ratio, image_crop: image_crop %}
+{% enddoc %}
+
+{% render 'css.element-thumbnail' %}
+
+{% liquid
+  assign aspect_ratio = aspect_ratio | default: media.preview_image.aspect_ratio | default: '1/1'
+  assign image_crop = image_crop | default: false, allow_false: true
+%}
+
+<div
+  class="
+    thumbnail
+    thumbnail--aspect-ratio-set
+  "
+  tabindex="0"
+  role="button"
+  {% if media.media_type == 'image' %}
+    data-photoswipe-thumb
+  {% endif %}
+  style="--aspect-ratio: {{ aspect_ratio }};"
+>
+  {% if media.media_type == 'video' or media.media_type == 'external_video' %}
+    <svg
+      class="thumbnail__icon"
+      aria-hidden="true"
+      focusable="false"
+      role="presentation"
+      xmlns="http://www.w3.org/2000/svg"
+      width="26"
+      height="26"
+      viewBox="0 0 26 26"
+      fill="none"
+    >
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M1 25H25V1H1V25Z" fill="none"/>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M9.71814 6.71984C9.0517 6.31605 8.19995 6.79588 8.19995 7.5751V18.311C8.19995 19.1138 9.09826 19.5893 9.76217 19.1379L18.1123 13.4612C18.7146 13.0518 18.6912 12.1564 18.0682 11.779L9.71814 6.71984Z" fill="currentColor"/>
+    </svg>
+  {% elsif media.media_type == 'model' %}
+    <svg
+      class="thumbnail__icon"
+      aria-hidden="true"
+      focusable="false"
+      role="presentation"
+      xmlns="http://www.w3.org/2000/svg"
+      width="26"
+      height="26"
+      viewBox="0 0 26 26"
+    >
+      <path d="M1,25H25V1H1Z" fill="none"/>
+      <path d="M19.13,8.28,14,5.32a2,2,0,0,0-2,0l-5.12,3a2,2,0,0,0-1,1.76V16a2,2,0,0,0,1,1.76l5.12,3a2,2,0,0,0,2,0l5.12-3a2,2,0,0,0,1-1.76V10A2,2,0,0,0,19.13,8.28Zm-6.4,11.1-5.12-3A.53.53,0,0,1,7.35,16V10a.53.53,0,0,1,.27-.46l5.12-3a.53.53,0,0,1,.53,0l5.12,3-4.72,2.68a1.33,1.33,0,0,0-.67,1.2v6a.53.53,0,0,1-.26,0Z" fill="currentColor" style="isolation:isolate"/>
+    </svg>
+  {% endif %}
+  {{ media.preview_image | image_url: width: 180 | image_tag: class: 'thumbnail__image', loading: 'lazy' }}
+</div>

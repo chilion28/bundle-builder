@@ -1,0 +1,491 @@
+<script>
+  // Pass all product tags to let API find the matching discount
+  const productTags = {{ product.tags | json }};
+
+  const { ref, reactive, createApp, watch, onBeforeMount } = Vue;
+
+  if(document.querySelector('#add-to-cart-form')) { 
+
+    const productForm = createApp({
+      delimiters: ['${', '}'],
+      setup() {
+        let comments = ref([]);
+        let selected = ref("Snapback");
+        let page = 1;
+        let isLoading = ref(true);
+        let variant = ref([]);
+        let options = ref([]);
+        let items = ref([0, 1, 2, 3, 4, 5, 6, 7]);
+        let qtySelected = reactive({});
+        let basePrice = ref(34.99);
+        let totalQty = ref(0);
+        let subTotal = ref(0.00);
+        let indiPrice = ref(0.00);
+        let messageDiscount = ref("ORDER MORE THAN 1 FOR DISCOUNTED PRICING");
+        let discountQtys = ref([]);
+        let discountAmounts = ref([]);
+        let discountName = ref("");
+        let prevCartItem = false;
+        let cartData;
+        let scrollContent;
+        let displayStyle = ref(false);
+
+        const load = async $state => {
+            // Fetch discount data from app proxy (send all product tags)
+            if (productTags && productTags.length > 0) {
+            fetch(`/apps/citylocs/discount-info?tags=${encodeURIComponent(JSON.stringify(productTags))}`)
+              .then(res => res.json())
+              .then(data => {
+                console.log('App Proxy API Response:', data);
+                if (data.discountBreak && data.discountAmount) {
+                  // Add 1 at the start for single item (no discount)
+                  discountQtys.value = [1, ...data.discountBreak.map(Number)];
+                  discountAmounts.value = [0, ...data.discountAmount.map(Number)];
+                  discountName.value = data.discountMessage || "";
+                }
+              })
+              .catch(err => console.log('App Proxy Error:', err));
+            }
+
+            try {
+              const productGet = await axios.get("{{ product.handle }}.js");
+
+              productGet.data.variants.forEach((prodEl, idx) => {
+                if( prodEl.inventory_management != "shopify" ||
+                  (prodEl.inventory_management == "shopify" && prodEl.inventory_quantity > 0) ) {
+                  variant.value.push(prodEl);
+                }
+              })
+
+              const selectedVars = variant.value.filter(varEl => varEl.option1 == selected.value);
+              options.value = [];
+              options.value.push(...selectedVars);
+
+              const queryString = window.location.search;
+              const urlParams = new URLSearchParams(queryString);
+              const itemId = urlParams.get('id');
+              const editProduct = urlParams.get('editProduct');
+
+              if(editProduct) {
+                prevCartItem = true;
+                checkProduct(itemId);
+              } else {
+                isLoading.value = false;
+              }
+
+            } catch (error) {
+              console.log(error);
+            }
+        }
+
+        const checkLoading = () => {
+          if(!isLoading.value) {
+            return "hide-div";
+          }
+        }
+
+        const checkOptions = () => {
+          if(isLoading.value) {
+            return "hide-div";
+          }
+        }
+
+        const selectionButton = (event) => {
+            event.preventDefault();
+            const clickedOption = event.currentTarget.dataset.value;
+            selected.value = clickedOption;
+        }
+
+        const addQty = (optionId, inputVal) => {
+          if(inputVal) {
+            qtySelected[optionId] = inputVal;
+            return;
+          }
+
+          let optionQty = 0;
+          if(qtySelected[optionId]) {
+            optionQty = qtySelected[optionId];
+          }
+          optionQty++;
+          qtySelected[optionId] = optionQty;
+        }
+
+        const inputQty = (optionId, inputVal) => {
+          qtySelected[optionId] = Number(inputVal);
+        }
+
+        const minQty = (optionId) => {
+          if(qtySelected[optionId] > 0) {          
+            let optionQty = 0;
+            if(qtySelected[optionId]) {
+              optionQty = qtySelected[optionId];
+            } else {
+            return;
+          }
+            optionQty = optionQty - 1;
+            qtySelected[optionId] = optionQty;
+          }
+        }
+
+        const handleQty = (prodID) => {
+          if(qtySelected[prodID]) {
+          return qtySelected[prodID];
+        } else {
+          return 0;
+        }
+        }
+
+        const displayImg = (imgSrc) => {
+          Fancybox.show([ {
+            src: imgSrc,
+            type: "image",
+          } ]);
+        }
+
+        const toggleApproval = (add) => {
+          if($('input[name="properties[Custom Text]"]').val().length < 1) {
+            Fancybox.show([ {
+              src: "<h2>Please enter your custom text, before adding to cart.</h2>",
+              type: "html",
+            } ]);
+            return
+          } else if(totalQty.value == 0) {
+            Fancybox.show([ {
+              src: "<h2>Please select a quantity.  No quantity has been selected.</h2>",
+              type: "html",
+            } ]);
+            return
+          } else if(add) {
+          displayStyle.value = true;
+          } else {
+            displayStyle.value = false;
+          }
+        }
+
+        const checkProduct = (itemId) => {
+          const prodTitle = $(".product-title").text().trim();
+          event.preventDefault();
+          axios({
+            method: 'GET',
+            url: '/cart.js'
+          })
+          .then( (response) => {
+            cartData = response.data;
+
+            cartData.items.forEach(el => {
+            if( el.product_title == prodTitle && el.id == itemId) {
+              if(el.properties["Custom Text"]) {
+                $("#user_input").val( el.properties["Custom Text"] );
+              }
+              addQty(el.id, el.quantity);
+            }
+
+          })
+            isLoading.value = false;
+          })
+          .catch( (error) => {
+            console.error('Error:', error);
+          });
+        }
+
+        const displayApproval = (event) => {
+            event.preventDefault();
+
+            Fancybox.bind("[data-fancybox]", {
+              // Your custom options
+            });
+        }
+
+        const addToCart = (event) => {
+          event.preventDefault();
+          
+          const base_url = window.location.origin;
+          const cartUrl = base_url + '/cart';
+          
+          let custom1;
+          let custom2;
+          let custom3;
+          
+          if( $('input[name*="ustom Text Two"]').val() ) {
+            custom2 = $('input[name*="ustom Text Two"]').val();
+          } else if( $('#second_user_input').val() ) {
+            custom2 = $('#second_user_input').val();
+          }
+
+          try{
+            if($('input[name*="ustom Text Two"]').val().length < 1 && document.getElementById("2ndmandatory")) {
+            Fancybox.show([ {
+              src: '<h2>Please enter "Custom Text Two" before adding to cart.</h2>',
+              type: "html",
+            } ]);
+            return
+          }
+          } catch{
+            
+          }
+
+
+          if( $('input[name*="Custom Text Three"]').val() ) {
+            custom3 = $('input[name*="Custom Text Three"]').val();
+          }
+  
+          const custom1Input =  $('input[name="properties[Custom Text]"]').val();
+
+          if( document.getElementById("engraved-hat-select") != null  
+              && $('#engraved-hat-select').val() == "Select" ) { 
+                Fancybox.show([ {
+                  src: "<h2>Please select a state from the dropdown menu</h2>",
+                  type: "html",
+                } ]);
+                return
+          } 
+
+          if ($('input[name="properties[Custom Text]"]').val())
+            {
+                custom1 = $('input[name="properties[Custom Text]"]').val();
+            } else if ($('#user_input').val()) {
+                custom1 = $('#user_input').val();
+            }
+
+
+          if($('input[name="properties[Custom Text]"]').val().length < 1) {
+            Fancybox.show([ {
+              src: "<h2>Please enter your custom text, before adding to cart.</h2>",
+              type: "html",
+            } ]);
+            return
+          };
+          
+          let properties;
+
+          if(custom3) {
+            properties = {
+              'Custom Text': custom1.toUpperCase(),
+              'Custom Text Two': custom2.toUpperCase(),
+              'Custom Text Three': custom3.toUpperCase()
+            }
+
+          } else if(custom2) {
+            properties = {
+              'Custom Text': custom1.toUpperCase(),
+              'Custom Text Two': custom2.toUpperCase()
+            }
+          } else {
+            properties = {
+              'Custom Text': custom1.toUpperCase()
+            }
+          }
+
+          // check if any other fields are custom 
+          // month
+          if(  $('input[name="properties[Month]"]').val()) properties["Month"] = $('input[name="properties[Month]"]').val();
+          // date
+          if(  $('input[name="properties[Year]"]').val()) properties["Year"] = $('input[name="properties[Year]"]').val(); 
+
+
+          // add state to object if engraved state plate
+          if( document.getElementById("engraved-hat-select") != null ) {
+            properties['state'] = $('#engraved-hat-select').val();
+          }
+
+          if(totalQty.value > 0 && !prevCartItem) {
+            let items = [];
+            let url = '/cart/add.js';
+          
+            Object.keys(qtySelected).forEach(selected => {
+              let currentItem = {
+                id: selected,
+                quantity: qtySelected[selected],
+                properties: properties
+              }
+          
+              items.push(currentItem);
+            })
+          
+            axios({
+              method: 'post',
+              url: url,
+              data: { 
+                items: items
+              }
+            })
+            .then( (response) => {
+              AMP_API.OPEN_CART();
+              {% comment %} window.location.href = cartUrl; {% endcomment %}
+            })
+            .catch( (error) => {
+              console.error('Error:', error);
+            }); 
+          } else if(totalQty.value > 0 && prevCartItem) {
+
+            let updates = {};
+            let items = [];
+
+            Object.keys(qtySelected).forEach((selected, idx) => { 
+
+              {% comment %} updates[selected] = qtySelected[selected]; {% endcomment %}
+              let currentProduct = {
+                quantity: qtySelected[selected]
+              }
+              // check for custom text
+             if(custom1 && !custom2) {
+                currentProduct['properties'] = {
+                  "Custom Text": custom1
+                }
+              } else if(custom2) {
+                currentProduct['properties'] = {
+                  "Custom Text": custom1,
+                  "Custom Text Two": custom2
+                }
+              }
+  
+                  let currentItem = {
+                    id: selected,
+                    quantity: qtySelected[selected],
+                    properties: properties
+                  }
+              
+                  items.push(currentItem);             
+            }) 
+
+            postShopifyAPI({ items });
+          } 
+        }
+
+        watch( selected, () => {
+            const updatedOptions = variant.value.filter(varEl => varEl.option1 == selected.value);
+            options.value = [];
+            options.value.push(...updatedOptions);
+        })
+
+        watch( qtySelected, () => {
+          const qtys = discountQtys.value;
+          const amounts = discountAmounts.value;
+
+          let buildQty = 0;
+            Object.keys(qtySelected).forEach(selected => {
+              buildQty = buildQty + qtySelected[selected];
+            });
+
+            let idxPrice;
+
+            for(let i = 0; i < qtys.length; i++) {
+              if(buildQty == qtys[i]) {
+                idxPrice = i;
+                break;
+              } else if( buildQty < qtys[i]) {
+                idxPrice = i - 1;
+                break;
+              } else {
+                idxPrice = qtys.length - 1;
+              }
+            }
+
+            function calculateCost() {
+                let totalProdCost = buildQty * basePrice.value;
+
+                if(buildQty != 1 && buildQty != 0) {
+                    const discountApplied = totalProdCost - (amounts[idxPrice] * buildQty);
+                    totalProdCost = discountApplied;
+                }
+
+                // if qty is above 0 run
+
+                subTotal.value = totalProdCost.toFixed(2);
+
+                let individualCost = 0;
+                if(buildQty > 0) {
+                  individualCost = totalProdCost / buildQty;
+                }
+                indiPrice.value = individualCost.toFixed(2);
+            }
+
+
+          totalQty.value = buildQty;
+          calculateCost();
+          if(idxPrice == qtys.length - 1) {
+            const maxDiscount = amounts[amounts.length - 1];
+            messageDiscount.value = `YOU SAVED $${maxDiscount} PER ${discountName.value.toUpperCase() || 'ITEM'}!`;
+            return ;
+          }
+          calculateRemainingQty(qtys[idxPrice + 1], amounts[idxPrice + 1]);
+        })
+
+        function calculateRemainingQty(nextQty, nextDiscountAmount) {
+            const qtyTotal = totalQty.value;
+            let toNextQtyDiscount = nextQty - qtyTotal;
+            let nextQtyDiscount = (basePrice.value - nextDiscountAmount).toFixed(2);
+            const message = `ORDER ${toNextQtyDiscount} MORE AND GET THEM AT ${nextQtyDiscount} EACH`;
+            messageDiscount.value = message;
+        }
+
+        function postShopifyAPI(data) {
+          let updates = {
+          }
+          data.items.forEach(el => {
+            updates[el.id] = 0; 
+          })
+          // remove all quantites before we update
+            axios({
+                method: 'post',
+                url: '/cart/update.js',
+                data: {
+                  updates: updates
+                }
+              })
+              .then(response => {
+                // add after removing
+                  axios({
+                    method: 'post',
+                    url: '/cart/add.js',
+                    data: data
+                  })
+                  .then(response => {
+                    AMP_API.OPEN_CART();
+                    {% comment %} window.location.href = "https://citylocs.com/cart"; {% endcomment %}
+                  })
+                  .catch( (error) => {
+                    console.error('Error:', error);
+                  })
+
+              })
+              .catch( (error) => {
+                console.error('Error:', error);
+              });
+        }
+        
+        onBeforeMount(load);
+
+        return {
+          selected,
+          comments,
+          page,
+          variant,
+          options,
+          items,
+          selectionButton,
+          addQty,
+          minQty,
+          inputQty,
+          handleQty,
+          addToCart,
+          totalQty,
+          subTotal,
+          indiPrice,
+          messageDiscount,
+          checkLoading,
+          checkOptions,
+          displayImg,
+          displayStyle,
+          toggleApproval
+        };
+      },
+      methods: {
+        setProdImg(optionImg) {
+          return optionImg;
+        }
+      }
+    })
+    productForm.mount('#add-to-cart-form')
+  }
+</script>

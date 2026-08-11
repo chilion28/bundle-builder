@@ -1,0 +1,81 @@
+{%- comment -%}
+  Renders the list of CSS variables. Typically, this is referenced inside of a
+  theme's layout file.
+
+  Usage:
+  {% render 'css-variables' %}
+{%- endcomment -%}
+
+{% liquid
+  assign icon_stroke_width = icon_stroke_width | default: settings.icon_weight
+  assign icon_stroke_line_join = icon_stroke_line_join | default: settings.icon_linecaps
+  assign button_style = button_style | default: settings.button_style
+  assign edges = edges | default: settings.edges
+  assign product_grid_style = product_grid_style | default: settings.product_grid_style
+  assign swatch_style = swatch_style | default: settings.swatch_style
+  assign swatch_size = swatch_size | default: settings.swatch_size
+  assign product_grid_image_margin = product_grid_image_margin | default: settings.product_grid_image_margin
+  assign collection_grid_image_margin = collection_grid_image_margin | default: settings.collection_grid_image_margin
+%}
+
+{%- style -%}
+  :root {
+    --product-tile-margin: {{ settings.product_grid_image_margin | default: '10' }}%;
+
+    {%- if collection_grid_image_margin -%}
+      --collection-tile-margin: {{ collection_grid_image_margin }}%;
+    {%- endif -%}
+
+    {%- if swatch_size -%}
+      --swatch-size: {{ swatch_size }}px;
+    {%- endif -%}
+
+    {%- if icon_stroke_width -%}
+      --icon-stroke-width: {{ icon_stroke_width }};
+    {%- endif -%}
+
+    {%- if icon_stroke_line_join -%}
+      --icon-stroke-line-join: {{ icon_stroke_line_join }};
+    {%- endif -%}
+
+    {%- if button_style == 'round-slight' -%}
+      --button-radius: var(--radius-xs);
+    {%- elsif button_style == 'round' -%}
+      --button-radius: var(--radius-full);
+    {%- elsif button_style == 'square' -%}
+      --button-radius: var(--radius-none);
+    {%- endif -%}
+
+    {%- if edges == 'round' -%}
+      --roundness: var(--radius-xl);
+      --chip-radius: var(--radius-full);
+      --input-radius: min(24px, var(--radius-full));
+    {%- elsif edges == 'square' -%}
+      --roundness: var(--radius-none);
+      --chip-radius: var(--radius-none);
+      --input-radius: var(--radius-none);
+    {%- endif -%}
+
+    {%- if product_grid_style == 'gridlines-thick' -%}
+      --grid-thickness: 2px;
+    {%- elsif product_grid_style == 'gridlines-thin' -%}
+      --grid-thickness: 1px;
+    {%- else -%}
+      --grid-thickness: 0;
+    {%- endif -%}
+
+    {%- if swatch_style == 'round' -%}
+      --swatch-border-radius: 50%;
+    {%- endif -%}
+  }
+
+  @media screen and (max-width: 768px) {
+    :root {
+      {% if edges == 'round' %}
+        --roundness: var(--radius-lg);
+      {%- elsif edges == 'square' -%}
+        --roundness: var(--radius-none);
+      {% endif %}
+    }
+  }
+{%- endstyle -%}

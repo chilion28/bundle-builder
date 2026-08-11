@@ -1,0 +1,129 @@
+<template class="photoswipe-template">
+  {% comment %} Root element of PhotoSwipe. Must have class pswp. {% endcomment %}
+  <div
+    id="pswp"
+    class="pswp"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+    aria-label="{{ 'general.accessibility.product_zoom_dialog' | t }}"
+    data-photoswipe
+  >
+    {% comment %}
+      Background of PhotoSwipe.
+      It's a separate element as animating opacity is faster than rgba().
+    {% endcomment %}
+    <div class="pswp__bg"></div>
+
+    {% comment %} Slides wrapper with overflow:hidden. {% endcomment %}
+    <div class="pswp__scroll-wrap">
+      {% comment %}
+        Container that holds slides.
+        PhotoSwipe keeps only 3 of them in the DOM to save memory.
+        Don't modify these 3 pswp__item elements, data is added later on.
+      {% endcomment %}
+      <div class="pswp__container" aria-hidden="true">
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+        <div class="pswp__item"></div>
+      </div>
+
+      {% comment %} Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. {% endcomment %}
+      <div class="pswp__ui pswp__ui--hidden">
+        <div class="pswp__top-bar">
+          {% comment %}  Controls are self-explanatory. Order can be changed. {% endcomment %}
+          {% comment %} <div class="pswp__counter"></div> {% endcomment %}
+          <button class="pswp__button pswp__button--close" title="{{ 'general.accessibility.close' | t }}">
+            <span tabindex="-1">
+              <svg
+                aria-hidden="true"
+                focusable="false"
+                role="presentation"
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 18 18"
+                fill="none"
+              >
+                <path d="M17 1L1 17" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+                <path d="M1 1L17 17" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </button>
+          {% comment %} <button class="pswp__button pswp__button--share" title="Share"></button> {% endcomment %}
+          {% comment %} <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button> {% endcomment %}
+          {% comment %} <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button> {% endcomment %}
+
+          {% comment %} Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR {% endcomment %}
+          {% comment %} element will get class pswp__preloader--active when preloader is running {% endcomment %}
+          {% comment %}
+            <div class="pswp__preloader">
+                <div class="pswp__preloader__icn">
+                    <div class="pswp__preloader__cut">
+                    <div class="pswp__preloader__donut"></div>
+                    </div>
+                </div>
+            </div>
+          {% endcomment %}
+        </div>
+        {% comment %}
+          <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+              <div class="pswp__share-tooltip"></div>
+          </div>
+
+          <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+          </button>
+          <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+          </button>
+          <div class="pswp__caption">
+              <div class="pswp__caption__center"></div>
+          </div>
+        {% endcomment %}
+      </div>
+    </div>
+    <div class="product-zoom--thumbnails" data-photoswipe-thumbs>
+      <button
+        class="product-gallery__scroll-button product-gallery__scroll-button--prev"
+        data-scroll-prev
+        aria-label="Scroll thumbnails previous"
+      >
+        <svg
+          class="icon-chevron-down"
+          aria-hidden="true"
+          focusable="false"
+          role="presentation"
+          width="14"
+          height="8"
+          viewBox="0 0 14 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path class="icon-chevron-down-left" d="M7 6.75L12.5 1.25" stroke="currentColor" stroke-width="1.75" stroke-linecap="square"/>
+          <path class="icon-chevron-down-right" d="M7 6.75L1.5 1.25" stroke="currentColor" stroke-width="1.75" stroke-linecap="square"/>
+        </svg>
+      </button>
+      <button
+        class="product-gallery__scroll-button product-gallery__scroll-button--next"
+        data-scroll-next
+        aria-label="Scroll thumbnails next"
+      >
+        <svg
+          class="icon-chevron-down"
+          aria-hidden="true"
+          focusable="false"
+          role="presentation"
+          width="14"
+          height="8"
+          viewBox="0 0 14 8"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path class="icon-chevron-down-left" d="M7 6.75L12.5 1.25" stroke="currentColor" stroke-width="1.75" stroke-linecap="square"/>
+          <path class="icon-chevron-down-right" d="M7 6.75L1.5 1.25" stroke="currentColor" stroke-width="1.75" stroke-linecap="square"/>
+        </svg>
+      </button>
+
+      <div class="product-zoom--thumb-scroller" data-photoswipe-thumb-scroller></div>
+    </div>
+  </div>
+</template>

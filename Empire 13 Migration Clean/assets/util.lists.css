@@ -1,0 +1,55 @@
+ul,
+ol {
+  margin: 0 0 calc(var(--gutter) / 2) var(--gutter);
+  padding: 0;
+  text-rendering: optimizeLegibility;
+}
+
+ol ol {
+  list-style: lower-alpha;
+}
+
+ol {
+  list-style: decimal;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin: 4px 0 5px 20px;
+}
+li {
+  margin-bottom: 0.25em;
+}
+
+ul.square {
+  list-style: square outside;
+}
+ul.disc {
+  list-style: disc outside;
+}
+ol.alpha {
+  list-style: lower-alpha outside;
+}
+
+.no-bullets {
+  list-style: none outside;
+  margin-left: 0;
+}
+
+.inline-list {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  & li {
+    display: block;
+    margin-bottom: 0;
+  }
+}
+
+.inline-list--no-wrap {
+  flex-wrap: nowrap;
+}

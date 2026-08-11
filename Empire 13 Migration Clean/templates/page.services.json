@@ -1,0 +1,239 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "dynamic_rich_text_intro": {
+      "type": "dynamic-rich-text",
+      "blocks": {
+        "heading-services": {
+          "type": "heading",
+          "settings": {
+            "title": "Services",
+            "heading_size": "large"
+          }
+        },
+        "text-intro": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We offer more than just products. Here's what we provide to make buying, owning, and maintaining what you purchase as straightforward as possible.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "heading-services",
+        "text-intro"
+      ],
+      "settings": {
+        "width": "regular",
+        "content_alignment": "center"
+      }
+    },
+    "dynamic_image_with_text_assembly": {
+      "type": "dynamic-image-with-text",
+      "blocks": {
+        "heading-assembly": {
+          "type": "heading",
+          "settings": {
+            "text": "Assembly and Installation",
+            "heading_size": "small"
+          }
+        },
+        "icon-assembly": {
+          "type": "icon",
+          "settings": {
+            "icon": "icon-delivery-handoff",
+            "icon_width": 30,
+            "icon_width_mobile": 30
+          }
+        },
+        "text-assembly": {
+          "type": "text",
+          "settings": {
+            "richtext": "<p>We'll take care of the setup so you don't have to. Our trained technicians handle assembly and installation for furniture, appliances, electronics, and more. Book a service appointment at checkout or in store.</p>"
+          }
+        },
+        "button-book": {
+          "type": "button",
+          "settings": {
+            "button_label": "Book a Service",
+            "button_link": "",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "heading-assembly",
+        "icon-assembly",
+        "text-assembly",
+        "button-book"
+      ],
+      "settings": {
+        "section_heading": "",
+        "desktop_width": 50,
+        "desktop_image_alignment": "left",
+        "mobile_image_alignment": "top",
+        "text_alignment": "left"
+      }
+    },
+    "dynamic_image_with_text_protection": {
+      "type": "dynamic-image-with-text",
+      "blocks": {
+        "heading-protection": {
+          "type": "heading",
+          "settings": {
+            "text": "Extended Protection Plans",
+            "heading_size": "small"
+          }
+        },
+        "icon-protection": {
+          "type": "icon",
+          "settings": {
+            "icon": "icon-rating-five-star",
+            "icon_width": 30,
+            "icon_width_mobile": 30
+          }
+        },
+        "text-protection": {
+          "type": "text",
+          "settings": {
+            "richtext": "<p>Every major purchase is backed by our protection plan program. Choose from one, two, or three year coverage on eligible products. Plans cover manufacturer defects, mechanical failure, and accidental damage, with no deductibles and no fine print.</p>"
+          }
+        },
+        "button-learn-more": {
+          "type": "button",
+          "settings": {
+            "button_label": "Learn More",
+            "button_link": "",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "heading-protection",
+        "icon-protection",
+        "text-protection",
+        "button-learn-more"
+      ],
+      "settings": {
+        "section_heading": "",
+        "desktop_width": 50,
+        "desktop_image_alignment": "right",
+        "mobile_image_alignment": "top",
+        "text_alignment": "left"
+      }
+    },
+    "dynamic_image_with_text_pickup": {
+      "type": "dynamic-image-with-text",
+      "blocks": {
+        "heading-pickup": {
+          "type": "heading",
+          "settings": {
+            "text": "In-Store Pickup",
+            "heading_size": "small"
+          }
+        },
+        "icon-pickup": {
+          "type": "icon",
+          "settings": {
+            "icon": "icon-store",
+            "icon_width": 30,
+            "icon_width_mobile": 30
+          }
+        },
+        "text-pickup": {
+          "type": "text",
+          "settings": {
+            "richtext": "<p>Order online and pick up at your nearest location, usually within 2 hours. Select \"Pick up in store\" at checkout, and we'll send a confirmation when your order is ready. No waiting, no shipping fees.</p>"
+          }
+        },
+        "button-find-store": {
+          "type": "button",
+          "settings": {
+            "button_label": "Find a Store",
+            "button_link": "",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "heading-pickup",
+        "icon-pickup",
+        "text-pickup",
+        "button-find-store"
+      ],
+      "settings": {
+        "section_heading": "",
+        "desktop_width": 50,
+        "desktop_image_alignment": "left",
+        "mobile_image_alignment": "top",
+        "text_alignment": "left"
+      }
+    },
+    "dynamic_image_with_text_registry": {
+      "type": "dynamic-image-with-text",
+      "blocks": {
+        "heading-registry": {
+          "type": "heading",
+          "settings": {
+            "text": "Gift Registry",
+            "heading_size": "small"
+          }
+        },
+        "icon-registry": {
+          "type": "icon",
+          "settings": {
+            "icon": "icon-gift-card",
+            "icon_width": 30,
+            "icon_width_mobile": 30
+          }
+        },
+        "text-registry": {
+          "type": "text",
+          "settings": {
+            "richtext": "<p>Create a registry for any occasion and share it with friends and family. Add items from any department, track what's been purchased, and manage everything from your account. Available in store and online.</p>"
+          }
+        },
+        "button-create-registry": {
+          "type": "button",
+          "settings": {
+            "button_label": "Create a Registry",
+            "button_link": "",
+            "button_style": "primary"
+          }
+        }
+      },
+      "block_order": [
+        "heading-registry",
+        "icon-registry",
+        "text-registry",
+        "button-create-registry"
+      ],
+      "settings": {
+        "section_heading": "",
+        "desktop_width": 50,
+        "desktop_image_alignment": "right",
+        "mobile_image_alignment": "top",
+        "text_alignment": "left"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "dynamic_rich_text_intro",
+    "dynamic_image_with_text_assembly",
+    "dynamic_image_with_text_protection",
+    "dynamic_image_with_text_pickup",
+    "dynamic_image_with_text_registry"
+  ]
+}

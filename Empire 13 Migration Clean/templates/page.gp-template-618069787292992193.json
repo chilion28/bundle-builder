@@ -1,0 +1,69 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_global_section_618517385699132151-1": {
+      "type": "gp-global-section-618517385699132151",
+      "settings": {
+        "section_preload": "false",
+        "checksum": "",
+        "gggPGGlr7OH_text_-1151340651": "Professional Photoshoot",
+        "gg8dh8vU14C_text_-1207402845": "A full experience with a pro photographer.",
+        "gg0CVVaIVew_text_-1970152338": "Exclusive father's day hat",
+        "ggGgxCtUA6E_text_-699718060": "You'll receive a CityLocs hat to keep.",
+        "gg4fVlYL2DE_text_1815698046": "Photos to keep",
+        "gglSEtGAuc3_text_-722978330": "High-quality photos you'll own forever.",
+        "ggTpQLAMAyG_text_629263825": "Featured in our campaign",
+        "gg41ihvmqLk_text_-639756407": "Be featured on our website, social media &amp; more",
+        "ggmFokUaXZQ_text_75027172": "Be part of something big",
+        "ggi8zTN38TX_text_-276370347": "Celebrate fatherhood. Inspire others."
+      }
+    },
+    "gp_section_618069869669122753": {
+      "type": "gp-section-618069869669122753",
+      "settings": {
+        "checksum": "1f8219635f287680f21cd8b23f262561b76cd353d73d7d9f8aeb1ec48375eaf5_1_1_1_0__1",
+        "ggKD7CGF0Nl_text": "This is for <span style=\"color:#2B70D8;\">Real Dads.</span>",
+        "ggODX3Ah8B0_text": "<p><strong>No modeling experience needed.</strong><br><strong>Just real dads with real stories.</strong></p>",
+        "ggIWpLhU_sD_text": "<p>We're looking for dads who show up every day-the early risers, the late workers, the fixers, the providers, the joke tellers, the quiet supporters.<br>&nbsp;</p><p>All kinds of dads. All stories welcome.</p>",
+        "gg-_5nREOsQ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Happy-Key-3.jpg",
+        "ggdGodwTxsp_text": "<p><strong>Limited Spots Available</strong></p>",
+        "gg7R4VaSC6A_text": "<p>We're only selecting a limited number of dads for this special campaign.</p>",
+        "ggT5gQXzReM_text": "<p><strong>APPLY TODAY!</strong></p>",
+        "ggrOS7ARUSk_text": "<p>Applications Are Now Closed.</p>",
+        "ggKqCv0CjQN_text": "<p>Thank you to all the dads who applied and shared their stories with us. We’ve officially closed submissions for this campaign and are currently reviewing applications.<br>&nbsp;</p><p>We’re incredibly grateful for the response and can’t wait to bring this project to life.</p>"
+      }
+    },
+    "gp_section_619096018054546267": {
+      "type": "gp-section-619096018054546267",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "5db594af45268bc10090eca1c3ae312536207cdc782e4871a366d25c1ad23deb_1_1_1_0__1",
+        "ggE9f-ech5I_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/photoshoot-hero-lp.png",
+        "ggE9f-ech5I_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/photoshoot-hero-lp-mobile2.png",
+        "ggDoZxbYtER_text": "Saturday, May 16th | City of Industry, CA",
+        "ggHfxhGIc9X_text": "We're turning real dads into",
+        "ggdUKql0-9E_text": "citylocs hat models",
+        "ggcXMmKin0g_text": "<p>This Father's Day, we're inviting real dads to a professional photo shoot–and featuring them in our campaign to show what being a dad really looks like.</p>",
+        "gg5QKx0AyiL_label": "<p>Applications Are Now Closed</p>"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_619096018054546267",
+    "gp_global_section_618517385699132151-1",
+    "gp_section_618069869669122753"
+  ]
+}

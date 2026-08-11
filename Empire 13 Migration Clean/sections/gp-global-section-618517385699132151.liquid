@@ -1,0 +1,509 @@
+
+    {% render 'gp-head', isThemeSection: true %}
+    
+    <style {% if section.settings.section_preload == "false" %} class="gps-link gps-style" type="text/disabled-css" {% endif %}>.gps-618517385699132151.gps.gpsil [style*="--bg:"]{background:var(--bg)}.gps-618517385699132151.gps.gpsil [style*="--bga:"]{background-attachment:var(--bga)}.gps-618517385699132151.gps.gpsil [style*="--bgc:"]{background-color:var(--bgc)}.gps-618517385699132151.gps.gpsil [style*="--bgi:"]{background-image:var(--bgi)}.gps-618517385699132151.gps.gpsil [style*="--bgp:"]{background-position:var(--bgp)}.gps-618517385699132151.gps.gpsil [style*="--bgr:"]{background-repeat:var(--bgr)}.gps-618517385699132151.gps.gpsil [style*="--bgs:"]{background-size:var(--bgs)}.gps-618517385699132151.gps.gpsil [style*="--b:"]{border:var(--b)}.gps-618517385699132151.gps.gpsil [style*="--bb:"]{border-bottom:var(--bb)}.gps-618517385699132151.gps.gpsil [style*="--bc:"]{border-color:var(--bc)}.gps-618517385699132151.gps.gpsil [style*="--bblr:"]{border-bottom-left-radius:var(--bblr)}.gps-618517385699132151.gps.gpsil [style*="--bbrr:"]{border-bottom-right-radius:var(--bbrr)}.gps-618517385699132151.gps.gpsil [style*="--bl:"]{border-left:var(--bl)}.gps-618517385699132151.gps.gpsil [style*="--bs:"]{border-style:var(--bs)}.gps-618517385699132151.gps.gpsil [style*="--bt:"]{border-top:var(--bt)}.gps-618517385699132151.gps.gpsil [style*="--btlr:"]{border-top-left-radius:var(--btlr)}.gps-618517385699132151.gps.gpsil [style*="--btrr:"]{border-top-right-radius:var(--btrr)}.gps-618517385699132151.gps.gpsil [style*="--bw:"]{border-width:var(--bw)}.gps-618517385699132151.gps.gpsil [style*="--shadow:"]{box-shadow:var(--shadow)}.gps-618517385699132151.gps.gpsil [style*="--c:"]{color:var(--c)}.gps-618517385699132151.gps.gpsil [style*="--cg:"]{-moz-column-gap:var(--cg);column-gap:var(--cg)}.gps-618517385699132151.gps.gpsil [style*="--ff:"]{font-family:var(--ff)}.gps-618517385699132151.gps.gpsil [style*="--size:"]{font-size:var(--size)}.gps-618517385699132151.gps.gpsil [style*="--weight:"]{font-weight:var(--weight)}.gps-618517385699132151.gps.gpsil [style*="--gtc:"]{grid-template-columns:var(--gtc)}.gps-618517385699132151.gps.gpsil [style*="--h:"]{height:var(--h)}.gps-618517385699132151.gps.gpsil [style*="--jc:"]{justify-content:var(--jc)}.gps-618517385699132151.gps.gpsil [style*="--lh:"]{line-height:var(--lh)}.gps-618517385699132151.gps.gpsil [style*="--tdt:"]{text-decoration-thickness:var(--tdt)}.gps-618517385699132151.gps.gpsil [style*="--m:"]{margin:var(--m)}.gps-618517385699132151.gps.gpsil [style*="--ml:"]{margin-left:var(--ml)}.gps-618517385699132151.gps.gpsil [style*="--mr:"]{margin-right:var(--mr)}.gps-618517385699132151.gps.gpsil [style*="--minw:"]{min-width:var(--minw)}.gps-618517385699132151.gps.gpsil [style*="--op:"]{opacity:var(--op)}.gps-618517385699132151.gps.gpsil [style*="--o:"]{order:var(--o)}.gps-618517385699132151.gps.gpsil [style*="--pc:"]{place-content:var(--pc)}.gps-618517385699132151.gps.gpsil [style*="--p:"]{padding:var(--p)}.gps-618517385699132151.gps.gpsil [style*="--pb:"]{padding-bottom:var(--pb)}.gps-618517385699132151.gps.gpsil [style*="--pl:"]{padding-left:var(--pl)}.gps-618517385699132151.gps.gpsil [style*="--pr:"]{padding-right:var(--pr)}.gps-618517385699132151.gps.gpsil [style*="--pt:"]{padding-top:var(--pt)}.gps-618517385699132151.gps.gpsil [style*="--rg:"]{row-gap:var(--rg)}.gps-618517385699132151.gps.gpsil [style*="--ta:"]{text-align:var(--ta)}.gps-618517385699132151.gps.gpsil [style*="--ts:"]{text-shadow:var(--ts)}.gps-618517385699132151.gps.gpsil [style*="--tt:"]{text-transform:var(--tt)}.gps-618517385699132151.gps.gpsil [style*="--t:"]{transform:var(--t)}.gps-618517385699132151.gps.gpsil [style*="--w:"]{width:var(--w)}.gps-618517385699132151.gps.gpsil [style*="--line-clamp:"]{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:var(--line-clamp)}@media only screen and (max-width:1024px){.gps-618517385699132151.gps.gpsil [style*="--size-tablet:"]{font-size:var(--size-tablet)}.gps-618517385699132151.gps.gpsil [style*="--h-tablet:"]{height:var(--h-tablet)}.gps-618517385699132151.gps.gpsil [style*="--lh-tablet:"]{line-height:var(--lh-tablet)}.gps-618517385699132151.gps.gpsil [style*="--ml-tablet:"]{margin-left:var(--ml-tablet)}.gps-618517385699132151.gps.gpsil [style*="--mr-tablet:"]{margin-right:var(--mr-tablet)}.gps-618517385699132151.gps.gpsil [style*="--minw-tablet:"]{min-width:var(--minw-tablet)}.gps-618517385699132151.gps.gpsil [style*="--pb-tablet:"]{padding-bottom:var(--pb-tablet)}.gps-618517385699132151.gps.gpsil [style*="--pl-tablet:"]{padding-left:var(--pl-tablet)}.gps-618517385699132151.gps.gpsil [style*="--pr-tablet:"]{padding-right:var(--pr-tablet)}.gps-618517385699132151.gps.gpsil [style*="--pt-tablet:"]{padding-top:var(--pt-tablet)}.gps-618517385699132151.gps.gpsil [style*="--rg-tablet:"]{row-gap:var(--rg-tablet)}.gps-618517385699132151.gps.gpsil [style*="--ta-tablet:"]{text-align:var(--ta-tablet)}.gps-618517385699132151.gps.gpsil [style*="--w-tablet:"]{width:var(--w-tablet)}.gps-618517385699132151.gps.gpsil [style*="--line-clamp-tablet:"]{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:var(--line-clamp-tablet)}}@media only screen and (max-width:767px){.gps-618517385699132151.gps.gpsil [style*="--cg-mobile:"]{-moz-column-gap:var(--cg-mobile);column-gap:var(--cg-mobile)}.gps-618517385699132151.gps.gpsil [style*="--size-mobile:"]{font-size:var(--size-mobile)}.gps-618517385699132151.gps.gpsil [style*="--gtc-mobile:"]{grid-template-columns:var(--gtc-mobile)}.gps-618517385699132151.gps.gpsil [style*="--h-mobile:"]{height:var(--h-mobile)}.gps-618517385699132151.gps.gpsil [style*="--lh-mobile:"]{line-height:var(--lh-mobile)}.gps-618517385699132151.gps.gpsil [style*="--ml-mobile:"]{margin-left:var(--ml-mobile)}.gps-618517385699132151.gps.gpsil [style*="--mr-mobile:"]{margin-right:var(--mr-mobile)}.gps-618517385699132151.gps.gpsil [style*="--minw-mobile:"]{min-width:var(--minw-mobile)}.gps-618517385699132151.gps.gpsil [style*="--pb-mobile:"]{padding-bottom:var(--pb-mobile)}.gps-618517385699132151.gps.gpsil [style*="--pl-mobile:"]{padding-left:var(--pl-mobile)}.gps-618517385699132151.gps.gpsil [style*="--pr-mobile:"]{padding-right:var(--pr-mobile)}.gps-618517385699132151.gps.gpsil [style*="--pt-mobile:"]{padding-top:var(--pt-mobile)}.gps-618517385699132151.gps.gpsil [style*="--rg-mobile:"]{row-gap:var(--rg-mobile)}.gps-618517385699132151.gps.gpsil [style*="--ta-mobile:"]{text-align:var(--ta-mobile)}.gps-618517385699132151.gps.gpsil [style*="--w-mobile:"]{width:var(--w-mobile)}.gps-618517385699132151.gps.gpsil [style*="--line-clamp-mobile:"]{display:-webkit-box;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:var(--line-clamp-mobile)}}.gps-618517385699132151 .gp-relative{position:relative}.gps-618517385699132151 .gp-mx-auto{margin-left:auto;margin-right:auto}.gps-618517385699132151 .gp-mb-0{margin-bottom:0}.gps-618517385699132151 .gp-flex{display:flex}.gps-618517385699132151 .gp-inline-flex{display:inline-flex}.gps-618517385699132151 .gp-grid{display:grid}.gps-618517385699132151 .\!gp-hidden{display:none!important}.gps-618517385699132151 .gp-hidden{display:none}.gps-618517385699132151 .gp-max-w-full{max-width:100%}.gps-618517385699132151 .gp-grid-rows-\[1fr\]{grid-template-rows:1fr}.gps-618517385699132151 .gp-flex-col{flex-direction:column}.gps-618517385699132151 .gp-items-center{align-items:center}.gps-618517385699132151 .gp-justify-center{justify-content:center}.gps-618517385699132151 .gp-overflow-hidden{overflow:hidden}.gps-618517385699132151 .gp-leading-\[0\]{line-height:0}.gps-618517385699132151 .gp-text-g-text-1{color:var(--g-c-text-1)}.gps-618517385699132151 .gp-transition-colors{transition-duration:.15s;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1)}.gps-618517385699132151 .gp-duration-200{transition-duration:.2s}.gps-618517385699132151 .gp-ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}@media (max-width:1024px){.gps-618517385699132151 .tablet\:\!gp-hidden{display:none!important}.gps-618517385699132151 .tablet\:gp-hidden{display:none}}@media (max-width:767px){.gps-618517385699132151 .mobile\:\!gp-hidden{display:none!important}.gps-618517385699132151 .mobile\:gp-hidden{display:none}}.gps-618517385699132151 .\[\&\>svg\]\:\!gp-h-\[var\(--height-desktop\)\]>svg{height:var(--height-desktop)!important}.gps-618517385699132151 .\[\&\>svg\]\:\!gp-w-auto>svg{width:auto!important}@media (max-width:1024px){.gps-618517385699132151 .tablet\:\[\&\>svg\]\:\!gp-h-\[var\(--height-tablet\)\]>svg{height:var(--height-tablet)!important}}@media (max-width:767px){.gps-618517385699132151 .mobile\:\[\&\>svg\]\:\!gp-h-\[var\(--height-mobile\)\]>svg{height:var(--height-mobile)!important}}.gps-618517385699132151 .\[\&_\*\]\:gp-max-w-full *{max-width:100%}</style>
+    <style {% if section.settings.section_preload == "false" %} class="gps-link" type="text/disabled-css" {% endif %}>@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjg.woff) format('woff');
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZJhjp-Ek-_EeAmM.woff) format('woff');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZthjp-Ek-_EeAmM.woff) format('woff');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZNhjp-Ek-_EeAmM.woff) format('woff');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZxhjp-Ek-_EeAmM.woff) format('woff');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZBhjp-Ek-_EeAmM.woff) format('woff');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZFhjp-Ek-_EeAmM.woff) format('woff');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/inter/v20/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff) format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+  
+    
+    
+    
+
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+
+    
+        <section
+          class="gp-mx-auto gp-max-w-full [&_*]:gp-max-w-full {% if section.settings.section_preload == "false" %}gps-lazy {% endif %}"
+          style="--w:100%;--w-tablet:calc(var(--g-ct-w, 100%) + 2 * var(--g-ct-p, 15px));--w-mobile:calc(var(--g-ct-w, 100%) + 2 * var(--g-ct-p, 15px));--pl:none;--pl-tablet:none;--pl-mobile:none;--pr:none;--pr-tablet:none;--pr-mobile:none"
+        >
+          
+    <gp-row gp-data='{"background":{"desktop":{"type":"color","color":"#FFFFFF","image":{"src":"","width":0,"height":0},"size":"cover","position":{"x":50,"y":50},"repeat":"no-repeat","attachment":"scroll","preload":false}},"uid":"g0iZbEYyik"}' data-id="g0iZbEYyik" id="g0iZbEYyik" data-same-height-subgrid-container class="g0iZbEYyik gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--blockPadding:base;--pt:var(--g-s-2xl);--pb:var(--g-s-2xl);--pt-tablet:12px;--pb-tablet:12px;--pt-mobile:12px;--pb-mobile:12px;--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:solid;--bw:0px 0px 1px 0px;--bc:#E9E9E9;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:100%;--bgc:#FFFFFF;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gP0RL1A84M gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"g-GeyJ4TlA"}' data-id="g-GeyJ4TlA" id="g-GeyJ4TlA" data-same-height-subgrid-container class="g-GeyJ4TlA gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--pt:var(--g-s-l);--pl:var(--g-s-l);--pb:var(--g-s-l);--pr:var(--g-s-l);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gGdwfzuaFo gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"gYS2OWU7tB"}' data-id="gYS2OWU7tB" id="gYS2OWU7tB" data-same-height-subgrid-container class="gYS2OWU7tB gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr] custom-benefits" style="--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--cg-mobile:0px;--rg:16px;--rg-tablet:16px;--rg-mobile:0px;--gtc:minmax(0, 2.4fr) minmax(0, 2.4fr) minmax(0, 2.4fr) minmax(0, 2.4fr) minmax(0, 2.4fr);--gtc-mobile:minmax(0, 12fr);--w:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gDQsoSQjRj gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"gkHLV_9jky"}' data-id="gkHLV_9jky" id="gkHLV_9jky" data-same-height-subgrid-container class="gkHLV_9jky gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--ml:auto;--mr:auto;--pt:var(--g-s-l);--pl:var(--g-s-l);--pb:var(--g-s-l);--pr:var(--g-s-l);--ml-tablet:auto;--mr-tablet:auto;--pt-tablet:var(--g-s-l);--pl-tablet:var(--g-s-l);--pb-tablet:var(--g-s-l);--pr-tablet:var(--g-s-l);--ml-mobile:auto;--mr-mobile:auto;--pt-mobile:0px;--pl-mobile:var(--g-s-l);--pb-mobile:6px;--pr-mobile:var(--g-s-l);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:80%;--w-tablet:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="g-Rpn1JB_m gp-relative gp-flex gp-flex-col"
+    >
+      
+    <div id="gPvQudKlr-" class="gp-leading-[0] gPvQudKlr-" style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:center">
+      <div data-id="gPvQudKlr-" class="icon-wrapper gp-inline-flex gp-overflow-hidden gPvQudKlr- " style="--pl:16px;--pr:16px;--pt:16px;--pb:16px;--shadow:none">
+      
+        <div >
+          <span style="--c:var(--g-c-text-1, text-1);--t:rotate(0deg);--w:48px;--w-tablet:48px;--w-mobile:48px;--h:48px;--h-tablet:48px;--h-mobile:48px;--minw:48px;--minw-tablet:48px;--minw-mobile:48px;--height-desktop:48px;--height-tablet:48px;--height-mobile:48px" class="gp-inline-flex gp-items-center gp-justify-center gp-overflow-hidden [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)] gp-text-g-text-1"><svg height="20" width="20" data-name="camera-light" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817612748161384">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M208,58H179.21L165,36.67A6,6,0,0,0,160,34H96a6,6,0,0,0-5,2.67L76.78,58H48A22,22,0,0,0,26,80V192a22,22,0,0,0,22,22H208a22,22,0,0,0,22-22V80A22,22,0,0,0,208,58Zm10,134a10,10,0,0,1-10,10H48a10,10,0,0,1-10-10V80A10,10,0,0,1,48,70H80a6,6,0,0,0,5-2.67L99.21,46h57.57L171,67.33A6,6,0,0,0,176,70h32a10,10,0,0,1,10,10ZM128,90a42,42,0,1,0,42,42A42,42,0,0,0,128,90Zm0,72a30,30,0,1,1,30-30A30,30,0,0,1,128,162Z" /></svg></span>
+        </div>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="ggPGGlr7OH"
+        class="ggPGGlr7OH"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <h3
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--ta-mobile:center;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-heading, heading);--size:16px;--size-tablet:16px;--size-mobile:24px;--lh:120%;--lh-tablet:130%;--lh-mobile:130%;--weight:bold;--c:var(--g-c-text-2, text-2);--tt:uppercase;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          {{ section.settings.gggPGGlr7OH_text_-1151340651 | replace: '$locationOrigin', locationOrigin }}
+        </h3>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="g8dh8vU14C"
+        class="g8dh8vU14C"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <div
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--line-clamp:unset;--line-clamp-tablet:unset;--line-clamp-mobile:unset;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:14px;--lh:120%;--lh-tablet:120%;--lh-mobile:180%;--c:var(--g-c-text-1, text-1);--tt:none;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          <p>{{ section.settings.gg8dh8vU14C_text_-1207402845 | replace: '$locationOrigin', locationOrigin }}</p>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+      <style id="custom-css-gkHLV_9jky">
+        .gkHLV_9jky {
+border-left: 1px solid #e9e9e9;
+}
+      </style>
+    
+    </div><div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="glqH3RChOl gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"gq70MDOf2J"}' data-id="gq70MDOf2J" id="gq70MDOf2J" data-same-height-subgrid-container class="gq70MDOf2J gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--ml:auto;--mr:auto;--pt:var(--g-s-l);--pl:var(--g-s-l);--pb:var(--g-s-l);--pr:var(--g-s-l);--ml-tablet:auto;--mr-tablet:auto;--pt-tablet:var(--g-s-l);--pl-tablet:var(--g-s-l);--pb-tablet:var(--g-s-l);--pr-tablet:var(--g-s-l);--ml-mobile:auto;--mr-mobile:auto;--pt-mobile:0px;--pl-mobile:var(--g-s-l);--pb-mobile:0px;--pr-mobile:var(--g-s-l);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:80%;--w-tablet:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gZruY5RR6N gp-relative gp-flex gp-flex-col"
+    >
+      
+    <div id="glYyfy7OCc" class="gp-leading-[0] glYyfy7OCc" style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:center">
+      <div data-id="glYyfy7OCc" class="icon-wrapper gp-inline-flex gp-overflow-hidden glYyfy7OCc " style="--pl:16px;--pr:16px;--pt:16px;--pb:16px;--shadow:none">
+      
+        <div >
+          <span style="--c:var(--g-c-text-1, text-1);--t:rotate(0deg);--w:48px;--w-tablet:48px;--w-mobile:48px;--h:48px;--h-tablet:48px;--h-mobile:48px;--minw:48px;--minw-tablet:48px;--minw-mobile:48px;--height-desktop:48px;--height-tablet:48px;--height-mobile:48px" class="gp-inline-flex gp-items-center gp-justify-center gp-overflow-hidden [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)] gp-text-g-text-1"><svg height="20" width="20" data-name="baseball-cap-light" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817609073361256">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M128,26A102.12,102.12,0,0,0,26,128v56a22,22,0,0,0,35,17.74c12.38-9,34.06-19.74,67-19.74s54.61,10.73,67,19.73A22,22,0,0,0,230,184V128A102.12,102.12,0,0,0,128,26Zm90,102v12.5a164.29,164.29,0,0,0-44.8-20.3A165.07,165.07,0,0,0,141.69,39,90.15,90.15,0,0,1,218,128Zm-57.21-10.78a168.56,168.56,0,0,0-65.58,0c5-38.38,24.16-65.59,32.79-76.14C136.63,51.65,155.8,78.85,160.79,117.23ZM114.31,39A165.07,165.07,0,0,0,82.8,120.21,164.29,164.29,0,0,0,38,140.51V128A90.15,90.15,0,0,1,114.31,39Zm98.26,153.85A9.94,9.94,0,0,1,202,192c-13.82-10-37.88-22-74-22s-60.22,12-74,22a9.92,9.92,0,0,1-10.53.85A9.79,9.79,0,0,1,38,184V155a154,154,0,0,1,180,0v29A9.79,9.79,0,0,1,212.57,192.89Z" /></svg></span>
+        </div>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="g0CVVaIVew"
+        class="g0CVVaIVew"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <h3
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--ta-mobile:center;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-heading, heading);--size:16px;--size-tablet:16px;--size-mobile:24px;--lh:120%;--lh-tablet:130%;--lh-mobile:130%;--weight:bold;--c:var(--g-c-text-2, text-2);--tt:uppercase;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          {{ section.settings.gg0CVVaIVew_text_-1970152338 | replace: '$locationOrigin', locationOrigin }}
+        </h3>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="gGgxCtUA6E"
+        class="gGgxCtUA6E"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <div
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--line-clamp:unset;--line-clamp-tablet:unset;--line-clamp-mobile:unset;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:14px;--lh:120%;--lh-tablet:120%;--lh-mobile:180%;--c:var(--g-c-text-1, text-1);--tt:none;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          <p>{{ section.settings.ggGgxCtUA6E_text_-699718060 | replace: '$locationOrigin', locationOrigin }}</p>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+    </div><div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gFboGSkFyO gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"gg3nZCAgO8"}' data-id="gg3nZCAgO8" id="gg3nZCAgO8" data-same-height-subgrid-container class="gg3nZCAgO8 gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--ml:auto;--mr:auto;--pt:var(--g-s-l);--pl:var(--g-s-l);--pb:var(--g-s-l);--pr:var(--g-s-l);--ml-tablet:auto;--mr-tablet:auto;--pt-tablet:var(--g-s-l);--pl-tablet:var(--g-s-l);--pb-tablet:var(--g-s-l);--pr-tablet:var(--g-s-l);--ml-mobile:auto;--mr-mobile:auto;--pt-mobile:0px;--pl-mobile:var(--g-s-l);--pb-mobile:0px;--pr-mobile:var(--g-s-l);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:80%;--w-tablet:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gAAZaAK_ix gp-relative gp-flex gp-flex-col"
+    >
+      
+    <div id="gI9QGtLhLc" class="gp-leading-[0] gI9QGtLhLc" style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:center">
+      <div data-id="gI9QGtLhLc" class="icon-wrapper gp-inline-flex gp-overflow-hidden gI9QGtLhLc " style="--pl:16px;--pr:16px;--pt:16px;--pb:16px;--shadow:none">
+      
+        <div >
+          <span style="--c:var(--g-c-text-1, text-1);--t:rotate(0deg);--w:48px;--w-tablet:48px;--w-mobile:48px;--h:48px;--h-tablet:48px;--h-mobile:48px;--minw:48px;--minw-tablet:48px;--minw-mobile:48px;--height-desktop:48px;--height-tablet:48px;--height-mobile:48px" class="gp-inline-flex gp-items-center gp-justify-center gp-overflow-hidden [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)] gp-text-g-text-1"><svg height="20" width="20" data-name="images-light" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817633463042408">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M216,42H72A14,14,0,0,0,58,56V74H40A14,14,0,0,0,26,88V200a14,14,0,0,0,14,14H184a14,14,0,0,0,14-14V182h18a14,14,0,0,0,14-14V56A14,14,0,0,0,216,42ZM70,56a2,2,0,0,1,2-2H216a2,2,0,0,1,2,2v67.57L204.53,110.1a14,14,0,0,0-19.8,0l-21.42,21.41L117.9,86.1a14,14,0,0,0-19.8,0L70,114.2ZM186,200a2,2,0,0,1-2,2H40a2,2,0,0,1-2-2V88a2,2,0,0,1,2-2H58v82a14,14,0,0,0,14,14H186Zm30-30H72a2,2,0,0,1-2-2V131.17l36.58-36.58a2,2,0,0,1,2.83,0l49.66,49.66a6,6,0,0,0,8.49,0l25.65-25.66a2,2,0,0,1,2.83,0l22,22V168A2,2,0,0,1,216,170ZM162,84a10,10,0,1,1,10,10A10,10,0,0,1,162,84Z" /></svg></span>
+        </div>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="g4fVlYL2DE"
+        class="g4fVlYL2DE"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <h3
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--ta-mobile:center;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-heading, heading);--size:16px;--size-tablet:16px;--size-mobile:24px;--lh:120%;--lh-tablet:130%;--lh-mobile:130%;--weight:bold;--c:var(--g-c-text-2, text-2);--tt:uppercase;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          {{ section.settings.gg4fVlYL2DE_text_1815698046 | replace: '$locationOrigin', locationOrigin }}
+        </h3>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="glSEtGAuc3"
+        class="glSEtGAuc3"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <div
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--line-clamp:unset;--line-clamp-tablet:unset;--line-clamp-mobile:unset;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:14px;--lh:120%;--lh-tablet:120%;--lh-mobile:180%;--c:var(--g-c-text-1, text-1);--tt:none;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          <p>{{ section.settings.gglSEtGAuc3_text_-722978330 | replace: '$locationOrigin', locationOrigin }}</p>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+    </div><div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gde2XsPVfz gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"gN9RZCq7zT"}' data-id="gN9RZCq7zT" id="gN9RZCq7zT" data-same-height-subgrid-container class="gN9RZCq7zT gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--ml:auto;--mr:auto;--pt:var(--g-s-l);--pl:var(--g-s-l);--pb:var(--g-s-l);--pr:var(--g-s-l);--ml-tablet:auto;--mr-tablet:auto;--pt-tablet:var(--g-s-l);--pl-tablet:var(--g-s-l);--pb-tablet:var(--g-s-l);--pr-tablet:var(--g-s-l);--ml-mobile:auto;--mr-mobile:auto;--pt-mobile:0px;--pl-mobile:var(--g-s-l);--pb-mobile:0px;--pr-mobile:var(--g-s-l);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:80%;--w-tablet:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gttuXiHn80 gp-relative gp-flex gp-flex-col"
+    >
+      
+    <div id="g9zPCMokHu" class="gp-leading-[0] g9zPCMokHu" style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:center">
+      <div data-id="g9zPCMokHu" class="icon-wrapper gp-inline-flex gp-overflow-hidden g9zPCMokHu " style="--pl:16px;--pr:16px;--pt:16px;--pb:16px;--shadow:none">
+      
+        <div >
+          <span style="--c:var(--g-c-text-1, text-1);--t:rotate(0deg);--w:48px;--w-tablet:48px;--w-mobile:48px;--h:48px;--h-tablet:48px;--h-mobile:48px;--minw:48px;--minw-tablet:48px;--minw-mobile:48px;--height-desktop:48px;--height-tablet:48px;--height-mobile:48px" class="gp-inline-flex gp-items-center gp-justify-center gp-overflow-hidden [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)] gp-text-g-text-1"><svg height="20" width="20" data-name="megaphone-regular" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817690724598120">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M248,120a48.05,48.05,0,0,0-48-48H160.2c-2.91-.17-53.62-3.74-101.91-44.24A16,16,0,0,0,32,40V200a16,16,0,0,0,26.29,12.25c37.77-31.68,77-40.76,93.71-43.3v31.72A16,16,0,0,0,159.12,214l11,7.33A16,16,0,0,0,194.5,212l11.77-44.36A48.07,48.07,0,0,0,248,120ZM48,199.93V40h0c42.81,35.91,86.63,45,104,47.24v65.48C134.65,155,90.84,164.07,48,199.93Zm131,8,0,.11-11-7.33V168h21.6ZM200,152H168V88h32a32,32,0,1,1,0,64Z" /></svg></span>
+        </div>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="gTpQLAMAyG"
+        class="gTpQLAMAyG"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <h3
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--ta-mobile:center;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-heading, heading);--size:16px;--size-tablet:16px;--size-mobile:24px;--lh:120%;--lh-tablet:130%;--lh-mobile:130%;--weight:bold;--c:var(--g-c-text-2, text-2);--tt:uppercase;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          {{ section.settings.ggTpQLAMAyG_text_629263825 | replace: '$locationOrigin', locationOrigin }}
+        </h3>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="g41ihvmqLk"
+        class="g41ihvmqLk"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <div
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--line-clamp:unset;--line-clamp-tablet:unset;--line-clamp-mobile:unset;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:14px;--lh:120%;--lh-tablet:120%;--lh-mobile:180%;--c:var(--g-c-text-1, text-1);--tt:none;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          <p>{{ section.settings.gg41ihvmqLk_text_-639756407 | replace: '$locationOrigin', locationOrigin }}</p>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+    </div><div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gACGzPQmBi gp-relative gp-flex gp-flex-col"
+    >
+      
+    
+
+    
+
+    
+    <gp-row gp-data='{"background":{},"uid":"ghWpBRrxDS"}' data-id="ghWpBRrxDS" id="ghWpBRrxDS" data-same-height-subgrid-container class="ghWpBRrxDS gp-relative gp-mx-auto gp-mb-0 gp-grid gp-max-w-full gp-transition-colors gp-duration-200 gp-ease-in-out [&_*]:gp-max-w-full gp-grid-rows-[1fr]" style="--ml:auto;--mr:auto;--pt:var(--g-s-l);--pl:var(--g-s-l);--pb:var(--g-s-l);--pr:var(--g-s-l);--ml-tablet:auto;--mr-tablet:auto;--pt-tablet:var(--g-s-l);--pl-tablet:var(--g-s-l);--pb-tablet:var(--g-s-l);--pr-tablet:var(--g-s-l);--ml-mobile:auto;--mr-mobile:auto;--pt-mobile:0px;--pl-mobile:var(--g-s-l);--pb-mobile:0px;--pr-mobile:var(--g-s-l);--d:grid;--d-tablet:grid;--d-mobile:grid;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--cg:16px;--rg:0px;--gtc:minmax(0, 12fr);--w:80%;--w-tablet:100%;--h:auto;--pc:start">
+      
+
+      <div
+      data-same-height-display-contents
+      style="--jc:start"
+      class="gu2NLIey_g gp-relative gp-flex gp-flex-col"
+    >
+      
+    <div id="gy6e0ByKlr" class="gp-leading-[0] gy6e0ByKlr" style="--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--ta:center">
+      <div data-id="gy6e0ByKlr" class="icon-wrapper gp-inline-flex gp-overflow-hidden gy6e0ByKlr " style="--pl:16px;--pr:16px;--pt:16px;--pb:16px;--shadow:none">
+      
+        <div >
+          <span style="--c:var(--g-c-text-1, text-1);--t:rotate(0deg);--w:48px;--w-tablet:48px;--w-mobile:48px;--h:48px;--h-tablet:48px;--h-mobile:48px;--minw:48px;--minw-tablet:48px;--minw-mobile:48px;--height-desktop:48px;--height-tablet:48px;--height-mobile:48px" class="gp-inline-flex gp-items-center gp-justify-center gp-overflow-hidden [&>svg]:!gp-h-[var(--height-desktop)] [&>svg]:!gp-w-auto tablet:[&>svg]:!gp-h-[var(--height-tablet)] mobile:[&>svg]:!gp-h-[var(--height-mobile)] gp-text-g-text-1"><svg height="20" width="20" data-name="star-regular" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 256 256" fill="currentColor" data-id="508817706427482472">
+              <path fill="currentColor" strokeLinecap="round" strokeLinejoin="round" fill="currentColor" d="M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z" /></svg></span>
+        </div>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="gmFokUaXZQ"
+        class="gmFokUaXZQ"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <h3
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--ta-mobile:center;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-heading, heading);--size:16px;--size-tablet:16px;--size-mobile:24px;--lh:120%;--lh-tablet:130%;--lh-mobile:130%;--weight:bold;--c:var(--g-c-text-2, text-2);--tt:uppercase;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          {{ section.settings.ggmFokUaXZQ_text_75027172 | replace: '$locationOrigin', locationOrigin }}
+        </h3>
+      </div>
+    </div>
+    
+    {% assign locationOrigin = request.origin | append: routes.root_url | split: '/' | join: '/' %}
+    <div data-id="gi8zTN38TX"
+        class="gi8zTN38TX"
+        style="--ta:left;--d:block;--d-tablet:block;--d-mobile:block;--bs:none;--bw:1px 1px 1px 1px;--bc:var(--g-c-line-3, line-3);--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--op:100%;--dynamic-source-color:#F4F4F4"
+      >
+      <div class="gp-flex" style="--jc:left">
+        <div
+          data-gp-text
+          class=" gp-text-instant gp-text"
+          style="--w:100%;--w-tablet:100%;--w-mobile:100%;--tdt:auto;--b:none;--bc:#121212;--bw:1px 1px 1px 1px;--bblr:0px;--bbrr:0px;--btlr:0px;--btrr:0px;--shadow:none;--ts:none;--ta:center;--ta-tablet:center;--line-clamp:unset;--line-clamp-tablet:unset;--line-clamp-mobile:unset;--ff:var(--g-font-Inter, 'Inter'), var(--g-font-body, body);--weight:400;--size:14px;--size-tablet:14px;--size-mobile:14px;--lh:120%;--lh-tablet:120%;--lh-mobile:180%;--c:var(--g-c-text-1, text-1);--tt:none;word-break:break-word;--bgc:transparent;--bgi:url();--bgp:50% 50%;--bgs:cover;--bgr:no-repeat;--bga:scroll;overflow:hidden"
+        >
+          <p>{{ section.settings.ggi8zTN38TX_text_-276370347 | replace: '$locationOrigin', locationOrigin }}</p>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+    </div>
+
+      
+    </gp-row>
+  
+  
+      <style id="custom-css-gYS2OWU7tB">
+        .gYS2OWU7tB {
+
+}
+
+.gYS2OWU7tB h3 {
+    text-wrap-mode: wrap;
+    text-wrap-style: balance;
+
+}
+      </style>
+    
+    </div>
+
+      
+    </gp-row>
+  
+  
+    </div>
+
+      
+    </gp-row>
+  
+        </section>
+      
+  
+    
+{% schema %}
+  {
+    "presets": [{ "name": "Section - Benefits" }],
+    "name": "Section - Benefits",
+    "tag": "section",
+    "class": "gps-618517385699132151 gps gpsil",
+    "settings": [{"type":"paragraph","content":"Section design by GemPages. [Click here to start design](https://admin.shopify.com/store/citylocs/apps/gempages-cro/app/shopify/edit?pageType=THEME_SECTION&editorId=618517385699132151)"},{"type":"select","label":"Section Preload","id":"section_preload","options":[{"label":"On","value":"true"},{"label":"Off","value":"false"},{"label":"Off Lazy Script","value":"off_lazy_script"}],"default":"off_lazy_script"},{"type":"text","label":"Checksum","id":"checksum"},{"type":"html","id":"gggPGGlr7OH_text_-1151340651","label":"gggPGGlr7OH_text_-1151340651","default":"Professional Photoshoot"},{"type":"html","id":"gg8dh8vU14C_text_-1207402845","label":"gg8dh8vU14C_text_-1207402845","default":"A full experience with a pro photographer."},{"type":"html","id":"gg0CVVaIVew_text_-1970152338","label":"gg0CVVaIVew_text_-1970152338","default":"Exclusive father's day hat"},{"type":"html","id":"ggGgxCtUA6E_text_-699718060","label":"ggGgxCtUA6E_text_-699718060","default":"You'll receive a CityLocs hat to keep."},{"type":"html","id":"gg4fVlYL2DE_text_1815698046","label":"gg4fVlYL2DE_text_1815698046","default":"Photos to keep"},{"type":"html","id":"gglSEtGAuc3_text_-722978330","label":"gglSEtGAuc3_text_-722978330","default":"High-quality photos you'll own forever."},{"type":"html","id":"ggTpQLAMAyG_text_629263825","label":"ggTpQLAMAyG_text_629263825","default":"Featured in our campaign"},{"type":"html","id":"gg41ihvmqLk_text_-639756407","label":"gg41ihvmqLk_text_-639756407","default":"Be featured on our website, social media &amp; more"},{"type":"html","id":"ggmFokUaXZQ_text_75027172","label":"ggmFokUaXZQ_text_75027172","default":"Be part of something big"},{"type":"html","id":"ggi8zTN38TX_text_-276370347","label":"ggi8zTN38TX_text_-276370347","default":"Celebrate fatherhood. Inspire others."}],
+    "blocks": [{"type": "@app"}],
+    "locales": {}
+  }
+{% endschema %}

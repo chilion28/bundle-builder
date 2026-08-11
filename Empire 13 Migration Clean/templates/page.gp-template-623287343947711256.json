@@ -1,0 +1,92 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_623287344048374552": {
+      "type": "gp-section-623287344048374552",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "4fd5c1a63ece4eb1c135663a693860e6e89f5b2028123b0fb9363b70be9ac224_1_1_0_0__1",
+        "ggYjpifOoP0_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-1-desktop.png",
+        "ggYjpifOoP0_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-1-mobile.png",
+        "ggXQUGgp8FM_text": "<p>customer spotlight</p>",
+        "ggRhsJbc-oa_text": "what's the story",
+        "ggdEifJ45OE_text": "behind your custom text?",
+        "ggCKGJEqlp5_text": "<p>Every custom hat starts with a story. We want to hear the emotional reason behind the text you chose.</p>",
+        "gg2OBkR89jW_text": "<p>Selected stories may be recreated using AI and featured by CityLocs.</p>",
+        "ggrn51SGU7J_label": "<p>Share my Story</p>"
+      }
+    },
+    "gp_section_623287344048505624": {
+      "type": "gp-section-623287344048505624",
+      "settings": {
+        "checksum": "d4f457c06627f7ce3b5f0f661019fb5c35e579bb550bd55766138289efe35b9e_1_1_0_0__1",
+        "ggvD2DJ87Js_background_desktop_video": "https://www.youtube.com/watch?v=NfASaHFN1zg",
+        "ggvD2DJ87Js_background_desktop_videoHtml5": "https://cdn.shopify.com/videos/c/o/v/7b8605b7d20b49bf932a67098b8cd15b.mp4",
+        "ggvWmuAR2Q2_text": "Your story could be brought to life",
+        "ggRCkUOR0G1_text": "<p>Selected stories may be transformed into cinematic AI-generated recreations inspired by your photos and memories</p>",
+        "ggcu5pjYfi5_label": "<p>Submit Your Story</p>"
+      }
+    },
+    "gp_section_623287344048571160": {
+      "type": "gp-section-623287344048571160",
+      "settings": {
+        "checksum": "bfbcf09e891237a50257f22e4fd364cf8fe06746922063b482a46fc95d095796_1_1_0_0__1",
+        "ggST90J5WJU_text": "The more photos you share, the better we can tell your story",
+        "ggqRPrCUTW2_text": "<strong>Upload as many photos as possible.</strong>",
+        "ggEn0pJge2Y_text": "<p>Photos help us recreate the people, places, vehicles, memories, and emotions behind your custom text.</p>",
+        "ggqXMdyOC6y_text": "Family Photos",
+        "gguZ5dnBM3d_text": "Old Pictures",
+        "ggweMZCijmi_text": "Vechicles",
+        "ggCWOE5xhi1_text": "Military Photos",
+        "gglhcapgYFI_text": "Celebrations and more",
+        "ggMnzJhNll6_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/featured-1.png"
+      }
+    },
+    "gp_section_623287344048702232": {
+      "type": "gp-section-623287344048702232",
+      "settings": {
+        "checksum": "95a5d2b715e14bd8f23ca0a1177cf27b420dc33036680f891d7c17211d767739_1_1_0_0__1",
+        "ggasMaHA-dr_text": "Share Your Story"
+      }
+    },
+    "gp_section_623424564008845854": {
+      "type": "gp-section-623424564008845854",
+      "settings": {
+        "checksum": "7a3e833deb1759cc581b9cc3819374b65a032f751bd8dc298d70382c1ec8fa13_1_1_0_0__1",
+        "ggLiU-cRaAC_text": "Not sure what to share?",
+        "ggsfVC_ZuT6_text": "<p>Tell us things like:</p>",
+        "ggR-CWAXfnz_text": "Why you chose that text?",
+        "ggPNrcYgR8v_text": "<p>Share what inspired the words, name, phrase, or message on your plate.</p>",
+        "ggnvkXAPzUF_text": "Who or what it represents",
+        "gg-WrVl4eTN_text": "<p>Tell us about the person, family, business, team, or passion behind your design.</p>",
+        "ggQxsBT9TyI_text": "What memory it reminds You of",
+        "ggTGEuho4w1_text": "<p>Share a meaningful moment, experience, or story connected to your plate.</p>",
+        "ggENQ5JQAkx_text": "Is it tied to a celebration, car, place or milestone?",
+        "gg6rj74FICY_text": "<p>Whether it's a new car, a business launch, a graduation, or a personal goal, we'd love to hear about it.</p>",
+        "ggcZHzwpcAP_text": "Why Does it mean so much to you?",
+        "ggC-XDjfXV__text": "<p>Tell us what makes your custom plate special and why it's worth celebrating.</p>",
+        "gg0wVTmWYJs_label": "<p>Share my Story</p>"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_623287344048374552",
+    "gp_section_623424564008845854",
+    "gp_section_623287344048571160",
+    "gp_section_623287344048505624",
+    "gp_section_623287344048702232"
+  ]
+}

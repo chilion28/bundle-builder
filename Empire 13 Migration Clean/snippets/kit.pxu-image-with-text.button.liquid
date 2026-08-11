@@ -1,0 +1,22 @@
+{% doc %}
+  @param {string} button_label - Button label
+  @param {string} button_link - Button link URL
+  @param {string} button_style - Button style: primary or secondary
+  @param {string} base_name - BEM prefix for emitted classes (default: 'image-with-text')
+{% enddoc %}
+
+{%- assign base_name = base_name | default: 'image-with-text' -%}
+
+{%- if button_label != blank or button_link != blank -%}
+  <a
+    class="
+      {{ base_name }}__button
+      {% if button_style %}
+        {{ base_name }}__button--style-{{ button_style }}
+      {% endif %}
+    "
+    href="{{ button_link }}"
+  >
+    {{ button_label | escape }}
+  </a>
+{%- endif -%}

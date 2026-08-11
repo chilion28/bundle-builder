@@ -1,0 +1,69 @@
+{%- comment -%}
+  Renders a stylesheet link or inline style based on the section location and index.
+  Cleans up duplicate stylesheets declarations that are loaded into the page on the front end.
+  Duplicate inline styles delivered in HTML do not add to the page weight thanks to Brotli compression.
+
+  Accepts:
+  - name {string} - The name of the stylesheet asset, e.g. 'styles.css'
+  - remove_duplicate {boolean} - Whether to remove duplicate stylesheets
+  - load {'inline'|'async'|'blocking'} - Loading strategy:
+    - inline: Inlines styles directly in the page
+    - async: Loads stylesheet asynchronously (default, non-blocking)
+    - blocking: Loads stylesheet synchronously
+
+  Usage:
+  {% render 'utility.stylesheet', name: 'styles.css', load: 'inline' %}
+{%- endcomment -%}
+
+{%- liquid
+  assign name = name | default: ''
+  assign remove_duplicate = remove_duplicate | default: true, allow_false: true
+
+  if load == blank
+    if section.location == 'header'
+      assign load = 'inline'
+    elsif section.location == 'template' and section.index <= 3
+      assign load = 'inline'
+    else
+      assign load = 'async'
+    endif
+  endif
+-%}
+
+<style-sheet name="{{ name }}" remove-duplicate="{{ remove_duplicate }}" load="{{ load }}" style="display: none;">
+  {%- case load -%}
+    {%- when 'async' -%}
+      {%- # theme-check-disable AssetPreload -%}
+      <link href="{{ name | asset_url }}" rel="preload" as="style" onload="this.rel='stylesheet'">
+    {%- when 'inline' -%}
+      {%- capture stylesheet_content -%}
+        {{ name | inline_asset_content }}
+      {%- endcapture -%}
+
+      {%- if stylesheet_content contains 'Asset size is too large' -%}
+        {{ name | asset_url | stylesheet_tag }}
+        <script>
+          console.warn('Asset size is too large to inline stylesheet: {{ name }}')
+        </script>
+      {%- elsif stylesheet_content contains 'Asset not found' -%}
+        <script>
+          console.warn('Asset not found: {{ name }}')
+        </script>
+      {%- elsif stylesheet_content == blank -%}
+        <script>
+          console.warn('Stylesheet content is empty: {{ name }}')
+        </script>
+      {%- else -%}
+        <style>
+          {{ stylesheet_content }}
+        </style>
+      {%- endif -%}
+    {%- when 'blocking' -%}
+      {{ name | asset_url | stylesheet_tag }}
+  {%- endcase -%}
+
+  {% comment %} This script is only required if you want to be cleaning up duplicate stylesheets. Does not effect what is rendered, helps with DevTools and style debugging.{% endcomment %}
+  {%- if remove_duplicate -%}
+    <script type="module" src="{{ 'utility.stylesheet.js' | asset_url }}"></script>
+  {%- endif -%}
+</style-sheet>

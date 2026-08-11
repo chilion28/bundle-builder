@@ -1,0 +1,150 @@
+{%- comment -%}
+  Renders the list of CSS variables. Typically, this is referenced inside of a
+  theme's layout file.
+
+  Usage:
+  {% render 'css-variables' %}
+{%- endcomment -%}
+
+{%- style -%}
+  /* Root Variables */
+  :root {
+    --root-font-size: 16px;
+    --root-color-primary: #000;
+    --root-color-secondary: #fff;
+  }
+
+  /* Colors */
+  :root {
+    --color-primary: var(--root-color-primary);
+    --color-secondary: var(--root-color-secondary);
+    --color-focus: #4a9afc;
+    --color-error: #ba4444;
+    --color-price: var(--color-primary);
+    --color-text-savings: var(--color-primary);
+    --disabled-grey: #f6f6f6;
+    --disabled-border: #b6b6b6;
+    --disabled-grey-text: #b6b6b6;
+    --success-green: #56ad6a;
+    --success-green-bg: #ecfef0;
+    --color-sticky-nav-links: #fff;
+  }
+
+  /* Body Font Stack */
+  :root {
+    --body-font-family: 'Arial';
+    --body-font-family-fallback: 'sans-serif';
+    --body-font-weight: var(--font-weight-400);
+    --body-letter-spacing: var(--letter-space-md);
+    --body-line-height: var(--line-height-md);
+    --body-text-transform: none;
+    --body-lg-font-size: var(--text-size-4);
+    --body-md-font-size: var(--text-size-3-5);
+    --body-sm-font-size: var(--text-size-3);
+    --body-xs-font-size: var(--text-size-2-5);
+
+    @media screen and (min-width: 769px) {
+      --body-lg-font-size: var(--text-size-4-5);
+      --body-md-font-size: var(--text-size-4);
+      --body-sm-font-size: var(--text-size-3-5);
+      --body-xs-font-size: var(--text-size-3);
+    }
+  }
+
+  /* Heading Font Stack */
+  :root {
+    --heading-font-family: 'Arial';
+    --heading-font-family-fallback: 'sans-serif';
+    --heading-font-weight: var(--font-weight-700);
+    --heading-letter-spacing: var(--letter-space-md);
+
+    --heading-2xl-line-height: var(--line-height-md);
+    --heading-xl-line-height: var(--line-height-md);
+    --heading-lg-line-height: var(--line-height-md);
+    --heading-md-line-height: var(--line-height-md);
+    --heading-sm-line-height: var(--line-height-md);
+    --heading-xs-line-height: var(--line-height-md);
+
+    --heading-2xl-font-size: var(--text-size-12);
+    --heading-xl-font-size: var(--text-size-8);
+    --heading-lg-font-size: var(--text-size-6);
+    --heading-md-font-size: var(--text-size-5);
+    --heading-sm-font-size: var(--text-size-4-5);
+    --heading-xs-font-size: var(--text-size-4);
+
+    @media screen and (min-width: 769px) {
+      --heading-2xl-font-size: var(--text-size-16);
+      --heading-xl-font-size: var(--text-size-12);
+      --heading-lg-font-size: var(--text-size-8);
+      --heading-md-font-size: var(--text-size-6);
+      --heading-sm-font-size: var(--text-size-5);
+      --heading-xs-font-size: var(--text-size-4-5);
+    }
+  }
+
+  /* Accent Font Stack */
+  :root {
+    --accent-font-family: 'Arial';
+    --accent-font-family-fallback: 'sans-serif';
+    --accent-font-weight: var(--font-weight-400);
+    --accent-letter-spacing: var(--letter-space-4xl);
+    --accent-line-height: var(--line-height-md);
+    --accent-text-transform: uppercase;
+  }
+
+  /* ==================================================================== */
+  /* OLD CSS VARIABLES THAT NEEDS TO 🔥 */
+  /* ==================================================================== */
+  :root {
+    --z-index-modal: 30;
+    --z-index-toolbar: 7;
+    --z-index-header: 6;
+    --z-index-header-submenu: 7;
+    --z-index-header-bottom-row: 3;
+    --z-index-header-drawers: 5;
+    --z-index-header-drawers-mobile: 3;
+    --z-index-header-search: 7;
+    --z-index-loader: 4;
+    --z-index-header-search-overlay: 1;
+    --url-ico-select: url({{ 'ico-select.svg' | asset_url | split: '?' | first }});
+    --url-swirl-svg: url({{ 'swirl.svg' | asset_url | split: '?' | first }});
+    --header-padding-bottom: 0;
+    --gutter: 30px;
+    --page-width: 1500px;
+    --page-width-narrow: 1000px;
+    --page-width-gutter-small: 17px;
+    --grid-gutter: 22px;
+    --grid-gutter-small: 16px;
+    --slide-curve: 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --drawer-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    --product-grid-margin: 10px;
+    --product-grid-padding: 12px;
+    --product-radius: 10px;
+    --page-top-padding: 35px;
+    --page-narrow: 780px;
+    --page-width-padding: 40px;
+    --grid-gutter: 22px;
+    --index-section-padding: 60px;
+    --section-header-bottom: 40px;
+    --size-chart-margin: 30px 0;
+    --size-chart-icon-margin: 5px;
+    --newsletter-reminder-padding: 20px 30px 20px 25px;
+    --text-frame-margin: 10px;
+    --desktop-menu-chevron-size: 10px;
+    --site-nav-item-padding: 20px;
+    --site-nav-item-padding-top-bottom: 16px;
+    --site-nav-icon-padding: 12px;
+  }
+
+  @media screen and (max-width: 768px) {
+    :root {
+      --page-top-padding: 15px;
+      --page-narrow: 330px;
+      --page-width-padding: 17px;
+      --grid-gutter: 16px;
+      --index-section-padding: 40px;
+      --section-header-bottom: 25px;
+      --text-frame-margin: 7px;
+    }
+  }
+{%- endstyle -%}

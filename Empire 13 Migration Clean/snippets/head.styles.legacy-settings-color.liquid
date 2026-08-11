@@ -1,0 +1,148 @@
+{% style %}
+  :root {
+    {% assign color_background = '#fff' %}
+
+    --color-background: {{ color_background }};
+    --color-background-alpha-0: {{ color_background | color_modify: 'alpha', 0 }};
+    --color-background-alpha-90: {{ color_background | color_modify: 'alpha', 0.9 }};
+
+    /* Typography */
+    {% assign color_text = '#1d1d1d' %}
+    {% assign color_links = '#046e82' %}
+    --color-headings: {{ color_text }};
+    --color-text: {{ color_text }};
+
+    --color-text-05: {{ color_text | color_mix: color_background, 5 }};
+    --color-text-05-alpha-0: {{ color_text | color_mix: color_background, 5 | color_modify: 'alpha', 0 }};
+
+    --color-text-hover: {{ color_text }};
+    --color-text-light: {{ color_text }};
+    --color-links: {{ color_links }};
+    --color-link-hover: {{ color_text }};
+
+    /* Products */
+    --color-products-in-stock: #268c0b;
+    --color-products-low-stock: #cc1313;
+    --color-products-no-stock: #121212;
+
+    /* Buttons */
+    {% assign settings_color_button_background = '#f04f36' %}
+    {% assign settings_color_button_secondary_background = '#ffffff' %}
+
+    --color-button-text: #ffffff;
+    --color-button-background: {{ settings_color_button_background }};
+    --color-button-background-hover: {{ color_background | color_mix: settings_color_button_background, 10 }};
+
+    --color-button-background-focus: #dddddd;
+    --color-button-disable: {{ settings_color_button_background | color_desaturate: 100 }};
+
+    --color-button-secondary-text: #f04f36;
+    --color-button-secondary-background: {{ settings_color_button_secondary_background }};
+    --color-button-secondary-background-hover: {{ color_background | color_mix: settings_color_button_secondary_background, 20 }};
+    --color-button-secondary-background-focus: #e6e6e6;
+    --color-button-secondary-border: #dddddd;
+    --color-button-secondary-border-hover: #c7c7c7;
+
+    --button-primary-text-color: #ffffff;
+    --button-primary-text-color-highlight: #ffffff;
+    --button-primary-bg-color: #000000;
+    --button-primary-bg-color-highlight: #606060;
+    --button-primary-border-color: rgba(0,0,0,0);
+    --button-primary-border-color-highlight: rgba(0,0,0,0);
+
+    --button-secondary-text-color: #000000;
+    --button-secondary-text-color-highlight: #ffffff;
+    --button-secondary-bg-color: rgba(0,0,0,0);
+    --button-secondary-bg-color-highlight: #000000;
+    --button-secondary-border-color: #000000;
+    --button-secondary-border-color-highlight: #000000;
+
+    --button-link-text-color: #000000;
+    --button-link-text-color-highlight: #ccc;
+
+    /* Header */
+    --color-header-text: {{ color_text }};
+    --color-header-background: {{ color_background }};
+
+    /* Forms */
+    {% assign settings_color_input_border = '#dddddd' %}
+    --color-input-text: #4d4d4d;
+
+    --color-input-text-hover: {{ settings_color_input_border }};
+
+    --color-input-background: {{ color_background }};
+    --color-input-background-hover: {{ color_text | color_mix: color_background, 5 }};
+
+    --color-input-border: {{ settings_color_input_border }};
+    --color-input-border-alpha-25: {{ settings_color_input_border | color_modify: 'alpha', 0.25 }};
+
+
+    --color-input-border-morph-2: #c7c7c7;
+    --color-input-border-morph-4: #b1b1b1;
+    --color-input-border-morph-10: #858585;
+    --color-input-border-morph-12: #767676;
+
+    --color-input-border-hover: #c7c7c7;
+
+    --color-product-sale-accent: #f04f36;
+    --color-product-review-star: #ffab41;
+
+    /* Footer */
+    --color-footer-text: {{ color_text }};
+
+    --color-footer-background: #f5f3ed;
+
+
+    --color-footer-link: #3c3c3c;
+    --color-footer-color-alt: {{ color_text | color_modify: 'alpha', 0.8 }};
+    --color-additional-accent: {{ color_text | color_modify: 'alpha', 0.5 }};
+
+    /* Placeholders */
+    --color-placeholder-background: {{ color_text | color_mix: color_background, 8 }};
+    --color-placeholder-fill: {{ color_text | color_mix: color_background, 35 }};
+
+    /* General */
+    {% assign color_border = '#808080' %}
+    {% assign border_mix = '#000' %}
+    {% assign overlay_opacity = 50 %}
+    --color-black: #000;
+    --color-white: #fff;
+
+    --color-border: {{ color_border }};
+    --color-border-modify: {{ color_border | color_modify: 'alpha', 0.3 }};
+    --color-border-less-soft: rgba(0, 0, 0, 0.25);
+    --color-border-soft: {{ border_mix | color_modify: 'alpha', 0.15 }};
+    --color-border-softer: rgba(0, 0, 0, 0.1);
+
+
+    --color-overlay-background: {{ color_background | color_modify: 'alpha', overlay_opacity }};
+
+
+    --color-background-8: {{ color_text | color_mix: color_background, 8 }};
+    --color-background-4: {{ color_text | color_mix: color_background, 4 }};
+
+    --color-background-light: #f2f2f2;
+    --color-search-category-background: {{ color_text | color_mix: color_background, 10 }};
+
+    --color-box-shadow-border: {{ color_border | color_modify: 'alpha', 0.16 }};
+    --color-box-shadow-shadow: {{ color_border | color_modify: 'alpha', 0.11 }};
+    --color-box-shadow-border-focused: {{ color_border | color_modify: 'alpha', 0.5 }};
+    --color-box-shadow-shadow-focused: {{ color_border | color_modify: 'alpha', 0.5 }};
+
+    --color-box-shadow-shadow-headings: {{ color_border | color_modify: 'alpha', 0.05 }};
+
+    --color-error: #f05d5d;
+    --color-success: #51a551;
+    --color-warning: #dfa354;
+    --color-highlight: #fffbd9;
+    --color-notice: --color-text;
+    --color-sale: --color-product-sale-accent;
+    --color-star: --color-product-review-star;
+    --color-star-empty: {{ color_text | color_mix: color_background, 50 }};
+
+    --color-facebook: #425dab;
+    --color-x: #000;
+    --color-pinterest: #bd1c1c;
+    --color-linkedin: #0077B5;
+  }
+{% endstyle %}

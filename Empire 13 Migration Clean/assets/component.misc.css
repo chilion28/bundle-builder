@@ -1,0 +1,312 @@
+/*
+  A place for CSS rules that probably should be part of a component but require
+  duplicated code to be abstracted to a new component or general refactoring.
+*/
+
+/*Animate hamburger icon when nav open*/
+.mobile-nav-trigger,
+.site-nav__compress-menu {
+  & path {
+    transition: all 0.3s cubic-bezier(0.18, 0.77, 0.58, 1);
+  }
+
+  &[aria-expanded='true'],
+  &.is-active {
+    & path:nth-child(1) {
+      transform: rotate(45deg);
+      transform-origin: 20% 30%;
+    }
+    & path:nth-child(2) {
+      opacity: 0;
+    }
+    & path:nth-child(3) {
+      transform: rotate(-45deg);
+      transform-origin: 15% 66%;
+    }
+  }
+}
+
+/*
+  -------------------------------------
+  Shared PDP Styles
+  -------------------------------------
+*/
+
+@media only screen and (min-width: 769px) {
+  .product-single__sticky {
+    position: sticky;
+    top: 20px;
+  }
+
+  .modal--quick-shop .product-single__sticky {
+    top: 0;
+  }
+
+  .product-full-width {
+    margin-top: 40px;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .grid--product-images-right {
+    display: flex;
+    flex-wrap: wrap;
+
+    & .grid__item:first-child {
+      order: 2;
+    }
+  }
+
+  /* Custom full-width layout for product tabs on mobile */
+  .product-full-width .page-width--narrow {
+    max-width: none;
+  }
+}
+
+.page-content--product {
+  padding-top: 40px;
+  padding-bottom: 0;
+
+  @media only screen and (max-width: 768px) {
+    padding: 0;
+  }
+
+  /* Prevent jittery sizing while loading in quick view */
+  .modal--quick-shop & {
+    width: var(--page-width);
+    max-width: 100%;
+  }
+}
+
+.product-single__meta {
+  padding-top: 65px;
+  padding-left: 45px;
+
+  @media only screen and (max-width: 768px) {
+    padding-top: 0;
+    padding-left: 0;
+    margin-top: calc(var(--gutter) / 2);
+    margin-bottom: calc(var(--gutter) / 2);
+  }
+
+  .grid--product-images-right & {
+    padding-left: 0;
+    padding-right: 45px;
+
+    @media only screen and (max-width: 768px) {
+      padding-right: 0;
+    }
+  }
+
+  & .rte {
+    text-align: left;
+
+    html[dir='rtl'] & {
+      text-align: right;
+    }
+  }
+
+  & > *:first-child {
+    padding-top: 0;
+  }
+}
+
+/*Hide selectable elements when slide is not active*/
+.flickity-enabled {
+  .product-main-slide:not(.is-selected) {
+    & button,
+    & video,
+    & iframe,
+    & model-viewer {
+      display: none;
+    }
+  }
+}
+
+.product-main-slide {
+  display: none;
+  width: 100%;
+  overflow: hidden;
+  margin-block-start: 0;
+  @media only screen and (max-width: 768px) {
+    /* Set initial width to prevent layout shifts */
+    .grid--product-images--partial & {
+      width: 75%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  /*Hide all but first slide to prevent page reflows prior to init*/
+  &:first-child {
+    display: block;
+  }
+
+  @media only screen and (max-width: 768px) {
+    border: 1px solid;
+    border-color: color-mix(in srgb, var(--color-primary) var(--shade-12), var(--color-secondary));
+  }
+
+  [data-media-gallery-layout='stacked'] & {
+    display: block;
+    margin: 0 auto 8px;
+  }
+
+  .flickity-slider & {
+    display: block;
+
+    /*show a bit of the next image*/
+    @media only screen and (max-width: 768px) {
+      .grid--product-images--partial & {
+        width: 75%;
+        margin-right: 10px;
+      }
+    }
+  }
+}
+
+/*Used anywhere unit price is visible*/
+.product__unit-price {
+  font-size: calc(var(--body-md-font-size) - 3px);
+  opacity: 0.65;
+}
+
+/*Product page mobile*/
+
+.product--images {
+  @media only screen and (max-width: 768px) {
+    order: 1;
+  }
+}
+
+.product--description {
+  @media only screen and (max-width: 768px) {
+    order: 3;
+  }
+}
+
+/*
+  -------------------------------------
+  Sections
+  -------------------------------------
+*/
+
+.index-section {
+  margin: var(--index-section-padding) 0;
+
+  /*Required so box-shadow on .main-content doesn't appear
+  when first section has no background*/
+  &:not(.index-section--sub-product):first-child {
+    margin-top: 0;
+    padding-top: var(--index-section-padding);
+  }
+}
+
+.index-section + .index-section,
+.index-section + .index-section--hidden {
+  margin-top: 0;
+}
+
+.page-width .index-section .page-width {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.index-section--flush {
+  margin: 0;
+}
+
+.section--divider {
+  border-top: 1px solid;
+  border-top-color: color-mix(in srgb, var(--color-primary) var(--shade-12), var(--color-secondary));
+  padding-top: var(--index-section-padding);
+}
+
+/*Hide footer sections on /challenge page*/
+.template-challange .index-section--footer {
+  display: none;
+}
+
+.theme-block {
+  margin-bottom: 30px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/*
+  -------------------------------------
+  Article Tags + Elements
+  -------------------------------------
+*/
+
+/*Date, comments, author*/
+.article__sub-meta {
+  opacity: 0.65;
+  font-size: calc(var(--body-md-font-size) - 2px);
+
+  & > span {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 2px;
+    margin-right: 10px;
+
+    [dir='rtl'] & {
+      margin-right: 0;
+      margin-left: 10px;
+    }
+
+    &:not(:last-child):after {
+      content: '\b7';
+      display: inline-block;
+      margin-left: 10px;
+
+      [dir='rtl'] & {
+        margin-left: 0;
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .section-header & {
+    margin-top: 20px;
+  }
+}
+
+.article__sub-meta-date {
+  text-transform: uppercase;
+}
+
+.article__title {
+  font-weight: var(--heading-font-weight);
+}
+
+/*
+  -------------------------------------
+  Color Swatches
+  -------------------------------------
+*/
+[data-color-swatch],
+.color-swatch {
+  position: relative;
+  display: block;
+  text-indent: -9999px;
+  overflow: hidden;
+  margin: 0 4px 4px;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 2.5em;
+  border: 3px solid;
+  border-color: var(--root-color-secondary);
+  border-radius: var(--swatch-border-radius, 0);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) var(--shade-12), var(--color-secondary));
+  transition: box-shadow 0.1s ease;
+  width: var(--swatch-size, var(--size-10));
+  height: var(--swatch-size, var(--size-10));
+
+  &.is-active {
+    box-shadow: 0 0 0 1px var(--root-color-primary);
+  }
+}

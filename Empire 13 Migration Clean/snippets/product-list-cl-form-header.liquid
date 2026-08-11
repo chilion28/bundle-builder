@@ -1,0 +1,246 @@
+{% comment %}
+  @param product
+
+  @param selected_variant
+
+  @param show_dynamic_checkout_button {Boolean}
+    If true, show dynamic checkout button
+{% endcomment %}
+
+{% if is_product_modal and show_dynamic_checkout_button %}
+  {% assign quickshop_smart_buttons = true %}
+{% endif %}
+
+{% if is_product_modal == false and show_dynamic_checkout_button %}
+  {% assign product_smart_buttons = true %}
+{% endif %}
+
+{% if product.selling_plan_groups.size > 0 %}
+  {% assign show_dynamic_checkout_button = false %}
+{% endif %}
+
+{% if selected_variant.available == false %}
+  {% assign quickshop_smart_buttons = false %}
+  {% assign product_smart_buttons = false %}
+{% endif %}
+
+{% assign product_form_class = '' %}
+
+{% if show_dcb %}
+  {% if product_smart_buttons or quickshop_smart_buttons %}
+    {% assign product_form_class = 'smart-payment-enabled' %}
+  {% endif %}
+{% endif %}
+
+{% comment %}
+{% form 'product', product, class: product_form_class, data-product-form: '' %}
+  
+    Display variant options for a product
+
+    @param product
+    @param selected_variant
+    @param style
+
+    @param enable_swatches
+    @param swatches_shape
+    @param swatches_option_trigger
+    @param swatches_option_style
+    @param swatches_product_page_size
+    @param swatch_colors
+
+    @param select_main_classes
+    @param select_classes
+    @param input_select_wrapper_classes
+    @param input_select_classes
+    @param input_select_label_classes
+    @param input_select_chevron_classes
+
+    @param radios_classes
+    @param option_header_classes
+    @param option_name_classes
+    @param option_values_classes
+    @param option_value_classes
+    @param option_value_label_classes
+    @param option_value_input_classes
+    @param option_value_name_classes
+
+    @param swatches_classes
+    @param option_swatch_wrapper_classes
+    @param option_swatch_classes
+    @param option_swatch_inner_classes
+  {% endcomment %}
+  {% assign product = product %}
+  {% assign selected_variant = selected_variant %}
+  {% assign style = settings.product_option_style %}
+  {% assign enable_swatches = settings.swatches_enable %}
+  {% assign sold_out_options = settings.sold_out_options %}
+  {% assign swatches_shape = settings.swatches_shape %}
+  {% assign swatches_option_trigger = settings.swatches_swatch_trigger %}
+  {% assign swatches_option_style = settings.swatches_option_style %}
+  {% assign swatches_product_page_size = settings.swatches_product_page_size %}
+  {% assign swatches_custom_colors = settings.swatches_custom_colors %}
+  {% assign swatch_file_type = 'files' %}
+  {% assign select_main_classes = 'form-options' %}
+  {% assign select_classes = 'form-field form-options' %}
+  {% assign input_select_wrapper_classes = 'form-field-select-wrapper' %}
+  {% assign input_select_classes = 'form-field-input form-field-select' %}
+  {% assign input_select_label_classes = 'form-field-title' %}
+  {% assign radios_classes = 'form-options form-options-selectable-boxes' %}
+  {% assign option_header_classes = 'options-selection__option-header' %}
+  {% assign option_name_classes = 'options-selection__option-name' %}
+  {% assign option_values_classes = 'options-selection__option-values' %}
+  {% assign option_value_classes = 'options-selection__option-value' %}
+  {% assign option_value_label_classes = 'options-selection__option-value-label' %}
+  {% assign option_value_input_classes = 'options-selection__option-value-input' %}
+  {% assign option_value_name_classes = 'options-selection__option-value-name' %}
+  {% assign swatches_classes = 'form-options form-options-swatches' %}
+  {% assign option_swatch_wrapper_classes = 'option-value-name option-value-swatch-wrapper' %}
+  {% assign option_swatch_classes = 'swatch' %}
+  {% assign option_swatch_inner_classes = 'swatch-inner' %}
+
+  {% comment %}Inject @pixelunion/shopify-variants-ui/variant-selection begin{% endcomment %}
+  {% comment %}
+    Display variant options for a product
+  
+    @param product
+    @param selected_variant
+j    @param variant_selection_id
+    @param sold_out_options
+    @param style
+  
+    @param enable_swatches
+    @param swatches_shape
+    @param swatches_option_trigger
+    @param swatches_option_style
+    @param swatches_product_page_size
+    @param swatches_custom_colors
+  {% endcomment %}
+  
+  {% comment %} <variant-selection
+    {% if variant_selection_id != blank %}id="{{ variant_selection_id }}"{% endif %}
+    class="variant-selection"
+    product-url="{{ product.url }}.js"
+    variant="{% if selected_variant %}{{ selected_variant.id }}{% else %}not-selected{% endif %}"
+    data-variant-selection
+  >
+    {% if product.has_only_default_variant %}
+      <input
+        class="variant-selection__variants variant-selection__variants--default"
+        name="id"
+        type="hidden"
+        value="{{ product.variants.first.id }}"
+        data-variants
+      >
+    {% else %}
+      <noscript>
+        <style>
+          .variant-selection__variants {
+            display: block !important;
+          }
+        </style>
+      </noscript>
+      <select
+        class="variant-selection__variants"
+        name="id"
+        style="display: none"
+        data-variants
+      >
+        <option
+          value="not-selected"
+          disabled
+          {% if selected_variant == blank %}selected{% endif %}
+        >
+          {{ 'product.variants.choose_variant' | t }}
+        </option>
+        {% for variant in product.variants %}
+          <option
+            {% if selected_variant and selected_variant.id == variant.id %}selected{% endif %}
+            value="{{ variant.id }}"
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            {{ variant.title }} - {{ variant.price | money }}
+          </option>
+        {% endfor %}
+      </select>
+  
+      {% comment %}Inject @pixelunion/shopify-variants-ui/options-selection begin{% endcomment %}
+      {% comment %}
+        Display variant options for a product
+      
+        @param product
+        @param selected_variant
+        @param variant_selection_id
+        @param sold_out_options
+        @param style
+      
+        @param enable_swatches
+        @param swatches_shape
+        @param swatches_option_trigger
+        @param swatches_option_style
+        @param swatches_product_page_size
+        @param swatches_custom_colors
+        @param swatch_file_type
+      {% endcomment %}
+      
+      <options-selection
+        {% if variant_selection_id != blank %}variant-selection="{{ variant_selection_id }}"{% endif %}
+        style="display: none;"
+        {% if sold_out_options == 'disabled' %}disable-unavailable{% endif %}
+        {% if sold_out_options == 'hidden' %}remove-unavailable{% endif %}
+        data-options-selection
+      >
+        <script>
+          (function() {
+            const scriptTag = document.scripts[document.scripts.length - 1];
+            const parentTag = scriptTag.parentNode;
+      
+            parentTag.style.display = '';
+          })()
+        </script>
+      
+        {% for option in product.options_with_values %}
+          {% assign option_index = forloop.index0 %}
+          {% assign show_swatches = false %}
+          {% if enable_swatches %}
+            {%- assign swatches_option_trigger = swatches_option_trigger | strip | downcase -%}
+            {%- assign option_name = option.name | strip | downcase -%}
+      
+            {% if option_name == swatches_option_trigger %}
+              {% assign show_swatches = true %}
+              {% assign swatch_option_key = 'option' | append: forloop.index %}
+            {% endif %}
+          {% endif %}
+      
+          {% if style == 'select' and show_swatches == false %}
+            {%
+              render 'options-select',
+              product: product,
+              selected_variant: selected_variant,
+              option: option,
+              option_index: option_index
+            %}
+          {% elsif style == 'radio' or show_swatches == true %}
+            {%
+              render 'options-radios',
+              product: product,
+              selected_variant: selected_variant,
+              option: option,
+              option_index: option_index,
+              show_swatches: show_swatches,
+              swatch_option_key: swatch_option_key,
+              swatch_size: swatches_product_page_size,
+              swatches_option_style: swatches_option_style,
+              swatch_file_type: swatch_file_type,
+              swatches_custom_colors: swatches_custom_colors,
+              swatches_shape: swatches_shape,
+            %}
+          {% endif %}
+        {% endfor %}
+      </options-selection>
+      {% comment %}Inject @pixelunion/shopify-variants-ui/options-selection end{% endcomment %}
+  
+    {% endif %}
+  </variant-selection> {% endcomment %}
+  {% comment %}Inject @pixelunion/shopify-variants-ui/variant-selection end{% endcomment %}
+
+    

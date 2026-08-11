@@ -1,0 +1,33 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_607973848742101590": {
+      "type": "gp-section-607973848742101590",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "136d4f823114cbc4d01bd5d8cdd46960b7d105b729631e417ddc0bd49aaf41ac_1_1_1_0__1",
+        "ggTaAB4dVeb_text": "That Double Take?",
+        "ggMkQ37LbVU_text": "Yeah… That’s The Payoff.",
+        "gg_lytnRP5h_text": "<p>Jim matched his License Plate Hat to his Corvette’s vanity plate.</p><p>That pause.</p><p>That second look.</p><p>That “yo… that’s hard.”</p><p>That’s what happens when your gear actually says something.</p><p>Hit play and see how he turned a ride into a statement.</p>",
+        "ggHpv6kic7U_text": "<p>Ready to lock in your own story?<br>Make it custom. Make it yours.</p>",
+        "ggE1KsuuSor_label": "<p>START CUSTOMIZING</p>"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_607973848742101590"
+  ]
+}

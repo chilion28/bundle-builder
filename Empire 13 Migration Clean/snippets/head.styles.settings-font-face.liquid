@@ -1,0 +1,103 @@
+{% comment %}
+  Renders the typography styles for the given settings (expects base spacing and line height scales)
+
+  Accepts:
+  - type_base_spacing {-3|-2|-1|0|1|2|3} - The base spacing scale for typography
+  - type_base_line_height_scale {-3|-2|-1|0|1|2|3} - The base line height scale for typography
+
+  Usage:
+  {% render 'head.styles.typography', type_base_spacing: settings.type_base_spacing, type_base_line_height_scale: settings.type_base_line_height_scale %}
+{% endcomment %}
+
+{%- liquid
+  assign body_font = body_font | default: settings.type_body_font_family
+  assign heading_font = heading_font | default: settings.type_heading_font_family
+  assign heading_capitalize = heading_capitalize | default: settings.type_heading_capitalize
+  assign accent_font = accent_font | default: settings.accent_font_family
+  assign accent_capitalize = accent_capitalize | default: settings.type_accent_capitalize
+-%}
+
+{%- style -%}
+  {% liquid
+    if heading_font
+      assign heading_font_italic = heading_font | font_modify: 'style', 'italic'
+
+      echo heading_font | font_face: font_display: 'fallback'
+
+      if heading_font_italic
+        echo heading_font_italic | font_face: font_display: 'fallback'
+      endif
+    endif
+
+    if body_font
+      assign body_font_italic = body_font | font_modify: 'style', 'italic'
+      assign body_font_bold = body_font | font_modify: 'weight', 'bolder'
+      assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+
+      echo body_font | font_face: font_display: 'fallback'
+
+      if body_font_italic
+        echo body_font_italic | font_face: font_display: 'fallback'
+      endif
+
+      if body_font_bold
+        echo body_font_bold | font_face: font_display: 'fallback'
+      endif
+
+      if body_font_bold_italic
+        echo body_font_bold_italic | font_face: font_display: 'fallback'
+      endif
+    endif
+
+    if accent_font
+      assign accent_font_italic = accent_font | font_modify: 'style', 'italic'
+      assign accent_font_bold = accent_font | font_modify: 'weight', 'bolder'
+      assign accent_font_bold_italic = accent_font_bold | font_modify: 'style', 'italic'
+
+      echo accent_font | font_face: font_display: 'fallback'
+
+      if accent_font_italic
+        echo accent_font_italic | font_face: font_display: 'fallback'
+      endif
+
+      if accent_font_bold
+        echo accent_font_bold | font_face: font_display: 'fallback'
+      endif
+
+      if accent_font_bold_italic
+        echo accent_font_bold_italic | font_face: font_display: 'fallback'
+      endif
+    endif
+  %}
+
+  :root {
+    /* Body Font Stack */
+    {%- if body_font -%}
+      --body-font-family:{{ body_font.family }};
+      --body-font-family-fallback:{{ body_font.fallback_families }};
+      --body-font-weight: {{ body_font.weight }};
+    {%- endif -%}
+
+    /* Accent Font Stack */
+    {%- if accent_font -%}
+      --accent-font-family:{{ accent_font.family }};
+      --accent-font-family-fallback:{{ accent_font.fallback_families }};
+      --accent-font-weight: {{ accent_font.weight }};
+    {%- endif -%}
+
+    {% if accent_capitalize %}
+      --accent-text-transform: uppercase;
+    {% endif %}
+
+    /* Heading Font Stack */
+    {%- if heading_font -%}
+      --heading-font-family:{{ heading_font.family }};
+      --heading-font-family-fallback:{{ heading_font.fallback_families }};
+      --heading-font-weight: {{ heading_font.weight }};
+    {%- endif -%}
+
+    {% if heading_capitalize %}
+      --heading-text-transform: uppercase;
+    {% endif %}
+  }
+{%- endstyle -%}

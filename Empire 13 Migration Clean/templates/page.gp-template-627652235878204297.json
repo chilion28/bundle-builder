@@ -1,0 +1,102 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_627652235978867593": {
+      "type": "gp-section-627652235978867593",
+      "settings": {
+        "checksum": "0ef77452dfa6f5760715707cc34435264a97158ad99577acf39e601bc8d6520b_1_1_0_0__1",
+        "ggPOMdv3SX3_label": "<p>View All Reviews</p>"
+      }
+    },
+    "gp_section_627652235978933129": {
+      "type": "gp-section-627652235978933129",
+      "settings": {
+        "checksum": "afd80f7a140a2025f519148ac73044a9e7801715648abc06aaa8c36b3b1ae70a_1_1_0_0__1",
+        "ggKtTmcrJ6r_text": "loved by thousands of customers",
+        "ggwuu2_UaWj_srcSet_desktop_src": "https://ucarecdn.com/72eff214-e480-4df7-82aa-1f866ef0fea4/-/format/auto/-/preview/3000x3000/-/quality/lighter/33-min.png",
+        "ggC5FdrWivj_srcSet_desktop_src": "https://ucarecdn.com/3495fcb4-ec4c-4d5e-b41d-722b7af46a44/-/format/auto/-/preview/3000x3000/-/quality/lighter/S1-min.png",
+        "ggcsuuOXdGW_srcSet_desktop_src": "https://ucarecdn.com/601d7943-0f15-4064-bef2-4067bfa3e8ff/-/format/auto/-/preview/3000x3000/-/quality/lighter/14-min.png",
+        "ggaul-FJ3JW_srcSet_desktop_src": "https://ucarecdn.com/4e6beb65-4402-471a-9ebf-390201a06758/-/format/auto/-/preview/3000x3000/-/quality/lighter/s2-min.png",
+        "ggIFgyUoarh_srcSet_desktop_src": "https://ucarecdn.com/e076b420-8ce6-4de9-beb5-57eb532dcc79/-/format/auto/-/preview/3000x3000/-/quality/lighter/37-min.png",
+        "ggD4bIRXSXb_srcSet_desktop_src": "https://ucarecdn.com/62387d6d-44a3-41ef-96c8-b4824f60ccb9/-/format/auto/-/preview/3000x3000/-/quality/lighter/s5-min.png",
+        "ggzJQrZmmZ4_srcSet_desktop_src": "https://ucarecdn.com/59a2913e-87a0-4e1d-9ba1-ed7adb51849c/-/format/auto/-/preview/3000x3000/-/quality/lighter/51-min.png",
+        "ggEs8ILICzv_srcSet_desktop_src": "https://ucarecdn.com/3ea590a2-b789-46cf-a43e-67908e1c2386/-/format/auto/-/preview/3000x3000/-/quality/lighter/s11-min.png",
+        "gg8C5gTibI3_srcSet_desktop_src": "https://ucarecdn.com/732c8ffe-37a8-4a65-9e54-c897a88ac467/-/format/auto/-/preview/480x480/-/quality/lighter/s4-min.png",
+        "ggqwApm49g4_srcSet_desktop_src": "https://ucarecdn.com/601dc38f-6c97-4649-88c2-311aaaee3be6/-/format/auto/-/preview/480x480/-/quality/lighter/12-min.png",
+        "ggxw9oivaSs_srcSet_desktop_src": "https://images.loox.io/uploads/2026/3/22/4eSmOhQxV_mid.jpg",
+        "ggo4vIKIDYt_srcSet_desktop_src": "https://images.loox.io/uploads/2026/3/31/_OM9iym1I.jpg",
+        "ggG80rmEOgp_srcSet_desktop_src": "https://images.loox.io/uploads/2026/4/1/Oy0bC3qoC.jpg",
+        "ggDssP3t9BO_srcSet_desktop_src": "https://images.loox.io/uploads/2026/4/1/L6sK6Q_bV_mid.jpg"
+      }
+    },
+    "gp_section_627652235978998665": {
+      "type": "gp-section-627652235978998665",
+      "settings": {
+        "checksum": "d33e462ec13444f3a724d3e63c83f7150162cbe6278d3d3681a8184ff07acf56_1_1_0_0__1",
+        "ggqR5kRcCUJ_text": "<p>15,000+ 5-STAR REVIEWS</p>",
+        "ggnijTw2VKl_text": "<p>Loved by thousands of happy customers</p>",
+        "ggZ3bo2fBTJ_srcSet_desktop_src": "https://ucarecdn.com/72eff214-e480-4df7-82aa-1f866ef0fea4/-/format/auto/-/preview/3000x3000/-/quality/lighter/33-min.png",
+        "ggLIVvEpdeV_srcSet_desktop_src": "https://ucarecdn.com/3495fcb4-ec4c-4d5e-b41d-722b7af46a44/-/format/auto/-/preview/3000x3000/-/quality/lighter/S1-min.png",
+        "ggWdMaI8yAx_srcSet_desktop_src": "https://ucarecdn.com/601d7943-0f15-4064-bef2-4067bfa3e8ff/-/format/auto/-/preview/3000x3000/-/quality/lighter/14-min.png",
+        "ggTXfQ774cG_srcSet_desktop_src": "https://ucarecdn.com/4e6beb65-4402-471a-9ebf-390201a06758/-/format/auto/-/preview/3000x3000/-/quality/lighter/s2-min.png",
+        "gglP5b1u32z_srcSet_desktop_src": "https://ucarecdn.com/3ea590a2-b789-46cf-a43e-67908e1c2386/-/format/auto/-/preview/3000x3000/-/quality/lighter/s11-min.png",
+        "ggW7pMHipgh_text": "<p>decorated and shipped in the USA</p>",
+        "gg15qifrKgC_text": "<p>Custom decorated by our team and shipped from the USA</p>",
+        "ggQUlFSh6ut_text": "<p>Fast Custom Production</p>",
+        "ggvM9OHoAbB_text": "<p>Made in 5-7 days and delivered in 10-12 business days</p>"
+      }
+    },
+    "gp_section_627652235979064201": {
+      "type": "gp-section-627652235979064201",
+      "settings": {
+        "checksum": "057b48c0752dc38a4c05d8b0c88130f7b1035c53940263526caebf5259210128_1_1_0_0__1",
+        "ggpC8bK8RFt_text": "how it works",
+        "ggzFh0HN08r_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Asset_3.svg",
+        "ggCvp9u5S6W_text": "1. Pick your state",
+        "gghhMjedril_text": "<p>Choose the state you want to represent</p>",
+        "ggGx2Ck4BrE_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Asset_2.svg",
+        "ggHSQyNxxvq_text": "2. enter your text",
+        "ggXLks4D1Fk_text": "<p>Add your custom text and preview it live</p>",
+        "gg5GBtjNjtQ_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/Asset_1.svg",
+        "ggACNzQFUo__text": "3. choose hat style",
+        "ggA4-zqyczH_text": "<p>Pick your hat style and color</p>"
+      }
+    },
+    "gp_section_627652235979129737": {
+      "type": "gp-section-627652235979129737",
+      "settings": {
+        "section_preload": "true",
+        "checksum": "fb9e8915834a265fab8fa3281af831e93e51de9ff983b9bfdd913e4c966eec65_1_1_0_0__1",
+        "ggOLbsTVBQ3_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/top-hero-bg-1-AD.png",
+        "ggOLbsTVBQ3_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/top-hero-bg-1-AD-mobile.png",
+        "ggKg0zhBhRT_text": "<p>over 15,000+ Reviews</p>",
+        "ggWP9MUjLm6_text": "custom license plate hats for",
+        "ggK8Fb6BuP-_text": "auto detailers",
+        "ggXikwuk005_text": "<p>Business cards get forgotten. Your hat gets seen while you work, drive, and show up to every job. Add your business name, city, or slogan and turn every detail into a chance to get recognized.</p>",
+        "gg2BqLPhJMj_text": "Step 1:",
+        "ggQAonRLroz_text": "&nbsp;Choose your state",
+        "ggTZFO5ytes_childItem_0": "<p>All 50 U. S. states available&nbsp;</p>"
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "gp_section_627652235979129737",
+    "gp_section_627652235978998665",
+    "gp_section_627652235979064201",
+    "gp_section_627652235978933129",
+    "gp_section_627652235978867593"
+  ]
+}

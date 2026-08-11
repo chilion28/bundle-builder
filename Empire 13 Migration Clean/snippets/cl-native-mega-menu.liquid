@@ -1,0 +1,1138 @@
+{% comment %}
+  Sanitized native mega-menu fallback generated from the former Qikify hierarchy.
+  Source record: Qikify entry_205678. Titles are stripped of all HTML and every
+  URL is restricted to a CityLocs-relative path. This snippet executes no remote code.
+
+  @param mode {String} "desktop" or "mobile"
+{% endcomment %}
+
+{% unless mode == 'mobile' %}
+  {{ 'cl-native-mega-menu.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'cl-native-mega-menu.js' | asset_url }}" defer="defer"></script>
+{% endunless %}
+
+<nav
+  class="cl-native-mega cl-native-mega--{{ mode | default: 'desktop' }}"
+  aria-label="{% if mode == 'mobile' %}Mobile navigation{% else %}Main navigation{% endif %}"
+  data-cl-native-mega
+  {% unless mode == 'mobile' %}data-navmenu{% endunless %}
+>
+  {% if mode == 'mobile' %}
+    <ul class="cl-native-mega__top" role="list"><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Custom Hats</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-480516.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>License Plate Hats</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-828383.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US License Plate Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/us-blackout-license-plate-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-135091.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US Blackout License Plate Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/universal-license-plate-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-194464.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Universal License Plate Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/u-s-military"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-109055.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Military License Plate Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/mexico-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-710129.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Mexico License Plate Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/engraved-license-plate-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-550902.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Engraved License Plate Hats</span></a></li></ul>
+              </details>
+            </li><li><a class="cl-native-mega__mobile-link" href="/collections/beverage-label-custom-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-543801.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom Beverage Label Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/top-shelf-liquor-labels-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-439472.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom Top-Shelf Label Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/salsa-picante"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-873441.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom Salsa Labels Hats</span></a></li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-297787.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Natural Leather Hats</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/work-hats-revamped"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-864402.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Work Hats Revamped</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/monogram-custom-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-691445.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Monogram Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/engraved-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-694763.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Engraved Leather Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/western"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-587865.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Western Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/engraved-license-plate-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-727497.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Engraved Plate Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/outdoors"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-145028.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Outdoors Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/beanies"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-656086.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Engraved Beanies</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/royal-crest"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-290160.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Royal Crest Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/wood-jax"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-531892.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Wood Jax Hats</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-742328.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Swap Patch System</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/swap-patches"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-278469.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Swap Patches</span></a></li><li><a class="cl-native-mega__mobile-link" href="/products/pro-six-swap-black"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-812349.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pro 6 Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/products/beanie-swap-patch"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-794585.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Swap Patch Beanies</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/boonie-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-128057.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Boonie Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/visors"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-172951.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Visors</span></a></li></ul>
+              </details>
+            </li><li><a class="cl-native-mega__mobile-link" href="/collections/image-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-945953.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom Image Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/products/pet-image-hat"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-868172.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pet Image hat</span></a></li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-838107.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Flag Hats</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/us-state-flag-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-698950.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>State Flags</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/country-flag-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-806807.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Country Flags</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-542092.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Printed Patch Hats</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/printed-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-934079.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Printed Patch Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/animal-custom-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-813906.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Animal Design Hats</span></a></li></ul>
+              </details>
+            </li><li><a class="cl-native-mega__mobile-link" href="/collections/golf-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-155443.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Golf Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/signature-series"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-547369.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Signature Series Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/backyard-chillin"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-986585.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Backyard Chillin&#39;</span></a></li></ul>
+        </details>
+      </li><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Sunglasses</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/hypro"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-606327.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Hypro</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/gst-custom"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-451861.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>GST</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/risky-b"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-375115.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Risky B</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/gst-collection"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-286065.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Que</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/wf-color"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-700728.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>WF Color</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/wf-signature-sunglasses"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-251272.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Signature Series</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/becky-sunlgasses"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-114316.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Becky</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/graduate"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-880797.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Graduate</span></a></li></ul>
+        </details>
+      </li><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Accessories</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/bottle-shape-openers"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-704973.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Bottle-shaped Opener</span></a></li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-398380.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Wallets</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/canvas-wallets"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-722786.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Canvas Wallet</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/slim-wallet"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-156486.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Slim Wallet</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/petite-wallet"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-925259.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Petit Wallet</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-838692.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pins</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/us-license-plate-enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-141386.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US License Plate Pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/mx-license-plate-enamil-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-485006.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Mexico License Plate Pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/armed-forces-enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-735269.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Armed Forces License Plate Pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/first-responder-enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-639518.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>First Responder License Plate Pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/universal-license-plate-enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-907229.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Universal License Plate Pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/borracho-enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-971398.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Borracho License Plate Pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-622315.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Enamel Pins</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-137953.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Drinkware</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/water-bottles"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-997268.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Water Bottles</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/tumbler"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-712214.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Tumblers</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/shot-glass-set"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-496535.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Boxsets</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/butterfly-bottle-openers"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-233176.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Butterfly Opener</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/bottle-shape-openers"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-140948.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Bottle-Shaped Opener</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/switchblade-bottle-opener"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-426179.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Switchblade Opener</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/coaster-sets"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-243194.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Coasters</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/flask"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-368491.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Flasks</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-842865.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Decor</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/signs"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-812373.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Wood Signs</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/wood-prints"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-921218.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Photo Wood Frames</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/led-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-717769.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>LED License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/led-custom-sign"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-355151.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom LED Signs</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/us-license-plate-keyracks"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-971884.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US Plate Key Racks</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/mexico-license-plate-key-racks"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-245535.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>MX Plate Key Racks</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/tin-signs"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-202065.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Tin Signs</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/gift-boxes"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-146698.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Gift Boxes</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/license-plate-bundles"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-838577.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>License Plate Bundles</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-862951.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Miscellaneous Accessories</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/pendants"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-803850.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pendants</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/lanyards"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-881269.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Lanyards</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/keychains"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-951833.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Leather Keychain</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/pocket-tools"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-859295.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pocket Tools</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/face-wraps"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-761322.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Facewraps</span></a></li></ul>
+              </details>
+            </li></ul>
+        </details>
+      </li><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Custom Image</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/image-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-869611.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom Image Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/products/pet-image-hat"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-661290.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pet Image hat</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/wood-prints"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-104672.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Photo Wood Frames</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/swap-patches"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-188541.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Swap Patches</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/pendants"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-926006.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Pendants</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/gift-boxes"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-211874.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Gift Boxes</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/led-custom-sign"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-664907.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Custom LED Signs</span></a></li></ul>
+        </details>
+      </li><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Metal License Plates</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-720709.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Metal License Plates</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/universal-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-469003.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Universal Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/us-metal-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-623647.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>U.S. Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/us-blackout-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-659079.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US Blackout Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/signature-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-931551.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Signature Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/mexico-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-592033.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Mexico Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/first-responders-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-412528.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>First Responder Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/halloween-custom-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-670320.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Spooky Custom Metal License plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/military-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-564195.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Military Metal License Plates</span></a></li></ul>
+              </details>
+            </li><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-751923.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Mini Metal License Plates</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/mini-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-901214.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US Mini Metal License Plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/us-blackout-mini-license-plate-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-416509.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>US Blackout Mini Plates</span></a></li></ul>
+              </details>
+            </li></ul>
+        </details>
+      </li><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Golf</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/golf-ball-marker-hat-clips"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-360641.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Ball Markers</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/golf-hats"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-283963.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Golf Hats</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/golf-towels"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-594768.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Golf Towels</span></a></li></ul>
+        </details>
+      </li><li>
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary"><span>Seasonal</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+          <ul class="cl-native-mega__mobile-list" role="list"><li>
+              <details class="cl-native-mega__mobile-details">
+                <summary class="cl-native-mega__mobile-summary"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-259737.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Halloween</span><span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span></summary>
+                <ul class="cl-native-mega__mobile-children" role="list"><li><a class="cl-native-mega__mobile-link" href="/collections/halloween-custom-metal-license-plates"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-268960.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Spooky Custom Metal License plates</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/spooky-custom-enamel-pins"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-966401.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Spooky Enamel pins</span></a></li><li><a class="cl-native-mega__mobile-link" href="/collections/spooky-home-decor"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-683601.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Spooky Home Decor</span></a></li></ul>
+              </details>
+            </li><li><a class="cl-native-mega__mobile-link" href="/pages/christmas-gift-guide-2025"><span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-190115.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span><span>Christmas Gift Guide</span></a></li></ul>
+        </details>
+      </li><li><a class="cl-native-mega__top-link" href="/pages/reviews">Reviews</a></li><li><a class="cl-native-mega__top-link" href="/blogs/stories">Stories</a></li></ul>
+  {% else %}
+    {% comment %}
+      Preserve Empire's desktop-navigation hooks. StaticHeader initializes the
+      live-search component only after NavDesktopMenu receives this element.
+    {% endcomment %}
+    <ul class="cl-native-mega__top navmenu-depth-1" role="list">
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Custom Hats</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="/collections/license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-480516.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">License Plate Hats</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-828383.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US License Plate Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-blackout-license-plate-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-135091.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US Blackout License Plate Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/universal-license-plate-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-194464.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Universal License Plate Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/u-s-military">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-109055.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Military License Plate Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/mexico-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-710129.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Mexico License Plate Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/engraved-license-plate-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-550902.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Engraved License Plate Hats</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/beverage-label-custom-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-543801.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom Beverage Label Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/top-shelf-liquor-labels-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-439472.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom Top-Shelf Label Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/salsa-picante">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-873441.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom Salsa Labels Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="/collections/engraved-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-297787.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Natural Leather Hats</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/work-hats-revamped">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-864402.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Work Hats Revamped</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/monogram-custom-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-691445.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Monogram Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/engraved-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-694763.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Engraved Leather Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/western">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-587865.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Western Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/engraved-license-plate-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-727497.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Engraved Plate Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/outdoors">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-145028.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Outdoors Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/beanies">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-656086.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Engraved Beanies</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/royal-crest">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-290160.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Royal Crest Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/wood-jax">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-531892.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Wood Jax Hats</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-742328.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Swap Patch System</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/swap-patches">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-278469.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Swap Patches</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/products/pro-six-swap-black">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-812349.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pro 6 Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/products/beanie-swap-patch">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-794585.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Swap Patch Beanies</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/boonie-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-128057.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Boonie Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/visors">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-172951.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Visors</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/image-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-945953.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom Image Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/products/pet-image-hat">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-868172.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pet Image hat</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-838107.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Flag Hats</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-state-flag-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-698950.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">State Flags</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/country-flag-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-806807.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Country Flags</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-542092.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Printed Patch Hats</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/printed-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-934079.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Printed Patch Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/animal-custom-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-813906.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Animal Design Hats</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/golf-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-155443.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Golf Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/signature-series">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-547369.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Signature Series Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/backyard-chillin">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-986585.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Backyard Chillin&#39;</span>
+
+                  </a>
+
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Sunglasses</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/hypro">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-606327.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Hypro</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/gst-custom">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-451861.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">GST</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/risky-b">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-375115.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Risky B</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/gst-collection">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-286065.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Que</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/wf-color">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-700728.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">WF Color</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/wf-signature-sunglasses">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-251272.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Signature Series</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/becky-sunlgasses">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-114316.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Becky</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/graduate">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-880797.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Graduate</span>
+
+                  </a>
+
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Accessories</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/bottle-shape-openers">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-704973.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Bottle-shaped Opener</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-398380.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Wallets</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/canvas-wallets">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-722786.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Canvas Wallet</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/slim-wallet">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-156486.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Slim Wallet</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/petite-wallet">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-925259.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Petit Wallet</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-838692.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pins</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-license-plate-enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-141386.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US License Plate Pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/mx-license-plate-enamil-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-485006.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Mexico License Plate Pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/armed-forces-enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-735269.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Armed Forces License Plate Pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/first-responder-enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-639518.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">First Responder License Plate Pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/universal-license-plate-enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-907229.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Universal License Plate Pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/borracho-enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-971398.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Borracho License Plate Pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-622315.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Enamel Pins</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-137953.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Drinkware</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/water-bottles">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-997268.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Water Bottles</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/tumbler">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-712214.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Tumblers</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/shot-glass-set">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-496535.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Boxsets</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/butterfly-bottle-openers">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-233176.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Butterfly Opener</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/bottle-shape-openers">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-140948.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Bottle-Shaped Opener</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/switchblade-bottle-opener">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-426179.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Switchblade Opener</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/coaster-sets">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-243194.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Coasters</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/flask">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-368491.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Flasks</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-842865.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Decor</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/signs">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-812373.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Wood Signs</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/wood-prints">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-921218.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Photo Wood Frames</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/led-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-717769.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">LED License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/led-custom-sign">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-355151.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom LED Signs</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-license-plate-keyracks">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-971884.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US Plate Key Racks</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/mexico-license-plate-key-racks">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-245535.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">MX Plate Key Racks</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/tin-signs">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-202065.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Tin Signs</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/gift-boxes">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-146698.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Gift Boxes</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/license-plate-bundles">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-838577.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">License Plate Bundles</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="#">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-862951.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Miscellaneous Accessories</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/pendants">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-803850.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pendants</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/lanyards">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-881269.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Lanyards</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/keychains">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-951833.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Leather Keychain</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/pocket-tools">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-859295.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pocket Tools</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/face-wraps">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-761322.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Facewraps</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Custom Image</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/image-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-869611.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom Image Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/products/pet-image-hat">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-661290.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pet Image hat</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/wood-prints">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-104672.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Photo Wood Frames</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/swap-patches">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-188541.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Swap Patches</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/pendants">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-926006.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Pendants</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/gift-boxes">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-211874.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Gift Boxes</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/led-custom-sign">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-664907.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Custom LED Signs</span>
+
+                  </a>
+
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Metal License Plates</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="/collections/metal-license-plate">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-720709.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Metal License Plates</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/universal-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-469003.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Universal Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-metal-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-623647.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">U.S. Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-blackout-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-659079.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US Blackout Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/signature-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-931551.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Signature Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/mexico-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-592033.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Mexico Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/first-responders-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-412528.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">First Responder Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/halloween-custom-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-670320.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Spooky Custom Metal License plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/military-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-564195.jpeg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Military Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="/collections/mini-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-751923.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Mini Metal License Plates</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/mini-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-901214.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US Mini Metal License Plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/us-blackout-mini-license-plate-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-416509.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">US Blackout Mini Plates</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Golf</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/golf-ball-marker-hat-clips">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-360641.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Ball Markers</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/golf-hats">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-283963.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Golf Hats</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/golf-towels">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-594768.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Golf Towels</span>
+
+                  </a>
+
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--parent">
+        <details class="cl-native-mega__details">
+          <summary class="cl-native-mega__summary">
+            <span>Seasonal</span>
+            <span class="cl-perso-caret cl-perso-caret--down" aria-hidden="true"></span>
+          </summary>
+          <div class="cl-native-mega__flyout cl-native-mega__flyout--level-1">
+            <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item cl-native-mega__flyout-item--parent">
+                  <a class="cl-native-mega__flyout-link" href="/pages/spooky-collection">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-259737.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Halloween</span>
+                    <span class="cl-perso-caret cl-perso-caret--right" aria-hidden="true"></span>
+                  </a>
+                  <div class="cl-native-mega__flyout cl-native-mega__flyout--level-2">
+                    <ul class="cl-native-mega__flyout-list" role="list">
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/halloween-custom-metal-license-plates">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-268960.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Spooky Custom Metal License plates</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/spooky-custom-enamel-pins">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-966401.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Spooky Enamel pins</span>
+
+                  </a>
+
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/collections/spooky-home-decor">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-683601.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Spooky Home Decor</span>
+
+                  </a>
+
+                </li>
+                    </ul>
+                  </div>
+                </li>
+                <li class="cl-native-mega__flyout-item">
+                  <a class="cl-native-mega__flyout-link" href="/pages/christmas-gift-guide-2025">
+                    <span class="cl-native-mega__thumb"><img src="{{ 'cl-menu-tmenu-menu-190115.jpg' | asset_url }}" alt="" width="56" height="56" loading="eager"></span>
+                    <span class="cl-native-mega__flyout-title">Christmas Gift Guide</span>
+
+                  </a>
+
+                </li>
+            </ul>
+          </div>
+        </details>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--link">
+        <a class="cl-native-mega__top-link" href="/pages/reviews">Reviews</a>
+      </li>
+      <li class="cl-native-mega__top-item cl-native-mega__top-item--link">
+        <a class="cl-native-mega__top-link" href="/blogs/stories">Stories</a>
+      </li></ul>
+  {% endif %}
+</nav>

@@ -1,0 +1,209 @@
+{% if section.settings.enable_bar %}
+  <div class="cl-countdown-bar">
+    <div class="cl-countdown-bar__inner">
+      <div class="cl-countdown-bar__message">
+        {{ section.settings.message }}
+      </div>
+
+      <div
+        class="cl-countdown"
+        data-cl-countdown
+        data-deadline="{{ section.settings.deadline }}"
+      >
+        <div class="cl-countdown__box">
+          <strong data-days>00</strong>
+          <span>Day</span>
+        </div>
+        <div class="cl-countdown__box">
+          <strong data-hours>00</strong>
+          <span>Hour</span>
+        </div>
+        <div class="cl-countdown__box">
+          <strong data-minutes>00</strong>
+          <span>Minute</span>
+        </div>
+        <div class="cl-countdown__box">
+          <strong data-seconds>00</strong>
+          <span>Second</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .cl-countdown-bar {
+      width: 100%;
+      background: {{ section.settings.bg_color }};
+      color: {{ section.settings.text_color }};
+      border-top: 1px solid rgba(255,255,255,.06);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      z-index: 30;
+    }
+
+    .cl-countdown-bar__inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 42px;
+    }
+
+    .cl-countdown-bar__message {
+      font-size: 16px;
+      line-height: 1.4;
+      letter-spacing: .01em;
+    }
+
+    .cl-countdown {
+      display: flex;
+      gap: 14px;
+    }
+
+    .cl-countdown__box {
+      min-width: 76px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px;
+      text-align: center;
+      background: rgba(0,0,0,.18);
+    }
+
+    .cl-countdown__box strong {
+      display: block;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .cl-countdown__box span {
+      display: block;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    @media screen and (max-width: 749px) {
+      .cl-countdown-bar__inner {
+        padding: 12px 14px;
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+
+      .cl-countdown-bar__message {
+        font-size: 14px;
+      }
+
+      .cl-countdown {
+        gap: 8px;
+      }
+
+      .cl-countdown__box {
+        min-width: 62px;
+        padding: 8px 6px;
+      }
+
+      .cl-countdown__box strong {
+        font-size: 16px;
+      }
+
+      .cl-countdown__box span {
+        font-size: 11px;
+      }
+    }
+  </style>
+
+  <script>
+    (() => {
+      const timers = document.querySelectorAll('[data-cl-countdown]');
+
+      timers.forEach(timer => {
+        const deadlineRaw = timer.dataset.deadline;
+        if (!deadlineRaw) return;
+
+        const deadline = new Date(deadlineRaw).getTime();
+
+        const daysEl = timer.querySelector('[data-days]');
+        const hoursEl = timer.querySelector('[data-hours]');
+        const minutesEl = timer.querySelector('[data-minutes]');
+        const secondsEl = timer.querySelector('[data-seconds]');
+
+        function pad(num) {
+          return String(num).padStart(2, '0');
+        }
+
+        function updateCountdown() {
+          const now = new Date().getTime();
+          const distance = deadline - now;
+
+          if (distance <= 0) {
+            daysEl.textContent = '00';
+            hoursEl.textContent = '00';
+            minutesEl.textContent = '00';
+            secondsEl.textContent = '00';
+            return;
+          }
+
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+          const minutes = Math.floor((distance / (1000 * 60)) % 60);
+          const seconds = Math.floor((distance / 1000) % 60);
+
+          daysEl.textContent = pad(days);
+          hoursEl.textContent = pad(hours);
+          minutesEl.textContent = pad(minutes);
+          secondsEl.textContent = pad(seconds);
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      });
+    })();
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "CityLocs Countdown Bar",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_bar",
+      "label": "Enable countdown bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "message",
+      "label": "Message",
+      "default": "Don't wait — order by June 14 to get your gift delivered before Father's Day"
+    },
+    {
+      "type": "text",
+      "id": "deadline",
+      "label": "Countdown deadline",
+      "default": "2026-06-14T23:59:59-07:00",
+      "info": "Use format: YYYY-MM-DDTHH:MM:SS-07:00"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background color",
+      "default": "#0d0d0d"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "CityLocs Countdown Bar"
+    }
+  ]
+}
+{% endschema %}

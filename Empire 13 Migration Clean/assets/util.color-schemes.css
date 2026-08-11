@@ -1,0 +1,20 @@
+[class*='color-scheme-'] {
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+}
+
+[class*='color-scheme-']:not(.color-scheme-none) {
+  position: relative;
+  z-index: 1;
+
+  & a:not(.button) {
+    color: currentColor;
+    border-color: currentColor;
+  }
+
+  &.index-section {
+    margin: 0;
+    padding-top: var(--index-section-padding);
+    padding-bottom: var(--index-section-padding);
+  }
+}

@@ -1,0 +1,24 @@
+.icon {
+  /* Layout & Typography */
+  --_size: var(--icon-size, 20px);
+  --_width: var(--icon-width-size, var(--_size));
+  --_height: var(--icon-height-size, var(--_size));
+  --_stroke-width: var(--icon-stroke-width, 2px);
+  --_stroke-linejoin: var(--icon-stroke-linejoin, miter);
+
+  /* Colors */
+  --_color: var(--icon-color, inherit);
+  --_opacity: var(--icon-opacity, 1);
+
+  display: inline-block;
+  vertical-align: middle;
+  width: var(--_width);
+  height: var(--_height);
+  color: var(--_color);
+  opacity: var(--_opacity);
+
+  &.icon--line {
+    stroke-width: var(--_stroke-width);
+    stroke-linejoin: var(--_stroke-linejoin);
+  }
+}

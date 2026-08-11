@@ -1,0 +1,35 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_626195922761548459": {
+      "settings": {
+        "checksum": "44060c9ccbb1829f58701eba84daaa0835f984c559f006c3b54a31a4107caa3e_1_1_0_0__1",
+        "ggEG2ns4EBJ_text": "<p>Exclusive Offer For Our Customers</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-626195922761548459"
+    },
+    "gp_section_626195922761613995": {
+      "settings": {
+        "checksum": "7a4325a7e19a457dbd9b0a0058b95a2a91f0bacec6ad43593a301375861d76f9_1_1_0_0__1",
+        "ggILN91aJA1_text": "Your Style. More Options.",
+        "ggMQt36hvfs_text": "<p>Same custom design on all 3 hats. Choose your state and text. We’ll handle the rest.</p>",
+        "ggQt8TD8lka_text": "3 Hats. $60",
+        "ggb0HIMKB_r_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/2005/9307/files/image_demo.jpg"
+      },
+      "type": "gp-section-626195922761613995"
+    }
+  },
+  "order": [
+    "gp_section_626195922761548459",
+    "gp_section_626195922761613995"
+  ]
+}

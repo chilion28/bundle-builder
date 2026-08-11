@@ -1,0 +1,1225 @@
+{% comment %}
+  @param product
+
+  @param selected_variant
+
+  @param show_dynamic_checkout_button {Boolean}
+    If true, show dynamic checkout button
+{% endcomment %}
+
+{% if is_product_modal and show_dynamic_checkout_button %}
+  {% assign quickshop_smart_buttons = true %}
+{% endif %}
+
+{% if is_product_modal == false and show_dynamic_checkout_button %}
+  {% assign product_smart_buttons = true %}
+{% endif %}
+
+{% if product.selling_plan_groups.size > 0 %}
+  {% assign show_dynamic_checkout_button = false %}
+{% endif %}
+
+{% if selected_variant.available == false %}
+  {% assign quickshop_smart_buttons = false %}
+  {% assign product_smart_buttons = false %}
+{% endif %}
+
+{% assign product_form_class = '' %}
+
+{% if show_dcb %}
+  {% if product_smart_buttons or quickshop_smart_buttons %}
+    {% assign product_form_class = 'smart-payment-enabled' %}
+  {% endif %}
+{% endif %}
+
+{% form 'product', product, class: product_form_class, data-product-form: '' %}
+  {% comment %}
+    Display variant options for a product
+
+    @param product
+    @param selected_variant
+    @param style
+
+    @param enable_swatches
+    @param swatches_shape
+    @param swatches_option_trigger
+    @param swatches_option_style
+    @param swatches_product_page_size
+    @param swatch_colors
+
+    @param select_main_classes
+    @param select_classes
+    @param input_select_wrapper_classes
+    @param input_select_classes
+    @param input_select_label_classes
+    @param input_select_chevron_classes
+
+    @param radios_classes
+    @param option_header_classes
+    @param option_name_classes
+    @param option_values_classes
+    @param option_value_classes
+    @param option_value_label_classes
+    @param option_value_input_classes
+    @param option_value_name_classes
+
+    @param swatches_classes
+    @param option_swatch_wrapper_classes
+    @param option_swatch_classes
+    @param option_swatch_inner_classes
+  {% endcomment %}
+  {% assign product = product %}
+  {% assign selected_variant = selected_variant %}
+  {% assign style = settings.product_option_style %}
+  {% assign enable_swatches = settings.swatches_enable %}
+  {% assign sold_out_options = settings.sold_out_options %}
+  {% assign swatches_shape = settings.swatches_shape %}
+  {% assign swatches_option_trigger = settings.swatches_swatch_trigger %}
+  {% assign swatches_option_style = settings.swatches_option_style %}
+  {% assign swatches_product_page_size = settings.swatches_product_page_size %}
+  {% assign swatches_custom_colors = settings.swatches_custom_colors %}
+  {% assign swatch_file_type = 'files' %}
+  {% assign select_main_classes = 'form-options' %}
+  {% assign select_classes = 'form-field form-options' %}
+  {% assign input_select_wrapper_classes = 'form-field-select-wrapper' %}
+  {% assign input_select_classes = 'form-field-input form-field-select' %}
+  {% assign input_select_label_classes = 'form-field-title' %}
+  {% assign radios_classes = 'form-options form-options-selectable-boxes' %}
+  {% assign option_header_classes = 'options-selection__option-header' %}
+  {% assign option_name_classes = 'options-selection__option-name' %}
+  {% assign option_values_classes = 'options-selection__option-values' %}
+  {% assign option_value_classes = 'options-selection__option-value' %}
+  {% assign option_value_label_classes = 'options-selection__option-value-label' %}
+  {% assign option_value_input_classes = 'options-selection__option-value-input' %}
+  {% assign option_value_name_classes = 'options-selection__option-value-name' %}
+  {% assign swatches_classes = 'form-options form-options-swatches' %}
+  {% assign option_swatch_wrapper_classes = 'option-value-name option-value-swatch-wrapper' %}
+  {% assign option_swatch_classes = 'swatch' %}
+  {% assign option_swatch_inner_classes = 'swatch-inner' %}
+
+  {% comment %}Inject @pixelunion/shopify-variants-ui/variant-selection begin{% endcomment %}
+  {% comment %}
+    Display variant options for a product
+  
+    @param product
+    @param selected_variant
+j    @param variant_selection_id
+    @param sold_out_options
+    @param style
+  
+    @param enable_swatches
+    @param swatches_shape
+    @param swatches_option_trigger
+    @param swatches_option_style
+    @param swatches_product_page_size
+    @param swatches_custom_colors
+  {% endcomment %}
+  
+  {% comment %} <variant-selection
+    {% if variant_selection_id != blank %}id="{{ variant_selection_id }}"{% endif %}
+    class="variant-selection"
+    product-url="{{ product.url }}.js"
+    variant="{% if selected_variant %}{{ selected_variant.id }}{% else %}not-selected{% endif %}"
+    data-variant-selection
+  >
+    {% if product.has_only_default_variant %}
+      <input
+        class="variant-selection__variants variant-selection__variants--default"
+        name="id"
+        type="hidden"
+        value="{{ product.variants.first.id }}"
+        data-variants
+      >
+    {% else %}
+      <noscript>
+        <style>
+          .variant-selection__variants {
+            display: block !important;
+          }
+        </style>
+      </noscript>
+      <select
+        class="variant-selection__variants"
+        name="id"
+        style="display: none"
+        data-variants
+      >
+        <option
+          value="not-selected"
+          disabled
+          {% if selected_variant == blank %}selected{% endif %}
+        >
+          {{ 'product.variants.choose_variant' | t }}
+        </option>
+        {% for variant in product.variants %}
+          <option
+            {% if selected_variant and selected_variant.id == variant.id %}selected{% endif %}
+            value="{{ variant.id }}"
+            {% unless variant.available %}disabled{% endunless %}
+          >
+            {{ variant.title }} - {{ variant.price | money }}
+          </option>
+        {% endfor %}
+      </select>
+  
+      {% comment %}Inject @pixelunion/shopify-variants-ui/options-selection begin{% endcomment %}
+      {% comment %}
+        Display variant options for a product
+      
+        @param product
+        @param selected_variant
+        @param variant_selection_id
+        @param sold_out_options
+        @param style
+      
+        @param enable_swatches
+        @param swatches_shape
+        @param swatches_option_trigger
+        @param swatches_option_style
+        @param swatches_product_page_size
+        @param swatches_custom_colors
+        @param swatch_file_type
+      {% endcomment %}
+      
+      <options-selection
+        {% if variant_selection_id != blank %}variant-selection="{{ variant_selection_id }}"{% endif %}
+        style="display: none;"
+        {% if sold_out_options == 'disabled' %}disable-unavailable{% endif %}
+        {% if sold_out_options == 'hidden' %}remove-unavailable{% endif %}
+        data-options-selection
+      >
+        <script>
+          (function() {
+            const scriptTag = document.scripts[document.scripts.length - 1];
+            const parentTag = scriptTag.parentNode;
+      
+            parentTag.style.display = '';
+          })()
+        </script>
+      
+        {% for option in product.options_with_values %}
+          {% assign option_index = forloop.index0 %}
+          {% assign show_swatches = false %}
+          {% if enable_swatches %}
+            {%- assign swatches_option_trigger = swatches_option_trigger | strip | downcase -%}
+            {%- assign option_name = option.name | strip | downcase -%}
+      
+            {% if option_name == swatches_option_trigger %}
+              {% assign show_swatches = true %}
+              {% assign swatch_option_key = 'option' | append: forloop.index %}
+            {% endif %}
+          {% endif %}
+      
+          {% if style == 'select' and show_swatches == false %}
+            {%
+              render 'options-select',
+              product: product,
+              selected_variant: selected_variant,
+              option: option,
+              option_index: option_index
+            %}
+          {% elsif style == 'radio' or show_swatches == true %}
+            {%
+              render 'options-radios',
+              product: product,
+              selected_variant: selected_variant,
+              option: option,
+              option_index: option_index,
+              show_swatches: show_swatches,
+              swatch_option_key: swatch_option_key,
+              swatch_size: swatches_product_page_size,
+              swatches_option_style: swatches_option_style,
+              swatch_file_type: swatch_file_type,
+              swatches_custom_colors: swatches_custom_colors,
+              swatches_shape: swatches_shape,
+            %}
+          {% endif %}
+        {% endfor %}
+      </options-selection>
+      {% comment %}Inject @pixelunion/shopify-variants-ui/options-selection end{% endcomment %}
+  
+    {% endif %}
+  </variant-selection> {% endcomment %}
+  {% comment %}Inject @pixelunion/shopify-variants-ui/variant-selection end{% endcomment %}
+
+    <div id="add-to-cart-form">
+      {% comment %} {% render 'select_state' %} {% endcomment %}  
+
+      <div class="center-align" :class="checkLoading()">
+        <div class="lds-hourglass"></div>
+      </div>
+
+      {% if template == "product.list-mandatory2nd-options" %}
+        <div id="2ndmandatory" style="display: none;"></div>
+      {% endif %}
+
+      <div :class="checkOptions()">
+
+        {% if template == "product.custom" or template == "product.pc-custom" or template == "product.list-options" or template == "product.list-mandatory2nd-options" or template == "product.gp-template-619060056830247729" %}
+          {% for option in product.options %}
+            {% if option == "Style" %}
+              {% if product.title == 'Alabama Plate Hat' %}
+                {% render 'product-swatch-mobile-clplate', option: option %}
+              {% else %}
+                {% render 'product-swatch-clplate', option: option  %}
+              {% endif %}
+            {% endif %}  
+          {% endfor %}
+      {% endif %}
+
+        {% comment %} <div>left</div> {% endcomment %}
+        <div id="product-list-options">
+                <div class="product-list-box" v-for="option in options" :key="option.id">
+                  <div style="flex: 1;">
+                    <img style="max-width: 80px;" :src="setProdImg(`${ option.featured_media.preview_image.src }`)"  alt="Plate Image" @click="displayImg( `${ option.featured_media.preview_image.src }` )"> 
+                  </div>
+                  
+                  <div class="product-list-child-2" style="display: flex; flex-direction: column; padding: 25px;">
+                    <div class="product-box-title">${ option.option3 }</div>
+                    <div class="product-box-title">${ option.option2 }</div>
+                    <div class="product-box-title">${ option.option1 }</div>
+                  </div>
+
+                    <div class="product-list-child-2 flex-container test">
+                      <div class="flex-child">
+                        <div type="button" class="qty-add-sub" @click="minQty( `${option.id}` )">
+                        <span class="qty-minus">-</span>  
+                        </div>  
+                      </div>
+                      <div style="flex: 2; min-width: 60px;">
+                       <input class="qty-box" type="text" id="qty" name="qty" :value="handleQty(`${ option.id }`)" @input="inputQty(`${ option.id }`, $event.target.value)" >     
+                      </div>
+                      <div class="flex-child">
+                        <div type="button" class="qty-add-sub" @click="addQty( `${option.id}` )">
+                        <span class="qty-add">+</span>    
+                        </div>
+                      </div>
+                    </div>
+                </div>            
+            </div>
+        
+          {% comment %} scroll box end {% endcomment %}
+        {% comment %} <div class="scroll-button"></div>     {% endcomment %}
+        </div>
+          <div class="plate-font-3">
+            Current selection: ${totalQty} piece(s)
+          </div>
+          <div class="plate-font-3" v-if="cartQty > 0" style="color:#0079b8;">
+            Already in your cart: ${cartQty} piece(s) · ${totalQty + cartQty} total
+          </div>
+          <div class="plate-price">
+            Unit Price: $${indiPrice} each
+          </div>
+          <div class="plate-font-2">
+            ${messageDiscount}
+          </div>
+          <div class="plate-font-2">
+            <span style="font-weight: bold;">SUBTOTAL $${ subTotal }</span>
+          </div>
+
+          <div>
+            <div
+              class="button-primary"
+              id="product-cl-add-cart"
+              @click="addToCart($event)"
+            >
+          Add To Cart
+            </div>
+              <div class="cl-lightbox" v-show=displayStyle>
+                <div id="approvePopUp" style="margin-left: auto; padding: 25px 50px 25px 50px; margin-right: auto; margin-top: 200px; background-color: rgb(246, 246, 246);">
+                  <h3 style="color: rgb(0, 0, 0); font-size: 18px;">Please look over the custom text to make sure its correct. <br>
+                      All sales are final on custom items.</h3>
+                  <div style="display: flex;">
+                    <div @click="toggleApproval()" id="continueBtnApproval">Go Back To Confirm</div>
+                    <div @click="addToCart($event)" id="btnApproval">Continue With Order</div>
+                  </div>
+                </div>
+              </div>
+
+      </div>
+
+      {% comment %} Upsell quick-view modal — pick colors/styles to reach the next price tier {% endcomment %}
+      <div class="cl-upsell-overlay" v-if="showUpsell" @click.self="declineUpsell()">
+        <div class="cl-upsell-modal cl-up2" role="dialog" aria-modal="true">
+          <button type="button" class="cl-upsell-close" @click="declineUpsell()" aria-label="Close">&times;</button>
+
+          {% comment %} Header {% endcomment %}
+          <div class="cl-up2-eyebrow">The more you stack, the less you pay</div>
+          <h3 class="cl-up2-title" v-if="upsellNext()">Add ${ upsellNext().moreNeeded } more &amp; <span class="cl-up2-save">save $${ upsellSavings() }</span></h3>
+          <h3 class="cl-up2-title" v-else>You've unlocked our best price!</h3>
+          <div class="cl-up2-sub" v-if="upsellNext()">Unlock $${ upsellNext().price } each at ${ upsellNext().qty }+ hats</div>
+
+          {% comment %} Tier cards {% endcomment %}
+          <div class="cl-up2-tiers" v-if="tierCards().length">
+            <div class="cl-up2-tier" v-for="c in tierCards()" :key="c.qty" :class="'is-' + c.state">
+              <div class="cl-up2-tier-badge" v-if="c.state === 'current'">You're here</div>
+              <div class="cl-up2-tier-qty">${ c.qty }+</div>
+              <div class="cl-up2-tier-price">$${ c.price }</div>
+            </div>
+          </div>
+
+          {% comment %} Two-column body {% endcomment %}
+          <div class="cl-up2-body">
+            <div class="cl-up2-left">
+              <div class="cl-up2-gallery">
+                <img class="cl-up2-img" :src="setProdImg(modalImg)" alt="Selected hat">
+                <span class="cl-up2-chip" v-if="modalColorLabel">${ modalColorLabel }</span>
+              </div>
+
+              <div class="cl-up2-custom" v-if="modalCustom1 || modalCustom2 || editingCustom">
+                <div class="cl-up2-custom-head">
+                  <span class="cl-up2-custom-label">Your custom text</span>
+                  <button type="button" class="cl-qv-edit" @click="toggleEditCustom()">${ editingCustom ? 'Done' : 'Edit' }</button>
+                </div>
+                <template v-if="!editingCustom">
+                  <div class="cl-up2-custom-val">
+                    <span v-if="modalCustom1">${ modalCustom1 }</span><span v-if="modalCustom2"> / ${ modalCustom2 }</span><span class="cl-up2-custom-date" v-if="modalMonth || modalYear"> · ${ modalMonth } ${ modalYear }</span>
+                  </div>
+                  <div class="cl-up2-custom-note">Applied to every hat in this order</div>
+                </template>
+                <template v-else>
+                  <input class="cl-qv-custom-input" type="text" :maxlength="customMax1" :value="modalCustom1" @input="onEditCustom1($event.target.value)" placeholder="Line 1">
+                  <input v-if="hasSecondLine" class="cl-qv-custom-input" type="text" :maxlength="customMax2" :value="modalCustom2" @input="onEditCustom2($event.target.value)" placeholder="Line 2 (optional)">
+                  <div class="cl-qv-date-row" v-if="modalMonth || modalYear">
+                    <input class="cl-qv-custom-input" type="text" :maxlength="monthMax" :value="modalMonth" @input="onEditMonth($event.target.value)" placeholder="Month">
+                    <input class="cl-qv-custom-input" type="text" :maxlength="yearMax" :value="modalYear" @input="onEditYear($event.target.value)" placeholder="Year">
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <div class="cl-up2-right">
+              <div class="cl-qv-styles">
+                <button
+                  type="button"
+                  v-for="style in styleList()"
+                  :key="style"
+                  class="cl-qv-style"
+                  :class="{ 'is-active': selected === style }"
+                  @click="selectStyle(style)"
+                >${ style }</button>
+              </div>
+
+              <div class="cl-up2-collabel">Choose colors &amp; quantities</div>
+              <div class="cl-qv-colors">
+                <div class="cl-qv-row" v-for="option in options" :key="option.id" :class="{ 'is-selected': handleQty(`${ option.id }`) > 0 }" @mouseenter="setModalView(option)">
+                  <img class="cl-qv-thumb" :src="setProdImg(`${ option.featured_media.preview_image.src }`)" alt="">
+                  <span class="cl-qv-name">${ option.option3 } ${ option.option2 }</span>
+                  <span class="cl-qv-stepper">
+                    <span class="cl-qv-btn" @click="minQty(`${option.id}`)">–</span>
+                    <input class="cl-qv-qty" type="text" :value="handleQty(`${ option.id }`)" @input="inputQty(`${ option.id }`, $event.target.value)">
+                    <span class="cl-qv-btn" @click="addQty(`${option.id}`); setModalView(option)">+</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% comment %} Footer {% endcomment %}
+          <div class="cl-up2-footer">
+            <div class="cl-up2-sumchip">
+              <span class="cl-up2-sumqty">${ totalQty }</span>
+              <span class="cl-up2-summeta">${ totalQty == 1 ? 'hat' : 'hats' } added now<br><span class="cl-up2-each">$${ indiPrice } each</span><span v-if="cartQty > 0"> · ${ cartQty } already in cart</span></span>
+            </div>
+            <div class="cl-up2-total">
+              <span class="cl-up2-total-label">Subtotal</span>
+              <span class="cl-up2-total-val">$${ subTotal }</span>
+            </div>
+            <button type="button" class="cl-up2-cta" @click="acceptConfigurator()">Add to cart · $${ subTotal }</button>
+          </div>
+          <button type="button" class="cl-upsell-decline cl-up2-decline" @click="declineUpsell()">No thanks, continue</button>
+        </div>
+      </div>
+    </div>
+
+
+  <div data-payment-terms-reference style="display: none;">
+    {{ form | payment_terms }}
+  </div>
+
+  {% if enable_local_pickup %}
+    <div class="surface-pick-up" data-surface-pick-up></div>
+  {% endif %}
+{% endform %}
+
+{% comment %} vue setup for product scroll {% endcomment %}
+
+<script>
+  // Pass all product tags to let API find the matching discount
+  const productTags = {{ product.tags | json }};
+  const productHandle = {{ product.handle | json }};
+
+  {%- comment -%}
+    Upsell modal toggle: boolean metafield custom.upsell_modal = true, set on the
+    PRODUCT (one at a time) OR on a COLLECTION (bulk). Add the definition for both
+    Products and Collections under Settings > Custom data. Product wins; else any
+    enabled collection turns it on.
+  {%- endcomment -%}
+  {%- assign cl_modal_ok = false -%}
+  {%- if product.metafields.custom.upsell_modal.value -%}{%- assign cl_modal_ok = true -%}{%- endif -%}
+  {%- unless cl_modal_ok -%}
+    {%- for c in product.collections -%}
+      {%- if c.metafields.custom.upsell_modal.value -%}{%- assign cl_modal_ok = true -%}{%- break -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endunless -%}
+  const CL_MODAL_ENABLED = {% if cl_modal_ok %}true{% else %}false{% endif %};
+
+  const { ref, reactive, createApp, watch, onBeforeMount } = Vue;
+
+  if(document.querySelector('#add-to-cart-form')) { 
+
+    const productForm = createApp({
+      delimiters: ['${', '}'],
+      setup() {
+        let comments = ref([]);
+        let selected = ref("Snapback");
+        let page = 1;
+        let isLoading = ref(true);
+        let variant = ref([]);
+        let options = ref([]);
+        let items = ref([0, 1, 2, 3, 4, 5, 6, 7]);
+        let qtySelected = reactive({});
+        let basePrice = ref(34.99);
+        let totalQty = ref(0);
+        let subTotal = ref(0.00);
+        let indiPrice = ref(0.00);
+        let messageDiscount = ref("ORDER MORE THAN 1 FOR DISCOUNTED PRICING");
+        let discountQtys = ref([]);
+        let discountAmounts = ref([]);
+        let discountName = ref("");
+        let prevCartItem = false;
+        let cartData;
+        let scrollContent;
+        let displayStyle = ref(false);
+
+        // ----- Upsell / milestone state -----
+        let showUpsell = ref(false);
+        let upsellDismissed = ref(false);
+        let upsell = reactive({ moreNeeded: 0, nextQty: 0, nextPrice: '0.00', savings: 0 });
+        let modalImg = ref('');
+        let modalColorLabel = ref('');
+        let modalCustom1 = ref('');
+        let modalCustom2 = ref('');
+        let modalMonth = ref('');
+        let modalYear = ref('');
+        let editingCustom = ref(false);
+        let hasSecondLine = ref(false);
+        let customMax1 = ref(20);
+        let customMax2 = ref(26);
+        let monthMax = ref(3);
+        let yearMax = ref(4);
+        let qtySnapshot = {};
+        let pendingProperties = null;
+        let cartQty = ref(0);   // qty of THIS product already in the cart (discount is cart-wide)
+
+        // On-page batch + what's already in the cart — the qty the discount engine actually sees.
+        const combinedQty = () => totalQty.value + cartQty.value;
+
+        // Read current cart and total the quantity for this product.
+        const refreshCartQty = () => {
+          return fetch('/cart.js')
+            .then(r => r.json())
+            .then(cart => {
+              let q = 0;
+              (cart.items || []).forEach(it => { if (it.handle === productHandle) q += it.quantity; });
+              cartQty.value = q;
+            })
+            .catch(() => {});
+        };
+
+        // Discount tiers above qty 1, derived from the app-provided breaks. [{qty, price}]
+        const milestoneTiers = () => {
+          const qtys = discountQtys.value, amounts = discountAmounts.value;
+          const out = [];
+          for (let i = 0; i < qtys.length; i++) {
+            if (qtys[i] <= 1) continue;
+            out.push({ qty: qtys[i], price: (basePrice.value - amounts[i]).toFixed(2) });
+          }
+          return out;
+        };
+
+        // Next reachable tier above the current total quantity, or null if at the top.
+        const getNextTier = () => {
+          const qtys = discountQtys.value, amounts = discountAmounts.value;
+          const q = combinedQty();
+          for (let i = 0; i < qtys.length; i++) {
+            if (q < qtys[i] && qtys[i] > 1) {
+              return { qty: qtys[i], price: (basePrice.value - amounts[i]).toFixed(2), moreNeeded: qtys[i] - q };
+            }
+          }
+          return null;
+        };
+
+        // Progress-bar fill % aligned to the evenly-spaced tier dots (not raw quantity).
+        const milestoneFill = () => {
+          const tiers = milestoneTiers();
+          const n = tiers.length;
+          if (!n) return 0;
+          const q = combinedQty();
+          const slot = 100 / n;            // each dot occupies one equal slot
+          let reached = -1;
+          for (let i = 0; i < n; i++) { if (q >= tiers[i].qty) reached = i; }
+          if (reached === n - 1) return 100;
+          // position of the last reached dot's centre (0 if none reached yet)
+          const pos = reached >= 0 ? (reached + 0.5) * slot : 0;
+          const nextPos = (reached + 1 + 0.5) * slot;
+          const curQty = reached >= 0 ? tiers[reached].qty : 0;
+          const nextQty = tiers[reached + 1].qty;
+          const frac = Math.min(1, Math.max(0, (q - curQty) / (nextQty - curQty)));
+          return Math.min(100, Math.max(0, pos + frac * (nextPos - pos)));
+        };
+
+        // Live headline that tracks the customer's current quantity / next tier.
+        const upsellHeadline = () => {
+          const nextTier = getNextTier();
+          if (!nextTier) {
+            return `You're getting our best price — $${indiPrice.value} each!`;
+          }
+          return `Add ${nextTier.moreNeeded} more & pay $${nextTier.price} each`;
+        };
+
+        // The savings amount, surfaced separately so it can be emphasised in the headline.
+        const upsellSavings = () => {
+          const nextTier = getNextTier();
+          if (!nextTier) return '';
+          const savings = Math.max(0, (parseFloat(indiPrice.value) - parseFloat(nextTier.price)) * nextTier.qty);
+          return savings > 0 ? savings.toFixed(2) : '';
+        };
+
+        // Next tier (for the header subtext) — exposed for the template.
+        const upsellNext = () => getNextTier();
+
+        // Tier cards for the modal header, each tagged reached / current / future.
+        const tierCards = () => {
+          const tiers = milestoneTiers();
+          const q = combinedQty();
+          let currentIdx = -1;
+          tiers.forEach((t, i) => { if (q >= t.qty) currentIdx = i; });
+          return tiers.map((t, i) => ({
+            qty: t.qty,
+            price: t.price,
+            state: i < currentIdx ? 'reached' : (i === currentIdx ? 'current' : 'future')
+          }));
+        };
+
+        const load = async $state => {
+            // Count this product's hats already in the cart (discount is cart-wide).
+            refreshCartQty();
+
+            // Fetch discount data from app proxy (send all product tags)
+            if (productTags && productTags.length > 0) {
+            fetch(`/apps/citylocs/discount-info?tags=${encodeURIComponent(JSON.stringify(productTags))}`)
+              .then(res => res.json())
+              .then(data => {
+                console.log('App Proxy API Response:', data);
+                if (data.discountBreak && data.discountAmount) {
+                  // Add 1 at the start for single item (no discount)
+                  discountQtys.value = [1, ...data.discountBreak.map(Number)];
+                  discountAmounts.value = [0, ...data.discountAmount.map(Number)];
+                  discountName.value = data.discountMessage || "";
+                }
+              })
+              .catch(err => console.log('App Proxy Error:', err));
+            }
+
+            try {
+              const productGet = await axios.get("{{ product.handle }}.js");
+
+              productGet.data.variants.forEach((prodEl, idx) => {
+                if( prodEl.inventory_management != "shopify" ||
+                  (prodEl.inventory_management == "shopify" && prodEl.inventory_quantity > 0) ) {
+                  variant.value.push(prodEl);
+                }
+              })
+
+              const selectedVars = variant.value.filter(varEl => varEl.option1 == selected.value);
+              options.value = [];
+              options.value.push(...selectedVars);
+
+              const queryString = window.location.search;
+              const urlParams = new URLSearchParams(queryString);
+              const itemId = urlParams.get('id');
+              const editProduct = urlParams.get('editProduct');
+
+              if(editProduct) {
+                prevCartItem = true;
+                checkProduct(itemId);
+              } else {
+                isLoading.value = false;
+              }
+
+            } catch (error) {
+              console.log(error);
+            }
+        }
+
+        const checkLoading = () => {
+          if(!isLoading.value) {
+            return "hide-div";
+          }
+        }
+
+        const checkOptions = () => {
+          if(isLoading.value) {
+            return "hide-div";
+          }
+        }
+
+        const selectionButton = (event) => {
+            event.preventDefault();
+            const clickedOption = event.currentTarget.dataset.value;
+            selected.value = clickedOption;
+        }
+
+        const addQty = (optionId, inputVal) => {
+          if(inputVal) {
+            qtySelected[optionId] = inputVal;
+            return;
+          }
+
+          let optionQty = 0;
+          if(qtySelected[optionId]) {
+            optionQty = qtySelected[optionId];
+          }
+          optionQty++;
+          qtySelected[optionId] = optionQty;
+        }
+
+        const inputQty = (optionId, inputVal) => {
+          qtySelected[optionId] = Number(inputVal);
+        }
+
+        const minQty = (optionId) => {
+          if(qtySelected[optionId] > 0) {          
+            let optionQty = 0;
+            if(qtySelected[optionId]) {
+              optionQty = qtySelected[optionId];
+            } else {
+            return;
+          }
+            optionQty = optionQty - 1;
+            qtySelected[optionId] = optionQty;
+          }
+        }
+
+        const handleQty = (prodID) => {
+          if(qtySelected[prodID]) {
+          return qtySelected[prodID];
+        } else {
+          return 0;
+        }
+        }
+
+        const displayImg = (imgSrc) => {
+          const imageOptions = window.matchMedia('(hover: none), (max-width: 767px)').matches
+            ? {
+                Image: {
+                  zoom: false,
+                  click: 'close',
+                  doubleClick: 'close',
+                  wheel: false,
+                },
+                Toolbar: {
+                  display: ['close'],
+                },
+              }
+            : {};
+
+          Fancybox.show([ {
+            src: imgSrc,
+            type: "image",
+          } ], imageOptions);
+        }
+
+        const toggleApproval = (add) => {
+          if($('input[name="properties[Custom Text]"]').val().length < 1) {
+            Fancybox.show([ {
+              src: "<h2>Please enter your custom text, before adding to cart.</h2>",
+              type: "html",
+            } ]);
+            return
+          } else if(totalQty.value == 0) {
+            Fancybox.show([ {
+              src: "<h2>Please select a quantity.  No quantity has been selected.</h2>",
+              type: "html",
+            } ]);
+            return
+          } else if(add) {
+          displayStyle.value = true;
+          } else {
+            displayStyle.value = false;
+          }
+        }
+
+        const checkProduct = (itemId) => {
+          const prodTitle = $(".product-title").text().trim();
+          event.preventDefault();
+          axios({
+            method: 'GET',
+            url: '/cart.js'
+          })
+          .then( (response) => {
+            cartData = response.data;
+
+            cartData.items.forEach(el => {
+            if( el.product_title == prodTitle && el.id == itemId) {
+              if(el.properties["Custom Text"]) {
+                $("#user_input").val( el.properties["Custom Text"] );
+              }
+              addQty(el.id, el.quantity);
+            }
+
+          })
+            isLoading.value = false;
+          })
+          .catch( (error) => {
+            console.error('Error:', error);
+          });
+        }
+
+        const displayApproval = (event) => {
+            event.preventDefault();
+
+            Fancybox.bind("[data-fancybox]", {
+              // Your custom options
+            });
+        }
+
+        const addToCart = (event) => {
+          event.preventDefault();
+          
+          const base_url = window.location.origin;
+          const cartUrl = base_url + '/cart';
+          
+          let custom1;
+          let custom2;
+          let custom3;
+          
+          if( $('input[name*="ustom Text Two"]').val() ) {
+            custom2 = $('input[name*="ustom Text Two"]').val();
+          } else if( $('#second_user_input').val() ) {
+            custom2 = $('#second_user_input').val();
+          }
+
+          try{
+            if($('input[name*="ustom Text Two"]').val().length < 1 && document.getElementById("2ndmandatory")) {
+            Fancybox.show([ {
+              src: '<h2>Please enter "Custom Text Two" before adding to cart.</h2>',
+              type: "html",
+            } ]);
+            return
+          }
+          } catch{
+            
+          }
+
+
+          if( $('input[name*="Custom Text Three"]').val() ) {
+            custom3 = $('input[name*="Custom Text Three"]').val();
+          }
+  
+          const custom1Input =  $('input[name="properties[Custom Text]"]').val();
+
+          if( document.getElementById("engraved-hat-select") != null  
+              && $('#engraved-hat-select').val() == "Select" ) { 
+                Fancybox.show([ {
+                  src: "<h2>Please select a state from the dropdown menu</h2>",
+                  type: "html",
+                } ]);
+                return
+          } 
+
+          if ($('input[name="properties[Custom Text]"]').val())
+            {
+                custom1 = $('input[name="properties[Custom Text]"]').val();
+            } else if ($('#user_input').val()) {
+                custom1 = $('#user_input').val();
+            }
+
+
+          if($('input[name="properties[Custom Text]"]').val().length < 1) {
+            Fancybox.show([ {
+              src: "<h2>Please enter your custom text, before adding to cart.</h2>",
+              type: "html",
+            } ]);
+            return
+          };
+          
+          let properties;
+
+          if(custom3) {
+            properties = {
+              'Custom Text': custom1.toUpperCase(),
+              'Custom Text Two': custom2.toUpperCase(),
+              'Custom Text Three': custom3.toUpperCase()
+            }
+
+          } else if(custom2) {
+            properties = {
+              'Custom Text': custom1.toUpperCase(),
+              'Custom Text Two': custom2.toUpperCase()
+            }
+          } else {
+            properties = {
+              'Custom Text': custom1.toUpperCase()
+            }
+          }
+
+          // check if any other fields are custom 
+          // month
+          if(  $('input[name="properties[Month]"]').val()) properties["Month"] = $('input[name="properties[Month]"]').val();
+          // date
+          if(  $('input[name="properties[Year]"]').val()) properties["Year"] = $('input[name="properties[Year]"]').val(); 
+
+
+          // add state to object if engraved state plate
+          if( document.getElementById("engraved-hat-select") != null ) {
+            properties['state'] = $('#engraved-hat-select').val();
+          }
+
+          // ----- Upsell gate: offer the next tier before adding -----
+          const nextTier = getNextTier();
+          if (CL_MODAL_ENABLED && totalQty.value > 0 && !upsellDismissed.value && nextTier) {
+            upsell.moreNeeded = nextTier.moreNeeded;
+            upsell.nextQty = nextTier.qty;
+            upsell.nextPrice = nextTier.price;
+            const perHatSavings = (parseFloat(indiPrice.value) - parseFloat(nextTier.price));
+            upsell.savings = Math.max(0, perHatSavings * nextTier.qty).toFixed(2);
+            pendingProperties = properties;
+            // Snapshot current selection so "No thanks" can revert any modal edits.
+            qtySnapshot = {};
+            Object.keys(qtySelected).forEach(k => { qtySnapshot[k] = qtySelected[k]; });
+            if (options.value.length) setModalView(options.value[0]);
+            modalCustom1.value = properties['Custom Text'] || '';
+            modalCustom2.value = properties['Custom Text Two'] || '';
+            modalMonth.value = properties['Month'] || '';
+            modalYear.value = properties['Year'] || '';
+            editingCustom.value = false;
+            hasSecondLine.value = !!(document.querySelector('#second_user_input') || document.querySelector('input[name*="ustom Text Two"]'));
+            // Pull real character limits off the page inputs so the modal enforces the same caps.
+            const ml = (sel, fallback) => {
+              const el = document.querySelector(sel);
+              const v = el && el.getAttribute('maxlength');
+              return v ? parseInt(v, 10) : fallback;
+            };
+            customMax1.value = ml('input[name="properties[Custom Text]"]', ml('#user_input', 20));
+            customMax2.value = ml('#second_user_input', ml('input[name*="ustom Text Two"]', 26));
+            monthMax.value = ml('input[name="properties[Month]"]', 3);
+            yearMax.value = ml('input[name="properties[Year]"]', 4);
+            showUpsell.value = true;
+            return;
+          }
+
+          executeAdd(properties);
+        }
+
+        // Performs the actual cart add/update once the upsell has been resolved.
+        // Clear the on-page configurator after a successful add so re-clicking ATC
+        // can't duplicate the order, and let the upsell modal offer again for a new batch.
+        const resetSelection = () => {
+          Object.keys(qtySelected).forEach(k => { qtySelected[k] = 0; });
+          upsellDismissed.value = false;
+          prevCartItem = false;
+          // The cart just changed — re-read it so the next batch is tier-aware.
+          refreshCartQty();
+        };
+
+        const executeAdd = (properties) => {
+          const base_url = window.location.origin;
+          const cartUrl = base_url + '/cart';
+
+          // Re-read custom text from the DOM (used by the edit-mode branch below).
+          let custom1 = $('input[name="properties[Custom Text]"]').val() || $('#user_input').val();
+          let custom2 = $('input[name*="ustom Text Two"]').val() || $('#second_user_input').val();
+
+          if(totalQty.value > 0 && !prevCartItem) {
+            let items = [];
+            let url = '/cart/add.js';
+
+            Object.keys(qtySelected).forEach(selected => {
+              let currentItem = {
+                id: selected,
+                quantity: qtySelected[selected],
+                properties: properties
+              }
+
+              items.push(currentItem);
+            })
+
+            axios({
+              method: 'post',
+              url: url,
+              data: {
+                items: items
+              }
+            })
+            .then( (response) => {
+              resetSelection();
+              AMP_API.OPEN_CART();
+              {% comment %} window.location.href = cartUrl; {% endcomment %}
+            })
+            .catch( (error) => {
+              console.error('Error:', error);
+            }); 
+          } else if(totalQty.value > 0 && prevCartItem) {
+
+            let updates = {};
+            let items = [];
+
+            Object.keys(qtySelected).forEach((selected, idx) => { 
+
+              {% comment %} updates[selected] = qtySelected[selected]; {% endcomment %}
+              let currentProduct = {
+                quantity: qtySelected[selected]
+              }
+              // check for custom text
+             if(custom1 && !custom2) {
+                currentProduct['properties'] = {
+                  "Custom Text": custom1
+                }
+              } else if(custom2) {
+                currentProduct['properties'] = {
+                  "Custom Text": custom1,
+                  "Custom Text Two": custom2
+                }
+              }
+  
+                  let currentItem = {
+                    id: selected,
+                    quantity: qtySelected[selected],
+                    properties: properties
+                  }
+              
+                  items.push(currentItem);             
+            }) 
+
+            postShopifyAPI({ items });
+          } else {
+            // Nothing selected (e.g. just added a batch) — show their current cart.
+            try { AMP_API.OPEN_CART(); } catch (e) {}
+          }
+        }
+
+        // Distinct hat styles (option1) available for this product, for the modal switcher.
+        const styleList = () => {
+          const seen = [];
+          variant.value.forEach(v => { if (v.option1 && !seen.includes(v.option1)) seen.push(v.option1); });
+          return seen;
+        };
+
+        // Switch style inside the modal (reuses the existing `selected` watcher to refilter colors).
+        const selectStyle = (style) => {
+          selected.value = style;
+          if (options.value.length) setModalView(options.value[0]);
+        };
+
+        // Update the modal gallery image (on color hover / qty change).
+        const setModalImg = (src) => { if (src) modalImg.value = src; };
+
+        // Set the gallery image AND the color-chip label from a color option.
+        const setModalView = (option) => {
+          if (!option) return;
+          modalImg.value = option.featured_media.preview_image.src;
+          modalColorLabel.value = ((option.option3 || '') + ' ' + (option.option2 || '')).trim();
+        };
+
+        // Toggle inline editing of the custom text.
+        const toggleEditCustom = () => { editingCustom.value = !editingCustom.value; };
+        const onEditCustom1 = (val) => { modalCustom1.value = val; };
+        const onEditCustom2 = (val) => { modalCustom2.value = val; };
+        const onEditMonth = (val) => { modalMonth.value = val; };
+        const onEditYear = (val) => { modalYear.value = val; };
+
+        // Mirror the modal's custom text/date back to the page inputs (keeps preview + cart in sync).
+        const writeCustomToDOM = () => {
+          const c1 = (modalCustom1.value || '').toUpperCase();
+          const c2 = (modalCustom2.value || '').toUpperCase();
+          const fire = (sel, v) => {
+            const el = document.querySelector(sel);
+            if (el) { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }
+          };
+          fire('input[name="properties[Custom Text]"]', c1);
+          fire('#user_input', c1);
+          if (hasSecondLine.value) { fire('#second_user_input', c2); fire('input[name*="ustom Text Two"]', c2); }
+          fire('input[name="properties[Month]"]', modalMonth.value || '');
+          fire('input[name="properties[Year]"]', modalYear.value || '');
+        };
+
+        // Accept: add everything currently configured and open the cart drawer.
+        const acceptConfigurator = () => {
+          // Sync any edited custom text into the cart payload + the page.
+          writeCustomToDOM();
+          if (pendingProperties) {
+            pendingProperties['Custom Text'] = (modalCustom1.value || '').toUpperCase();
+            if (hasSecondLine.value && modalCustom2.value) {
+              pendingProperties['Custom Text Two'] = modalCustom2.value.toUpperCase();
+            } else {
+              delete pendingProperties['Custom Text Two'];
+            }
+            if (modalMonth.value) pendingProperties['Month'] = modalMonth.value;
+            if (modalYear.value) pendingProperties['Year'] = modalYear.value;
+          }
+          upsellDismissed.value = true;
+          showUpsell.value = false;
+          if (pendingProperties) executeAdd(pendingProperties);
+        };
+
+        // Decline: revert any modal changes to what they had, then proceed.
+        const declineUpsell = () => {
+          upsellDismissed.value = true;
+          showUpsell.value = false;
+          Object.keys(qtySelected).forEach(k => { qtySelected[k] = 0; });
+          Object.keys(qtySnapshot).forEach(k => { qtySelected[k] = qtySnapshot[k]; });
+          if (pendingProperties) executeAdd(pendingProperties);
+        };
+
+        watch( selected, () => {
+            const updatedOptions = variant.value.filter(varEl => varEl.option1 == selected.value);
+            options.value = [];
+            options.value.push(...updatedOptions);
+        })
+
+        // Cart-aware pricing: the tier is decided by (this batch + what's already in the cart),
+        // and the on-page batch is priced at that combined-tier rate (matches the cart engine).
+        const recalc = () => {
+          const qtys = discountQtys.value;
+          const amounts = discountAmounts.value;
+          if (!qtys.length) return;
+
+          let buildQty = 0;
+          Object.keys(qtySelected).forEach(s => { buildQty += qtySelected[s]; });
+          totalQty.value = buildQty;
+
+          const combined = buildQty + cartQty.value;
+
+          let idxPrice = 0;
+          for (let i = 0; i < qtys.length; i++) {
+            if (combined == qtys[i]) { idxPrice = i; break; }
+            else if (combined < qtys[i]) { idxPrice = i - 1; break; }
+            else { idxPrice = qtys.length - 1; }
+          }
+          idxPrice = Math.max(0, idxPrice);
+
+          const perHat = basePrice.value - amounts[idxPrice];
+          const totalProdCost = buildQty * perHat;
+          subTotal.value = totalProdCost.toFixed(2);
+          indiPrice.value = (buildQty > 0 ? perHat : 0).toFixed(2);
+
+          if (idxPrice === qtys.length - 1) {
+            const maxDiscount = amounts[amounts.length - 1];
+            messageDiscount.value = `YOU SAVED $${maxDiscount} PER ${discountName.value.toUpperCase() || 'ITEM'}!`;
+            return;
+          }
+          const toNext = qtys[idxPrice + 1] - combined;
+          const nextPrice = (basePrice.value - amounts[idxPrice + 1]).toFixed(2);
+          messageDiscount.value = `ORDER ${toNext} MORE AND GET THEM AT ${nextPrice} EACH`;
+        };
+
+        watch( qtySelected, recalc );
+        watch( cartQty, recalc );
+        watch( discountQtys, recalc );
+
+        function postShopifyAPI(data) {
+          let updates = {
+          }
+          data.items.forEach(el => {
+            updates[el.id] = 0; 
+          })
+          // remove all quantites before we update
+            axios({
+                method: 'post',
+                url: '/cart/update.js',
+                data: {
+                  updates: updates
+                }
+              })
+              .then(response => {
+                // add after removing
+                  axios({
+                    method: 'post',
+                    url: '/cart/add.js',
+                    data: data
+                  })
+                  .then(response => {
+                    resetSelection();
+                    AMP_API.OPEN_CART();
+                    {% comment %} window.location.href = "https://citylocs.com/cart"; {% endcomment %}
+                  })
+                  .catch( (error) => {
+                    console.error('Error:', error);
+                  })
+
+              })
+              .catch( (error) => {
+                console.error('Error:', error);
+              });
+        }
+        
+        onBeforeMount(load);
+
+        return {
+          selected,
+          comments,
+          page,
+          variant,
+          options,
+          items,
+          selectionButton,
+          addQty,
+          minQty,
+          inputQty,
+          handleQty,
+          addToCart,
+          totalQty,
+          subTotal,
+          indiPrice,
+          messageDiscount,
+          checkLoading,
+          checkOptions,
+          displayImg,
+          displayStyle,
+          toggleApproval,
+          milestoneTiers,
+          milestoneFill,
+          combinedQty,
+          cartQty,
+          upsellHeadline,
+          upsellSavings,
+          upsellNext,
+          tierCards,
+          modalColorLabel,
+          setModalView,
+          showUpsell,
+          upsell,
+          modalImg,
+          modalCustom1,
+          modalCustom2,
+          modalMonth,
+          modalYear,
+          editingCustom,
+          hasSecondLine,
+          customMax1,
+          customMax2,
+          monthMax,
+          yearMax,
+          toggleEditCustom,
+          onEditCustom1,
+          onEditCustom2,
+          onEditMonth,
+          onEditYear,
+          styleList,
+          selectStyle,
+          setModalImg,
+          acceptConfigurator,
+          declineUpsell
+        };
+      },
+      methods: {
+        setProdImg(optionImg) {
+          return optionImg;
+        }
+      }
+    })
+    productForm.mount('#add-to-cart-form')
+  }
+</script>

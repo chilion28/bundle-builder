@@ -1,0 +1,27 @@
+<div
+  class="back-to-top"
+  data-back-to-top
+>
+<button class="back-to-top__button">
+  <span class="back-to-top__desktop-label-wrapper">
+    <span
+      class="
+        back-to-top__button-label
+        back-to-top__button-label--desktop
+      "
+    >
+      {{- 'general.back_to_top_button.desktop_button_label' | t -}}
+    </span>
+  </span>
+
+    <span
+      class="
+        back-to-top__button-label
+        back-to-top__button-label--mobile
+      "
+    >
+      {{- 'general.back_to_top_button.mobile_button_label' | t -}}
+    </span>
+    {% render 'icon-chevron-down-small' %}
+  </button>
+</div>

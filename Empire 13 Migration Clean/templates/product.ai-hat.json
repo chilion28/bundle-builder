@@ -1,0 +1,255 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "cl-ai-hat",
+      "blocks": {
+        "usp_1": {
+          "type": "usp",
+          "settings": {
+            "icon": "🛡",
+            "title": "PREMIUM QUALITY"
+          }
+        },
+        "usp_2": {
+          "type": "usp",
+          "settings": {
+            "icon": "💧",
+            "title": "WATER RESISTANT"
+          }
+        },
+        "usp_3": {
+          "type": "usp",
+          "settings": {
+            "icon": "✳",
+            "title": "LASER ENGRAVED"
+          }
+        },
+        "usp_4": {
+          "type": "usp",
+          "settings": {
+            "icon": "🚚",
+            "title": "FAST SHIPPING"
+          }
+        },
+        "insp_1": {
+          "type": "inspiration",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jul_20_2026_02_12_28_PM.png",
+            "label": "Vintage Bear"
+          }
+        },
+        "insp_2": {
+          "type": "inspiration",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jul_20_2026_10_37_35_AM.png",
+            "label": "Baja Racer"
+          }
+        },
+        "insp_3": {
+          "type": "inspiration",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jul_21_2026_01_09_27_PM.png",
+            "label": "Biewer Terrier"
+          }
+        },
+        "insp_4": {
+          "type": "inspiration",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jul_20_2026_02_26_27_PM.png",
+            "label": "Bass Fishing"
+          }
+        },
+        "insp_5": {
+          "type": "inspiration",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jul_20_2026_02_30_38_PM.png",
+            "label": "Desert Skull"
+          }
+        },
+        "insp_6": {
+          "type": "inspiration",
+          "settings": {
+            "image": "shopify://shop_images/ChatGPT_Image_Jul_20_2026_02_32_49_PM.png",
+            "label": "Eagle & Flag"
+          }
+        },
+        "vp_1": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "✅",
+            "title": "DESIGNED BY YOU",
+            "text": "Use AI to create something 100% original."
+          }
+        },
+        "vp_2": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "⚙",
+            "title": "PROFESSIONALLY MADE",
+            "text": "We laser engrave your art for a premium look."
+          }
+        },
+        "vp_3": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "🛡",
+            "title": "BUILT TO LAST",
+            "text": "Water resistant & made for everyday wear."
+          }
+        },
+        "vp_4": {
+          "type": "valueprop",
+          "settings": {
+            "icon": "❤",
+            "title": "MADE FOR YOU",
+            "text": "Every hat is custom printed just for you."
+          }
+        }
+      },
+      "block_order": [
+        "usp_1",
+        "usp_2",
+        "usp_3",
+        "usp_4",
+        "insp_1",
+        "insp_2",
+        "insp_3",
+        "insp_4",
+        "insp_5",
+        "insp_6",
+        "vp_1",
+        "vp_2",
+        "vp_3",
+        "vp_4"
+      ],
+      "settings": {
+        "accent_color": "#00a0ea",
+        "hero_badge": "NEW",
+        "hero_title": "CREATE YOUR CUSTOM",
+        "hero_accent": "IMAGE HAT",
+        "hero_tagline": "Turn your imagination into wearable art.",
+        "hero_sub": "Generate your artwork in ChatGPT in minutes—then we'll professionally print it on a premium patch.",
+        "reviews_text": "2,500+ Verified Reviews",
+        "step1_title": "GENERATE YOUR AI ARTWORK",
+        "prompt_text": "",
+        "prompt_hint": "Add your idea after “Now create:”",
+        "prompt_example": "A Baja race truck kicking up dust in the desert at sunset, vintage poster style.",
+        "upload_title": "UPLOAD YOUR AI ARTWORK",
+        "upload_note": "JPG, PNG, WEBP up to 25MB",
+        "qc_title": "PRINT QUALITY CHECK",
+        "preview_title": "YOUR PATCH",
+        "customize_title": "CUSTOMIZE YOUR HAT",
+        "cta_label": "ADD TO CART",
+        "inspo_title": "AI ART INSPIRATION",
+        "gallery_url": "",
+        "h1_enable": false,
+        "h1_font_enable": false,
+        "h1_font": "sans_serif_n4",
+        "h1_size": 72,
+        "h1_ls": -14,
+        "h1_lh": 95,
+        "h1_tt": "none",
+        "h1_ta": "left",
+        "h1_color": "#1a1f26",
+        "h1_mb": 0,
+        "h1_pad": 0,
+        "h1_size_m": 40,
+        "h1_ls_m": -10,
+        "h1_lh_m": 100,
+        "h1_tt_m": "none",
+        "h1_ta_m": "left",
+        "h1_color_m": "#1a1f26",
+        "h1_mb_m": 0,
+        "h1_pad_m": 0,
+        "tag_enable": true,
+        "tag_font_enable": true,
+        "tag_font": "sans_serif_n4",
+        "tag_size": 26,
+        "tag_ls": 0,
+        "tag_lh": 115,
+        "tag_tt": "none",
+        "tag_ta": "left",
+        "tag_color": "#9A9A9A",
+        "tag_mb": 0,
+        "tag_pad": 0,
+        "tag_size_m": 20,
+        "tag_ls_m": 0,
+        "tag_lh_m": 120,
+        "tag_tt_m": "none",
+        "tag_ta_m": "left",
+        "tag_color_m": "#00a0ea",
+        "tag_mb_m": 0,
+        "tag_pad_m": 0,
+        "sub_enable": false,
+        "sub_font_enable": false,
+        "sub_font": "sans_serif_n4",
+        "sub_size": 16,
+        "sub_ls": 0,
+        "sub_lh": 150,
+        "sub_tt": "none",
+        "sub_ta": "left",
+        "sub_color": "#374151",
+        "sub_mb": 0,
+        "sub_pad": 0,
+        "sub_size_m": 15,
+        "sub_ls_m": 0,
+        "sub_lh_m": 150,
+        "sub_tt_m": "none",
+        "sub_ta_m": "left",
+        "sub_color_m": "#374151",
+        "sub_mb_m": 0,
+        "sub_pad_m": 0,
+        "h2_enable": false,
+        "h2_font_enable": false,
+        "h2_font": "sans_serif_n4",
+        "h2_size": 19,
+        "h2_ls": 2,
+        "h2_lh": 120,
+        "h2_tt": "none",
+        "h2_ta": "left",
+        "h2_color": "#1a1f26",
+        "h2_mb": 0,
+        "h2_pad": 0,
+        "h2_size_m": 18,
+        "h2_ls_m": 2,
+        "h2_lh_m": 120,
+        "h2_tt_m": "none",
+        "h2_ta_m": "left",
+        "h2_color_m": "#1a1f26",
+        "h2_mb_m": 0,
+        "h2_pad_m": 0,
+        "body_enable": false,
+        "body_font_enable": false,
+        "body_font": "sans_serif_n4",
+        "body_size": 14,
+        "body_ls": 0,
+        "body_lh": 145,
+        "body_tt": "none",
+        "body_ta": "left",
+        "body_color": "#374151",
+        "body_mb": 0,
+        "body_pad": 0,
+        "body_size_m": 13,
+        "body_ls_m": 0,
+        "body_lh_m": 145,
+        "body_tt_m": "none",
+        "body_ta_m": "left",
+        "body_color_m": "#374151",
+        "body_mb_m": 0,
+        "body_pad_m": 0
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

@@ -1,0 +1,89 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_622419073375929336": {
+      "settings": {
+        "checksum": "c5280a76e325ae2c186fc31168ef07196c7b94d5040c239adad0f33d6eb3618c_1_1_0_0__1",
+        "gg6Cl8unNCW_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-dad-2.png",
+        "ggNtzrcyKUO_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-dad-2.png",
+        "ggWyO-dIS1X_text": "For the dad who says he wants <span style=\"color:#F9C60F;\">nothing</span>",
+        "ggitjcvwnL3_text": "The father's day gift",
+        "ggsyQiIH8g__text": "<p>Create personalized hat with his initial and name he'll be proud to wear</p>"
+      },
+      "type": "gp-section-622419073375929336"
+    },
+    "gp_section_622419073375994872": {
+      "settings": {
+        "checksum": "1d30506f9deec285c1583c89d41b70b986e2738f090ad5443b0d0550b09c42bc_1_1_0_0__1"
+      },
+      "type": "gp-section-622419073375994872"
+    },
+    "gp_section_622419073376060408": {
+      "settings": {
+        "checksum": "3615ebefa456df2b4c536ff7a13bc41adddc5673ac26d61456dc3c290695bd2d_1_1_0_0__1"
+      },
+      "type": "gp-section-622419073376060408"
+    },
+    "gp_section_622419073376125944": {
+      "settings": {
+        "checksum": "ab53187a23cc4e5900e8ca99668f0e839d51a3beffa6ea43f21da33633df34c1_1_1_0_0__1",
+        "section_preload": "true"
+      },
+      "type": "gp-section-622419073376125944"
+    },
+    "gp_section_622419073376191480": {
+      "settings": {
+        "checksum": "c844dab9a1e164e875563b9f282dcc61776b019c57d65f46b5ed036fba00982f_1_1_0_0__1",
+        "ggizr_eAHsi_childItem_0": "<p>Product Description</p>",
+        "ggizr_eAHsi_childItem_1": "<p>Reviews</p>",
+        "ggotpgH6PTP_viewLessText": "Show less",
+        "ggotpgH6PTP_viewMoreText": "Show more"
+      },
+      "type": "gp-section-622419073376191480"
+    },
+    "gp_section_622419073376322552": {
+      "settings": {
+        "checksum": "7a38862542a51c05172ebc69796596bb61e83c7f36960fc68a33d6c5a5642e40_1_1_0_0__1",
+        "gg-LZQF2Phe_text": "<p>Handcrafted in the USA</p>",
+        "gg251Gb4h5w_text": "Step 1: Personalize your patch",
+        "ggIGrfCMDaQ_text": "<p>Add your custom text</p>",
+        "ggO-Tx7F7v2_text": "<p>Add your custom text</p>",
+        "ggPmt-AjixE_text": "<p>Perfect Gift for Dad</p>",
+        "ggT_r7K8hn6_text": "father's day delivery",
+        "ggU37b0E4ST_text": "<p>Premium Leather Patch</p>",
+        "ggscIiM0xMJ_text": "<p>To ensure delivery by Father's, order by June 14th.</p>"
+      },
+      "type": "gp-section-622419073376322552"
+    },
+    "gp_section_622419073376388088": {
+      "settings": {
+        "checksum": "7ce47599f1ae7bbfbfd3663ac75e16b9e65403577f12b855f242df83f599e26f_1_1_0_0__1"
+      },
+      "type": "gp-section-622419073376388088"
+    },
+    "gp_section_622419073376453624": {
+      "settings": {
+        "checksum": "898a402745626229c442c8a4736eeaecbd82683f53252370c52915e3fa8714a2_1_1_0_0__1"
+      },
+      "type": "gp-section-622419073376453624"
+    }
+  },
+  "order": [
+    "gp_section_622419073376125944",
+    "gp_section_622419073375929336",
+    "gp_section_622419073376322552",
+    "gp_section_622419073376388088",
+    "gp_section_622419073376191480",
+    "gp_section_622419073376060408",
+    "gp_section_622419073375994872",
+    "gp_section_622419073376453624"
+  ]
+}

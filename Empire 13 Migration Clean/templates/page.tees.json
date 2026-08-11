@@ -1,0 +1,82 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "1662673809e78777a2": {
+      "type": "dynamic-promo-grid",
+      "blocks": {
+        "16626738096a7b65a8-0": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/US-License-Plate-Tees-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/custom-us-license-plate-t-shirt",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-1": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Custom-Graphic-Tees-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/custom-tees",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "16626738096a7b65a8-2": {
+          "type": "promotion",
+          "settings": {
+            "image": "shopify://shop_images/Graphic-Tees-Category.jpg",
+            "title": "",
+            "text": "",
+            "color": "#4d4d4d",
+            "block_link": "shopify://collections/graphic-tees",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        }
+      },
+      "block_order": [
+        "16626738096a7b65a8-0",
+        "16626738096a7b65a8-1",
+        "16626738096a7b65a8-2"
+      ],
+      "settings": {
+        "title": "",
+        "section_height": "natural",
+        "section_columns": 3,
+        "text_alignment": "top-left"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "1662673809e78777a2"
+  ]
+}

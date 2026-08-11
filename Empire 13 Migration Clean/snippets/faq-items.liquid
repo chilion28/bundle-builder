@@ -1,0 +1,107 @@
+{% comment %}
+  @param icon {String}
+    The summary icon
+
+  @param category_id {String}
+    The block setting ID for the category
+
+  @param summary_image_id {String}
+    The block setting ID for a custom image
+
+  @param custom_icon_id {String}
+    The block setting ID for a custom icon
+
+  @param heading_id {String}
+    The block setting ID for the heading
+
+  @param content_id {String}
+    The block setting ID for the answer/accordion content field
+
+  @param summary_id {String}
+    The block setting ID for the question/summary content
+{% endcomment %}
+
+{%- for block in section.blocks -%}
+  {%- case block.type -%}
+    {%- when category_id -%}
+      {%- liquid
+        if heading_id != blank
+          assign heading = block.settings[heading_id] | escape
+        endif
+      -%}
+
+      {%- if heading != blank -%}
+        <h3
+          class="faq__heading"
+          id="{{ section.id }}-{{ block.id }}"
+        >
+          {{- heading -}}
+        </h3>
+      {%- endif -%}
+
+    {%- when summary_id -%}
+      {%- liquid
+        if summary_id != blank
+          assign summary = block.settings[summary_id]
+        endif
+
+        if summary_image_id != blank
+          assign summary_image = block.settings[summary_image_id]
+        endif
+
+        if content_id != blank
+          assign content = block.settings[content_id]
+        endif
+
+        if custom_icon_id != blank
+          assign custom_icon = block.settings[custom_icon_id]
+        endif
+      -%}
+
+      {%- if summary != blank and content != blank -%}
+        <details
+          class="faq__details"
+          data-faq-details
+          {{ block.shopify_attributes }}
+        >
+          <summary class="faq__summary" data-faq-summary>
+            {%- if summary_image -%}
+              {%-
+                render 'rimg',
+                img: summary_image,
+                alt: summary_image.alt,
+                size: '50x50',
+                class: 'faq__summary-image',
+              -%}
+            {%- else -%}
+              {%-
+                render 'icon-library',
+                id: custom_icon,
+                icon_class: 'faq__summary-custom-icon',
+              -%}
+            {%- endif -%}
+
+            <span class="faq__summary-heading">
+              {{- summary | escape -}}
+            </span>
+
+            {%-
+              render 'icon-library',
+              id: icon,
+              icon_class: 'faq__summary-icon',
+            -%}
+          </summary>
+
+          <div
+            class="faq__answer"
+            data-faq-answer
+            data-faq-answer-index="{{ forloop.index0 }}"
+          >
+            <div class="faq__answer-content" data-faq-answer-content>
+              {{- content -}}
+            </div>
+          </div>
+        </details>
+      {%- endif -%}
+  {%- endcase -%}
+{%- endfor -%}

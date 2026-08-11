@@ -1,0 +1,150 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "page",
+      "settings": {}
+    },
+    "dynamic_rich_text_intro": {
+      "type": "dynamic-rich-text",
+      "blocks": {
+        "icon-pin": {
+          "type": "icon",
+          "settings": {
+            "icon": "icon-pin",
+            "icon_width": 46,
+            "icon_width_mobile": 36
+          }
+        },
+        "heading-find-a-store": {
+          "type": "heading",
+          "settings": {
+            "title": "Find a Store",
+            "heading_size": "medium"
+          }
+        },
+        "text-intro": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Over 50 locations across North America. Find your nearest store, check hours, and see what's in stock before you visit.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "icon-pin",
+        "heading-find-a-store",
+        "text-intro"
+      ],
+      "settings": {
+        "width": "regular",
+        "content_alignment": "center"
+      }
+    },
+    "pxs_map": {
+      "type": "pxs-map",
+      "settings": {
+        "section_height": "small",
+        "title": "Vancouver, BC",
+        "content": "<p>1221 Broad Street<br/>Vancouver, BC</p><p>Mon to Sat: 9am to 8pm<br/>Sun: 10am to 6pm</p>",
+        "text_alignment": "left",
+        "layout": "overlay-center-left",
+        "layout_mobile": "below",
+        "address": "1221 Broad St, Victoria, BC",
+        "api_key": "",
+        "enable_custom_colors": true,
+        "foreground_color": "#292929",
+        "background_color": "#ffab41",
+        "zoom": 2,
+        "overlay_color": "#000000",
+        "opacity": 10
+      }
+    },
+    "dynamic_promo_grid_locations": {
+      "type": "dynamic-promo-grid",
+      "blocks": {
+        "location-vancouver": {
+          "type": "promotion",
+          "settings": {
+            "title": "Vancouver, BC",
+            "text": "1221 Broad Street, Vancouver, BC\nMon to Sat: 9am to 8pm / Sun: 10am to 6pm",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "#dddddd",
+            "opacity": 100
+          }
+        },
+        "location-toronto": {
+          "type": "promotion",
+          "settings": {
+            "title": "Toronto, ON",
+            "text": "840 King Street West, Toronto, ON\nMon to Sat: 9am to 8pm / Sun: 10am to 6pm",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "location-calgary": {
+          "type": "promotion",
+          "settings": {
+            "title": "Calgary, AB",
+            "text": "320 17th Avenue SW, Calgary, AB\nMon to Sat: 9am to 7pm / Sun: 11am to 5pm",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        },
+        "location-montreal": {
+          "type": "promotion",
+          "settings": {
+            "title": "Montreal, QC",
+            "text": "1450 Rue Sainte-Catherine, Montreal, QC\nMon to Sat: 9am to 8pm / Sun: 11am to 6pm",
+            "color": "#4d4d4d",
+            "block_link": "",
+            "button_text": "",
+            "button_style": "primary",
+            "show_overlay": false,
+            "background": "",
+            "opacity": 50
+          }
+        }
+      },
+      "block_order": [
+        "location-vancouver",
+        "location-toronto",
+        "location-calgary",
+        "location-montreal"
+      ],
+      "settings": {
+        "title": "",
+        "section_height": "small",
+        "section_columns": 4,
+        "text_alignment": "top-left"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "dynamic_rich_text_intro",
+    "pxs_map",
+    "dynamic_promo_grid_locations"
+  ]
+}

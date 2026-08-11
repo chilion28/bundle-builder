@@ -1,0 +1,33 @@
+ <div id="product-list-options">
+                <div class="product-list-box" v-for="option in options" :key="option.id">
+                  <div style="flex: 1;">
+                    <img style="max-width: 80px;" :src="setProdImg(`${ option.featured_media.preview_image.src }`)"  alt="Plate Image" @click="displayImg( `${ option.featured_media.preview_image.src }` )"> 
+                  </div>
+                  
+                  <div class="product-list-child-2" style="display: flex; flex-direction: column; padding: 25px;">
+                    <div class="product-box-title">${ option.option3 }</div>
+                    <div class="product-box-title">${ option.option2 }</div>
+                    <div class="product-box-title">${ option.option1 }</div>
+                  </div>
+
+                    <div class="product-list-child-2 flex-container test">
+                      <div class="flex-child">
+                        <div type="button" class="qty-add-sub" @click="minQty( `${option.id}` )">
+                        <span class="qty-minus">-</span>  
+                        </div>  
+                      </div>
+                      <div style="flex: 2; min-width: 60px;">
+                       <input class="qty-box" type="text" id="qty" name="qty" :value="handleQty(`${ option.id }`)" @input="inputQty(`${ option.id }`, $event.target.value)" >     
+                      </div>
+                      <div class="flex-child">
+                        <div type="button" class="qty-add-sub" @click="addQty( `${option.id}` )">
+                        <span class="qty-add">+</span>    
+                        </div>
+                      </div>
+                    </div>
+                </div>            
+            </div>
+
+            {% comment %} scroll box end {% endcomment %}
+        {% comment %} <div class="scroll-button"></div>     {% endcomment %}
+        </div>

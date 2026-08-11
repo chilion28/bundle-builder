@@ -1,0 +1,170 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "d9ec115b-4d6c-4b1b-babb-a2c1c174aba2": {
+      "type": "dynamic-slideshow",
+      "blocks": {
+        "template--14627712204888__d9ec115b-4d6c-4b1b-babb-a2c1c174aba2-1679339066227a517d-0": {
+          "type": "slide",
+          "settings": {
+            "background_image": "shopify://shop_images/Delivery-Timeline-Graphic.jpg",
+            "mobile_background_image": "shopify://shop_images/delivery-timeline-graphic-mobile.jpg",
+            "title": "",
+            "text": "",
+            "color": "#FFFFFF",
+            "link": "",
+            "text_alignment": "center",
+            "button_one_label": "",
+            "button_one_link": "",
+            "button_one_style": "primary",
+            "button_two_label": "",
+            "button_two_link": "",
+            "button_two_style": "primary",
+            "show_overlay": true,
+            "overlay_color": "#000000",
+            "overlay_opacity": 1
+          }
+        }
+      },
+      "block_order": [
+        "template--14627712204888__d9ec115b-4d6c-4b1b-babb-a2c1c174aba2-1679339066227a517d-0"
+      ],
+      "settings": {
+        "slideshow_width": "content",
+        "enable_autoplay": false,
+        "autoplay_duration": 8,
+        "slideshow_height": "original",
+        "slideshow_height_mobile": "original",
+        "slideshow_text_below_image": false
+      }
+    },
+    "cecc100c-733e-4a7a-a37e-7b5125d3048e": {
+      "type": "dynamic-html",
+      "disabled": true,
+      "custom_css": [
+        "h2 {text-align: center; font-size: 1.75rem; height: 0px;}"
+      ],
+      "settings": {
+        "title": "",
+        "custom_html": "<h2> Your Order Status </h2>"
+      }
+    },
+    "1675978334568d440a": {
+      "type": "apps",
+      "blocks": {
+        "5d602b28-b4f4-48a8-a3ae-424cec391847": {
+          "type": "shopify://apps/track-by-loop/blocks/wonderBlock/89d63369-6ee7-4097-ac41-8229c6f90001",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "5d602b28-b4f4-48a8-a3ae-424cec391847"
+      ],
+      "custom_css": [],
+      "settings": {
+        "include_padding": true
+      }
+    },
+    "b35746d3-72d0-4a31-8e74-39385946b7b4": {
+      "type": "dynamic-featured-collection",
+      "settings": {
+        "title": "You may also like",
+        "layout": "grid",
+        "collection": "signature-series",
+        "product_count": 5,
+        "cta_label": "Shop collection",
+        "cta_button_style": "primary"
+      }
+    },
+    "faq": {
+      "type": "wonderment-faq",
+      "blocks": {
+        "shipping-heading": {
+          "type": "section_heading",
+          "settings": {
+            "title": "FAQs"
+          }
+        },
+        "when-shipping-question": {
+          "type": "question",
+          "settings": {
+            "title": "How long will it take to receive my order?",
+            "text": "<p>When considering production and shipping time, most orders arrive within eight business days. This excludes weekends and holidays. If your order does not require production, because it isn't being customized, it should arrive sooner than eight business days. </p>"
+          }
+        },
+        "when-arriving-question": {
+          "type": "question",
+          "settings": {
+            "title": "If my order doesn't require customization, how long will it take to arrive?",
+            "text": "<p>You can expect to receive your order in around four business days. </p>"
+          }
+        },
+        "ship-international-question": {
+          "type": "question",
+          "settings": {
+            "title": "How long does production take on my customized hat/sunglasses?",
+            "text": "<p>Production typically takes three business days (excluding weekends and holidays.)</p>"
+          }
+        },
+        "shipping-cost-question": {
+          "type": "question",
+          "settings": {
+            "title": "How can I send one of your products as a gift to someone else?",
+            "text": "<p>You'll need to provide us with the full name and proper address (double check spelling and accuracy of the apartment/suite numbers, if any) of the recipient. You'll be given a tracking number along with shipping information and instructions regarding the order. Please be aware that total shipping time will take eight days. Take that into account when planning for birthdays, anniversaries or any special events. </p>"
+          }
+        }
+      },
+      "block_order": [
+        "shipping-heading",
+        "when-shipping-question",
+        "when-arriving-question",
+        "ship-international-question",
+        "shipping-cost-question"
+      ],
+      "settings": {
+        "show_answers": false,
+        "text_size": 100,
+        "alignment": "center",
+        "text_color": "#121212",
+        "background_color": "linear-gradient(184deg, rgba(255, 255, 255, 1) 7%, rgba(255, 255, 255, 1) 94%)",
+        "border_color": "#121212",
+        "base_width": 60,
+        "max_width": "",
+        "inner_padding": 100,
+        "outer_margin": 0,
+        "custom_css": "",
+        "mobile_custom_css": "",
+        "override_theme_font": false,
+        "heading_font": "serif",
+        "main_font": "sans-serif"
+      }
+    },
+    "167597873864082656": {
+      "type": "apps",
+      "settings": {
+        "include_padding": true
+      }
+    },
+    "main": {
+      "type": "page",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main",
+    "d9ec115b-4d6c-4b1b-babb-a2c1c174aba2",
+    "cecc100c-733e-4a7a-a37e-7b5125d3048e",
+    "1675978334568d440a",
+    "b35746d3-72d0-4a31-8e74-39385946b7b4",
+    "faq",
+    "167597873864082656"
+  ]
+}

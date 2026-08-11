@@ -1,0 +1,97 @@
+{% comment %}
+ @param category_id {String}
+    The block setting ID for the category
+
+  @param category_heading_id {String}
+    The block setting ID for the category heading
+
+  @param show_category_card_id {String}
+    The block setting ID for showing individual category cards
+
+  @param category_image_id {String}
+    The block setting ID for the category image
+{% endcomment %}
+
+{%- liquid
+  assign category_blocks = 0
+  assign active_categories = 0
+  assign active_category_threshold = 6
+
+  for block in section.blocks
+    if block.type == category_id
+      assign active_categories = active_categories | plus: 1
+    endif
+  endfor
+
+  if active_categories > 2
+    assign category_class = 'over-2'
+  elsif active_categories > 1
+    assign category_class = 'over-1'
+  else
+    assign category_class = '1'
+  endif
+-%}
+
+{%- if active_categories > 0 -%}
+  <nav
+    class="
+      faq__categories
+      faq__categories--count-{{ category_class }}
+      {% if active_categories > active_category_threshold %}
+        faq__categories--has-hidden-categories
+      {%- endif %}
+    "
+  >
+    <ul class="faq__categories-list">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when category_id -%}
+            {%- liquid
+              assign heading = block.settings[category_heading_id] | escape
+              assign image = block.settings[category_image_id]
+              assign show_category_card = block.settings[show_category_card_id]
+              assign category_blocks = category_blocks | plus: 1
+              assign first_hidden_category_count = active_category_threshold | plus: 1
+            -%}
+
+            {%- if category_blocks == first_hidden_category_count -%}
+              </ul>
+              <div class="faq__categories-hidden" data-faq-categories>
+                <ul class="faq__categories-list" data-faq-categories-list>
+            {%- endif -%}
+
+            {%- if show_category_card and heading != blank or image -%}
+              <li class="faq__categories-list-item">
+                <a
+                  class="faq__categories-list-item-link"
+                  href="#{{ section.id }}-{{ block.id }}"
+                >
+                  {%- if image -%}
+                    {%-
+                      render 'rimg',
+                      img: image,
+                      alt: image.alt,
+                      size: '100x100',
+                      class: 'faq__categories-list-item-image',
+                    -%}
+                  {%- endif -%}
+                  {{- heading -}}
+                </a>
+              </li>
+            {%- endif -%}
+        {%- endcase -%}
+      {%- endfor -%}
+
+      {%- if category_blocks > active_category_threshold -%}
+        </div>
+      {%- endif -%}
+    </ul>
+
+    {%- if active_categories > active_category_threshold -%}
+      <button class="faq__categories-view-all" data-faq-view-all>
+        <span>{{- 'sections.faq.categories.view_all' | t -}}</span>
+        <span>{{- 'sections.faq.categories.view_less' | t -}}</span>
+      </button>
+    {%- endif -%}
+  </nav>
+{%- endif -%}
