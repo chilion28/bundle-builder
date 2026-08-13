@@ -22,6 +22,20 @@
   assign color_scheme = color_scheme | default: section.settings.color_scheme | default: 'none'
   assign padding = padding | default: section.settings.padding | default: 'none'
   assign form_id = 'section.flex-pdp.form-' | append: section.id
+  assign is_cl_combined_listing = false
+  assign has_cl_state = false
+  assign has_cl_design = false
+  for product_option in product.options_with_values
+    assign product_option_name = product_option.name | strip | downcase
+    if product_option_name == 'select state'
+      assign has_cl_state = true
+    elsif product_option_name == 'select design'
+      assign has_cl_design = true
+    endif
+  endfor
+  if has_cl_state and has_cl_design
+    assign is_cl_combined_listing = true
+  endif
 -%}
 
 {% if slot_details == blank %}
@@ -59,18 +73,60 @@
   {% render 'layout.sticky-scroller', slot: product_form %}
 {% endcapture %}
 
+{% if is_cl_combined_listing %}
+  {% capture combined_listing_product_form %}
+    <style>
+      .cl-combined-listing__details {
+        min-width: 0;
+      }
+
+      .cl-combined-listing-wrapper {
+        width: 100%;
+        max-width: 1200px;
+        margin-inline: auto;
+      }
+
+      @media screen and (min-width: 768px) {
+        .cl-combined-listing__details {
+          padding-inline-start: 24px;
+        }
+      }
+
+      @media screen and (min-width: 1024px) {
+        .cl-combined-listing__details {
+          padding-inline-start: 40px;
+        }
+      }
+    </style>
+    <div class="cl-combined-listing__details">
+      {{ sticky_product_form }}
+    </div>
+  {% endcapture %}
+{% endif %}
+
 {% capture grid_content %}
-  {% render 'layout.grid.cell', span_xs: 12, span_md: 7, span_lg: 8, slot: slot_gallery %}
-  {% render 'layout.grid.cell', span_xs: 12, span_md: 5, span_lg: 4, slot: sticky_product_form %}
+  {% if is_cl_combined_listing %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: 9, span_lg: 9, slot: slot_gallery %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: 11, span_lg: 11, slot: combined_listing_product_form %}
+  {% else %}
+    {% render 'layout.grid.cell', span_xs: 12, span_md: 7, span_lg: 8, slot: slot_gallery %}
+    {% render 'layout.grid.cell', span_xs: 12, span_md: 5, span_lg: 4, slot: sticky_product_form %}
+  {% endif %}
 {% endcapture %}
 
 {% capture grid_layout %}
-  {% render 'layout.grid',
-    columns: 12,
-    slot: grid_content,
-    gap_xs: 'sm',
-    gap_sm: 'md'
-  %}
+  {% assign product_grid_columns = 12 %}
+  {% if is_cl_combined_listing %}
+    {% assign product_grid_columns = 20 %}
+  {% endif %}
+  {% if is_cl_combined_listing %}<div class="cl-combined-listing-wrapper">{% endif %}
+    {% render 'layout.grid',
+      columns: product_grid_columns,
+      slot: grid_content,
+      gap_xs: 'sm',
+      gap_sm: 'md'
+    %}
+  {% if is_cl_combined_listing %}</div>{% endif %}
 {% endcapture %}
 
 {% capture section_layout %}

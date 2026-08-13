@@ -22,12 +22,108 @@
 
 {% liquid
   assign variant_selector_type = variant_selector_type | default: block.settings.variant_selector_type | default: 'radio'
+  assign is_cl_combined_listing = false
+  assign has_cl_state = false
+  assign has_cl_design = false
+  for product_option in product.options_with_values
+    assign product_option_name = product_option.name | strip | downcase
+    if product_option_name == 'select state'
+      assign has_cl_state = true
+    elsif product_option_name == 'select design'
+      assign has_cl_design = true
+    endif
+  endfor
+  if has_cl_state and has_cl_design
+    assign is_cl_combined_listing = true
+  endif
+
+  if is_cl_combined_listing
+    for product_option in product.options_with_values
+      assign product_option_name = product_option.name | strip | downcase
+      if product_option_name == 'select state'
+        assign cl_selected_state = product_option.selected_value
+      elsif product_option_name == 'select design'
+        assign cl_selected_design = product_option.selected_value
+      endif
+    endfor
+
+    assign cl_preview_handle = ''
+    assign cl_preview_has_date = false
+    if cl_selected_state == 'California'
+      if cl_selected_design == "60's"
+        assign cl_preview_handle = 'hat-cali-plates'
+        assign cl_preview_has_date = true
+      elsif cl_selected_design == 'Blackout'
+        assign cl_preview_handle = 'california-blackout-plate-hat'
+      elsif cl_selected_design == 'Sunny'
+        assign cl_preview_handle = 'california-sunny-plate-hat'
+      endif
+    elsif cl_selected_state == 'Texas'
+      if cl_selected_design == '2000'
+        assign cl_preview_handle = 'hat-tex-plate'
+      elsif cl_selected_design == 'Black'
+        assign cl_preview_handle = 'hat-60s-texas-plate'
+      elsif cl_selected_design == 'Blackout'
+        assign cl_preview_handle = 'texas-blackout-plate-hat'
+      endif
+    endif
+  endif
 %}
+
+{% if is_cl_combined_listing %}
+  {{ 'cl-pack-grid.css' | asset_url | stylesheet_tag }}
+  <script src="{{ 'cl-pack-grid.js' | asset_url }}" defer></script>
+{% endif %}
 
 {% capture variant_selector %}
   {%- unless product.has_only_default_variant -%}
     {% for option in product.options_with_values %}
-      {% case variant_selector_type %}
+      {% assign normalized_option_name = option.name | strip | downcase %}
+      {% assign option_selector_type = variant_selector_type %}
+      {% if normalized_option_name == 'select state' %}
+        {% assign option_selector_type = 'select' %}
+      {% endif %}
+
+      <div class="cl-combined-option cl-combined-option--{{ option.name | handleize }}">
+      {% if is_cl_combined_listing and normalized_option_name == 'color' %}
+        <div class="cl-combined-quantity-grid" data-cl-combined-quantity-grid>
+          <p class="cl-combined-quantity-grid__title">Choose colors &amp; quantities</p>
+          <div class="cl-combined-quantity-grid__rows">
+            {% for variant in product.variants %}
+              {% assign variant_matches = true %}
+              {% for comparison_option in product.options_with_values %}
+                {% assign comparison_name = comparison_option.name | strip | downcase %}
+                {% unless comparison_name == 'color' %}
+                  {% assign comparison_index = comparison_option.position | minus: 1 %}
+                  {% if variant.options[comparison_index] != comparison_option.selected_value %}
+                    {% assign variant_matches = false %}
+                  {% endif %}
+                {% endunless %}
+              {% endfor %}
+
+              {% if variant_matches and variant.available %}
+                {% assign color_index = option.position | minus: 1 %}
+                {% assign color_name = variant.options[color_index] %}
+                {% assign row_image = variant.featured_image | default: product.featured_image %}
+                <div class="cl-combined-quantity-row" data-cl-combined-quantity-row data-variant-id="{{ variant.id }}" data-price="{{ variant.price }}">
+                  <div class="cl-combined-quantity-row__image">
+                    {% if row_image %}
+                      {{ row_image | image_url: width: 180 | image_tag: loading: 'lazy', widths: '90, 180', alt: color_name }}
+                    {% endif %}
+                  </div>
+                  <span class="cl-combined-quantity-row__name">{{ color_name }}</span>
+                  <div class="cl-combined-quantity-row__stepper">
+                    <button type="button" data-cl-combined-minus aria-label="Decrease {{ color_name | escape }} quantity">−</button>
+                    <input type="number" inputmode="numeric" min="0" value="0" data-cl-combined-qty aria-label="{{ color_name | escape }} quantity">
+                    <button type="button" data-cl-combined-plus aria-label="Increase {{ color_name | escape }} quantity">+</button>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+      {% case option_selector_type %}
         {% when 'radio' %}
           {% capture option_name_content %}
             {% assign option_name = option.name | append: ':' %}
@@ -41,11 +137,15 @@
 
           {% capture option_values %}
             {% for value in option.values %}
-              {% unless value.available %}
-                {%- assign classlist = 'disabled' -%}
-              {% else %}
-                {%- assign classlist = '' -%}
-              {% endunless %}
+              {% comment %}
+                The hot-reload resolver now selects the first genuinely
+                available downstream variant whenever an upstream option
+                changes, so unavailable values can be omitted safely.
+              {% endcomment %}
+              {% if value.available == false %}
+                {% continue %}
+              {% endif %}
+              {%- assign classlist = '' -%}
 
               {%- capture input_id -%}
                 {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
@@ -91,6 +191,36 @@
           {% capture option_stack %}
             {{ option_name }}
             {% render 'layout.stack', horizontal: true, gap: 'xs', slot: option_values %}
+            {% if is_cl_combined_listing and normalized_option_name == 'select design' %}
+              <div class="cl-combined-personalizer cl-grid-perso" data-cl-combined-personalizer data-cl-preview-handle="{{ cl_preview_handle }}" data-cl-preview-script="{{ 'cl-pack-grid.js' | asset_url }}">
+                <div class="cl-grid-perso-preview" data-cl-perso-preview aria-live="polite"></div>
+
+                <label class="cl-combined-personalizer__field cl-grid-perso-field">
+                  <span><strong>Custom Text</strong><small data-cl-counter="Custom Text">20/20</small></span>
+                  <input type="text" name="properties[Custom Text]" maxlength="20" placeholder="CUSTOM" autocomplete="off" required data-cl-personalization-field="Custom Text">
+                </label>
+
+                <label class="cl-combined-personalizer__toggle">
+                  <input type="checkbox" data-cl-second-line-toggle>
+                  <span>Add a second line of text</span>
+                </label>
+
+                <label class="cl-combined-personalizer__field cl-grid-perso-field" data-cl-second-line-field hidden>
+                  <span><strong>Second Line</strong><small data-cl-counter="Custom Text Two">26/26</small></span>
+                  <input type="text" name="properties[Custom Text Two]" maxlength="26" placeholder="OPTIONAL" autocomplete="off" disabled data-cl-personalization-field="Custom Text Two">
+                </label>
+
+                <label class="cl-combined-personalizer__field cl-grid-perso-field"{% unless cl_preview_has_date %} hidden{% endunless %}>
+                  <span><strong>Month</strong><small data-cl-counter="Month">3/3</small></span>
+                  <input type="text" name="properties[Month]" maxlength="3" placeholder="MONTH" autocomplete="off" required data-cl-personalization-field="Month">
+                </label>
+
+                <label class="cl-combined-personalizer__field cl-grid-perso-field"{% unless cl_preview_has_date %} hidden{% endunless %}>
+                  <span><strong>Year</strong><small data-cl-counter="Year">4/4</small></span>
+                  <input type="text" name="properties[Year]" maxlength="4" placeholder="YEAR" autocomplete="off" required data-cl-personalization-field="Year">
+                </label>
+              </div>
+            {% endif %}
           {% endcapture %}
 
           {% render 'layout.stack', gap: 'xs', horizontal: false, slot: option_stack %}
@@ -132,8 +262,167 @@
 
           {% render 'layout.stack', gap: 'xs', horizontal: false, slot: option_stack %}
       {% endcase %}
+      {% endif %}
+      </div>
     {% endfor %}
   {%- endunless -%}
 {% endcapture %}
 
 {% render 'layout.stack', gap: 'sm', slot: variant_selector %}
+
+<style>
+  .cl-combined-option--select-state .element-select {
+    width: 100%;
+    min-height: 48px;
+    font-weight: 600;
+  }
+
+  .cl-combined-option--select-design .layout-stack[horizontal] {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .cl-combined-option--select-design .element-button {
+    min-height: 42px;
+    padding-inline: 18px;
+  }
+
+  .cl-combined-personalizer {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 16px;
+    border: 1px dashed #cfd3d8;
+    border-radius: 14px;
+    background: #fafafa;
+  }
+
+  .cl-combined-personalizer__field { display: grid; gap: 5px; }
+  .cl-combined-personalizer__field > span { display: flex; justify-content: space-between; gap: 12px; }
+  .cl-combined-personalizer__field small { color: #8a8f96; font-size: .9rem; }
+  .cl-combined-personalizer__field input {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 14px;
+    border: 1px solid #cfd3d8;
+    border-radius: 10px;
+    background: #fff;
+    font: inherit;
+    text-transform: uppercase;
+  }
+  .cl-combined-personalizer__field input:focus { outline: 2px solid #159ee4; outline-offset: 1px; }
+  .cl-combined-personalizer__toggle { display: flex; gap: 10px; align-items: center; font-weight: 600; }
+  .cl-combined-personalizer__toggle input { width: 22px; height: 22px; }
+  .cl-combined-personalizer [hidden] { display: none !important; }
+
+  product-hot-reload:has(.cl-combined-quantity-grid) .layout-stack:has(> quantity-selector),
+  product-hot-reload:has(.cl-combined-quantity-grid) .shopify-payment-button,
+  product-hot-reload:has(.cl-combined-quantity-grid) [data-shopify="payment-button"],
+  product-hot-reload:has(.cl-combined-quantity-grid) quantity-selector,
+  product-hot-reload:has(.cl-combined-quantity-grid) .inventory-status--in-stock,
+  product-hot-reload:has(.cl-combined-quantity-grid) .inventory-status--low-stock,
+  product-hot-reload:has(.cl-combined-quantity-grid) .inventory-status--sold-out {
+    display: none !important;
+  }
+
+  .cl-combined-quantity-grid__title {
+    margin: 0 0 14px;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .cl-combined-quantity-grid__rows {
+    overflow: hidden;
+    border: 1px solid #dfe3e8;
+    border-radius: 14px;
+  }
+
+  .cl-combined-quantity-row {
+    display: grid;
+    grid-template-columns: 58px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    min-height: 78px;
+    padding: 9px 14px;
+    border-top: 1px solid #e8ebef;
+  }
+
+  .cl-combined-quantity-row:first-child { border-top: 0; }
+
+  .cl-combined-quantity-row__image {
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+    border: 1px solid #dfe3e8;
+    border-radius: 11px;
+    background: #fff;
+  }
+
+  .cl-combined-quantity-row__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .cl-combined-quantity-row__name {
+    font-size: 1.0625rem;
+    font-weight: 700;
+  }
+
+  .cl-combined-quantity-row__stepper {
+    display: grid;
+    grid-template-columns: 42px 48px 42px;
+    overflow: hidden;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+  }
+
+  .cl-combined-quantity-row__stepper button,
+  .cl-combined-quantity-row__stepper input {
+    height: 42px;
+    border: 0;
+    background: #fff;
+    color: #273142;
+    text-align: center;
+    font: inherit;
+    font-size: 1rem;
+  }
+
+  .cl-combined-quantity-row__stepper [data-cl-combined-plus] {
+    border-left: 1px solid #dfe3e8;
+  }
+
+  .cl-combined-quantity-row__stepper input {
+    width: 100%;
+    border-inline: 1px solid #dfe3e8;
+    border-radius: 0;
+    appearance: textfield;
+  }
+
+  .cl-combined-quantity-row__stepper input::-webkit-inner-spin-button,
+  .cl-combined-quantity-row__stepper input::-webkit-outer-spin-button { appearance: none; }
+
+  @media screen and (max-width: 749px) {
+    .cl-combined-personalizer { padding: 12px; }
+    .cl-combined-option--select-design .element-radio {
+      flex: 1 1 calc(50% - var(--spacing-xs));
+    }
+
+    .cl-combined-option--select-design .element-button {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .cl-combined-quantity-row {
+      grid-template-columns: 50px minmax(0, 1fr) auto;
+      gap: 8px;
+      min-height: 68px;
+      padding: 7px 9px;
+    }
+
+    .cl-combined-quantity-row__image { width: 48px; height: 48px; }
+    .cl-combined-quantity-row__stepper { grid-template-columns: 36px 40px 36px; }
+    .cl-combined-quantity-row__stepper button,
+    .cl-combined-quantity-row__stepper input { height: 38px; }
+  }
+</style>

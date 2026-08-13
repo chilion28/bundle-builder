@@ -80,7 +80,170 @@
       this.supportsViewTransitions = 'startViewTransition' in document;
       
       this.addEventListener('change', (event) => this.onVariantChange(event));
+      this.addEventListener('change', (event) => this.onCombinedPersonalizationChange(event));
       this.addEventListener('mouseover', (event) => this.onMouseOver(event));
+      this.addEventListener('click', (event) => this.onCombinedQuantityClick(event));
+      this.addEventListener('input', (event) => this.onCombinedQuantityInput(event));
+      this.addEventListener('submit', (event) => this.onCombinedQuantitySubmit(event), true);
+    }
+
+    connectedCallback() {
+      this.renderCombinedPersonalization();
+    }
+
+    getCombinedQuantityRows() {
+      return Array.from(this.querySelectorAll('[data-cl-combined-quantity-row]'));
+    }
+
+    normalizeCombinedQuantity(input) {
+      const quantity = Math.max(0, Math.min(999, parseInt(input.value, 10) || 0));
+      input.value = quantity;
+      return quantity;
+    }
+
+    onCombinedQuantityClick(event) {
+      const button = event.target.closest('[data-cl-combined-minus], [data-cl-combined-plus]');
+      if (!button) return;
+
+      const row = button.closest('[data-cl-combined-quantity-row]');
+      const input = row && row.querySelector('[data-cl-combined-qty]');
+      if (!input) return;
+
+      const current = this.normalizeCombinedQuantity(input);
+      input.value = Math.max(0, current + (button.hasAttribute('data-cl-combined-plus') ? 1 : -1));
+    }
+
+    onCombinedQuantityInput(event) {
+      if (event.target.matches('[data-cl-combined-qty]')) {
+        this.normalizeCombinedQuantity(event.target);
+        return;
+      }
+      if (event.target.matches('[data-cl-personalization-field]')) {
+        event.target.value = event.target.value.toUpperCase();
+        this.renderCombinedPersonalization();
+      }
+    }
+
+    onCombinedPersonalizationChange(event) {
+      if (!event.target.matches('[data-cl-second-line-toggle]')) return;
+      const personalizer = event.target.closest('[data-cl-combined-personalizer]');
+      const field = personalizer && personalizer.querySelector('[data-cl-second-line-field]');
+      const input = field && field.querySelector('[data-cl-personalization-field="Custom Text Two"]');
+      if (!field || !input) return;
+      field.hidden = !event.target.checked;
+      input.disabled = !event.target.checked;
+      if (!event.target.checked) input.value = '';
+      this.renderCombinedPersonalization();
+    }
+
+    getCombinedPersonalizationState() {
+      const state = {};
+      this.querySelectorAll('[data-cl-personalization-field]').forEach((field) => {
+        state[field.dataset.clPersonalizationField] = field.value;
+      });
+      const toggle = this.querySelector('[data-cl-second-line-toggle]');
+      state.secondLineEnabled = Boolean(toggle && toggle.checked);
+      return state;
+    }
+
+    restoreCombinedPersonalizationState(state) {
+      if (!state) return;
+      this.querySelectorAll('[data-cl-personalization-field]').forEach((field) => {
+        if (Object.prototype.hasOwnProperty.call(state, field.dataset.clPersonalizationField)) {
+          field.value = state[field.dataset.clPersonalizationField];
+        }
+      });
+      const toggle = this.querySelector('[data-cl-second-line-toggle]');
+      if (toggle) {
+        toggle.checked = Boolean(state.secondLineEnabled);
+        this.onCombinedPersonalizationChange({ target: toggle });
+      }
+      this.renderCombinedPersonalization();
+    }
+
+    renderCombinedPersonalization() {
+      const personalizer = this.querySelector('[data-cl-combined-personalizer]');
+      if (!personalizer) return;
+      const get = (name) => personalizer.querySelector(`[data-cl-personalization-field="${name}"]`)?.value.trim() || '';
+      const preview = personalizer.querySelector('[data-cl-perso-preview]');
+      if (preview && typeof window.CLPlatePreview === 'function') {
+        window.CLPlatePreview(preview, personalizer.dataset.clPreviewHandle, {
+          'Custom Text': get('Custom Text'),
+          'Custom Text One': get('Custom Text'),
+          'Custom Text Two': get('Custom Text Two'),
+          'Month': get('Month'),
+          'Year': get('Year'),
+        });
+      } else if (preview) {
+        const source = personalizer.dataset.clPreviewScript;
+        if (source && !document.querySelector('script[data-cl-combined-preview-engine]')) {
+          const script = document.createElement('script');
+          script.src = source;
+          script.dataset.clCombinedPreviewEngine = 'true';
+          script.onload = () => this.renderCombinedPersonalization();
+          document.head.appendChild(script);
+        } else if (!preview.dataset.clPreviewRetry) {
+          preview.dataset.clPreviewRetry = '1';
+          window.setTimeout(() => {
+            delete preview.dataset.clPreviewRetry;
+            this.renderCombinedPersonalization();
+          }, 150);
+        }
+      }
+      personalizer.querySelectorAll('[data-cl-personalization-field]').forEach((field) => {
+        const counter = personalizer.querySelector(`[data-cl-counter="${field.dataset.clPersonalizationField}"]`);
+        if (counter) counter.textContent = `${field.maxLength - field.value.length}/${field.maxLength}`;
+      });
+    }
+
+    async onCombinedQuantitySubmit(event) {
+      const rows = this.getCombinedQuantityRows();
+      if (!rows.length) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      const items = rows.map((row) => ({
+        id: row.dataset.variantId,
+        quantity: this.normalizeCombinedQuantity(row.querySelector('[data-cl-combined-qty]')),
+        properties: Array.from(event.target.elements).reduce((properties, field) => {
+          const match = field.name && field.name.match(/^properties\[(.+)\]$/);
+          if (!match || field.disabled || ((field.type === 'checkbox' || field.type === 'radio') && !field.checked)) return properties;
+          if (field.value !== '') properties[match[1]] = field.value;
+          return properties;
+        }, {})
+      })).filter((item) => item.quantity > 0);
+
+      if (!items.length) {
+        const grid = this.querySelector('[data-cl-combined-quantity-grid]');
+        if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        window.alert('Please choose a quantity for at least one color.');
+        return;
+      }
+
+      const submitButton = event.target.querySelector('button[type="submit"], input[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+
+      try {
+        const response = await fetch(`${window.Shopify.routes.root}cart/add.js`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+          body: JSON.stringify({ items })
+        });
+        if (!response.ok) throw await response.json();
+
+        rows.forEach((row) => { row.querySelector('[data-cl-combined-qty]').value = 0; });
+        if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') {
+          window.AMP_API.OPEN_CART();
+        } else {
+          window.location.href = `${window.Shopify.routes.root}cart`;
+        }
+      } catch (error) {
+        console.error('Unable to add combined listing colors to cart:', error);
+        window.alert('Sorry — we could not add those hats. Please try again.');
+      } finally {
+        if (submitButton) submitButton.disabled = false;
+      }
     }
 
     showLoadingState() {
@@ -104,6 +267,7 @@
     buildRequestUrl(input) {
       const productFormElement = input.closest('form');
       const sectionId = this.dataset.sectionId;
+      const changedOptionGroup = input.closest('.cl-combined-option');
       
       // Get dataset values from the input or selected option
       let newProductUrl, optionValueId;
@@ -133,13 +297,33 @@
         }
       });
 
+      /*
+       * A higher-level selection can make every selection after it invalid.
+       * For example, Trucker may not offer the Color that was selected for
+       * Snapback. Sending both values makes Shopify render no variant at all.
+       * Keep selections through the option that changed and let Shopify pick
+       * the first valid values for all downstream options.
+       */
+      if (changedOptionGroup) {
+        const optionGroups = Array.from(productFormElement.querySelectorAll('.cl-combined-option'));
+        const changedOptionIndex = optionGroups.indexOf(changedOptionGroup);
+
+        selectedOptionValues = selectedOptionValues.filter((id) => {
+          const valueElement = productFormElement.querySelector(`[data-option-value-id="${id}"]`);
+          if (!valueElement) return false;
+
+          const valueGroup = valueElement.closest('.cl-combined-option');
+          const valueGroupIndex = optionGroups.indexOf(valueGroup);
+          return valueGroupIndex !== -1 && valueGroupIndex <= changedOptionIndex;
+        });
+      }
+
       // If we're building for a hover state, replace the current option's value
       if (input.type === 'radio' && !input.checked) {
-        const currentOptionName = input.name;
-        // Remove any existing selection for this option
-        selectedOptionValues = selectedOptionValues.filter(id => {
-          const input = productFormElement.querySelector(`input[data-option-value-id="${id}"]`);
-          return input && input.name !== currentOptionName;
+        // Replace the selected value in the hovered option group.
+        selectedOptionValues = selectedOptionValues.filter((id) => {
+          const valueElement = productFormElement.querySelector(`[data-option-value-id="${id}"]`);
+          return valueElement && valueElement.closest('.cl-combined-option') !== changedOptionGroup;
         });
         // Add the hovered option value
         selectedOptionValues.push(optionValueId);
@@ -147,6 +331,56 @@
 
       const params = selectedOptionValues.length > 0 ? `&option_values=${selectedOptionValues.join(',')}` : '';
       return `${newProductUrl}?section_id=${sectionId}${params}`;
+    }
+
+    async buildAvailableVariantRequestUrl(input) {
+      const productFormElement = input.closest('form');
+      const changedOptionGroup = input.closest('.cl-combined-option');
+      const optionGroups = Array.from(productFormElement.querySelectorAll('.cl-combined-option'));
+      const changedOptionIndex = optionGroups.indexOf(changedOptionGroup);
+      const sectionId = this.dataset.sectionId;
+
+      let newProductUrl = this.dataset.productUrl;
+      if (input.type === 'radio') {
+        newProductUrl = input.dataset.productUrl || newProductUrl;
+      } else if (input.tagName === 'SELECT') {
+        const selectedOption = input.options[input.selectedIndex];
+        newProductUrl = selectedOption.dataset.productUrl || newProductUrl;
+      }
+
+      const selectedValuesByName = new Map();
+      optionGroups.slice(0, changedOptionIndex + 1).forEach((group) => {
+        const selected = group.querySelector('input[type="radio"]:checked, select');
+        if (!selected) return;
+
+        const name = selected.name;
+        const value = selected.tagName === 'SELECT' ? selected.value : selected.value;
+        if (name && value) selectedValuesByName.set(name, value);
+      });
+
+      try {
+        const productUrl = new URL(newProductUrl, window.location.origin);
+        const productResponse = await fetch(`${productUrl.pathname}.js`);
+        if (!productResponse.ok) throw new Error(`Unable to load product data (${productResponse.status})`);
+
+        const productData = await productResponse.json();
+        const matchingVariant = productData.variants.find((variant) => {
+          if (!variant.available) return false;
+
+          return productData.options.every((option, index) => {
+            const requiredValue = selectedValuesByName.get(option.name);
+            return !requiredValue || variant.options[index] === requiredValue;
+          });
+        });
+
+        if (matchingVariant) {
+          return `${newProductUrl}?section_id=${sectionId}&variant=${matchingVariant.id}`;
+        }
+      } catch (error) {
+        console.warn('Unable to resolve an available variant; using option-value fallback.', error);
+      }
+
+      return this.buildRequestUrl(input);
     }
 
     onMouseOver(event) {
@@ -191,7 +425,7 @@
       if (!event.target.hasAttribute('data-product-hot-reload-trigger')) return;
 
       const optionValueElement = event.target;
-      const requestUrl = this.buildRequestUrl(optionValueElement);
+      const requestUrl = await this.buildAvailableVariantRequestUrl(optionValueElement);
       const oldProductUrl = this.dataset.productUrl;
       
       // Get new product URL from the input or selected option
@@ -235,6 +469,7 @@
 
     async updateProductWithTransition(html, newProductUrl, targetId) {
       const updatedHtml = html.getElementById(this.id);
+      const personalizationState = this.getCombinedPersonalizationState();
       
       if (this.supportsViewTransitions) {
         // Use View Transitions API for smooth transitions
@@ -252,6 +487,8 @@
         this.dataset.productUrl = updatedHtml.dataset.productUrl;
         this.dataset.variantId = updatedHtml.dataset.variantId;
       }
+
+      this.restoreCombinedPersonalizationState(personalizationState);
 
       // Update URL and history
       let url = new URL(newProductUrl, window.location.origin);

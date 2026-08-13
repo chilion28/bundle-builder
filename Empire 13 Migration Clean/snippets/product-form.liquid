@@ -229,7 +229,13 @@
             {% endif %}
           {% endif %}
       
-          {% if style == 'select' and show_swatches == false %}
+          {%- assign normalized_option_name = option.name | strip | downcase -%}
+          {%- assign force_state_dropdown = false -%}
+          {%- if normalized_option_name == 'select state' -%}
+            {%- assign force_state_dropdown = true -%}
+          {%- endif -%}
+
+          {% if force_state_dropdown or style == 'select' and show_swatches == false %}
             {%
               render 'options-select',
               product: product,

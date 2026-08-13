@@ -21,6 +21,19 @@
 {%  liquid
   assign image_aspect_ratio = image_aspect_ratio | default: block.settings.image_aspect_ratio | default: '1/1'
   assign thumbnail_position = thumbnail_position | default: 'left'
+  assign has_cl_state = false
+  assign has_cl_design = false
+  for product_option in product.options_with_values
+    assign product_option_name = product_option.name | strip | downcase
+    if product_option_name == 'select state'
+      assign has_cl_state = true
+    elsif product_option_name == 'select design'
+      assign has_cl_design = true
+    endif
+  endfor
+  if has_cl_state and has_cl_design
+    assign thumbnail_position = 'bottom'
+  endif
   assign autoplay = autoplay | default: block.settings.enable_video_autoplay, allow_false: true | default: false, allow_false: true
   assign loop = loop | default: block.settings.enable_video_looping, allow_false: true | default: false, allow_false: true
 
