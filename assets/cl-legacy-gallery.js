@@ -37,6 +37,14 @@
       .toLowerCase();
   }
 
+  // Filename only — the same image is served from different CDN folders
+  // (/products/ vs /files/) for variants vs gallery media, so match on basename.
+  function baseName(s) {
+    s = normSrc(s).split(/[?#]/)[0];
+    var i = s.lastIndexOf('/');
+    return i >= 0 ? s.slice(i + 1) : s;
+  }
+
   function Gallery(nav) {
     // Find the container that holds both the navigation and the viewer.
     var root = nav.parentElement;
@@ -159,14 +167,13 @@
     };
 
     api.selectByImageSrc = function (srcSub) {
-      var want = normSrc(srcSub);
-      if (!want) return false;
+      var wantBase = baseName(srcSub);
+      if (!wantBase) return false;
       for (var i = 0; i < figures.length; i++) {
-        var z = normSrc(figures[i].getAttribute('data-zoom') || '');
+        var zBase = baseName(figures[i].getAttribute('data-zoom') || '');
         var img = figures[i].querySelector('img');
-        var isrc = img ? normSrc(img.getAttribute('src') || img.getAttribute('data-src') || '') : '';
-        if ((z && (z.indexOf(want) !== -1 || want.indexOf(z) !== -1)) ||
-            (isrc && (isrc.indexOf(want) !== -1 || want.indexOf(isrc) !== -1))) {
+        var iBase = img ? baseName(img.getAttribute('src') || img.getAttribute('data-src') || '') : '';
+        if (zBase === wantBase || iBase === wantBase) {
           show(i);
           return true;
         }
@@ -217,4 +224,114 @@
   } else {
     init();
   }
+})();
+
+/*
+ * Style -> gallery image sync.
+ * When a shopper picks a hat style in the CityLocs "SELECT HAT STYLE" swatch
+ * (product-swatch-clplate / -mobile-clplate: `.selection-button[data-value]`),
+ * swap the gallery to that style's representative product photo. Uses the
+ * product's own variant data (option named "Style" -> variant.featured_image)
+ * and the gallery's public selectByImageSrc() API. No Liquid changes needed.
+ */
+(function () {
+  'use strict';
+
+  function productHandle() {
+    var m = location.pathname.match(/\/products\/([^/?#]+)/);
+    return m ? m[1] : null;
+  }
+
+  function init() {
+    var buttons = document.querySelectorAll('.selection-button[data-value]');
+    if (!buttons.length) return;                       // no style swatch here
+    if (!document.querySelector('[data-gallery-viewer]')) return; // no legacy gallery
+    var handle = productHandle();
+    if (!handle) return;
+
+    var styleMap = null;   // { "<style value>": "<featured_image src>" }
+    var loading = false;
+    var queue = [];
+
+    function buildMap(product) {
+      var opts = product.options || [];
+      var styleIdx = -1;
+      opts.forEach(function (o, i) {
+        var name = (o && o.name ? o.name : o) + '';
+        if (name.toLowerCase() === 'style') {
+          styleIdx = o && o.position ? o.position - 1 : i;
+        }
+      });
+      if (styleIdx < 0) styleIdx = 0; // fall back to first option
+      var map = {};
+      (product.variants || []).forEach(function (v) {
+        var val = (v.options || [])[styleIdx];
+        if (val && !map[val] && v.featured_image && v.featured_image.src) {
+          map[val] = v.featured_image.src;
+        }
+      });
+      return map;
+    }
+
+    function withMap(cb) {
+      if (styleMap) { cb(); return; }
+      queue.push(cb);
+      if (loading) return;
+      loading = true;
+      fetch('/products/' + handle + '.js', { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (p) {
+          styleMap = buildMap(p);
+          loading = false;
+          queue.splice(0).forEach(function (fn) { fn(); });
+        })
+        .catch(function () { loading = false; });
+    }
+
+    function syncTo(styleValue) {
+      if (!styleValue) return;
+      withMap(function () {
+        var src = styleMap && styleMap[styleValue];
+        if (src && window.CLLegacyGallery) window.CLLegacyGallery.selectByImageSrc(src);
+      });
+    }
+
+    // Delegated so it survives the Vue swatch re-render; additive to Vue's own handler.
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.selection-button[data-value]');
+      if (btn) syncTo(btn.getAttribute('data-value'));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+
+/*
+ * Color-thumbnail lightbox.
+ * Clicking a hat thumbnail in the variant-selection rows (`.product-list-box img`,
+ * rendered by the product-list-cl-*-form snippets) opens the full image in the
+ * Fancybox lightbox already loaded by the theme. cl-mobile-image-zoom.js wraps
+ * Fancybox.show(), so this inherits the mobile close-button behavior for free.
+ */
+(function () {
+  'use strict';
+
+  function fullSrc(img) {
+    var s = img.getAttribute('src') || '';
+    if (!s || s.indexOf('data:') === 0) s = img.getAttribute('data-src') || img.currentSrc || '';
+    return s;
+  }
+
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest && e.target.closest('.product-list-box img');
+    if (!img) return;
+    var src = fullSrc(img);
+    if (!src || !window.Fancybox || typeof window.Fancybox.show !== 'function') return;
+    e.preventDefault();
+    window.Fancybox.show([{ src: src, type: 'image', caption: img.getAttribute('alt') || '' }]);
+  });
 })();

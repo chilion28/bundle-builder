@@ -122,3 +122,8 @@
 .product--section .gallery-navigation--scroll-button.scroll-right svg {
   transform: rotate(270deg);
 }
+
+/* Variant-row hat thumbnails open a lightbox (cl-legacy-gallery.js) — hint it. */
+.product-list-box img {
+  cursor: zoom-in;
+}
