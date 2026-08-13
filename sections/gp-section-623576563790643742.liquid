@@ -1572,9 +1572,37 @@ gp-product.cl-in-pack .gkBonhMcMd {
 
 @media only screen and (max-width: 812px) {
 
-    section#shopify-section-template--21046264987736__gp_section_623576563790643742 {visibility: hidden;}
     .cl-golf-summary .cl-clear-pack {margin: 34px 0 14px !important;}
     .cl-golf-summary.is-mobile-open {border-radius: 0 !important; }
+}
+
+/* Restore golf grass footer background (shows on desktop + mobile) */
+#gL_wL24CRM {
+  background-image: url("https://cdn.shopify.com/s/files/1/0519/6401/files/seamless-grass.png") !important;
+  background-position: 50% 100% !important;
+  background-repeat: repeat-x !important;
+  background-size: contain !important;
+  min-height: 318px !important;
+}
+@media only screen and (max-width: 812px) {
+  #gL_wL24CRM { min-height: 146px !important; }
+}
+
+/* Golf ball on tee, sitting bottom-right on the grass */
+#gL_wL24CRM::after {
+  content: "";
+  position: absolute;
+  right: 8%;
+  bottom: 0;
+  height: 300px;
+  aspect-ratio: 2406 / 3787;
+  background: url("https://cdn.shopify.com/s/files/1/0519/6401/files/golfball2.png") no-repeat bottom center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: 2;
+}
+@media only screen and (max-width: 812px) {
+  #gL_wL24CRM::after { height: 175px; right: 6%; }
 }
 
 /*END TEMPLATE STYLES*/
