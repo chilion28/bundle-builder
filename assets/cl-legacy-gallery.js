@@ -311,11 +311,13 @@
 })();
 
 /*
- * Color-thumbnail lightbox.
- * Clicking a hat thumbnail in the variant-selection rows (`.product-list-box img`,
- * rendered by the product-list-cl-*-form snippets) opens the full image in the
- * Fancybox lightbox already loaded by the theme. cl-mobile-image-zoom.js wraps
- * Fancybox.show(), so this inherits the mobile close-button behavior for free.
+ * Color-thumbnail -> gallery slider sync.
+ * The variant-selection row thumbnails (`.product-list-box img`, rendered by the
+ * product-list-cl-*-form snippets) ALREADY open the Fancybox lightbox via the
+ * Vue `@click="displayImg(...)"` handler (and cl-mobile-image-zoom.js gives that
+ * lightbox the no-zoom / click-to-close / on-image-X treatment on all devices).
+ * Here we only ALSO sync the on-page gallery slider to the clicked variant's
+ * image — we must NOT open a second lightbox (that stacked two containers).
  */
 (function () {
   'use strict';
@@ -330,8 +332,8 @@
     var img = e.target.closest && e.target.closest('.product-list-box img');
     if (!img) return;
     var src = fullSrc(img);
-    if (!src || !window.Fancybox || typeof window.Fancybox.show !== 'function') return;
-    e.preventDefault();
-    window.Fancybox.show([{ src: src, type: 'image', caption: img.getAttribute('alt') || '' }]);
+    if (src && window.CLLegacyGallery && typeof window.CLLegacyGallery.selectByImageSrc === 'function') {
+      window.CLLegacyGallery.selectByImageSrc(src);
+    }
   });
 })();
