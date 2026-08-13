@@ -1,0 +1,124 @@
+/*
+ * cl-legacy-gallery.css
+ * ---------------------------------------------------------------------------
+ * Navigation styling for the legacy CityLocs product gallery on Empire 13.
+ * Ported from Empire 7's theme.css (which Empire 13 dropped), scoped to
+ * `.product--section` so it never touches Empire 13's Swiper gallery.
+ * Pairs with cl-legacy-gallery.js. See cl-legacy-product-compat.css for the
+ * main-figure visibility contract.
+ */
+
+/* Thumbnail strip -------------------------------------------------------- */
+.product--section .product-gallery--navigation {
+  position: relative;
+  width: 100%;
+  margin-top: 0.5rem;
+  margin-right: -0.3125rem;
+  margin-left: -0.3125rem;
+  padding-bottom: 0.125rem;
+  font-size: 0;
+  text-align: left;
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hidden until cl-legacy-gallery.js finishes init (removes .loading). */
+.product--section .product-gallery--navigation.loading {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.product--section .gallery-navigation--scroller {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.product--section .gallery-navigation--scroller::-webkit-scrollbar {
+  display: none;
+}
+
+/* Individual thumbnails -------------------------------------------------- */
+.product--section .product-gallery--media-thumbnail {
+  position: relative;
+  display: inline-block;
+  height: 4.9375rem;
+  padding: 2px;
+  margin: 0.375rem 0.1875rem 0;
+  vertical-align: middle;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 0 2px transparent;
+  transition: box-shadow 100ms cubic-bezier(0.4, 0, 1, 1);
+  -webkit-appearance: none;
+          appearance: none;
+}
+.product--section .gallery-navigation--scroller .product-gallery--media-thumbnail:last-child {
+  margin-right: 10px;
+}
+.product--section .product-gallery--media-thumbnail:focus {
+  outline: none;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.15);
+}
+.product--section .product-gallery--media-thumbnail[data-gallery-selected="true"],
+.product--section .product-gallery--media-thumbnail.is-selected {
+  box-shadow: 0 0 0 1.5px #818181;
+}
+.product--section .product-gallery--media-thumbnail-img-wrapper {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+.product--section .product-gallery--media-thumbnail-img {
+  display: block;
+  max-width: 100%;
+  height: 100%;
+  width: auto;
+}
+
+/* Scroll arrows — hidden unless the strip overflows (JS adds .visible) --- */
+.product--section .gallery-navigation--scroll-button {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  display: none;
+  width: 2rem;
+  height: 100%;
+  padding: 0;
+  color: #1d1d1d;
+  cursor: pointer;
+  background: #fff;
+  border-top: none;
+  border-bottom: none;
+  outline: none;
+}
+.product--section .gallery-navigation--scroll-button.visible {
+  display: block;
+}
+.product--section .gallery-navigation--scroll-button.scroll-left {
+  left: 0;
+  border-right: 1px solid rgba(128, 128, 128, 0.3);
+  border-left: none;
+}
+.product--section .gallery-navigation--scroll-button.scroll-right {
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(128, 128, 128, 0.3);
+}
+.product--section .gallery-navigation--scroll-button svg {
+  width: 1rem;
+  height: 1rem;
+}
+/* Legacy icon is a chevron-down; rotate it to point left / right. */
+.product--section .gallery-navigation--scroll-button.scroll-left svg {
+  transform: rotate(90deg);
+}
+.product--section .gallery-navigation--scroll-button.scroll-right svg {
+  transform: rotate(270deg);
+}
