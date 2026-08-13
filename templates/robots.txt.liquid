@@ -1,0 +1,31 @@
+{% comment %}
+  Custom robots.txt for CityLocs
+  - Keeps ALL of Shopify's default rules (checkout, cart, account, admin, etc.)
+  - Adds explicit blocks for AI scrapers, price-comparison bots, and aggressive SEO crawlers
+  - Adds a crawl-delay hint for the general crawlers that honor it
+
+  NOTE: Well-behaved bots obey this. Malicious/scraper bots may ignore it.
+  This trims the "polite" crawler volume (a big chunk), not abusive traffic.
+{% endcomment %}
+{%- for group in robots.default_groups -%}
+  {{- group.user_agent }}
+
+  {%- for rule in group.rules -%}
+    {{ rule }}
+  {%- endfor -%}
+
+  {%- if group.sitemap != blank -%}
+    {{ group.sitemap }}
+  {%- endif -%}
+{%- endfor -%}
+
+# --- CityLocs custom rules: block AI/scraper/aggressive crawlers ---
+{%- assign blocked_bots = "GPTBot,ChatGPT-User,OAI-SearchBot,CCBot,anthropic-ai,ClaudeBot,Claude-Web,Google-Extended,Applebot-Extended,Bytespider,Amazonbot,FacebookBot,Meta-ExternalAgent,Diffbot,PerplexityBot,Omgilibot,Omgili,ImagesiftBot,DataForSeoBot,AhrefsBot,SemrushBot,MJ12bot,DotBot,BLEXBot,Barkrowler,SeekportBot,PetalBot,serpstatbot,ZoominfoBot" | split: "," -%}
+{%- for bot in blocked_bots %}
+User-agent: {{ bot }}
+Disallow: /
+{%- endfor %}
+
+# --- Slow down the general crawlers that honor crawl-delay ---
+User-agent: *
+Crawl-delay: 10
