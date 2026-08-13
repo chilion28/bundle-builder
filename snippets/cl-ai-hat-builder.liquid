@@ -316,6 +316,18 @@ Now create:' }}</pre>
         <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
       </div>
 
+      {%- comment -%} Live "buy more, save more" pricing summary — mirrors the other
+        hats' footer. Updated by cl-ai-hat.js as quantities change. Only for bulkhat
+        (image hats); the pendant/other single products don't get it. {%- endcomment -%}
+      {%- if product.tags contains 'bulkhat' -%}
+      <div class="cl-ai-b__pricing" data-cl-ai-pricing>
+        <p class="cl-ai-b__pricing-sel">Current selection: <span data-cl-ai-price-qty>0</span> piece(s)</p>
+        <p class="cl-ai-b__pricing-unit">Unit Price: <span data-cl-ai-price-unit>$0.00</span> each</p>
+        <p class="cl-ai-b__pricing-next" data-cl-ai-price-next></p>
+        <p class="cl-ai-b__pricing-sub">SUBTOTAL <span data-cl-ai-price-sub>$0.00</span></p>
+      </div>
+      {%- endif -%}
+
       {%- else -%}
       {%- comment -%} Single-variant (pendant): a −/+ quantity stepper matching the
         hat grid rows; the JS SIMPLE-add path uses data-cl-ai-simple-qty. {%- endcomment -%}

@@ -287,6 +287,15 @@
 .cl-ai-b__row-qty .cl-ai-b__qty-btn{width:38px;height:40px;font-size:18px}
 .cl-ai-b__row-qty .cl-ai-b__qty-input{width:46px;height:40px;font-size:15px}
 
+/* Live "buy more, save more" pricing summary (image hats) */
+.cl-ai-b__pricing{text-align:center;margin:4px 0 2px;line-height:1.35}
+.cl-ai-b__pricing-sel{font-size:13.5px;color:var(--muted);margin:0 0 2px}
+.cl-ai-b__pricing-unit{font-size:25px;font-weight:800;color:var(--green);letter-spacing:-.01em;margin:0 0 7px}
+.cl-ai-b__pricing-next{display:inline-block;font-size:14px;font-weight:800;color:#9a3412;background:#fff7ed;
+  border:1.5px solid #fdba74;border-radius:9px;padding:8px 14px;margin:0 0 8px;text-transform:uppercase;letter-spacing:.02em}
+.cl-ai-b__pricing-next:empty{display:none}
+.cl-ai-b__pricing-sub{font-size:15px;font-weight:800;margin:0}
+
 .cl-ai-b__cta{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;padding:17px;
   font-size:17px;font-weight:800;letter-spacing:.02em;margin-top:6px;transition:background .15s;box-shadow:var(--shadow)}
 .cl-ai-b__cta:hover{background:var(--green-dk)}

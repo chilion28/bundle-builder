@@ -47,6 +47,30 @@
 
 {% endfor %}
 
+{%- comment -%} Image Hats: tag-based (collection was renamed from "Image Hats" to
+  "Custom Image Hats", so gate on the reliable `bulkhat` tag). Same standard hat tiers. {%- endcomment -%}
+{% if product.tags contains 'bulkhat' %}
+        <button class="accordion">View Bulk Pricing</button>
+        <div class="accordion-content">
+            <table class="discount-info">
+                <thead>
+                    <tr>
+                        <th class="discount-box-header">Order More Save More</th>
+                        <th class="discount-box-header2">Price per item</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="discount-box-header2">2+</td><td><span class="saso-price">$ 32.99</span></td></tr>
+                    <tr><td class="discount-box-header2">3+</td><td><span class="saso-price">$ 30.99</span></td></tr>
+                    <tr><td class="discount-box-header2">6+</td><td><span class="saso-price">$ 29.99</span></td></tr>
+                    <tr><td class="discount-box-header2">12+</td><td><span class="saso-price">$ 24.99</span></td></tr>
+                    <tr><td class="discount-box-header2">24+</td><td><span class="saso-price">$ 22.99</span></td></tr>
+                    <tr><td class="discount-box-header2">36+</td><td><span class="saso-price">$ 16.99</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+{% endif %}
+
 {% if product.tags contains "Bulk Discount Switchblade" %}
 <table>
   <thead>

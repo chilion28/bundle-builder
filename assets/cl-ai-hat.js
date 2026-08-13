@@ -66,6 +66,20 @@
   // dataset — a hyphenated data-cl-ai-* attr maps to dataset.clAiX, an easy trap.
   var filePrefix = (root.getAttribute('data-cl-ai-file-prefix') || 'image-hat').replace(/[^a-z0-9-]/gi, '') || 'image-hat';
 
+  // Bulk "buy more, save more" tiers for the live pricing summary (image hats).
+  // Mirrors the standard hat footer: dollars OFF per hat at each quantity break.
+  var TIER_QTYS = [1, 2, 3, 6, 12, 24, 36];
+  var TIER_OFF  = [0, 2, 4, 5, 10, 12, 16];   // $ off each vs base price
+  function tierIndex(qty) {
+    var idx = 0;
+    for (var i = 0; i < TIER_QTYS.length; i++) {
+      if (qty === TIER_QTYS[i]) { idx = i; break; }
+      else if (qty < TIER_QTYS[i]) { idx = i - 1; break; }
+      else idx = TIER_QTYS.length - 1;
+    }
+    return Math.max(0, idx);
+  }
+
   /* ---- config-driven per-shape geometry (optional) ----
    * A product can carry its own patch geometry via a [data-cl-ai-config] JSON
    * block (emitted by the builder snippet's config_json param — the seam a
@@ -1627,12 +1641,31 @@
   }
   function totalQty() { var t = 0; Object.keys(qtySel).forEach(function (k) { t += qtySel[k]; }); return t; }
 
+  var priceQtyEl = $('[data-cl-ai-price-qty]'), priceUnitEl = $('[data-cl-ai-price-unit]'),
+      priceNextEl = $('[data-cl-ai-price-next]'), priceSubEl = $('[data-cl-ai-price-sub]');
+
   function updateTotals() {
-    var q = 0, total = 0;
-    variants.forEach(function (v) { var n = qtySel[v.id] || 0; if (n) { q += n; total += n * v.price; } });
-    if (ctaPrice) ctaPrice.textContent = formatMoney(q ? total : basePrice());
+    var q = totalQty();
+    var base = basePrice();                                  // cents
+    var idx = tierIndex(q);
+    var unit = q > 0 ? (base - TIER_OFF[idx] * 100) : 0;     // discounted unit price, cents
+    var sub = unit * q;                                      // discounted subtotal, cents
+    if (ctaPrice) ctaPrice.textContent = formatMoney(q ? sub : base);
     var lbl = $('[data-cl-ai-cta-label]');
     if (lbl) lbl.textContent = q ? (ctaDefaultLabel + ' · ' + q + ' hat' + (q === 1 ? '' : 's')) : ctaDefaultLabel;
+    // Live "buy more, save more" summary
+    if (priceQtyEl) priceQtyEl.textContent = q;
+    if (priceUnitEl) priceUnitEl.textContent = formatMoney(unit);
+    if (priceSubEl) priceSubEl.textContent = formatMoney(sub);
+    if (priceNextEl) {
+      if (idx >= TIER_QTYS.length - 1) {
+        priceNextEl.textContent = 'YOU SAVED ' + formatMoney(TIER_OFF[TIER_OFF.length - 1] * 100) + ' PER HAT!';
+      } else {
+        var toNext = TIER_QTYS[idx + 1] - q;
+        var nextUnit = (base - TIER_OFF[idx + 1] * 100) / 100;
+        priceNextEl.textContent = 'ORDER ' + toNext + ' MORE AND GET THEM AT ' + nextUnit.toFixed(2) + ' EACH';
+      }
+    }
   }
 
   function setRowQty(vid, n) {
