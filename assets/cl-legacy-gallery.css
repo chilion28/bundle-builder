@@ -127,3 +127,10 @@
 .product-list-box img {
   cursor: zoom-in;
 }
+
+/* The fixed site header is z-index:5000 and was covering the Fancybox lightbox's
+   top toolbar / close (X) controls. Lift the whole lightbox above it so its
+   controls stay in view when open. */
+.fancybox__container {
+  z-index: 10000 !important;
+}
