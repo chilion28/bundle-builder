@@ -275,3 +275,83 @@ This integration is complete when CityLocs can place a Fixed Bundle order using
 a `Bundle Hat`-only clearance SKU and clOrdersApp produces the same correct
 template/tag/Dropbox/custom-variable result as a normal order of the selected
 design product, while keeping and decrementing the actual clearance blank.
+
+## 12. Open questions for Omar — API contract requirements
+
+Omar proposed exposing a **product-keyed clOrdersApp API** that returns a
+design's live production config (name, template, production tag, Custom 1–4 field
+assignments). The bundle JS calls it when the customer selects a design, saves
+the result on the cart/order line, the Cart Transform copies it to the 3 child
+components, and clOrdersApp uses it for `Bundle Hat` fallback lines. Reusable
+later for Mexico plate hats, metal plates, and other customizable products.
+
+**Web integration will NOT be built until Omar provides the contract below.** No
+URL or response shape will be guessed.
+
+### 12.1 Contract details still needed from Omar
+
+- **API URL** (endpoint the storefront/Cart Transform will call).
+- **Lookup key:** does it expect the Shopify **product ID** or **handle**? (The
+  order will carry both — `_fxb_design_product_id` and `_plate_product_handle` —
+  so either works; state which is authoritative.)
+- **Real request + response example** (actual JSON, not approximate).
+- **Exact returned field names** and the **exact order-property names** we should
+  save from them.
+- **Auth:** confirmation the browser can call it **without exposing a private
+  key** (see 12.2).
+
+Expected response is approximately (structure to be confirmed by Omar):
+
+```json
+{
+  "name": "Hawaii Plate Hat",
+  "template": "US License Plates/prt Hawaii.ai",
+  "custom_text": ["Custom Text"],
+  "tag": "UV-F100-Rectangle-Patch"
+}
+```
+
+### 12.2 CORS + keyless call
+
+If the bundle JS calls the API **from the browser**, the request crosses origins
+(`citylocs.com` → clOrdersApp domain). For a keyless browser call, the API must:
+
+- return CORS headers allowing the `citylocs.com` (storefront) origin, and
+- expose **only** non-sensitive config (name/template/tag/fields) — no private
+  key or secret in the client.
+
+If Omar prefers not to open the endpoint to the browser, the alternative is a
+server-side call (Cart Transform or a small proxy) — but that changes the flow's
+step 2. Confirm which is intended.
+
+### 12.3 Save the KEY, not the PATH — reconcile with §8 ⚠️
+
+Omar's proposed flow saves the **resolved template path** on the order and reads
+it back. This conflicts with **§8**: line properties are set client-side and must
+not be trusted as template/Dropbox paths. Preferred resolution:
+
+- Save `_fxb_design_product_id` as the **lookup key** (optionally keep the
+  returned config as a non-authoritative snapshot for human reference).
+- clOrdersApp **re-resolves** template/tag/fields from its own trusted DB at
+  processing time, validating the ID is a configured CityLocs design product.
+
+This also forces an explicit decision: **if production changes a template/tag/
+field mapping after an order is placed but before fulfillment, which wins?**
+- *Re-resolve at processing* → order always gets the current config (recommended,
+  and consistent with "clOrdersApp is the single source of truth").
+- *Pure snapshot* → order is frozen to whatever was captured at add-to-cart.
+
+### 12.4 Versioning
+
+`_fxb_schema_version` (see §4) must be honored by both the API response and
+clOrdersApp's reader so the contract can evolve without guessing an order's age.
+
+### 12.5 Rollout process (once the contract lands)
+
+1. Pull the current **live** theme copy of `assets/cl-fixed-bundle.js` and diff
+   against the local working copy before editing.
+2. Implement the API call + property save; extend the Cart Transform to carry the
+   new properties to child lines; add/extend Function tests.
+3. Test end-to-end on **DEV theme `153264947288`** with at least one clearance
+   SKU that exists only on `Bundle Hat` (per §10).
+4. Only then, a focused live deployment of the changed files.
