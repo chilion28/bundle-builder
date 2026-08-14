@@ -31,6 +31,18 @@
   endif
   assign price_spacing_top = block.settings.spacing_top | default: 0
   assign price_spacing_bottom = block.settings.spacing_bottom | default: 0
+  assign price_font_size_mobile = block.settings.font_size_mobile | default: 18
+  assign price_font_weight_mobile = block.settings.font_weight_mobile | default: '700'
+  assign price_color_mobile = block.settings.color_mobile | default: '#1f2328'
+  assign price_alignment_mobile = block.settings.alignment_mobile | default: 'left'
+  if price_alignment_mobile == 'left'
+    assign price_alignment_mobile = 'start'
+  elsif price_alignment_mobile == 'right'
+    assign price_alignment_mobile = 'end'
+  endif
+  assign price_spacing_top_mobile = block.settings.spacing_top_mobile | default: 0
+  assign price_spacing_bottom_mobile = block.settings.spacing_bottom_mobile | default: 0
+  assign price_class = 'product-price product-price--' | append: block.id
 -%}
 
 {% capture product_price_content %}
@@ -45,4 +57,18 @@
   margin-block: {{ price_spacing_top }}px {{ price_spacing_bottom }}px;
 {% endcapture %}
 
-{% render 'element.text', variant: 'body-lg', text: product_price_content, alignment: price_alignment, style: price_style %}
+{% if block.settings.use_mobile_styles %}
+  <style>
+    @media screen and (max-width: 767px) {
+      .product-price--{{ block.id }} {
+        --_font-size: {{ price_font_size_mobile }}px !important;
+        --_font-weight: {{ price_font_weight_mobile }} !important;
+        --_color: {{ price_color_mobile }} !important;
+        margin-block: {{ price_spacing_top_mobile }}px {{ price_spacing_bottom_mobile }}px !important;
+        text-align: {{ price_alignment_mobile }} !important;
+      }
+    }
+  </style>
+{% endif %}
+
+{% render 'element.text', variant: 'body-lg', text: product_price_content, classlist: price_class, alignment: price_alignment, style: price_style %}

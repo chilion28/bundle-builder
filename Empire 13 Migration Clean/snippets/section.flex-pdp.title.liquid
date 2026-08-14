@@ -26,12 +26,30 @@
   assign title_spacing_bottom = block.settings.spacing_bottom | default: 0
   assign title_class = 'product-title product-title--' | append: block.id
 
+  assign title_font_source_mobile = block.settings.font_source_mobile | default: 'heading'
+  assign title_font_weight_mobile = block.settings.font_weight_mobile | default: '700'
+  assign title_line_height_mobile = block.settings.line_height_mobile | default: 110
+  assign title_letter_spacing_mobile = block.settings.letter_spacing_mobile | default: 0
+  assign title_transform_mobile = block.settings.text_transform_mobile | default: 'none'
+  assign title_alignment_mobile = block.settings.alignment_mobile | default: 'start'
+  assign title_color_mobile = block.settings.color_mobile | default: '#1f2328'
+  assign title_spacing_top_mobile = block.settings.spacing_top_mobile | default: 0
+  assign title_spacing_bottom_mobile = block.settings.spacing_bottom_mobile | default: 0
+
   if title_font_source == 'body'
     assign title_font_family = 'var(--body-font-family)'
     assign title_font_fallback = 'var(--body-font-family-fallback)'
   else
     assign title_font_family = 'var(--heading-font-family)'
     assign title_font_fallback = 'var(--heading-font-family-fallback)'
+  endif
+
+  if title_font_source_mobile == 'body'
+    assign title_font_family_mobile = 'var(--body-font-family)'
+    assign title_font_fallback_mobile = 'var(--body-font-family-fallback)'
+  else
+    assign title_font_family_mobile = 'var(--heading-font-family)'
+    assign title_font_fallback_mobile = 'var(--heading-font-family-fallback)'
   endif
 %}
 
@@ -55,6 +73,25 @@
     @media screen and (max-width: 767px) {
       .product-title--{{ block.id }} {
         --_font-size: {{ block.settings.font_size_mobile }}px;
+      }
+    }
+  </style>
+{% endif %}
+
+{% if block.settings.use_mobile_styles %}
+  <style>
+    @media screen and (max-width: 767px) {
+      .product-title--{{ block.id }} {
+        --_font-size: {{ block.settings.font_size_mobile | default: 32 }}px !important;
+        --_font-family: {{ title_font_family_mobile }} !important;
+        --_font-family-fallback: {{ title_font_fallback_mobile }} !important;
+        --_font-weight: {{ title_font_weight_mobile }} !important;
+        --_line-height: {{ title_line_height_mobile | divided_by: 100.0 }} !important;
+        --_letter-spacing: {{ title_letter_spacing_mobile }}px !important;
+        --_color: {{ title_color_mobile }} !important;
+        margin-block: {{ title_spacing_top_mobile }}px {{ title_spacing_bottom_mobile }}px !important;
+        text-align: {{ title_alignment_mobile }} !important;
+        text-transform: {{ title_transform_mobile }} !important;
       }
     }
   </style>

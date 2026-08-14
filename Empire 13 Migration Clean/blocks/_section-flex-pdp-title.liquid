@@ -20,7 +20,7 @@
     {
       "type": "checkbox",
       "id": "custom_font_sizes",
-      "label": "Use custom font sizes",
+      "label": "Use custom desktop font size",
       "default": false
     },
     {
@@ -32,17 +32,6 @@
       "step": 1,
       "unit": "px",
       "default": 48,
-      "visible_if": "{{ block.settings.custom_font_sizes }}"
-    },
-    {
-      "type": "range",
-      "id": "font_size_mobile",
-      "label": "Mobile font size",
-      "min": 18,
-      "max": 56,
-      "step": 1,
-      "unit": "px",
-      "default": 32,
       "visible_if": "{{ block.settings.custom_font_sizes }}"
     },
     {
@@ -137,6 +126,129 @@
       "step": 2,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile title styling"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_styles",
+      "label": "Use custom mobile title styles",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Mobile font size",
+      "min": 18,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "select",
+      "id": "font_source_mobile",
+      "label": "Mobile font family",
+      "default": "heading",
+      "options": [
+        { "value": "heading", "label": "Theme heading font" },
+        { "value": "body", "label": "Theme body font" }
+      ],
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "select",
+      "id": "font_weight_mobile",
+      "label": "Mobile font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" },
+        { "value": "900", "label": "Black" }
+      ],
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "range",
+      "id": "line_height_mobile",
+      "label": "Mobile line height",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 110,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing_mobile",
+      "label": "Mobile letter spacing",
+      "min": -2,
+      "max": 6,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "select",
+      "id": "text_transform_mobile",
+      "label": "Mobile letter case",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "Original" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "capitalize", "label": "Capitalize" },
+        { "value": "lowercase", "label": "Lowercase" }
+      ],
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "select",
+      "id": "alignment_mobile",
+      "label": "Mobile alignment",
+      "default": "start",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ],
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "color",
+      "id": "color_mobile",
+      "label": "Mobile title color",
+      "default": "#1f2328",
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "range",
+      "id": "spacing_top_mobile",
+      "label": "Mobile spacing above",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom_mobile",
+      "label": "Mobile spacing below",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
     }
   ],
   "presets": [

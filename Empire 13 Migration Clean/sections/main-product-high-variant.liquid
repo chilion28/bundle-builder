@@ -141,6 +141,49 @@
     },
     {
       "type": "header",
+      "content": "Mobile product layout"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_layout",
+      "label": "Use custom mobile layout",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "mobile_max_width",
+      "label": "Mobile maximum content width",
+      "min": 320,
+      "max": 760,
+      "step": 20,
+      "unit": "px",
+      "default": 760,
+      "visible_if": "{{ section.settings.use_mobile_layout }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_side_padding",
+      "label": "Mobile side padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ section.settings.use_mobile_layout }}"
+    },
+    {
+      "type": "range",
+      "id": "mobile_details_gutter",
+      "label": "Mobile details inner gutter",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.use_mobile_layout }}"
+    },
+    {
+      "type": "header",
       "content": "Details column spacing"
     },
     {

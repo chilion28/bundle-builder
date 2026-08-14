@@ -79,6 +79,76 @@
       "step": 2,
       "unit": "px",
       "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Mobile price styling"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_mobile_styles",
+      "label": "Use custom mobile price styles",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Mobile price font size",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "select",
+      "id": "font_weight_mobile",
+      "label": "Mobile price font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ],
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "color",
+      "id": "color_mobile",
+      "label": "Mobile price color",
+      "default": "#1f2328",
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment_mobile",
+      "label": "Mobile price alignment",
+      "default": "left",
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "range",
+      "id": "spacing_top_mobile",
+      "label": "Mobile spacing above",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom_mobile",
+      "label": "Mobile spacing below",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.use_mobile_styles }}"
     }
   ],
   "presets": [

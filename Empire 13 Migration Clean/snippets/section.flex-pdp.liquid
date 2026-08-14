@@ -43,6 +43,10 @@
   assign cl_mobile_spacing = section.settings.mobile_spacing | default: 'sm'
   assign cl_details_gap_desktop = section.settings.details_gap_desktop | default: 'md'
   assign cl_details_gap_mobile = section.settings.details_gap_mobile | default: 'sm'
+  assign cl_use_mobile_layout = section.settings.use_mobile_layout | default: false
+  assign cl_mobile_max_width = section.settings.mobile_max_width | default: 760
+  assign cl_mobile_side_padding = section.settings.mobile_side_padding | default: 16
+  assign cl_mobile_details_gutter = section.settings.mobile_details_gutter | default: 0
   assign cl_gallery_span = 9
   case section.settings.gallery_width
     when '40'
@@ -150,6 +154,7 @@
       }
 
       .cl-combined-listing-wrapper {
+        box-sizing: border-box;
         width: 100%;
         max-width: {{ cl_max_width }}px;
         margin-inline: auto;
@@ -160,6 +165,19 @@
           padding-inline-start: 24px;
         }
       }
+
+      {% if cl_use_mobile_layout %}
+        @media screen and (max-width: 767px) {
+          .cl-combined-listing-wrapper {
+            max-width: {{ cl_mobile_max_width }}px;
+            padding-inline: {{ cl_mobile_side_padding }}px;
+          }
+
+          .cl-combined-listing__details {
+            padding-inline: {{ cl_mobile_details_gutter }}px;
+          }
+        }
+      {% endif %}
 
       @media screen and (min-width: 1024px) {
         .cl-combined-listing__details {
@@ -175,6 +193,7 @@
   {% capture standard_listing_product_form %}
     <style>
       .cl-standard-product-wrapper {
+        box-sizing: border-box;
         width: 100%;
         max-width: {{ cl_max_width }}px;
         margin-inline: auto;
@@ -191,6 +210,19 @@
           padding-inline-start: 24px;
         }
       }
+
+      {% if cl_use_mobile_layout %}
+        @media screen and (max-width: 767px) {
+          .cl-standard-product-wrapper {
+            max-width: {{ cl_mobile_max_width }}px;
+            padding-inline: {{ cl_mobile_side_padding }}px;
+          }
+
+          .cl-standard-product__details {
+            padding-inline: {{ cl_mobile_details_gutter }}px;
+          }
+        }
+      {% endif %}
 
       @media screen and (min-width: 1024px) {
         .cl-standard-product__details {
