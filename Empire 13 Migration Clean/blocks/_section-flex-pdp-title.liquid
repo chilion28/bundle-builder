@@ -3,6 +3,21 @@
 {% schema %}
 {
   "name": "t:flex_pdp.blocks.title.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "size",
+      "label": "Title size",
+      "default": "xl",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" },
+        { "value": "xl", "label": "Extra large" },
+        { "value": "2xl", "label": "2X large" }
+      ]
+    }
+  ],
   "presets": [
     {
       "name": "t:flex_pdp.blocks.title.name"

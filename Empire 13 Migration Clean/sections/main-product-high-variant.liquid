@@ -89,6 +89,68 @@
         { "value": "bottom", "label": "t:flex_pdp.section.high_variant.settings.padding.options.bottom.label" },
         { "value": "both", "label": "t:flex_pdp.section.high_variant.settings.padding.options.both.label" }
       ]
+    },
+    {
+      "type": "header",
+      "content": "Product layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum content width",
+      "min": 900,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "select",
+      "id": "gallery_width",
+      "label": "Gallery width on desktop",
+      "default": "45",
+      "options": [
+        { "value": "40", "label": "40% gallery / 60% details" },
+        { "value": "45", "label": "45% gallery / 55% details" },
+        { "value": "50", "label": "50% gallery / 50% details" },
+        { "value": "55", "label": "55% gallery / 45% details" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "column_gap",
+      "label": "Desktop column gap",
+      "default": "xl",
+      "options": [
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" },
+        { "value": "xl", "label": "Extra large" },
+        { "value": "2xl", "label": "2X large" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "details_gutter",
+      "label": "Details column inner gutter",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "select",
+      "id": "mobile_spacing",
+      "label": "Mobile gallery/details spacing",
+      "default": "sm",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "xs", "label": "Extra small" },
+        { "value": "sm", "label": "Small" },
+        { "value": "md", "label": "Medium" },
+        { "value": "lg", "label": "Large" }
+      ]
     }
   ],
   "blocks": [

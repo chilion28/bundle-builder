@@ -227,7 +227,7 @@
         align-items: center;
         gap: 8px;
         width: 100%;
-        max-width: 1200px;
+        max-width: {{ cl_max_width }}px;
         margin: 0 auto 18px;
         padding-inline: 4px;
         color: #687078;
@@ -266,7 +266,6 @@
     {% render 'layout.grid',
       columns: product_grid_columns,
       slot: grid_content,
-      gap_xs: 'sm',
       gap_xs: cl_mobile_spacing,
       gap_sm: cl_column_gap
     %}

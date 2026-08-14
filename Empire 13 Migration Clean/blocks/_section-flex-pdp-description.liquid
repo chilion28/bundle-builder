@@ -1,8 +1,47 @@
-{% render 'section.flex-pdp.description', product: closest.product %}
+<div
+  class="product-description product-description--{{ block.id }}"
+  style="--product-description-font-size: {{ block.settings.font_size | default: 16 }}px; --product-description-line-height: {{ block.settings.line_height | default: 165 | divided_by: 100.0 }};"
+>
+  {% render 'section.flex-pdp.description', product: closest.product %}
+</div>
+
+{% stylesheet %}
+  .product-description {
+    font-size: var(--product-description-font-size, 16px);
+    line-height: var(--product-description-line-height, 1.65);
+  }
+
+  .product-description :is(p, li) {
+    font-size: inherit;
+    line-height: inherit;
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:flex_pdp.blocks.description.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Description font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Description line height",
+      "min": 120,
+      "max": 200,
+      "step": 5,
+      "unit": "%",
+      "default": 165
+    }
+  ],
   "presets": [
     {
       "name": "t:flex_pdp.blocks.description.name"
