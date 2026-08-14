@@ -120,6 +120,65 @@
   // Capture phase so we clean the value before framework input handlers read it.
   document.addEventListener('input', onInput, true);
 
+  // ---- Always-visible helper hint under each personalization group --------
+  var HINT_TEXT =
+    'Letters, numbers, and basic symbols only — emojis and special characters can’t be printed.';
+  var HINT_CSS =
+    '.cl-input-hint{display:block;margin:6px 2px 8px;font-size:12.5px;line-height:1.35;' +
+    'color:#6b7280;font-weight:400;}';
+
+  function hintStyle() {
+    if (document.getElementById('cl-input-hint-style')) return;
+    var s = document.createElement('style');
+    s.id = 'cl-input-hint-style';
+    s.textContent = HINT_CSS;
+    document.head.appendChild(s);
+  }
+  function groupOf(el) {
+    return (
+      el.closest('.product-personalizer, .cl-cfg, .cl-ai, .cl-up2, form') ||
+      el.parentElement
+    );
+  }
+  function addHints() {
+    var fields = document.querySelectorAll('input, textarea');
+    Array.prototype.forEach.call(fields, function (el) {
+      if (!isTarget(el)) return;
+      var g = groupOf(el);
+      if (!g || g.querySelector('.cl-input-hint')) return; // one per group; re-adds if removed
+      hintStyle();
+      // place the hint after this group's LAST personalization field's wrapper
+      var groupFields = Array.prototype.filter.call(
+        g.querySelectorAll('input, textarea'),
+        isTarget
+      );
+      var last = groupFields[groupFields.length - 1] || el;
+      var anchor = last.closest('.pplr-wrapper') || last;
+      var hint = document.createElement('div');
+      hint.className = 'cl-input-hint';
+      hint.textContent = HINT_TEXT;
+      if (anchor.parentNode) anchor.parentNode.insertBefore(hint, anchor.nextSibling);
+    });
+  }
+
+  // Re-run for fields added later (Vue builder modal, AI-hat editor, GemPages).
+  var hintTimer;
+  function scheduleHints() {
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(addHints, 150);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(scheduleHints).observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addHints);
+  } else {
+    addHints();
+  }
+
   // Submit-time safety net for standard forms: clean any target field on submit.
   document.addEventListener(
     'submit',
