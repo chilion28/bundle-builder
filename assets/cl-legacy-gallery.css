@@ -149,6 +149,8 @@
   flex-wrap: wrap;
   gap: 10px;
   align-items: stretch;
+  justify-content: flex-start; /* override citylocs.css space-around, which
+                                  spread the content-sized pills apart */
 }
 .swatch_options .selection-button-container {
   margin: 0 !important; /* replace the inline margin:4px with the flex gap */
