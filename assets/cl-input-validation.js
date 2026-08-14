@@ -145,21 +145,25 @@
     Array.prototype.forEach.call(fields, function (el) {
       if (!isTarget(el)) return;
       var g = groupOf(el);
-      if (!g || g.querySelector('.cl-input-hint')) return; // one per group; re-adds if removed
-      hintStyle();
-      // place the hint after this group's LAST personalization field's wrapper
+      if (!g) return;
+      // Compute the placement anchor: after this group's LAST field's row/wrapper,
+      // so the hint sits on its own line (e.g. the AI-hat editor's flex text row).
       var groupFields = Array.prototype.filter.call(
         g.querySelectorAll('input, textarea'),
         isTarget
       );
       var last = groupFields[groupFields.length - 1] || el;
-      // Anchor after the field's ROW so the hint sits on its own line, not
-      // squished inline (e.g. the AI-hat editor's flex text row).
       var anchor = last.closest('.pplr-wrapper, .cl-ai-ed__textrow') || last;
+      if (!anchor || !anchor.parentNode) return;
+      // De-dupe by the ACTUAL placement (anchor's next sibling) — the anchor may
+      // sit outside `g`, so a group-scoped query would miss it and loop forever.
+      var nx = anchor.nextElementSibling;
+      if (nx && nx.classList && nx.classList.contains('cl-input-hint')) return;
+      hintStyle();
       var hint = document.createElement('div');
       hint.className = 'cl-input-hint';
       hint.textContent = HINT_TEXT;
-      if (anchor.parentNode) anchor.parentNode.insertBefore(hint, anchor.nextSibling);
+      anchor.parentNode.insertBefore(hint, anchor.nextSibling);
     });
   }
 
