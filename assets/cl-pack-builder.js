@@ -26,6 +26,19 @@
     if (!grid || !summary) return; // not a builder page
     window.__clPackBuilderInit = true;
 
+    // Self-contained styling for the per-swatch count badge (golf-builder style).
+    if (!document.getElementById('cl-pack-builder-style')) {
+      var pbStyle = document.createElement('style');
+      pbStyle.id = 'cl-pack-builder-style';
+      pbStyle.textContent =
+        '.cl-grid-swatch{position:relative}' +
+        '.cl-grid-card .cl-swatch-badge{position:absolute;top:-6px;right:-6px;z-index:3;' +
+        'min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:#2c2c2c;color:#fff;' +
+        'font-size:11px;font-weight:800;line-height:1;display:flex;align-items:center;justify-content:center;' +
+        'box-shadow:0 1px 4px rgba(0,0,0,.25);pointer-events:none}';
+      document.head.appendChild(pbStyle);
+    }
+
     var selected = new Map();
     var unlockedGiftTierKeys = new Set();
     var clCheckoutInProgress = false;
@@ -123,6 +136,7 @@
       return {
         key: String(vid), variantId: vid, title: title, variant: variant, price: price, image: image,
         handle: handle, discountKey: rule.key, discountRule: rule,
+        options: v && Array.isArray(v.options) ? v.options : [],
         available: v ? v.available !== false : isVariantAvailable(vid),
         personalized: isPersonalized(card)
       };
@@ -333,11 +347,32 @@
       renderSummary();
     }
 
+    // ---- per-swatch selected-count badges (matches the golf builder) ----
+    function updateSwatchBadges(card) {
+      var handle = card.getAttribute('data-cl-handle');
+      var groups = card.querySelectorAll('[data-cl-option-group]');
+      var colorGroup = null;
+      groups.forEach(function (g) { if (/colou?r/i.test(g.getAttribute('data-cl-option-name') || '')) colorGroup = g; });
+      if (!colorGroup && groups.length) colorGroup = groups[groups.length - 1];
+      if (!colorGroup) return;
+      colorGroup.querySelectorAll('.cl-grid-swatch').forEach(function (sw) {
+        var val = sw.getAttribute('data-cl-value');
+        var qty = 0;
+        selected.forEach(function (it) { if (it.handle === handle && (it.options || []).indexOf(val) !== -1) qty += it.qty || 0; });
+        var badge = sw.querySelector('.cl-swatch-badge');
+        if (qty > 0) {
+          if (!badge) { badge = document.createElement('span'); badge.className = 'cl-swatch-badge'; if (getComputedStyle(sw).position === 'static') sw.style.position = 'relative'; sw.appendChild(badge); }
+          badge.textContent = qty;
+        } else if (badge) { badge.remove(); }
+      });
+    }
+
     // ---- card UI (added/in-pack states on the grid) ----
     function syncCards() {
       document.querySelectorAll('.cl-grid-card').forEach(function (card) {
         var btn = card.querySelector('[data-cl-add]'); if (!btn) return;
         var data = getCardData(card);
+        updateSwatchBadges(card);
         var productTotal = 0; selected.forEach(function (i) { if (i.handle === data.handle) productTotal += i.qty || 0; });
         var activeQty = (selected.get(data.key) || {}).qty || 0;
         var full = isPackFull();
