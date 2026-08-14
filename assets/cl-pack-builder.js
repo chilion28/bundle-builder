@@ -300,12 +300,14 @@
         return '<div class="cl-golf-summary-group"><div class="cl-golf-summary-group-head"><span>' + escapeHtml(group.title) + '</span><span class="cl-golf-summary-group-count">x' + group.qty + '</span></div>' + priceHtml +
           group.items.map(function (item) {
             var pk = escapeHtml(item.key);
-            var qtyBox = '<div class="cl-golf-summary-qty"><button type="button" data-summary-minus="' + pk + '">-</button><input type="number" min="0" max="' + maxPackSize + '" value="' + item.qty + '" data-summary-qty-input="' + pk + '"><button type="button" data-summary-plus="' + pk + '">+</button></div>';
+            function qtyBoxHtml(extra) {
+              return '<div class="cl-golf-summary-qty' + (extra ? ' ' + extra : '') + '"><button type="button" data-summary-minus="' + pk + '">-</button><input type="number" min="0" max="' + maxPackSize + '" value="' + item.qty + '" data-summary-qty-input="' + pk + '"><button type="button" data-summary-plus="' + pk + '">+</button></div>';
+            }
             if (item.personalization && Object.keys(item.personalization).length) {
               var lines = Object.keys(item.personalization).map(function (k) { return '<div class="cl-perso-line"><span>' + escapeHtml(k) + '</span><strong>' + escapeHtml(item.personalization[k]) + '</strong></div>'; }).join('');
-              return '<div class="cl-golf-summary-variant-row cl-is-personalized"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant ? '<div>' + escapeHtml(item.variant) + '</div>' : '') + '<div class="cl-perso-lines">' + lines + '</div><div class="cl-perso-actions"><button type="button" data-cl-remove-key="' + pk + '">Remove</button></div></div><div class="cl-golf-summary-qty cl-perso-qty">' + qtyBox.replace('cl-golf-summary-qty', '') + '</div></div>';
+              return '<div class="cl-golf-summary-variant-row cl-is-personalized"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant ? '<div>' + escapeHtml(item.variant) + '</div>' : '') + '<div class="cl-perso-lines">' + lines + '</div><div class="cl-perso-actions"><button type="button" data-cl-remove-key="' + pk + '">Remove</button></div></div>' + qtyBoxHtml('cl-perso-qty') + '</div>';
             }
-            return '<div class="cl-golf-summary-variant-row"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant || '') + '</div>' + qtyBox + '</div>';
+            return '<div class="cl-golf-summary-variant-row"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant || '') + '</div>' + qtyBoxHtml('') + '</div>';
           }).join('') + '</div>';
       }).join('');
       renderGifts(list, totalQty);
@@ -318,7 +320,8 @@
         return tier.variants.map(function (gift) {
           if (unlocked) return '<div class="cl-free-gift-preview ' + (justUnlocked ? 'cl-gift-unlock-pulse' : '') + '"><img src="' + normalizeImage(gift.image) + '" alt=""><div class="cl-free-gift-wrap"><div class="cl-free-gift-title">' + escapeHtml(gift.title) + '</div><div class="cl-free-gift-label">' + escapeHtml(builderConfig.freeGiftLabel || 'Free gift included') + '</div><div class="cl-golf-summary-price"><s>' + money(gift.price) + '</s> <strong>$ 0.00</strong></div></div><div class="cl-free-gift-badge">FREE</div></div>';
           var rem = tier.minQty - totalQty; var w = rem === 1 ? builderConfig.itemSingular : builderConfig.itemPlural;
-          return '<div class="cl-free-gift-preview is-locked"><img src="' + normalizeImage(gift.image) + '" alt=""><div class="cl-free-gift-wrap"><div class="cl-free-gift-title">' + escapeHtml(gift.title) + '</div><div class="cl-free-gift-label">Add ' + rem + ' more ' + w + ' to unlock</div><div class="cl-golf-summary-price"><strong>' + money(gift.price) + '</strong></div></div><div class="cl-free-gift-lock-badge">🔒</div></div>';
+          var lockSvg = '<svg height="20" width="20" viewBox="0 0 256 256" fill="currentColor"><path fill="currentColor" d="M208,76H180V56A52,52,0,0,0,76,56V76H48A20,20,0,0,0,28,96V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V96A20,20,0,0,0,208,76ZM100,56a28,28,0,0,1,56,0V76H100ZM204,204H52V100H204Zm-76-92a32,32,0,0,0-12,61.66V180a12,12,0,0,0,24,0v-6.34A32,32,0,0,0,128,112Zm0,24a8,8,0,1,1-8,8A8,8,0,0,1,128,136Z"></path></svg>';
+          return '<div class="cl-free-gift-preview is-locked"><img src="' + normalizeImage(gift.image) + '" alt=""><div class="cl-free-gift-wrap"><div class="cl-free-gift-title">' + escapeHtml(gift.title) + '</div><div class="cl-free-gift-label">Add ' + rem + ' more ' + w + ' to unlock</div><div class="cl-golf-summary-price"><strong>' + money(gift.price) + '</strong></div></div><div class="cl-free-gift-lock-badge">' + lockSvg + '</div></div>';
         });
       }).join('');
       if (html) list.insertAdjacentHTML('afterbegin', html);
