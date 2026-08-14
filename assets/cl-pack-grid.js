@@ -888,26 +888,6 @@
     if (el) el.textContent = t;
   }
 
-  // Required-personalization gate for "Add to Pack". The add button (.cl-grid-add)
-  // is wired by the GemPages section's custom code, which has lost this check on
-  // republish before. Enforce it here (theme asset, republish-proof): if a card's
-  // personalization is required but incomplete, block the add and prompt (open the
-  // accordion + inline "Enter your …" notice) instead. Capture phase + stop so the
-  // GemPages add handler never runs for an invalid card. Valid cards pass through.
-  document.addEventListener(
-    'click',
-    function (e) {
-      var btn = e.target.closest && e.target.closest('.cl-grid-add');
-      if (!btn) return;
-      var card = btn.closest('[data-cl-personalized]');
-      if (!card || !card.__clPerso || card.__clPerso.valid) return;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      card.__clPerso.promptMissing();
-    },
-    true
-  );
-
   function boot() {
     applyHeroText();
     document.querySelectorAll('[data-cl-pack-grid] [data-cl-card]').forEach(initCard);
