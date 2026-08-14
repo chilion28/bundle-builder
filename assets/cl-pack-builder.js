@@ -319,7 +319,7 @@
             }
             if (item.personalization && Object.keys(item.personalization).length) {
               var lines = Object.keys(item.personalization).map(function (k) { return '<div class="cl-perso-line"><span>' + escapeHtml(k) + '</span><strong>' + escapeHtml(item.personalization[k]) + '</strong></div>'; }).join('');
-              return '<div class="cl-golf-summary-variant-row cl-is-personalized"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant ? '<div>' + escapeHtml(item.variant) + '</div>' : '') + '<div class="cl-perso-lines">' + lines + '</div><div class="cl-perso-actions"><button type="button" data-cl-remove-key="' + pk + '">Remove</button></div></div>' + qtyBoxHtml('cl-perso-qty') + '</div>';
+              return '<div class="cl-golf-summary-variant-row cl-is-personalized"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant ? '<div>' + escapeHtml(item.variant) + '</div>' : '') + '<div class="cl-perso-lines">' + lines + '</div><div class="cl-perso-actions"><button type="button" data-cl-edit-key="' + pk + '">Edit</button><button type="button" data-cl-remove-key="' + pk + '">Remove</button></div></div>' + qtyBoxHtml('cl-perso-qty') + '</div>';
             }
             return '<div class="cl-golf-summary-variant-row"><img src="' + item.image + '" alt=""><div class="cl-golf-summary-variant">' + (item.variant || '') + '</div>' + qtyBoxHtml('') + '</div>';
           }).join('') + '</div>';
@@ -350,20 +350,19 @@
     // ---- per-swatch selected-count badges (matches the golf builder) ----
     function updateSwatchBadges(card) {
       var handle = card.getAttribute('data-cl-handle');
-      var groups = card.querySelectorAll('[data-cl-option-group]');
-      var colorGroup = null;
-      groups.forEach(function (g) { if (/colou?r/i.test(g.getAttribute('data-cl-option-name') || '')) colorGroup = g; });
-      if (!colorGroup && groups.length) colorGroup = groups[groups.length - 1];
-      if (!colorGroup) return;
-      colorGroup.querySelectorAll('.cl-grid-swatch').forEach(function (sw) {
-        var val = sw.getAttribute('data-cl-value');
-        var qty = 0;
-        selected.forEach(function (it) { if (it.handle === handle && (it.options || []).indexOf(val) !== -1) qty += it.qty || 0; });
-        var badge = sw.querySelector('.cl-swatch-badge');
-        if (qty > 0) {
-          if (!badge) { badge = document.createElement('span'); badge.className = 'cl-swatch-badge'; if (getComputedStyle(sw).position === 'static') sw.style.position = 'relative'; sw.appendChild(badge); }
-          badge.textContent = qty;
-        } else if (badge) { badge.remove(); }
+      card.querySelectorAll('[data-cl-option-group]').forEach(function (group) {
+        // Badge Style + Colour swatches (skip Size, which every item shares).
+        if (/size/i.test(group.getAttribute('data-cl-option-name') || '')) return;
+        group.querySelectorAll('.cl-grid-swatch').forEach(function (sw) {
+          var val = sw.getAttribute('data-cl-value');
+          var qty = 0;
+          selected.forEach(function (it) { if (it.handle === handle && (it.options || []).indexOf(val) !== -1) qty += it.qty || 0; });
+          var badge = sw.querySelector('.cl-swatch-badge');
+          if (qty > 0) {
+            if (!badge) { badge = document.createElement('span'); badge.className = 'cl-swatch-badge'; if (getComputedStyle(sw).position === 'static') sw.style.position = 'relative'; sw.appendChild(badge); }
+            badge.textContent = qty;
+          } else if (badge) { badge.remove(); }
+        });
       });
     }
 
@@ -379,9 +378,13 @@
         card.classList.toggle('cl-in-pack', productTotal > 0);
         if (data.personalized) {
           btn.classList.remove('is-added');
-          btn.classList.toggle('is-pack-full', full && productTotal === 0);
-          btn.disabled = full && productTotal === 0;
-          btn.textContent = full && productTotal === 0 ? 'Your pack is full' : (productTotal > 0 ? 'Add Another (' + productTotal + ')' : 'Personalize & Add');
+          if (card.__clEditKey) {
+            btn.classList.remove('is-pack-full'); btn.disabled = false; btn.textContent = 'Update Item';
+          } else {
+            btn.classList.toggle('is-pack-full', full && productTotal === 0);
+            btn.disabled = full && productTotal === 0;
+            btn.textContent = full && productTotal === 0 ? 'Your pack is full' : (productTotal > 0 ? 'Add Another (' + productTotal + ')' : 'Personalize & Add');
+          }
         } else if (activeQty > 0) {
           btn.disabled = true; btn.classList.add('is-added'); btn.classList.remove('is-pack-full'); btn.textContent = '✓ Added';
         } else if (!data.available) {
@@ -394,12 +397,45 @@
       });
     }
 
+    // Load an added item's personalization back into its card for editing.
+    function startEdit(key) {
+      var item = selected.get(key);
+      if (!item || !item.personalization) return;
+      var sel = (window.CSS && CSS.escape) ? CSS.escape(item.handle) : item.handle;
+      var card = document.querySelector('.cl-grid-card[data-cl-handle="' + sel + '"]');
+      if (!card) return; // product not on the current (filtered) page
+      // open the personalization accordion if it's collapsed
+      var toggle = card.querySelector('[data-cl-perso-toggle], .cl-perso-toggle, .cl-grid-perso-toggle');
+      if (toggle && toggle.getAttribute('aria-expanded') === 'false') toggle.click();
+      card.querySelectorAll('[data-cl-perso-input]').forEach(function (i) {
+        var label = i.getAttribute('data-cl-perso-input');
+        i.value = item.personalization[label] || '';
+        i.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      card.__clEditKey = key;
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var first = card.querySelector('[data-cl-perso-input]'); if (first) setTimeout(function () { first.focus(); }, 320);
+      syncCards();
+    }
+
     function addFromCard(card) {
       var data = getCardData(card);
       if (data.personalized) {
         if (!persoValid(card)) { if (card.__clPerso && card.__clPerso.promptMissing) card.__clPerso.promptMissing(); return; }
-        if (isPackFull()) return;
         var perso = readPersonalization(card);
+        // Editing an existing line: keep its variant/qty, update only the text.
+        if (card.__clEditKey) {
+          var old = selected.get(card.__clEditKey);
+          if (old) {
+            var newKey = makeItemKey(old.variantId, perso);
+            if (newKey !== card.__clEditKey) selected.delete(card.__clEditKey);
+            selected.set(newKey, refreshItemDiscountRule(Object.assign({}, old, { key: newKey, personalization: perso })));
+          }
+          card.__clEditKey = null;
+          renderSummary();
+          return;
+        }
+        if (isPackFull()) return;
         var key = makeItemKey(data.variantId, perso);
         var existing = selected.get(key);
         selected.set(key, refreshItemDiscountRule(Object.assign({}, data, { key: key, qty: existing ? existing.qty + 1 : 1, personalization: perso })));
@@ -486,8 +522,10 @@
       if (plus && plus.closest('.cl-golf-summary')) { e.preventDefault(); e.stopImmediatePropagation(); if (isPackFull()) return; var it = selected.get(plus.getAttribute('data-summary-plus')); if (it) updateSelectedItem(it.key, it.qty + 1); return; }
       var minus = e.target.closest && e.target.closest('[data-summary-minus]');
       if (minus && minus.closest('.cl-golf-summary')) { e.preventDefault(); e.stopImmediatePropagation(); var im = selected.get(minus.getAttribute('data-summary-minus')); if (im) updateSelectedItem(im.key, im.qty - 1); return; }
+      var ed = e.target.closest && e.target.closest('[data-cl-edit-key]');
+      if (ed) { e.preventDefault(); e.stopImmediatePropagation(); startEdit(ed.getAttribute('data-cl-edit-key')); return; }
       var rm = e.target.closest && e.target.closest('[data-cl-remove-key]');
-      if (rm) { e.preventDefault(); e.stopImmediatePropagation(); selected.delete(rm.getAttribute('data-cl-remove-key')); renderSummary(); return; }
+      if (rm) { e.preventDefault(); e.stopImmediatePropagation(); var rk = rm.getAttribute('data-cl-remove-key'); document.querySelectorAll('.cl-grid-card').forEach(function (c) { if (c.__clEditKey === rk) c.__clEditKey = null; }); selected.delete(rk); renderSummary(); return; }
       var clear = e.target.closest && e.target.closest('[data-cl-clear-pack]');
       if (clear) { e.preventDefault(); e.stopImmediatePropagation(); selected.clear(); renderSummary(); clearExistingBundleFromCart(getCurrentCollectionHandle()); return; }
       var checkout = e.target.closest && e.target.closest('.cl-golf-checkout');
@@ -508,6 +546,14 @@
     document.addEventListener('cl:perso-change', syncCards);
 
     // ---- init ----
+    // Map this builder's title -> collection handle so the cart page can route
+    // "edit / back to builder" links to the right collection.
+    try {
+      var clMap = JSON.parse(localStorage.getItem('cl_bundle_collections') || '{}');
+      clMap[builderConfig.title] = getCurrentCollectionHandle();
+      localStorage.setItem('cl_bundle_collections', JSON.stringify(clMap));
+    } catch (e) {}
+
     if (document.querySelector('.cl-golf-summary h3') && builderConfig.title) { var h = document.querySelector('.cl-golf-summary h3'); if (h && !h.textContent.trim()) h.textContent = builderConfig.title; }
     renderProgressDots();
     renderSummary();
