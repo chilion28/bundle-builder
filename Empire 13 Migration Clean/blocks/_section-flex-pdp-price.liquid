@@ -3,6 +3,84 @@
 {% schema %}
 {
   "name": "t:flex_pdp.blocks.price.name",
+  "settings": [
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Price font size",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Price font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Price color",
+      "default": "#1f2328"
+    },
+    {
+      "type": "text_alignment",
+      "id": "alignment",
+      "label": "Price alignment",
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "superscript_decimals",
+      "label": "Superscript cents",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "product_save_amount",
+      "label": "Show savings",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "product_save_type",
+      "label": "Savings format",
+      "default": "dollar",
+      "options": [
+        { "value": "dollar", "label": "Dollar amount" },
+        { "value": "percent", "label": "Percentage" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "label": "Spacing above",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Spacing below",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
   "presets": [
     {
       "name": "t:flex_pdp.blocks.price.name"

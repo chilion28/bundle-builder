@@ -15,6 +15,49 @@
 
 {% liquid
   assign size = size | default: block.settings.size | default: 'xl'
+  assign title_font_source = block.settings.font_source | default: 'heading'
+  assign title_font_weight = block.settings.font_weight | default: '700'
+  assign title_line_height = block.settings.line_height | default: 110
+  assign title_letter_spacing = block.settings.letter_spacing | default: 0
+  assign title_transform = block.settings.text_transform | default: 'none'
+  assign title_alignment = block.settings.alignment | default: 'start'
+  assign title_color = block.settings.color | default: '#1f2328'
+  assign title_spacing_top = block.settings.spacing_top | default: 0
+  assign title_spacing_bottom = block.settings.spacing_bottom | default: 0
+  assign title_class = 'product-title product-title--' | append: block.id
+
+  if title_font_source == 'body'
+    assign title_font_family = 'var(--body-font-family)'
+    assign title_font_fallback = 'var(--body-font-family-fallback)'
+  else
+    assign title_font_family = 'var(--heading-font-family)'
+    assign title_font_fallback = 'var(--heading-font-family-fallback)'
+  endif
 %}
 
-{% render 'element.text', as: 'h1 ', variant: 'heading', size: size, text: product.title, classlist: 'product-title' %}
+{% capture title_style %}
+  --_font-family: {{ title_font_family }};
+  --_font-family-fallback: {{ title_font_fallback }};
+  --_font-weight: {{ title_font_weight }};
+  --_line-height: {{ title_line_height | divided_by: 100.0 }};
+  --_letter-spacing: {{ title_letter_spacing }}px;
+  --_color: {{ title_color }};
+  display: block;
+  margin-block: {{ title_spacing_top }}px {{ title_spacing_bottom }}px;
+{% endcapture %}
+
+{% if block.settings.custom_font_sizes %}
+  <style>
+    .product-title--{{ block.id }} {
+      --_font-size: {{ block.settings.font_size_desktop }}px;
+    }
+
+    @media screen and (max-width: 767px) {
+      .product-title--{{ block.id }} {
+        --_font-size: {{ block.settings.font_size_mobile }}px;
+      }
+    }
+  </style>
+{% endif %}
+
+{% render 'element.text', as: 'h1', variant: 'heading', size: size, text: product.title, classlist: title_class, alignment: title_alignment, text_transform: title_transform, style: title_style %}

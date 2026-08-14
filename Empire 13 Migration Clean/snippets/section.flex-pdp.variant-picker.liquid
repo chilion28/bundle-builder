@@ -147,6 +147,9 @@
                 {% continue %}
               {% endif %}
               {%- assign classlist = '' -%}
+              {% if is_cl_combined_listing and normalized_option_name == 'select design' %}
+                {% assign classlist = 'cl-combined-design-radio' %}
+              {% endif %}
 
               {%- capture input_id -%}
                 {{ section.id }}-{{ option.position }}-{{ forloop.index0 -}}
@@ -155,7 +158,28 @@
               {% assign input_value = value | escape %}
 
               {%- capture input_label -%}
-                {% if value.swatch %}
+                {% if is_cl_combined_listing and normalized_option_name == 'select design' %}
+                  {% liquid
+                    assign cl_design_product = product
+                    assign cl_design_product_url = value.product_url | default: ''
+                    if cl_design_product_url != blank
+                      assign cl_design_handle = cl_design_product_url | split: '/products/' | last | split: '?' | first | split: '#' | first
+                      assign cl_design_product_from_url = all_products[cl_design_handle]
+                      if cl_design_product_from_url != blank
+                        assign cl_design_product = cl_design_product_from_url
+                      endif
+                    endif
+                    assign cl_design_swatch = cl_design_product.metafields.custom.design_swatch.value
+                  %}
+                  <span class="cl-combined-design-card{% if value.selected %} cl-combined-design-card--selected{% endif %}">
+                    {% if cl_design_swatch != blank %}
+                      <span class="cl-combined-design-card__image">
+                        {{ cl_design_swatch | image_url: width: 360 | image_tag: loading: 'lazy', widths: '120, 180, 240, 360', sizes: '(max-width: 749px) 96px, 120px', alt: value }}
+                      </span>
+                    {% endif %}
+                    <span class="cl-combined-design-card__label">{{ value }}</span>
+                  </span>
+                {% elsif value.swatch %}
                   {% assign swatch_disabled = false %}
                   {% if value.available == false %}
                     {% assign swatch_disabled = true %}
@@ -286,6 +310,67 @@
   .cl-combined-option--select-design .layout-stack[horizontal] {
     display: flex;
     flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .cl-combined-option--select-design .cl-combined-design-radio {
+    display: block;
+    min-width: 112px;
+    cursor: pointer;
+  }
+
+  .cl-combined-design-card {
+    display: grid;
+    height: 100%;
+    overflow: hidden;
+    border: none;
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+  }
+
+  .cl-combined-design-card__image {
+    display: block;
+    width: 120px;
+    object-fit: contain;
+    overflow: hidden;
+    background: #f5f5f5;
+  }
+
+  .cl-combined-design-card__image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .cl-combined-design-card__label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: auto;
+    padding: 4px;
+    color: #252525;
+    font-size: .9rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .cl-combined-design-radio:hover .cl-combined-design-card {
+    border-color: #8a8f96;
+  }
+
+  .cl-combined-design-radio:has(input:focus-visible) .cl-combined-design-card {
+    outline: 2px solid var(--color-focus, #159ee4);
+    outline-offset: 2px;
+  }
+
+  .cl-combined-design-radio:has(input:checked) .cl-combined-design-card,
+  .cl-combined-design-card--selected {
+    border-color: #159ee4;
+    background: #e8f7ff;
+    box-shadow: 0 0 0 1px #159ee4;
   }
 
   .cl-combined-option--select-design .element-button {
@@ -420,6 +505,13 @@
     .cl-combined-option--select-design .element-radio {
       flex: 1 1 calc(50% - var(--spacing-xs));
     }
+
+    .cl-combined-option--select-design .cl-combined-design-radio {
+      flex: 0 1 96px;
+      min-width: 88px;
+    }
+
+    .cl-combined-design-card__image { width: 100%; }
 
     .cl-combined-option--select-design .element-button {
       width: 100%;

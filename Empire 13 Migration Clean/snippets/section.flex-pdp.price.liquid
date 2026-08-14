@@ -20,10 +20,29 @@
   assign superscript_decimals = superscript_decimals | default: block.settings.superscript_decimals, allow_false: true | default: settings.superscript_decimals, allow_false: true | default: true, allow_false: true
   assign product_save_amount = product_save_amount | default: block.settings.product_save_amount, allow_false: true | default: true, allow_false: true
   assign product_save_type = product_save_type | default: block.settings.product_save_type | default: 'dollar'
+  assign price_font_size = block.settings.font_size | default: 18
+  assign price_font_weight = block.settings.font_weight | default: '700'
+  assign price_color = block.settings.color | default: '#1f2328'
+  assign price_alignment = block.settings.alignment | default: 'left'
+  if price_alignment == 'left'
+    assign price_alignment = 'start'
+  elsif price_alignment == 'right'
+    assign price_alignment = 'end'
+  endif
+  assign price_spacing_top = block.settings.spacing_top | default: 0
+  assign price_spacing_bottom = block.settings.spacing_bottom | default: 0
 -%}
 
 {% capture product_price_content %}
   {% render 'product.price', product: product, superscript_decimals: superscript_decimals, product_save_amount: product_save_amount, product_save_type: product_save_type %}
 {% endcapture %}
 
-{% render 'element.text', variant: 'body-lg', text: product_price_content %}
+{% capture price_style %}
+  --_font-size: {{ price_font_size }}px;
+  --_font-weight: {{ price_font_weight }};
+  --_color: {{ price_color }};
+  display: block;
+  margin-block: {{ price_spacing_top }}px {{ price_spacing_bottom }}px;
+{% endcapture %}
+
+{% render 'element.text', variant: 'body-lg', text: product_price_content, alignment: price_alignment, style: price_style %}

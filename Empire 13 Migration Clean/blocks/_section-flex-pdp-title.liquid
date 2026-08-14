@@ -16,6 +16,127 @@
         { "value": "xl", "label": "Extra large" },
         { "value": "2xl", "label": "2X large" }
       ]
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_font_sizes",
+      "label": "Use custom font sizes",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Desktop font size",
+      "min": 20,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 48,
+      "visible_if": "{{ block.settings.custom_font_sizes }}"
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Mobile font size",
+      "min": 18,
+      "max": 56,
+      "step": 1,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.custom_font_sizes }}"
+    },
+    {
+      "type": "select",
+      "id": "font_source",
+      "label": "Font family",
+      "default": "heading",
+      "options": [
+        { "value": "heading", "label": "Theme heading font" },
+        { "value": "body", "label": "Theme body font" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "font_weight",
+      "label": "Font weight",
+      "default": "700",
+      "options": [
+        { "value": "400", "label": "Regular" },
+        { "value": "500", "label": "Medium" },
+        { "value": "600", "label": "Semibold" },
+        { "value": "700", "label": "Bold" },
+        { "value": "800", "label": "Extra bold" },
+        { "value": "900", "label": "Black" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "label": "Line height",
+      "min": 80,
+      "max": 160,
+      "step": 5,
+      "unit": "%",
+      "default": 110
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": -2,
+      "max": 6,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Letter case",
+      "default": "none",
+      "options": [
+        { "value": "none", "label": "Original" },
+        { "value": "uppercase", "label": "Uppercase" },
+        { "value": "capitalize", "label": "Capitalize" },
+        { "value": "lowercase", "label": "Lowercase" }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "default": "start",
+      "options": [
+        { "value": "start", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "Right" }
+      ]
+    },
+    {
+      "type": "color",
+      "id": "color",
+      "label": "Title color",
+      "default": "#1f2328"
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "label": "Spacing above",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Spacing below",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 0
     }
   ],
   "presets": [

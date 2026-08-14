@@ -41,6 +41,8 @@
   assign cl_details_gutter = section.settings.details_gutter | default: 40
   assign cl_column_gap = section.settings.column_gap | default: 'xl'
   assign cl_mobile_spacing = section.settings.mobile_spacing | default: 'sm'
+  assign cl_details_gap_desktop = section.settings.details_gap_desktop | default: 'md'
+  assign cl_details_gap_mobile = section.settings.details_gap_mobile | default: 'sm'
   assign cl_gallery_span = 9
   case section.settings.gallery_width
     when '40'
@@ -77,7 +79,7 @@
 {% endif %}
 
 {% capture product_details_stack %}
-  {% render 'layout.stack', gap_xs: 'sm', gap_sm: 'md', slot: slot_details %}
+  {% render 'layout.stack', gap_xs: cl_details_gap_mobile, gap_sm: cl_details_gap_desktop, slot: slot_details %}
 {% endcapture %}
 
 {% capture product_form %}
