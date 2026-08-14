@@ -152,8 +152,9 @@
 }
 .swatch_options .selection-button-container {
   margin: 0 !important; /* replace the inline margin:4px with the flex gap */
-  flex: 1 1 auto;
-  min-width: 96px;
+  flex: 0 1 auto; /* size to content + wrap; don't balloon to fill the row */
+  min-width: 0;
+  max-width: 100%;
 }
 .swatch_options .selection-button {
   height: auto;
