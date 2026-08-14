@@ -415,6 +415,16 @@ function decorateAmpBundleCartFromCart(cart) {
         li.dataset.clPackName = props._bundle_name || DEFAULT_BUNDLE_NAME;
         li.dataset.clCollection = props._bundle_collection || '';
 
+        // Route the item's title/image links back to the builder (the pack lives
+        // there), not the individual product page.
+        if (props._bundle_collection) {
+          li.querySelectorAll('a[href*="/products/"]').forEach(function (a) {
+            if (a.dataset.clRerouted) return;
+            a.dataset.clRerouted = '1';
+            a.setAttribute('href', '/collections/' + props._bundle_collection);
+          });
+        }
+
         var giftBadge = Array.prototype.find.call(
         li.querySelectorAll('.discount-list-item'),
         function (node) { return /free bundle gift/i.test(node.textContent); }
