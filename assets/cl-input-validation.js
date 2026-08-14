@@ -133,6 +133,89 @@
     true
   );
 
+  // ---- Network safety net -------------------------------------------------
+  // The visible-field cleaning above can be bypassed: the Zepto personalizer and
+  // the custom builders add to cart via AJAX with values they captured on their
+  // own, so a stray emoji can still reach the order. As a guarantee, intercept
+  // cart requests and clean line-item property VALUES before they leave the
+  // browser. Only non-system properties are touched — keys starting with "_"
+  // (Shopify's hidden props: _Artwork Print URLs, _pplr_customization JSON, …)
+  // are left intact.
+  var CART_RE = /\/cart\/(add|change|update)(\.js)?(\?|$)/i;
+
+  function cleanPropsObject(props) {
+    if (!props || typeof props !== 'object') return;
+    Object.keys(props).forEach(function (k) {
+      if (k.charAt(0) !== '_' && typeof props[k] === 'string') props[k] = clean(props[k]);
+    });
+  }
+  function cleanCartData(data) {
+    if (!data || typeof data !== 'object') return data;
+    if (data.properties) cleanPropsObject(data.properties);
+    if (Array.isArray(data.items)) data.items.forEach(function (it) { if (it) cleanPropsObject(it.properties); });
+    return data;
+  }
+  function cleanUSP(usp) {
+    var keys = [];
+    usp.forEach(function (v, k) { keys.push(k); });
+    keys.forEach(function (k) {
+      var m = /^properties\[(.+)\]$/.exec(k);
+      if (m && m[1].charAt(0) !== '_') usp.set(k, clean(usp.get(k)));
+    });
+    return usp;
+  }
+  function cleanBody(body) {
+    try {
+      if (!body) return body;
+      if (typeof FormData !== 'undefined' && body instanceof FormData) {
+        var fkeys = [];
+        body.forEach(function (v, k) { if (typeof v === 'string') fkeys.push(k); });
+        fkeys.forEach(function (k) {
+          var m = /^properties\[(.+)\]$/.exec(k);
+          if (m && m[1].charAt(0) !== '_') body.set(k, clean(body.get(k)));
+        });
+        return body;
+      }
+      if (typeof URLSearchParams !== 'undefined' && body instanceof URLSearchParams) {
+        return cleanUSP(body);
+      }
+      if (typeof body === 'string') {
+        var trimmed = body.replace(/^\s+/, '');
+        if (trimmed.charAt(0) === '{' || trimmed.charAt(0) === '[') {
+          try { return JSON.stringify(cleanCartData(JSON.parse(body))); } catch (_) { return body; }
+        }
+        return cleanUSP(new URLSearchParams(body)).toString();
+      }
+    } catch (_) {}
+    return body;
+  }
+
+  if (typeof window.fetch === 'function' && !window.fetch.__clWrapped) {
+    var _fetch = window.fetch;
+    window.fetch = function (input, init) {
+      try {
+        var url = typeof input === 'string' ? input : (input && input.url) || '';
+        if (CART_RE.test(url) && init && init.body != null) init.body = cleanBody(init.body);
+      } catch (_) {}
+      return _fetch.apply(this, arguments);
+    };
+    window.fetch.__clWrapped = true;
+  }
+
+  if (window.XMLHttpRequest && !XMLHttpRequest.prototype.__clWrapped) {
+    var _open = XMLHttpRequest.prototype.open;
+    var _send = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.open = function (method, url) {
+      this.__clCartUrl = CART_RE.test(url || '');
+      return _open.apply(this, arguments);
+    };
+    XMLHttpRequest.prototype.send = function (body) {
+      try { if (this.__clCartUrl && body != null) arguments[0] = cleanBody(body); } catch (_) {}
+      return _send.apply(this, arguments);
+    };
+    XMLHttpRequest.prototype.__clWrapped = true;
+  }
+
   // Expose for reuse/testing.
-  window.CLInputValidation = { clean: clean, isTarget: isTarget };
+  window.CLInputValidation = { clean: clean, isTarget: isTarget, cleanBody: cleanBody };
 })();
