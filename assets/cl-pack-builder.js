@@ -501,14 +501,27 @@
       }).catch(function () { clCheckoutInProgress = false; window.clCheckoutInProgress = false; btn.textContent = 'Something went wrong'; btn.disabled = false; });
     }
 
+    // Variant availability is already embedded in each card ([data-cl-variants]),
+    // so read it synchronously instead of fetching /products/{handle}.js for every
+    // product — the summary/cards render correct immediately, no network wait.
+    function loadAvailabilityFromCards() {
+      document.querySelectorAll('.cl-grid-card [data-cl-variants]').forEach(function (s) {
+        try { JSON.parse(s.textContent).forEach(function (v) { if (availabilityByVariantId.get(Number(v.id)) === undefined) availabilityByVariantId.set(Number(v.id), v.available !== false); }); } catch (e) {}
+      });
+    }
+
+    var _discountByTagKey = new Map(); // dedupe: fetch each tag-set's discount once
     function loadDiscounts() {
       var handles = getProductHandles(); if (!handles.length) { renderSummary(); return; }
       Promise.all(handles.map(function (handle) {
         return fetch('/products/' + handle + '.js').then(function (r) { return r.json(); }).then(function (product) {
           (product.variants || []).forEach(function (v) { availabilityByVariantId.set(Number(v.id), v.available !== false); });
           var tags = Array.isArray(product.tags) ? product.tags : []; if (!tags.length) return;
-          return fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(JSON.stringify(tags))).then(function (r) { return r.json(); }).then(function (data) {
-            if (data.discountBreak && data.discountAmount) {
+          var tagKey = tags.slice().sort().join('|');
+          var pending = _discountByTagKey.get(tagKey);
+          if (!pending) { pending = fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(JSON.stringify(tags))).then(function (r) { return r.json(); }); _discountByTagKey.set(tagKey, pending); }
+          return pending.then(function (data) {
+            if (data && data.discountBreak && data.discountAmount) {
               discountRulesByHandle.set(handle, { key: data.tag || tags.join('|') || handle, tag: data.tag || '', qtys: [1].concat(data.discountBreak.map(Number)), amounts: [0].concat(data.discountAmount.map(Number)), name: data.discountMessage || builderConfig.itemSingular });
             }
           });
@@ -563,6 +576,7 @@
 
     if (document.querySelector('.cl-golf-summary h3') && builderConfig.title) { var h = document.querySelector('.cl-golf-summary h3'); if (h && !h.textContent.trim()) h.textContent = builderConfig.title; }
     renderProgressDots();
+    loadAvailabilityFromCards();
     renderSummary();
     restoreBundleFromCart().then(loadDiscounts);
     // Beat the stale inline builder's async render, then own the summary.
