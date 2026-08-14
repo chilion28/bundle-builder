@@ -259,10 +259,11 @@
       var gs = builderConfig.giftTiers.find(function (x) { return x.minQty === focus; }) ? ' + free gift' : '';
       t.textContent = rem + ' more ' + w + ' → ' + money(perItemPriceAtQty(focus).price) + '/' + builderConfig.itemSingular + gs;
     }
+    // The theme renders the number via CSS ::after { content: attr(data-header-cart-count) },
+    // so only set the attribute + visible class — never textContent (that double-prints it).
     function updateNavCartBadge(count) {
       document.querySelectorAll('[data-header-cart-count], .site-header-cart--count').forEach(function (b) {
         b.setAttribute('data-header-cart-count', count);
-        b.textContent = count > 0 ? String(count) : '';
         b.classList.toggle('visible', count > 0);
       });
     }
