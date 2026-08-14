@@ -36,6 +36,21 @@
   if has_cl_state and has_cl_design
     assign is_cl_combined_listing = true
   endif
+
+  assign cl_max_width = section.settings.max_width | default: 1200
+  assign cl_details_gutter = section.settings.details_gutter | default: 40
+  assign cl_column_gap = section.settings.column_gap | default: 'xl'
+  assign cl_mobile_spacing = section.settings.mobile_spacing | default: 'sm'
+  assign cl_gallery_span = 9
+  case section.settings.gallery_width
+    when '40'
+      assign cl_gallery_span = 8
+    when '50'
+      assign cl_gallery_span = 10
+    when '55'
+      assign cl_gallery_span = 11
+  endcase
+  assign cl_details_span = 20 | minus: cl_gallery_span
 -%}
 
 {% if slot_details == blank %}
@@ -69,6 +84,58 @@
   {% render 'form.product', product: product, id: form_id, slot: product_details_stack %}
 {% endcapture %}
 
+{% unless is_cl_combined_listing %}
+  <style>
+    /*
+      Zepto Product Personalizer inserts its mount before Empire's layout stack
+      with an inline `float: left`. Empire 13 renders layout-stack as
+      `display: contents`, so the remaining product information wraps beside the
+      float and collapses into a narrow column. Keep the app mount and product
+      information in the normal document flow on standard product templates.
+    */
+    product-form form.shopify-product-form > .product-personalizer {
+      float: none !important;
+      clear: both;
+      width: 100%;
+    }
+
+    product-form form.shopify-product-form > .product-personalizer ~ layout-stack {
+      display: flex;
+      flex-direction: column;
+      clear: both;
+      width: 100%;
+      min-width: 0;
+    }
+  </style>
+
+  <script>
+    (() => {
+      const placeZeptoPersonalizer = () => {
+        document.querySelectorAll('product-form form.shopify-product-form').forEach((form) => {
+          const mount = form.querySelector('.product-personalizer');
+          const stack = form.querySelector(':scope > layout-stack');
+          const divider = stack?.querySelector('[id*="section_flex_pdp_divider"]');
+
+          if (!mount || !stack || !divider) return;
+
+          const wrapper = mount.parentElement === form ? mount : mount.parentElement;
+          if (wrapper.previousElementSibling === divider) return;
+
+          divider.insertAdjacentElement('afterend', wrapper);
+          wrapper.dataset.clZeptoPlacement = 'after-reviews-divider';
+        });
+      };
+
+      placeZeptoPersonalizer();
+
+      const observer = new MutationObserver(placeZeptoPersonalizer);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+
+      window.addEventListener('load', placeZeptoPersonalizer, { once: true });
+    })();
+  </script>
+{% endunless %}
+
 {% capture sticky_product_form %}
   {% render 'layout.sticky-scroller', slot: product_form %}
 {% endcapture %}
@@ -82,7 +149,7 @@
 
       .cl-combined-listing-wrapper {
         width: 100%;
-        max-width: 1200px;
+        max-width: {{ cl_max_width }}px;
         margin-inline: auto;
       }
 
@@ -94,7 +161,7 @@
 
       @media screen and (min-width: 1024px) {
         .cl-combined-listing__details {
-          padding-inline-start: 40px;
+          padding-inline-start: {{ cl_details_gutter }}px;
         }
       }
     </style>
@@ -102,31 +169,108 @@
       {{ sticky_product_form }}
     </div>
   {% endcapture %}
+{% else %}
+  {% capture standard_listing_product_form %}
+    <style>
+      .cl-standard-product-wrapper {
+        width: 100%;
+        max-width: {{ cl_max_width }}px;
+        margin-inline: auto;
+      }
+
+      .cl-standard-product__details {
+        min-width: 0;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      @media screen and (min-width: 768px) {
+        .cl-standard-product__details {
+          padding-inline-start: 24px;
+        }
+      }
+
+      @media screen and (min-width: 1024px) {
+        .cl-standard-product__details {
+          padding-inline-start: {{ cl_details_gutter }}px;
+        }
+      }
+    </style>
+    <div class="cl-standard-product__details">
+      {{ sticky_product_form }}
+    </div>
+  {% endcapture %}
 {% endif %}
 
 {% capture grid_content %}
   {% if is_cl_combined_listing %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: 9, span_lg: 9, slot: slot_gallery %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: 11, span_lg: 11, slot: combined_listing_product_form %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: slot_gallery %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_details_span, span_lg: cl_details_span, slot: combined_listing_product_form %}
   {% else %}
-    {% render 'layout.grid.cell', span_xs: 12, span_md: 7, span_lg: 8, slot: slot_gallery %}
-    {% render 'layout.grid.cell', span_xs: 12, span_md: 5, span_lg: 4, slot: sticky_product_form %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: slot_gallery %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_details_span, span_lg: cl_details_span, slot: standard_listing_product_form %}
   {% endif %}
 {% endcapture %}
 
 {% capture grid_layout %}
-  {% assign product_grid_columns = 12 %}
+  {% assign product_grid_columns = 20 %}
   {% if is_cl_combined_listing %}
-    {% assign product_grid_columns = 20 %}
+    <nav class="cl-combined-breadcrumb" aria-label="Breadcrumb">
+      <a href="/collections/custom-license-plate-hats-copy">Choose your state</a>
+      <span aria-hidden="true">›</span>
+      <span aria-current="page">{{ product.title }}</span>
+    </nav>
+    <style>
+      .cl-combined-breadcrumb {
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto 18px;
+        padding-inline: 4px;
+        color: #687078;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .cl-combined-breadcrumb a {
+        color: #159ee4;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .cl-combined-breadcrumb a:hover,
+      .cl-combined-breadcrumb a:focus-visible {
+        text-decoration: underline;
+      }
+
+      .cl-combined-breadcrumb [aria-current="page"] {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      @media screen and (max-width: 767px) {
+        .cl-combined-breadcrumb {
+          margin-bottom: 12px;
+          padding-inline: 0;
+          font-size: 13px;
+        }
+      }
+    </style>
   {% endif %}
-  {% if is_cl_combined_listing %}<div class="cl-combined-listing-wrapper">{% endif %}
+  <div class="{% if is_cl_combined_listing %}cl-combined-listing-wrapper{% else %}cl-standard-product-wrapper{% endif %}">
     {% render 'layout.grid',
       columns: product_grid_columns,
       slot: grid_content,
       gap_xs: 'sm',
-      gap_sm: 'md'
+      gap_xs: cl_mobile_spacing,
+      gap_sm: cl_column_gap
     %}
-  {% if is_cl_combined_listing %}</div>{% endif %}
+  </div>
 {% endcapture %}
 
 {% capture section_layout %}

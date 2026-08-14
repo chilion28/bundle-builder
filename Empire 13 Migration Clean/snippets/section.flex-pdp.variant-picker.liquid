@@ -73,6 +73,7 @@
 {% if is_cl_combined_listing %}
   {{ 'cl-pack-grid.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'cl-pack-grid.js' | asset_url }}" defer></script>
+  <script src="{{ 'cl-combined-quantity-state.js' | asset_url }}" defer></script>
 {% endif %}
 
 {% capture variant_selector %}
@@ -84,7 +85,7 @@
         {% assign option_selector_type = 'select' %}
       {% endif %}
 
-      <div class="cl-combined-option cl-combined-option--{{ option.name | handleize }}">
+      <div class="cl-combined-option cl-combined-option--{{ option.name | handleize }}{% if is_cl_combined_listing and normalized_option_name == 'select state' %} cl-combined-option--state-locked{% endif %}">
       {% if is_cl_combined_listing and normalized_option_name == 'color' %}
         <div class="cl-combined-quantity-grid" data-cl-combined-quantity-grid>
           <p class="cl-combined-quantity-grid__title">Choose colors &amp; quantities</p>
@@ -212,12 +213,12 @@
 
                 <label class="cl-combined-personalizer__field cl-grid-perso-field"{% unless cl_preview_has_date %} hidden{% endunless %}>
                   <span><strong>Month</strong><small data-cl-counter="Month">3/3</small></span>
-                  <input type="text" name="properties[Month]" maxlength="3" placeholder="MONTH" autocomplete="off" required data-cl-personalization-field="Month">
+                  <input type="text" name="properties[Month]" maxlength="3" placeholder="MONTH" autocomplete="off"{% if cl_preview_has_date %} required{% else %} disabled{% endif %} data-cl-personalization-field="Month">
                 </label>
 
                 <label class="cl-combined-personalizer__field cl-grid-perso-field"{% unless cl_preview_has_date %} hidden{% endunless %}>
                   <span><strong>Year</strong><small data-cl-counter="Year">4/4</small></span>
-                  <input type="text" name="properties[Year]" maxlength="4" placeholder="YEAR" autocomplete="off" required data-cl-personalization-field="Year">
+                  <input type="text" name="properties[Year]" maxlength="4" placeholder="YEAR" autocomplete="off"{% if cl_preview_has_date %} required{% else %} disabled{% endif %} data-cl-personalization-field="Year">
                 </label>
               </div>
             {% endif %}
@@ -277,6 +278,11 @@
     font-weight: 600;
   }
 
+  .cl-combined-option--select-state.cl-combined-option--state-locked,
+  .cl-combined-state-locked .cl-combined-option--select-state {
+    display: none !important;
+  }
+
   .cl-combined-option--select-design .layout-stack[horizontal] {
     display: flex;
     flex-wrap: wrap;
@@ -290,6 +296,9 @@
   .cl-combined-personalizer {
     display: grid;
     gap: 12px;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     margin-top: 14px;
     padding: 16px;
     border: 1px dashed #cfd3d8;
@@ -297,11 +306,15 @@
     background: #fafafa;
   }
 
-  .cl-combined-personalizer__field { display: grid; gap: 5px; }
+  .cl-combined-personalizer__field { display: grid; gap: 5px; min-width: 0; }
   .cl-combined-personalizer__field > span { display: flex; justify-content: space-between; gap: 12px; }
   .cl-combined-personalizer__field small { color: #8a8f96; font-size: .9rem; }
   .cl-combined-personalizer__field input {
+    box-sizing: border-box;
+    display: block;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     min-height: 48px;
     padding: 10px 14px;
     border: 1px solid #cfd3d8;
@@ -426,3 +439,43 @@
     .cl-combined-quantity-row__stepper input { height: 38px; }
   }
 </style>
+
+{% if is_cl_combined_listing %}
+  <script>
+    (() => {
+      const stateFromLandingPage = new URLSearchParams(window.location.search).get('state');
+      if (!stateFromLandingPage) return;
+
+      const normalizeState = (value) => String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-');
+      const requestedState = normalizeState(stateFromLandingPage);
+      const stateOption = document.currentScript.previousElementSibling
+        ?.parentElement
+        ?.querySelector('.cl-combined-option--select-state');
+      const stateSelect = stateOption?.querySelector('select');
+      if (!stateSelect) return;
+
+      const matchingOption = Array.from(stateSelect.options).find((option) => {
+        return normalizeState(option.value) === requestedState
+          || normalizeState(option.textContent) === requestedState;
+      });
+
+      if (!matchingOption) return;
+      document.documentElement.classList.add('cl-combined-state-locked');
+
+      if (stateSelect.value !== matchingOption.value) {
+        customElements.whenDefined('product-hot-reload').then(() => {
+          window.requestAnimationFrame(() => {
+            stateSelect.value = matchingOption.value;
+            stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+        });
+        return;
+      }
+
+      stateOption.classList.add('cl-combined-option--state-locked');
+    })();
+  </script>
+{% endif %}
