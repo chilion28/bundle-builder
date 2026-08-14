@@ -259,7 +259,13 @@
       var gs = builderConfig.giftTiers.find(function (x) { return x.minQty === focus; }) ? ' + free gift' : '';
       t.textContent = rem + ' more ' + w + ' → ' + money(perItemPriceAtQty(focus).price) + '/' + builderConfig.itemSingular + gs;
     }
-    function updateNavCartBadge(count) { var b = document.querySelector('[data-header-cart-count], .site-header-cart--count'); if (!b) return; b.setAttribute('data-header-cart-count', count); b.classList.toggle('visible', count > 0); }
+    function updateNavCartBadge(count) {
+      document.querySelectorAll('[data-header-cart-count], .site-header-cart--count').forEach(function (b) {
+        b.setAttribute('data-header-cart-count', count);
+        b.textContent = count > 0 ? String(count) : '';
+        b.classList.toggle('visible', count > 0);
+      });
+    }
     function updatePackFullUI(totalQty) { document.documentElement.classList.toggle('cl-pack-is-full', totalQty >= maxPackSize); }
 
     // ---- summary render ----
@@ -468,7 +474,7 @@
         bundleItems.forEach(function (ci) {
           var perso = {}; Object.keys(ci.properties || {}).forEach(function (k) { if (k.charAt(0) === '_' || k === 'Pack') return; perso[k] = ci.properties[k]; });
           var key = makeItemKey(ci.variant_id, perso);
-          selected.set(key, { key: key, variantId: Number(ci.variant_id), title: ci.product_title, variant: ci.variant_title || '', price: ci.original_price, image: normalizeImage(ci.image || (ci.featured_image || {}).url || ''), qty: ci.quantity, handle: ci.handle, discountKey: 'default', discountRule: defaultDiscountRule, personalization: Object.keys(perso).length ? perso : undefined });
+          selected.set(key, { key: key, variantId: Number(ci.variant_id), title: ci.product_title, variant: ci.variant_title || '', price: ci.original_price, image: normalizeImage(ci.image || (ci.featured_image || {}).url || ''), qty: ci.quantity, handle: ci.handle, options: Array.isArray(ci.variant_options) ? ci.variant_options : [], discountKey: 'default', discountRule: defaultDiscountRule, personalization: Object.keys(perso).length ? perso : undefined });
         });
         renderSummary();
       });
