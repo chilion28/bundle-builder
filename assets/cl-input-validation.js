@@ -153,7 +153,9 @@
         isTarget
       );
       var last = groupFields[groupFields.length - 1] || el;
-      var anchor = last.closest('.pplr-wrapper') || last;
+      // Anchor after the field's ROW so the hint sits on its own line, not
+      // squished inline (e.g. the AI-hat editor's flex text row).
+      var anchor = last.closest('.pplr-wrapper, .cl-ai-ed__textrow') || last;
       var hint = document.createElement('div');
       hint.className = 'cl-input-hint';
       hint.textContent = HINT_TEXT;
