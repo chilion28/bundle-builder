@@ -134,3 +134,50 @@
 .fancybox__container {
   z-index: 10000 !important;
 }
+
+/* ---------------------------------------------------------------------------
+ * "SELECT HAT STYLE" swatch tabs — restyled to match the AI image-hat pills
+ * (.cl-ai-b__pill): soft rounded buttons with a blue-outline selected state.
+ * Covers desktop (product-swatch-clplate) + mobile (-mobile-clplate); both use
+ * .swatch_options > .selection-button-container > .selection-button(.button-on).
+ * ------------------------------------------------------------------------- */
+.swatch .option_title {
+  margin-bottom: 10px;
+}
+.swatch_options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: stretch;
+}
+.swatch_options .selection-button-container {
+  margin: 0 !important; /* replace the inline margin:4px with the flex gap */
+  flex: 1 1 auto;
+  min-width: 96px;
+}
+.swatch_options .selection-button {
+  height: auto;
+  padding: 12px 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  background: #fff;
+  border: 1.5px solid #e5e7eb; /* --line */
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.swatch_options .selection-button .text {
+  color: inherit;
+  font-weight: inherit;
+}
+.swatch_options .selection-button:hover {
+  border-color: #9dd6f4;
+}
+.swatch_options .selection-button.button-on {
+  color: #0088c7; /* --green-dk */
+  background: #e4f4fd;
+  border-color: #00a0ea; /* --green */
+  box-shadow: inset 0 0 0 1px #00a0ea;
+}
