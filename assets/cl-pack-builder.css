@@ -1,0 +1,1785 @@
+/* =====================================================================
+   cl-pack-builder.css  —  CityLocs Pack Builder styles (SHARED ASSET)
+   Single source of truth for the Create-Your-Pack bundle builder UI
+   (sidebar summary, milestone/reward tracker, mobile bar, product modal).
+
+   Loaded by a slim per-page wrapper via {{ 'cl-pack-builder.css' | asset_url }}.
+   Source of truth: golf section gp-section-623576563790643742 (lines 83-1857
+   at extraction time). Do not fork inline again — edit this file.
+   ===================================================================== */
+
+  body.template-collection .gp-product-button {
+    display: none !important;
+  }
+
+  .cl-golf-builder-controls {
+    margin-top: 12px;
+  }
+
+  .cl-add-to-bundle {
+    width: 100%;
+    min-height: 46px;
+    border: 0;
+    background: #121212 !important;
+    color: #fff !important;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+
+  .cl-golf-checkout {
+    width: 100%;
+    min-height: 46px;
+    border: 0;
+    background: #00a0ea !important;
+    color: #fff !important;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .cl-golf-checkout:disabled {
+    background: #aaa !important;
+    cursor: not-allowed;
+  }
+
+  .cl-golf-qty,
+  .cl-golf-summary-qty {
+    display: none;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+
+  .cl-golf-qty.is-active,
+  .cl-golf-summary-qty {
+    display: flex;
+  }
+
+  .cl-golf-qty button,
+  .cl-golf-qty span,
+  .cl-golf-summary-qty button,
+  .cl-golf-summary-qty span {
+    flex: 1;
+    height: 42px;
+    display: grid;
+    place-items: center;
+  }
+
+  .cl-golf-qty button,
+  .cl-golf-summary-qty button {
+    border: 0;
+    background: #f5f5f5;
+    cursor: pointer;
+  }
+
+  .cl-golf-summary {
+    position: sticky;
+    top: 120px;
+    background: #fff;
+    /*border: 1px solid #ddd;*/
+    padding: 18px;
+    border-radius:16px;
+  }
+
+  .cl-golf-summary h3 {
+      margin-bottom:1em !important;
+      font-size: 20px;
+      text-align: center;
+  }
+
+  .cl-golf-summary-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 12px 0;
+    border-top: 1px solid #eee;
+  }
+
+  .cl-golf-summary-item img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+  }
+
+  .cl-golf-summary-title {
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .cl-golf-summary-variant,
+  .cl-golf-discount-message {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .cl-golf-summary-qty {
+    grid-column: 2 / 3;
+    max-width: 150px;
+    margin-top: 8px;
+  }
+
+  .cl-golf-summary-footer {
+    border-top: 1px solid #ddd;
+    padding-top: 14px;
+    margin-top: 10px;
+  }
+
+  .cl-golf-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .cl-golf-discount-message {
+    margin: 10px 0 14px;
+  }
+
+  .cl-golf-milestones {
+  margin: 0 0 18px;
+}
+
+.cl-golf-milestone-line {
+  position: relative;
+  height: 36px;
+  margin-bottom: 12px;
+}
+
+.cl-golf-progress-track {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  right: 12px;
+  height: 8px;
+  transform: translateY(-50%);
+  background: #eee;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.cl-golf-progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: #00a0ea;
+  border-radius: 99px;
+  transition: width .2s ease;
+}
+
+.cl-golf-milestone-dots {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+.cl-golf-milestone-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.cl-golf-milestone-labels span {
+  min-width: 24px;
+  height: auto;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 0;
+  background: transparent !important;
+  color: #666 !important;
+  font-weight: 400 !important;
+}
+
+
+
+.cl-golf-milestone-dot {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  border: 2px solid #00a0ea;
+
+  background: #fff;
+  color: #00a0ea;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  transition: all .2s ease;
+
+}
+
+.cl-golf-milestone-dot.is-complete {
+  background: #00a0ea;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgb(216,239,250);
+}
+
+.cl-golf-current-discount {
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: #151515;
+  line-height: 1.35;
+  margin-top:10px;
+}
+
+
+
+  .cl-golf-summary-price {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #666;
+}
+
+.cl-golf-summary-price s {
+  margin-right: 6px;
+  color: #999;
+}
+
+.cl-golf-summary-price strong {
+  color: #111;
+  font-weight: 800;
+}
+
+.cl-golf-milestone-labels span {
+  min-width: 24px;
+  height: 24px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+}
+
+.cl-golf-milestone-labels span.is-active {
+  background: #00a0ea;
+  color: #fff;
+  font-weight: 800;
+}
+
+.cl-golf-summary-save-badge {
+  display: inline-flex;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #e4f6ff;
+  color: #00a0ea;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.cl-product-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+}
+
+.cl-product-modal.is-open {
+  display: block;
+}
+
+.cl-product-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+}
+
+.cl-product-modal-box {
+  position: relative;
+  z-index: 100;
+  width: min(900px, calc(100% - 32px));
+  max-height: calc(100vh - 160px);
+  overflow: auto;
+  margin: 130px auto 24px;
+  background: #fff;
+  padding: 32px;
+  border-radius: 4px;
+}
+
+.cl-product-modal-close {
+  position: sticky;
+  top: 0;
+  margin-left: auto;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: #111;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.cl-product-modal-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+.cl-product-modal-image {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+}
+
+.cl-product-modal h3 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.cl-product-modal-price {
+  margin: 8px 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.cl-product-modal-variant {
+  margin-bottom: 14px;
+  color: #666;
+}
+
+.cl-product-modal-description {
+  line-height: 1.55;
+  color: #333;
+}
+
+.cl-product-modal-actions {
+  margin-top: 20px;
+}
+
+.cl-product-modal-add {
+  width: 100%;
+  min-height: 46px;
+  border: 0;
+  background: #121212 !important;
+  color: #fff !important;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cl-product-modal-qty {
+  display: none;
+  width: 100%;
+  border: 1px solid #ddd !important;
+}
+
+.cl-product-modal-qty.is-active {
+  display: flex;
+}
+
+.cl-product-modal-qty button,
+.cl-product-modal-qty span {
+  flex: 1;
+  height: 46px;
+  display: grid;
+  place-items: center;
+}
+
+.cl-product-modal-qty button {
+  border: 0;
+  background: #f5f5f5 !important;
+  cursor: pointer;
+}
+
+.cl-product-modal-thumbs {
+  /*display: flex;*/
+  /*gap: 8px;*/
+  /*margin-top: 12px;*/
+  overflow-x: auto;
+}
+
+.cl-product-modal-thumbs {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.cl-product-modal-thumb {
+  width: 64px;
+  height: 64px;
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+}
+
+.cl-product-modal-thumb.is-active {
+  border-color: #111;
+  border-width: 2px;
+}
+
+.cl-product-modal-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cl-product-modal-thumb {
+  cursor: pointer;
+  border: 2px solid transparent;
+  background: #fff;
+  padding: 0;
+}
+
+.cl-product-modal-thumb img {
+  display: block;
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+}
+
+.cl-product-modal-thumb.is-active {
+  border-color: #111;
+}
+
+.cl-product-modal-thumb.is-active {
+  border: 2px solid #000;
+  opacity: 1;
+}
+
+.cl-product-modal-thumb {
+  opacity: .7;
+  transition: all .2s ease;
+}
+
+.cl-product-modal-thumb:hover {
+  opacity: 1;
+}
+
+.cl-product-modal-thumb {
+  opacity: .7;
+  transition: opacity .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.cl-product-modal-thumb:hover,
+.cl-product-modal-thumb.is-active {
+  opacity: 1;
+}
+
+.cl-product-modal-thumb.is-active {
+  border: 2px solid #000 !important;
+  transform: translateY(-2px);
+}
+
+.cl-product-modal-description {
+  line-height: 1.7;
+  color: #444;
+}
+
+.cl-product-modal-description p {
+  margin: 0 0 12px;
+}
+
+.cl-product-modal-description ul,
+.cl-product-modal-description ol {
+  margin: 12px 0;
+  padding-left: 20px;
+}
+
+.cl-product-modal-description li {
+  margin-bottom: 6px;
+}
+
+
+.cl-product-modal-thumb {
+  opacity: .72;
+  transition: opacity .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.cl-product-modal-thumb:hover,
+.cl-product-modal-thumb.is-active {
+  opacity: 1;
+}
+
+.cl-product-modal-thumb.is-active {
+  border: 2px solid #000 !important;
+  transform: translateY(-2px);
+}
+
+.cl-product-modal-description {
+  line-height: 1.7;
+  color: #444;
+}
+
+.cl-product-modal-description p {
+  margin: 0 0 12px;
+}
+
+.cl-product-modal-description h1,
+.cl-product-modal-description h2,
+.cl-product-modal-description h3,
+.cl-product-modal-description h4 {
+  margin: 18px 0 10px;
+  font-weight: 800;
+}
+
+.cl-product-modal-description ul,
+.cl-product-modal-description ol {
+  margin: 12px 0 16px;
+  padding-left: 22px;
+}
+
+.cl-product-modal-description li {
+  margin-bottom: 6px;
+}
+
+/*6-16-2026*/
+.cl-golf-summary-group {
+  border-top: 1px solid #eee;
+  padding: 12px 0;
+}
+
+.cl-golf-summary .cl-clear-pack {
+  margin: 8px 0 14px !important;
+  padding: 0 !important;
+  border: 0;
+  background: transparent !important;
+  color: #777;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cl-golf-summary .cl-clear-pack:hover {
+  color: #111;
+}
+
+.cl-golf-summary-group-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.cl-golf-summary-group-count {
+  white-space: nowrap;
+  color: #00a0ea;
+}
+
+
+
+.cl-golf-summary-variant-row {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.cl-golf-summary-variant-row img {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+}
+
+.cl-golf-summary-variant-row .cl-golf-summary-qty {
+  grid-column: 2 / 3;
+}
+
+.cl-golf-summary-group-price {
+  margin: 4px 0 14px;
+  font-size: 13px;
+  color: #666;
+}
+
+.cl-golf-summary-variant-row {
+  grid-template-columns: 44px 1fr 130px;
+}
+
+.cl-golf-summary-variant-row .cl-golf-summary-qty {
+  grid-column: auto;
+  margin-top: 0;
+}
+
+.cl-golf-summary-list {
+  max-height: 428px;
+  overflow-y: overlay;
+  position: relative;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* Chrome/Safari */
+.cl-golf-summary-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.cl-golf-summary-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cl-golf-summary-list::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 999px;
+}
+
+/* Show scrollbar when interacting */
+.cl-golf-summary-list:hover {
+  scrollbar-color: rgba(0,0,0,.25) transparent;
+}
+
+.cl-golf-summary-list:hover::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,.25);
+}
+
+.cl-golf-summary-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,.4);
+}
+
+@media (max-width: 1024px) {
+  .cl-golf-summary-list {
+    max-height: 420px;
+  }
+}
+
+@media (max-width: 767px) {
+  .cl-product-modal-box {
+    width: calc(100% - 24px);
+    max-height: calc(100vh - 80px);
+    margin: 64px auto 16px;
+    padding: 18px;
+  }
+
+  .cl-product-modal-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .cl-product-modal-image {
+    max-height: 280px;
+  }
+
+  .cl-product-modal h3 {
+    font-size: 21px;
+  }
+
+  .cl-product-modal-description {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .cl-product-modal-thumbs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .cl-product-modal-thumb {
+    flex: 0 0 auto;
+  }
+
+  .cl-product-modal-add,
+  .cl-product-modal-qty {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+  }
+
+  .cl-golf-summary {
+    position: static;
+    margin-top: 24px;
+  }
+
+  .cl-product-modal-box {
+    width: calc(100% - 24px);
+    max-height: calc(100vh - 100px);
+    margin: 80px auto 16px;
+    padding: 20px;
+  }
+
+  .cl-product-modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cl-product-modal-image {
+    max-height: 300px;
+  }
+
+    .cl-golf-summary {
+      position: static;
+      margin-top: 24px;
+    }
+  }
+
+  .cl-product-modal-thumb.is-active {
+  border: 2px solid #000;
+}
+
+/*MOBILE STICKY BAR STYLES*/
+
+.cl-mobile-pack-bar {
+  display: none;
+}
+
+.cl-mobile-summary-close {
+  display: none;
+}
+
+@media (max-width: 767px) {
+
+    :root {
+  --cl-mobile-header-height: 62px;
+}
+  body {
+    padding-bottom: 96px;
+  }
+
+
+
+  .cl-mobile-pack-bar {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99998;
+
+    background-color: #fff !important;
+    box-shadow: 0 0 10px #00000030;
+    padding: 1.2em 1em;
+  }
+
+  .cl-mobile-pack-bar button.cl-mobile-pack-toggle {
+    width: 100%;
+    min-height: 58px;
+    border: 0;
+    border-radius: 999px;
+    background: #00a0ea;
+    color: #fff;
+    font-weight: 800;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  }
+
+  .cl-mobile-pack-toggle strong {
+    min-width: 52px;
+    height: 38px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.22);
+    display: grid;
+    place-items: center;
+  }
+
+
+
+  .cl-golf-summary {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999;
+    width: 100%;
+    /*height: 100dvh;*/
+    max-height: none;
+    overflow-y: auto;
+    transform: translateY(110%);
+    transition: transform .25s ease;
+    border-radius: 0;
+    border: 0;
+    margin: 0;
+    padding: 20px;
+    background: #fff;
+
+    left: 0 !important;
+    right: 0 !important;
+    top: var(--cl-mobile-header-height, 135px) !important;
+    bottom: 0 !important;
+
+    height: calc(100dvh - var(--cl-mobile-header-height, 135px));
+
+    transform: translateY(100%);
+    transition: transform .3s ease;
+  }
+
+  .cl-golf-summary.is-mobile-open {
+    transform: translateY(0);
+  }
+
+  .cl-golf-summary.is-mobile-open {
+    padding-top: 72px;
+  }
+
+  .cl-golf-summary.is-mobile-open::before {
+    content: "Shopping Cart";
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-weight: 800;
+    font-size: 16px;
+    z-index: 2;
+  }
+
+  .cl-golf-summary.is-mobile-open::after {
+    content: "Keep Shopping";
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    padding: 7px 16px;
+    border: 1px solid #00a0ea;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font-size: 14px;
+    z-index: 2;
+  }
+
+  .cl-golf-summary.is-mobile-open + .cl-mobile-pack-bar {
+    display: none !important;
+  }
+
+  #shopify-chat,
+  iframe[title*="chat" i],
+  iframe[src*="chat" i],
+  .chat-widget,
+  .chat-bubble {
+    bottom: 70px !important;
+    display: none !important;
+  }
+
+
+
+
+  div.cl-golf-summary.is-mobile-open .cl-mobile-summary-close {
+    display: inline-flex;
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    z-index: 100001;
+    padding: 7px 16px;
+    border: 1px solid #00a0ea;
+    border-radius: 999px;
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .cl-golf-summary:not(.is-mobile-open) .cl-mobile-summary-close {
+    display: none;
+  }
+
+  .cl-golf-summary.is-mobile-open::after {
+    display: none;
+  }
+
+   .cl-golf-summary-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    background: #fff;
+    padding: 14px 0 calc(14px + env(safe-area-inset-bottom));
+    margin-top: 16px;
+    box-shadow: 0 -10px 24px rgba(255,255,255,.95);
+  }
+
+  .cl-golf-checkout {
+    min-height: 56px;
+    font-size: 16px;
+  }
+
+  .cl-golf-summary-list {
+    padding-bottom: 18px;
+  }
+}
+
+/*BUNDLE DISCOUNTS BREAKDOWN*/
+.cl-discount-breakdown {
+  border-top: 1px solid #eee;
+  padding: 14px 0;
+  margin-top: 10px;
+}
+
+.cl-discount-breakdown-title {
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.cl-discount-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+.cl-discount-breakdown-total {
+  border-top: 1px dashed #ddd;
+  padding-top: 8px;
+  margin-top: 8px;
+  font-weight: 800;
+  color: #111;
+}
+
+/*6-17-2026*/
+.cl-pack-is-full .cl-add-to-bundle,
+.cl-pack-is-full [data-cl-plus],
+.cl-pack-is-full [data-summary-plus],
+.cl-pack-is-full [data-cl-modal-plus] {
+  opacity: .45;
+  cursor: not-allowed !important;
+}
+
+.cl-add-to-bundle.is-pack-full {
+  background: #aaa !important;
+}
+
+.cl-golf-summary {
+  max-height: calc(100vh - 10px);
+  overflow-y: visible;
+}
+
+.cl-golf-summary-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: #fff;
+  padding-top: 14px;
+  box-shadow: 0 -10px 24px rgba(255,255,255,.95);
+}
+
+.cl-golf-summary-qty input[data-summary-qty-input] {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 42px;
+  border: 0;
+  text-align: center;
+  font: inherit;
+  background: #fff;
+  color: #111;
+}
+
+.cl-golf-summary-qty input[data-summary-qty-input]::-webkit-inner-spin-button,
+.cl-golf-summary-qty input[data-summary-qty-input]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .cl-golf-summary {
+    position: fixed !important;
+    top: var(--cl-mobile-header-height, 122px) !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    width: 100% !important;
+    height: calc(100dvh - var(--cl-mobile-header-height, 122px)) !important;
+    max-height: none !important;
+
+    overflow-y: auto;
+    z-index: 99999;
+
+    background: #fff;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 20px;
+
+    transform: translateY(110%);
+    transition: transform .3s ease;
+  }
+
+  .cl-golf-summary.is-mobile-open {
+    transform: translateY(0);
+  }
+
+  .cl-pack-size-picker {
+    padding: 32px 20px 24px;
+    margin-bottom: 0;
+  }
+
+  .cl-pack-size-picker h2 {
+    font-size: 34px;
+    line-height: 1.1;
+  }
+
+  .cl-pack-size-picker p {
+    font-size: 16px;
+    line-height: 1.35;
+  }
+
+  .cl-pack-size-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .cl-pack-size-btn {
+    min-height: 56px;
+    font-size: 16px;
+  }
+}
+
+
+.cl-free-gift-preview {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 0 0 0 10px;
+  border-top: 1px solid #eee;
+  background: #d6f0fc;
+  margin-top: 10px;
+}
+
+.cl-free-gift-preview img {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+}
+
+.cl-free-gift-wrap {padding-top:8px; padding-bottom:8px;}
+
+.cl-free-gift-title {
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.cl-free-gift-label {
+  color: #00a0ea;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.cl-free-gift-badge {
+  writing-mode: vertical-rl;
+  background: #00a0ea;
+  color: #fff;
+  font-weight: 900;
+  padding: 10px 6px;
+}
+
+.cl-free-gift-cart-line .amp-cart__line-quantity-selector {
+  opacity: 0.45 !important;
+}
+
+.cl-free-gift-cart-line .amp-cart__line-quantity-selector-more,
+.cl-free-gift-cart-line .amp-cart__line-quantity-selector-less {
+  cursor: not-allowed !important;
+}
+
+/*6-18-2026*/
+.cl-free-gift-cart-line .amp-cart__line-quantity-selector {
+  opacity: 0.45 !important;
+}
+
+.cl-free-gift-cart-line .amp-cart__line-quantity-selector-less,
+.cl-free-gift-cart-line .amp-cart__line-quantity-selector-more {
+  cursor: not-allowed !important;
+}
+
+
+.cl-amp-bundle-header {
+  padding: 18px 24px;
+  background: #eef9e9;
+  border-top: 1px solid #d7efd0;
+  border-bottom: 1px solid #d7efd0;
+}
+
+.cl-amp-bundle-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1d1d1d;
+}
+
+.cl-amp-bundle-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #4d8f2a;
+  font-weight: 700;
+}
+
+.cl-amp-bundle-line {
+  background: #fff;
+}
+
+.cl-amp-free-gift-line {
+  background: #f2ffec !important;
+  position: relative;
+}
+
+.cl-amp-free-gift-line::after {
+  content: "FREE";
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  background: #4d9f24;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.cl-summary-pulse {
+  animation: clSummaryPulse 1.2s ease;
+}
+
+@keyframes clSummaryPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 160, 220, 0.35);
+  }
+
+  70% {
+    box-shadow: 0 0 0 12px rgba(0, 160, 220, 0);
+  }
+
+  100% {
+    box-shadow: none;
+  }
+}
+
+.cl-selected-pack-note {
+  margin: 14px auto 0;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+.cl-selected-pack-note strong {
+  color: #009fe3;
+}
+
+/*6-19-2026*/
+.cl-golf-milestone-dot {
+  cursor: pointer;
+}
+
+.cl-pack-notice {
+  margin: 10px 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #eef8ff;
+  border: 1px solid #bde8ff;
+  color: #0076ad;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.cl-pack-notice.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cl-restoring-pack .cl-golf-summary {
+  position: relative;
+  min-height: 260px;
+}
+
+.cl-restoring-pack .cl-golf-summary::after {
+  content: "Restoring your pack...";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #00a0ea;
+  font-size: 16px;
+  font-weight: 800;
+  z-index: 20;
+  border-radius: 12px;
+}
+
+/*6-23-2026*/
+.cl-amp-bundle-line {
+  border-left: 3px solid #00a0ea;
+  background: #f7fcff !important;
+}
+.cl-amp-free-gift-line {
+  border-left: 3px solid #4d9f24;
+}
+.cl-pack-cart-notice {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff4f4;
+  border: 1px solid #f3c2c2;
+  color: #b42318;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.cl-cartpage-bundle-header {
+  display: flex; flex-direction: column;
+  padding: 10px 14px; margin: 8px 0 0;
+  background: #eef9ff; border-left: 3px solid #00a0ea; border-radius: 6px 6px 0 0;
+}
+.cl-cartpage-bundle-title { font-weight: 800; }
+.cl-cartpage-bundle-sub { font-size: 12px; color: #0076ad; font-weight: 700; }
+.cl-cartpage-bundle-line { border-left: 3px solid #00a0ea; }
+.cl-cartpage-gift-line { border-left-color: #4d9f24; }
+
+/*6-24-2026*/
+.cl-gift-progress-banner {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fff7e6;
+  border: 1px solid #ffe0a3;
+  color: #8a5a00;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: center;
+}
+
+/* Two labeled reward tracks (discount + gift), replacing the old stacked
+   banner/bold-line/gift-subline that mixed two milestones and confused shoppers. */
+.cl-reward-tracks { margin-top: 14px; }
+.cl-reward-tracks-grid {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  align-items: center;
+  gap: 11px 12px;
+}
+.cl-reward-track { display: contents; }
+.cl-reward-track-label { font-weight: 700; color: #1a1a1a; font-size: 15px; }
+.cl-reward-track-count { font-weight: 700; color: var(--cl-accent, #00a0ea); font-size: 15px; white-space: nowrap; }
+.cl-reward-track-arrow { color: #c2c2c2; }
+.cl-reward-track-reward { color: #111; font-weight: 700; font-size: 15px; }
+.cl-reward-track.is-done .cl-reward-track-label { grid-column: 1 / -1; color: #0a7d32; }
+.cl-reward-cta {
+  margin-top: 16px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  background: #e8f6fd;
+  border: 1px solid #b9e4f6;
+  color: #076a94;
+  font-weight: 700;
+  font-size: 14.5px;
+  text-align: center;
+  line-height: 1.35;
+}
+/* Low-stock / sold-out signalling on the product cards. */
+.cl-stock-hint {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: #b45309;
+}
+.cl-stock-hint.is-maxed { color: #b42318; }
+.cl-card-soldout { opacity: .72; }
+.cl-card-soldout .cl-stock-hint { display: none; }
+button.is-sold-out,
+.cl-card-soldout button {
+  opacity: .55 !important;
+  cursor: not-allowed !important;
+}
+
+@media (max-width: 767px) {
+  .cl-reward-tracks-grid { gap: 8px 9px; }
+  .cl-reward-track-label,
+  .cl-reward-track-count,
+  .cl-reward-track-reward { font-size: 13.5px; }
+}
+
+.cl-free-gift-preview.is-locked {
+  background: #f2f2f2;
+}
+
+.cl-free-gift-preview.is-locked img {
+  filter: grayscale(1) opacity(.5);
+}
+
+.cl-free-gift-preview.is-locked .cl-free-gift-label {
+  color: #888;
+}
+
+.cl-free-gift-lock-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e2e2;
+  color: #888;
+  margin-right: 10px;
+}
+
+@keyframes clGiftUnlockPulse {
+  0% { box-shadow: 0 0 0 0 rgba(0,160,234,.45); }
+  70% { box-shadow: 0 0 0 14px rgba(0,160,234,0); }
+  100% { box-shadow: none; }
+}
+
+.cl-free-gift-preview.cl-gift-unlock-pulse {
+  animation: clGiftUnlockPulse 1.2s ease;
+}
+
+/*6-25-2026*/
+/* Milestone style: slots (per-collection alternative to dots) */
+.cl-golf-milestones.cl-style-slots .cl-golf-progress-track {
+  display: none;
+}
+
+.cl-golf-milestones.cl-style-slots .cl-golf-milestone-line {
+  height: auto;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.cl-golf-milestones.cl-style-slots .cl-golf-milestone-dots {
+  gap: 8px;
+}
+
+.cl-golf-milestones.cl-style-slots .cl-slot {
+  flex: 1;
+  height: 10px;
+  border-radius: 999px;
+  background: #eee;
+  transition: background .25s ease, transform .25s ease;
+}
+
+.cl-golf-milestones.cl-style-slots .cl-slot.is-filled {
+  background: #00a0ea;
+}
+
+.cl-slot-label {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.cl-slot-label strong {
+  color: #00a0ea;
+  font-weight: 800;
+}
+
+/*TEMPLATE STYLES*/
+
+/* ===== CityLocs Pack Builder — design restyle (Stage 1) ===== */
+body.template-collection {
+  --cl-accent: #00a0ea;
+  --cl-ink: #141312;
+  --cl-muted: #6f6e6a;
+  --cl-faint: #a3a29e;
+  --cl-dark: #0a0a0a;
+  --cl-card: #ffffff;
+  --cl-border: #e7e6e2;
+  --cl-page: #f4f3f0;
+}
+
+/* Title block */
+[data-cl-page-title] {
+  font-family: 'Archivo', sans-serif !important;
+  font-weight: 900 !important;
+  font-size: 46px !important;
+  line-height: 1.02 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--cl-ink) !important;
+}
+[data-cl-page-subtitle] {
+  font-family: 'Barlow', sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+  color: var(--cl-muted) !important;
+}
+
+/* Summary panel shell */
+.cl-golf-summary {
+  background: var(--cl-card);
+  border: 1.5px solid var(--cl-border) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 14px 40px rgba(0,0,0,.06);
+  padding: 22px !important;
+}
+.cl-golf-summary h3 {
+  font-family: 'Archivo', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 19px !important;
+  text-align: left !important;
+  margin-bottom: 14px !important;
+}
+
+/* Progress / slots bar — single accent fill on a soft track */
+.cl-golf-milestones.cl-style-slots .cl-slot { background: #dadada; }
+.cl-golf-milestones.cl-style-slots .cl-slot.is-filled { background: var(--cl-accent); }
+.cl-golf-progress-fill { background: var(--cl-accent); }
+[data-cl-current-discount] {
+  font-family: 'Barlow', sans-serif !important;
+  font-weight: 600;
+  color: var(--cl-muted);
+}
+
+/* Line-item groups */
+.cl-golf-summary-group { border-top: 1px solid #efeeea; }
+.cl-golf-summary-group-head {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.cl-golf-summary-group-count { color: var(--cl-accent); }
+.cl-golf-summary-save-badge {
+  background: #e4f6ff;
+  color: var(--cl-accent);
+}
+
+/* Qty stepper */
+.cl-golf-summary-qty {
+  border: 1px solid #e2e1dd !important;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.cl-golf-summary-qty button { background: #f6f5f2; }
+
+/* Totals + CTA */
+.cl-golf-summary-footer { border-top: 1px solid #efeeea; }
+[data-cl-estimated-total] {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  font-size: 24px;
+}
+.cl-golf-checkout {
+  border-radius: 13px !important;
+  padding: 15px !important;
+  font-family: 'Archivo', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  background: var(--cl-dark) !important;
+  transition: background .15s ease, color .15s ease;
+}
+.cl-golf-checkout:not(:disabled):hover {
+  background: var(--cl-accent) !important;
+  color: #04212d !important;
+}
+.cl-golf-checkout:disabled { background: #edece9 !important; color: var(--cl-faint) !important; }
+
+/* Product card + add-to-bundle button */
+gp-product article,
+gp-product .gp-product-inner {
+  border-radius: 16px;
+}
+.cl-add-to-bundle {
+  border-radius: 11px !important;
+  font-family: 'Archivo', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+  letter-spacing: .02em;
+  background: var(--cl-dark) !important;
+  transition: background .15s ease, color .15s ease;
+}
+.cl-add-to-bundle:not(.is-pack-full):hover {
+  background: var(--cl-accent) !important;
+  color: #04212d !important;
+}
+
+/* Free-gift card */
+.cl-free-gift-preview { border-radius: 12px; }
+.cl-free-gift-badge { background: var(--cl-accent); }
+
+
+
+/* In-pack product highlight — full card */
+gp-product .gp-featured-image-wrapper { position: relative; }  /* keep — anchors the ✓ */
+
+/* ring on the whole white card, not just the image */
+gp-product.cl-in-pack .gkBonhMcMd {
+  box-shadow: 0 0 0 2px var(--cl-accent);
+  border-radius: 8px;
+}
+
+.cl-pack-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 5;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--cl-accent);
+  color: #04212d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+
+
+@media only screen and (max-width: 812px) {
+
+    .cl-golf-summary .cl-clear-pack {margin: 34px 0 14px !important;}
+    .cl-golf-summary.is-mobile-open {border-radius: 0 !important; }
+}
+
+/*END TEMPLATE STYLES*/
+
+
+/* Card button: "added" state */
+.cl-add-to-bundle.is-added {
+  background: #fff !important;
+  color: var(--cl-accent) !important;
+  box-shadow: inset 0 0 0 1.5px var(--cl-accent);
+}
+
+/* Per-swatch selected-count badge */
+.option-item { position: relative; }
+.cl-swatch-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  z-index: 3;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #2c2c2c;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  pointer-events: none;
+}
+
+/*6-26-2026*/
+.cl-value-headline {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0076ad;
+  background: #eef8ff;
+  border: 1px solid #bde8ff;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 0 0 14px;
+  line-height: 1.35;
+}
+
+.cl-value-strip {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 16px;
+}
+
+.cl-value-strip-tier {
+  text-align: center;
+  padding: 8px 4px;
+  border: 1px solid #e7e6e2;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.cl-value-strip-qty {
+  font-size: 11px;
+  font-weight: 800;
+  color: #141312;
+}
+
+.cl-value-strip-price {
+  font-size: 12px;
+  font-weight: 800;
+  color: #00a0ea;
+  margin-top: 2px;
+}
+
+.cl-value-strip-price.is-base { color: #6f6e6a; }
+
+.cl-value-strip-gift {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #4d9f24;
+  margin-top: 2px;
+}
+
+
+.cl-golf-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cl-golf-summary-head h3 { margin: 0 !important; }
+.cl-golf-summary .cl-golf-summary-head .cl-clear-pack { margin: 0 !important; }
+
+.cl-golf-reward-card {
+  background: #f4f3f0;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.cl-golf-reward-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.cl-golf-reward-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #6f6e6a;
+}
+.cl-golf-reward-pill {
+  background: #00a0ea;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 14px;
+  white-space: normal;
+  text-align: right;
+  max-width: 62%;
+  line-height: 1.25;
+}
+.cl-golf-reward-pill.is-unlocked {
+  background: #00a0ea;   /* green confirms "you're getting this price now" */
+}
+.cl-golf-reward-card .cl-golf-milestones { margin: 0 0 10px; }
+.cl-golf-reward-card .cl-golf-current-discount {
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  color: #141312;
+  margin-top: 6px;
+}
+.cl-golf-reward-gift {
+  font-size: 13px;
+  color: #6f6e6a;
+  margin-top: 4px;
+}
+
+/* Footer */
+.cl-golf-summary-save.has-savings span,
+.cl-golf-summary-save.has-savings strong { color: #00a0ea; }
+.cl-golf-summary-giftrow span,
+.cl-golf-summary-giftrow strong { color: #00a0ea; font-weight: 800; }
+.cl-golf-summary-total {
+  border-top: 1px solid #efeeea;
+  padding-top: 12px;
+  margin-top: 4px;
+}
+.cl-golf-summary-total strong:last-child {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  font-size: 24px;
+}
+.cl-golf-summary-microcopy {
+  text-align: center;
+  font-size: 12px;
+  color: #a3a29e;
+  margin-top: 10px;
+}
+
+.cl-golf-milestone-labels span {
+    min-width: 24px;
+    height: auto;
+    padding: 4px 8px 0;
+    display: inline-block;
+    place-items: center;
+    border-radius: 999px;
+    width: 100%;
+}
+
+@media (max-width: 767px) {
+  /* --- Header overlap fix: drop the duplicate "Shopping Cart" pseudo-title --- */
+  .cl-golf-summary.is-mobile-open::before { display: none !important; }
+  .cl-golf-summary.is-mobile-open { padding-top: 60px; }
+
+  /* --- Persistent mini reward bar --- */
+  .cl-mobile-pack-bar button.cl-mobile-pack-toggle {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 9px;
+    min-height: auto;
+    padding: 12px 16px;
+    border-radius: 18px;
+  }
+  .cl-mobile-reward {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+  .cl-mobile-reward-text {
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .cl-mobile-reward-track {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.3);
+    overflow: hidden;
+  }
+  .cl-mobile-reward-fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    border-radius: 999px;
+    transition: width .25s ease;
+  }
+  .cl-mobile-pack-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .cl-mobile-pack-cta strong {
+    min-width: 30px;
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.22);
+    display: grid;
+    place-items: center;
+  }
+  
+  .cl-golf-summary-head {
+    justify-content: flex-start;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  
+  .cl-golf-reward-pill { font-size:10px; }
+  .cl-pack-size-picker { padding: 0; }
+  .cl-golf-milestone-labels { display: none; }
+}
