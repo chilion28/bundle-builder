@@ -1,9 +1,9 @@
 /* =====================================================================
-   cl-pack-builder.css  —  CityLocs Pack Builder styles (SHARED ASSET)
+   cl-bundle-builder.css  —  CityLocs Pack Builder styles (SHARED ASSET)
    Single source of truth for the Create-Your-Pack bundle builder UI
    (sidebar summary, milestone/reward tracker, mobile bar, product modal).
 
-   Loaded by a slim per-page wrapper via {{ 'cl-pack-builder.css' | asset_url }}.
+   Loaded by a slim per-page wrapper via {{ 'cl-bundle-builder.css' | asset_url }}.
    Source of truth: golf section gp-section-623576563790643742 (lines 83-1857
    at extraction time). Do not fork inline again — edit this file.
    ===================================================================== */

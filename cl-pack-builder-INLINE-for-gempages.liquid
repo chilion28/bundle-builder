@@ -4,12 +4,12 @@
   where the pack SUMMARY should appear on a Create-Your-Pack collection page).
 
   This REPLACES the old inline summary markup + inline engine (CSS/JS). It:
-    1. loads the shared stylesheet   -> assets/cl-pack-builder.css
+    1. loads the shared stylesheet   -> assets/cl-bundle-builder.css
     2. emits window.CL_BUILDER_CONFIG from the collection's custom.* metafields
     3. drops a single mount point     -> <div data-cl-pack-summary>
        (the shared engine's renderSummaryShell() builds the whole panel:
         summary + mobile bar + product modal — nothing else to author)
-    4. loads the shared engine        -> assets/cl-pack-builder.js (deferred)
+    4. loads the shared engine        -> assets/cl-bundle-builder.js (deferred)
 
   The product GRID (the <gp-product> cards) stays as-is in GemPages — do NOT
   remove it. This block only owns the summary + engine.
@@ -21,7 +21,7 @@
   ============================================================================
 {%- endcomment -%}
 
-{{ 'cl-pack-builder.css' | asset_url | stylesheet_tag }}
+{{ 'cl-bundle-builder.css' | asset_url | stylesheet_tag }}
 
 <script>
   window.CL_BUILDER_CONFIG = {
@@ -70,4 +70,4 @@
 
 <div data-cl-pack-summary></div>
 
-<script src="{{ 'cl-pack-builder.js' | asset_url }}" defer></script>
+<script src="{{ 'cl-bundle-builder.js' | asset_url }}" defer></script>

@@ -1659,11 +1659,11 @@
     if (priceSubEl) priceSubEl.textContent = formatMoney(sub);
     if (priceNextEl) {
       if (idx >= TIER_QTYS.length - 1) {
-        priceNextEl.textContent = 'YOU SAVED ' + formatMoney(TIER_OFF[TIER_OFF.length - 1] * 100) + ' PER HAT!';
+        priceNextEl.textContent = 'You saved ' + formatMoney(TIER_OFF[TIER_OFF.length - 1] * 100) + ' per hat!';
       } else {
         var toNext = TIER_QTYS[idx + 1] - q;
         var nextUnit = (base - TIER_OFF[idx + 1] * 100) / 100;
-        priceNextEl.textContent = 'ORDER ' + toNext + ' MORE AND GET THEM AT ' + nextUnit.toFixed(2) + ' EACH';
+        priceNextEl.textContent = 'Order ' + toNext + ' more and get them at $' + nextUnit.toFixed(2) + ' each';
       }
     }
   }
