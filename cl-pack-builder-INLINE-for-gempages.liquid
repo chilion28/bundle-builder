@@ -1,0 +1,73 @@
+{%- comment -%}
+  ============================================================================
+  cl-pack-builder — SLIM GemPages block (paste into the Custom Code element
+  where the pack SUMMARY should appear on a Create-Your-Pack collection page).
+
+  This REPLACES the old inline summary markup + inline engine (CSS/JS). It:
+    1. loads the shared stylesheet   -> assets/cl-pack-builder.css
+    2. emits window.CL_BUILDER_CONFIG from the collection's custom.* metafields
+    3. drops a single mount point     -> <div data-cl-pack-summary>
+       (the shared engine's renderSummaryShell() builds the whole panel:
+        summary + mobile bar + product modal — nothing else to author)
+    4. loads the shared engine        -> assets/cl-pack-builder.js (deferred)
+
+  The product GRID (the <gp-product> cards) stays as-is in GemPages — do NOT
+  remove it. This block only owns the summary + engine.
+
+  Requires these collection metafields (same ones the golf builder uses):
+    custom.builder_title, builder_item_singular, builder_item_plural,
+    builder_add_button_text, builder_milestones, builder_milestone_style,
+    gift_tiers, builder_free_gift_variants / _pack_size / _discount_code / _label
+  ============================================================================
+{%- endcomment -%}
+
+{{ 'cl-pack-builder.css' | asset_url | stylesheet_tag }}
+
+<script>
+  window.CL_BUILDER_CONFIG = {
+    title: {{ collection.metafields.custom.builder_title | json }},
+    itemSingular: {{ collection.metafields.custom.builder_item_singular | json }},
+    itemPlural: {{ collection.metafields.custom.builder_item_plural | json }},
+    addButtonText: {{ collection.metafields.custom.builder_add_button_text | json }},
+    milestones: {{ collection.metafields.custom.builder_milestones.value | json }},
+    milestoneStyle: {{ collection.metafields.custom.builder_milestone_style | json }},
+    giftTiers: [
+  {% for tier in collection.metafields.custom.gift_tiers.value %}
+    {
+      minQty: {{ tier.minimum_quantity.value | json }},
+      variants: [
+        {% for variant in tier.gift_variants.value %}
+          {
+            id: {{ variant.id | json }},
+            title: {{ variant.product.title | json }},
+            variantTitle: {{ variant.title | json }},
+            image: {{ variant.image | default: variant.product.featured_image | image_url: width: 160 | json }},
+            price: {{ variant.price | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {% endfor %}
+      ]
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+],
+    freeGiftProducts: [
+  {% for variant in collection.metafields.custom.builder_free_gift_variants.value %}
+    {
+      id: {{ variant.id | json }},
+      title: {{ variant.product.title | json }},
+      variantTitle: {{ variant.title | json }},
+      image: {{ variant.image | default: variant.product.featured_image | image_url: width: 160 | json }},
+      price: {{ variant.price | json }},
+      tags: {{ variant.product.tags | json }}
+    }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+],
+    freeGiftVariants: {{ collection.metafields.custom.builder_free_gift_variants.value | map: 'id' | json }},
+    freeGiftPackSize: {{ collection.metafields.custom.builder_free_gift_pack_size | json }},
+    freeGiftDiscountCode: {{ collection.metafields.custom.builder_free_gift_discount_code | json }},
+    freeGiftLabel: {{ collection.metafields.custom.builder_free_gift_label | json }}
+  };
+</script>
+
+<div data-cl-pack-summary></div>
+
+<script src="{{ 'cl-pack-builder.js' | asset_url }}" defer></script>
