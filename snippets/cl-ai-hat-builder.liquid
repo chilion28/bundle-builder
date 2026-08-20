@@ -321,10 +321,19 @@ Now create:' }}</pre>
         (image hats); the pendant/other single products don't get it. {%- endcomment -%}
       {%- if product.tags contains 'bulkhat' -%}
       <div class="cl-ai-b__pricing" data-cl-ai-pricing>
-        <p class="cl-ai-b__pricing-sel">Current selection: <span data-cl-ai-price-qty>0</span> piece(s)</p>
-        <p class="cl-ai-b__pricing-unit">Unit Price: <span data-cl-ai-price-unit>$0.00</span> each</p>
-        <p class="cl-ai-b__pricing-next" data-cl-ai-price-next></p>
-        <p class="cl-ai-b__pricing-sub">SUBTOTAL <span data-cl-ai-price-sub>$0.00</span></p>
+        <div class="cl-ai-b__pr-row cl-ai-b__pr-row--rule">
+          <span class="cl-ai-b__pr-k">Current selection</span>
+          <span class="cl-ai-b__pr-sel"><b data-cl-ai-price-qty>0</b> pieces</span>
+        </div>
+        <div class="cl-ai-b__pr-row">
+          <span class="cl-ai-b__pr-k">Unit price</span>
+          <span class="cl-ai-b__pr-unit"><span data-cl-ai-price-unit>$0.00</span> each</span>
+        </div>
+        <p class="cl-ai-b__pr-next" data-cl-ai-price-next></p>
+        <div class="cl-ai-b__pr-row cl-ai-b__pr-row--top">
+          <span class="cl-ai-b__pr-k cl-ai-b__pr-k--sub">Subtotal</span>
+          <span class="cl-ai-b__pr-sub" data-cl-ai-price-sub>$0.00</span>
+        </div>
       </div>
       {%- endif -%}
 

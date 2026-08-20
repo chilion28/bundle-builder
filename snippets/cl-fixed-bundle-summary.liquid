@@ -1,0 +1,216 @@
+{%- comment -%}
+  Product-page SIDEBAR SUMMARY for a fixed bundle, styled like the cart-page
+  breakdown (cl-bundle-breakdown). Lists the component hats from
+  custom.bundle_components + compare-at→price savings + quantity + add-to-cart.
+  No personalization. Self-contained CSS/JS, scoped under #cl-fbs and forced
+  with !important so GemPages .gps resets don't override it.
+
+  Drop into a GemPages LIQUID element (not HTML) on the bundle product template:
+    {% render 'cl-fixed-bundle-summary' %}
+  Optional params:
+    {% render 'cl-fixed-bundle-summary', product: product, heading: 'Your Pack', cta_label: 'Add bundle to cart' %}
+{%- endcomment -%}
+
+{%- assign fbs_product = product -%}
+{%- assign bundle_components = fbs_product.metafields.custom.bundle_components.value -%}
+
+{%- if bundle_components and bundle_components.size > 0 -%}
+  {%- assign fbs_variant = fbs_product.selected_or_first_available_variant -%}
+  {%- assign fbs_heading = heading | default: fbs_product.title -%}
+  {%- assign fbs_cta = cta_label | default: 'Add bundle to cart' -%}
+  {%- assign fbs_price = fbs_variant.price -%}
+  {%- assign fbs_compare = fbs_variant.compare_at_price -%}
+  {%- assign fbs_savings = 0 -%}
+  {%- if fbs_compare and fbs_compare > fbs_price -%}
+    {%- assign fbs_savings = fbs_compare | minus: fbs_price -%}
+  {%- endif -%}
+
+  <div id="cl-fbs" class="cl-fbs">
+    <div class="cl-fbs__card" data-variant-id="{{ fbs_variant.id }}">
+      <div class="cl-fbs__head">
+        <span class="cl-fbs__kicker">{{ bundle_components.size }}-Hat Bundle</span>
+        <h3 class="cl-fbs__title">{{ fbs_heading }}</h3>
+      </div>
+
+      <ul class="cl-fbs__list" role="list">
+        {%- for v in bundle_components -%}
+          {%- assign img = v.image | default: v.product.featured_image -%}
+          <li class="cl-fbs__item">
+            {%- if img -%}
+              <img class="cl-fbs__img" src="{{ img | image_url: width: 120 }}" alt="{{ v.product.title | escape }}" width="52" height="52" loading="lazy">
+            {%- else -%}
+              <span class="cl-fbs__img cl-fbs__img--ph" aria-hidden="true"></span>
+            {%- endif -%}
+            <div class="cl-fbs__info">
+              <span class="cl-fbs__name">1 &times; {{ v.product.title }}</span>
+              {%- unless v.title == 'Default Title' -%}
+                <span class="cl-fbs__variant">{{ v.title }}</span>
+              {%- endunless -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="cl-fbs__pricing">
+        <span class="cl-fbs__price-label">Price</span>
+        <span class="cl-fbs__price">
+          {%- if fbs_compare and fbs_compare > fbs_price -%}
+            <s class="cl-fbs__was">{{ fbs_compare | money }}</s>
+          {%- endif -%}
+          <span class="cl-fbs__now">{{ fbs_price | money }}</span>
+        </span>
+      </div>
+      {%- if fbs_savings > 0 -%}
+        <div class="cl-fbs__save">You save {{ fbs_savings | money }}</div>
+      {%- endif -%}
+
+      <div class="cl-fbs__qty">
+        <button type="button" class="cl-fbs__qbtn" data-cl-fbs-dec aria-label="Decrease quantity">&minus;</button>
+        <input class="cl-fbs__qinput" type="text" inputmode="numeric" value="1" data-cl-fbs-qty aria-label="Quantity">
+        <button type="button" class="cl-fbs__qbtn" data-cl-fbs-inc aria-label="Increase quantity">+</button>
+      </div>
+
+      <button type="button" class="cl-fbs__cta" data-cl-fbs-add>{{ fbs_cta }}</button>
+      <div class="cl-fbs__msg" data-cl-fbs-msg role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <style>
+    #cl-fbs .cl-fbs__card {
+      box-sizing: border-box !important;
+      max-width: 420px !important;
+      background: #fff !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 16px !important;
+      padding: 20px !important;
+      font-family: inherit !important;
+      color: #111 !important;
+      box-shadow: 0 6px 24px rgba(0,0,0,.08) !important;
+    }
+    #cl-fbs .cl-fbs__head { margin: 0 0 14px !important; }
+    #cl-fbs .cl-fbs__kicker {
+      display: inline-block !important;
+      font-size: 11px !important; font-weight: 700 !important;
+      letter-spacing: .12em !important; text-transform: uppercase !important;
+      color: #6b7280 !important; margin: 0 0 4px !important;
+    }
+    #cl-fbs .cl-fbs__title {
+      margin: 0 !important; font-size: 20px !important; line-height: 1.2 !important;
+      font-weight: 800 !important; color: #111 !important;
+    }
+    #cl-fbs .cl-fbs__list { list-style: none !important; margin: 0 0 14px !important; padding: 0 !important; }
+    #cl-fbs .cl-fbs__item {
+      display: flex !important; align-items: center !important; gap: 12px !important;
+      padding: 10px 0 !important; border-bottom: 1px solid #f0f0f0 !important;
+    }
+    #cl-fbs .cl-fbs__item:last-child { border-bottom: 0 !important; }
+    #cl-fbs .cl-fbs__img {
+      width: 52px !important; height: 52px !important; flex: 0 0 52px !important;
+      border-radius: 8px !important; object-fit: cover !important;
+      background: #f3f4f6 !important; border: 1px solid #eee !important;
+    }
+    #cl-fbs .cl-fbs__img--ph { display: inline-block !important; }
+    #cl-fbs .cl-fbs__info { display: flex !important; flex-direction: column !important; min-width: 0 !important; }
+    #cl-fbs .cl-fbs__name { font-size: 14px !important; font-weight: 600 !important; color: #111 !important; }
+    #cl-fbs .cl-fbs__variant { font-size: 12px !important; color: #6b7280 !important; margin-top: 2px !important; }
+    #cl-fbs .cl-fbs__pricing {
+      display: flex !important; align-items: baseline !important; justify-content: space-between !important;
+      margin: 4px 0 2px !important;
+    }
+    #cl-fbs .cl-fbs__price-label { font-size: 14px !important; font-weight: 600 !important; color: #111 !important; }
+    #cl-fbs .cl-fbs__was { color: #9ca3af !important; margin-right: 8px !important; font-size: 15px !important; }
+    #cl-fbs .cl-fbs__now { font-size: 20px !important; font-weight: 800 !important; color: #111 !important; }
+    #cl-fbs .cl-fbs__save {
+      font-size: 12px !important; font-weight: 700 !important; color: #16a34a !important;
+      text-align: right !important; margin: 0 0 14px !important;
+    }
+    #cl-fbs .cl-fbs__qty {
+      display: flex !important; align-items: center !important; width: 100% !important;
+      border: 1px solid #d1d5db !important; border-radius: 10px !important; overflow: hidden !important;
+      margin: 0 0 12px !important;
+    }
+    #cl-fbs .cl-fbs__qbtn {
+      appearance: none !important; -webkit-appearance: none !important;
+      background: #fff !important; border: 0 !important; cursor: pointer !important;
+      width: 40px !important; height: 40px !important; font-size: 18px !important;
+      line-height: 1 !important; color: #111 !important;
+    }
+    #cl-fbs .cl-fbs__qbtn:hover { background: #f3f4f6 !important; }
+    #cl-fbs .cl-fbs__qinput {
+      appearance: none !important; -webkit-appearance: none !important;
+      flex: 1 1 auto !important; width: auto !important; min-width: 0 !important;
+      height: 40px !important; text-align: center !important;
+      border: 0 !important; border-left: 1px solid #e5e7eb !important; border-right: 1px solid #e5e7eb !important;
+      font-size: 15px !important; font-weight: 600 !important; color: #111 !important; background: #fff !important;
+      margin: 0 !important; padding: 0 !important; border-radius: 0 !important;
+    }
+    #cl-fbs .cl-fbs__cta {
+      appearance: none !important; -webkit-appearance: none !important;
+      display: block !important; width: 100% !important; cursor: pointer !important;
+      background: #00a0ea !important; color: #fff !important; border: 0 !important;
+      border-radius: 999px !important; padding: 15px 20px !important;
+      font-size: 15px !important; font-weight: 700 !important; letter-spacing: .01em !important;
+      transition: opacity .15s ease !important;
+    }
+    #cl-fbs .cl-fbs__cta:hover { opacity: .88 !important; }
+    #cl-fbs .cl-fbs__cta[disabled] { opacity: .55 !important; cursor: default !important; }
+    #cl-fbs .cl-fbs__msg { font-size: 13px !important; color: #6b7280 !important; margin-top: 8px !important; min-height: 0 !important; text-align: center !important; }
+    #cl-fbs .cl-fbs__msg--err { color: #dc2626 !important; }
+  </style>
+
+  <script>
+    (function () {
+      var root = document.getElementById('cl-fbs');
+      if (!root || root.dataset.clFbsInit === '1') return;
+      root.dataset.clFbsInit = '1';
+
+      var card = root.querySelector('.cl-fbs__card');
+      var variantId = card && card.getAttribute('data-variant-id');
+      var qtyEl = root.querySelector('[data-cl-fbs-qty]');
+      var addBtn = root.querySelector('[data-cl-fbs-add]');
+      var msgEl = root.querySelector('[data-cl-fbs-msg]');
+
+      function getQty() {
+        var n = parseInt((qtyEl && qtyEl.value) || '1', 10);
+        if (!n || n < 1) n = 1;
+        return n;
+      }
+      function setQty(n) { if (qtyEl) qtyEl.value = n < 1 ? 1 : n; }
+      function say(text, isErr) {
+        if (!msgEl) return;
+        msgEl.textContent = text || '';
+        msgEl.classList.toggle('cl-fbs__msg--err', !!isErr);
+      }
+
+      root.addEventListener('click', function (e) {
+        if (e.target.closest('[data-cl-fbs-inc]')) { setQty(getQty() + 1); }
+        else if (e.target.closest('[data-cl-fbs-dec]')) { setQty(getQty() - 1); }
+      });
+      if (qtyEl) qtyEl.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      });
+
+      if (addBtn) addBtn.addEventListener('click', function () {
+        if (!variantId) { say('Bundle unavailable.', true); return; }
+        addBtn.setAttribute('disabled', 'disabled');
+        say('Adding…');
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ items: [{ id: Number(variantId), quantity: getQty() }] })
+        })
+          .then(function (r) { if (!r.ok) throw new Error('add failed'); return r.json(); })
+          .then(function () {
+            say('Added to cart!');
+            if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') {
+              window.AMP_API.OPEN_CART();
+            } else {
+              window.location.href = '/cart';
+            }
+          })
+          .catch(function () { say('Sorry, could not add the bundle. Please try again.', true); })
+          .finally(function () { addBtn.removeAttribute('disabled'); });
+      });
+    })();
+  </script>
+{%- endif -%}
