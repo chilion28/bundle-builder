@@ -593,13 +593,19 @@
   }
 
   function clampOffset() {
-    // Pan within the slack in BOTH directions: a larger-than-window image pans
-    // the crop (fill); a smaller-than-window image (fit / zoomed out) can be
-    // nudged around inside the padding. Old code zeroed the range when the image
-    // was smaller than the window, which killed dragging in Fit mode.
+    // Let the customer pan the artwork PARTIALLY OFF the window (push it up/down/
+    // off-canvas), not just crop within it — previously the edge of the art
+    // couldn't pass the edge of the window, so you had to zoom in first to get any
+    // slack. We now allow moving the art out until only a sliver (KEEP) of it
+    // remains inside the window, so it can never be dragged away completely.
+    // KEEP is a fraction of the smaller of art/window in each axis, so both a big
+    // (fill) and small (fit) image keep a sensible amount visible.
+    var KEEP = 0.25;
     var ext = edExtent();
-    var maxX = Math.abs(ext.ew - edState.maskW) / 2;
-    var maxY = Math.abs(ext.eh - edState.maskH) / 2;
+    var keepX = Math.min(ext.ew, edState.maskW) * KEEP;
+    var keepY = Math.min(ext.eh, edState.maskH) * KEEP;
+    var maxX = Math.max(0, (ext.ew + edState.maskW) / 2 - keepX);
+    var maxY = Math.max(0, (ext.eh + edState.maskH) / 2 - keepY);
     edState.offsetX = Math.max(-maxX, Math.min(maxX, edState.offsetX));
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
@@ -1005,11 +1011,18 @@
       }
       if (!dragging) {   // hover cursor hint over the various handles
         var h = stageXY(e);
+        // Diagonal cursor that matches which corner is under the pointer: a corner
+        // in the TL/BR direction → nwse, TR/BL → nesw. Derived from the handle's
+        // position vs the box centre, so it stays right when the art is rotated.
+        var cornerCur = function (hx, hy, cx, cy) {
+          return ((hx - cx) * (hy - cy) >= 0) ? 'nwse-resize' : 'nesw-resize';
+        };
+        var th = textHandleHit(h[0], h[1]);
         var hb = edState.showBox ? handleHit(h[0], h[1]) : -1;
-        edStage.style.cursor = textHandleHit(h[0], h[1]) >= 0 ? 'nwse-resize'
+        edStage.style.cursor = th >= 0 ? cornerCur(edTextBox.handles[th][0], edTextBox.handles[th][1], edTextBox.cx, edTextBox.cy)
           : textBodyHit(h[0], h[1]) ? 'move'
           : hb >= 4 ? ((hb === 5 || hb === 7) ? 'ew-resize' : 'ns-resize')
-          : hb >= 0 ? 'nwse-resize' : 'grab';
+          : hb >= 0 ? cornerCur(edBox.handles[hb][0], edBox.handles[hb][1], edBox.cx, edBox.cy) : 'grab';
         return;
       }
       rawX += e.clientX - lastX; rawY += e.clientY - lastY;
