@@ -341,6 +341,7 @@
   var edStage = $('[data-cl-ai-ed-stage]');
   var edMask = $('[data-cl-ai-ed-mask]');
   var edFrame = $('[data-cl-ai-ed-frame]');
+  var edOverlay = $('[data-cl-ai-ed-overlay]');   // handles/box layer above the frame
   var edZoom = $('[data-cl-ai-ed-zoom]');
   var edWarn = $('[data-cl-ai-ed-warn]');
   var edBoxToggle = $('[data-cl-ai-ed-box]');
@@ -754,9 +755,21 @@
       // Fallback (mask not loaded yet): clip via traced shape path.
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
-    if (edState.showBox) drawTransformBox(ctx, W, H); else edBox.handles = null;
-    drawEditorText(ctx, W, H);
-    drawGuides(ctx, W, H);
+    // Paint the transform box + handles + caption box + guides on the OVERLAY
+    // canvas (z-index above the frame) so the frame's opaque bezel/rivets can't
+    // hide the resize corners. Falls back to the base ctx if the overlay element
+    // isn't in the DOM (stale cached markup).
+    var octx2 = ctx;
+    if (edOverlay) {
+      edOverlay.width = W * dpr; edOverlay.height = H * dpr;
+      edOverlay.style.width = W + 'px'; edOverlay.style.height = H + 'px';
+      octx2 = edOverlay.getContext('2d');
+      octx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+      octx2.clearRect(0, 0, W, H);
+    }
+    if (edState.showBox) drawTransformBox(octx2, W, H); else edBox.handles = null;
+    drawEditorText(octx2, W, H);
+    drawGuides(octx2, W, H);
     updateWarn();
   }
 
@@ -897,7 +910,7 @@
     function handleHit(px, py) {
       if (!edBox.handles) return -1;
       for (var i = 0; i < edBox.handles.length; i += 1) {
-        if (Math.abs(px - edBox.handles[i][0]) <= 12 && Math.abs(py - edBox.handles[i][1]) <= 12) return i;
+        if (Math.abs(px - edBox.handles[i][0]) <= 16 && Math.abs(py - edBox.handles[i][1]) <= 16) return i;
       }
       return -1;
     }
