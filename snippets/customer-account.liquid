@@ -1,6 +1,5 @@
 {% liquid
   assign menu_id = settings.customer_accounts_menu
-  assign account_menu = linklists[menu_id]
 %}
 
 {% if shop.customer_accounts_enabled %}
@@ -28,18 +27,14 @@
       <div class="cl-account__panel" data-cl-acct-panel hidden>
         <p class="cl-account__greeting">{{ customer.name | default: customer.email }}</p>
 
+        {%- comment -%}
+          Use CLASSIC storefront routes, not the customer-account-main-menu:
+          that menu is Shopify's NEW-accounts menu and its links redirect to
+          the shopify.com hosted portal (bounces classic customers off-site).
+        {%- endcomment -%}
         <ul class="cl-account__links">
-          {%- if account_menu != blank -%}
-            {%- for link in account_menu.links -%}
-              {%- unless link.url contains 'logout' -%}
-                <li>
-                  <a href="{{ link.url }}">{{ link.title }}</a>
-                </li>
-              {%- endunless -%}
-            {%- endfor -%}
-          {%- else -%}
-            <li><a href="{{ routes.account_url }}">{{ 'header.account.title' | t }}</a></li>
-          {%- endif -%}
+          <li><a href="{{ routes.account_url }}">Orders</a></li>
+          <li><a href="{{ routes.account_addresses_url }}">Addresses</a></li>
 
           <li class="cl-account__links-sep">
             <a href="{{ routes.account_logout_url }}" data-no-instant>{{ 'header.account.logout' | t }}</a>
