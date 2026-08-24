@@ -1,0 +1,221 @@
+{% liquid
+  assign menu_id = settings.customer_accounts_menu
+  assign account_menu = linklists[menu_id]
+%}
+
+{% if shop.customer_accounts_enabled %}
+  {%- if customer -%}
+    {%- comment -%} Signed in: custom avatar + dropdown (classic customer accounts) {%- endcomment -%}
+    {%- assign _fi = customer.first_name | strip | slice: 0 -%}
+    {%- assign _li = customer.last_name | strip | slice: 0 -%}
+    {%- capture acct_initials -%}{{ _fi }}{{ _li }}{%- endcapture -%}
+    {%- if acct_initials == blank -%}
+      {%- assign acct_initials = customer.email | slice: 0 -%}
+    {%- endif -%}
+
+    <div class="cl-account" data-cl-account>
+      <button
+        type="button"
+        class="cl-account__toggle"
+        data-cl-acct-toggle
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <span class="cl-account__avatar" aria-hidden="true">{{ acct_initials | upcase }}</span>
+        <span class="visually-hidden">{{ 'header.account.title' | t }}</span>
+      </button>
+
+      <div class="cl-account__panel" data-cl-acct-panel hidden>
+        <p class="cl-account__greeting">{{ customer.name | default: customer.email }}</p>
+
+        <ul class="cl-account__links">
+          {%- if account_menu != blank -%}
+            {%- for link in account_menu.links -%}
+              {%- unless link.url contains 'logout' -%}
+                <li>
+                  <a href="{{ link.url }}">{{ link.title }}</a>
+                </li>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- else -%}
+            <li><a href="{{ routes.account_url }}">{{ 'header.account.title' | t }}</a></li>
+          {%- endif -%}
+
+          <li class="cl-account__links-sep">
+            <a href="{{ routes.account_logout_url }}" data-no-instant>{{ 'header.account.logout' | t }}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  {%- else -%}
+    {%- comment -%} Signed out: keep Shopify's component so "Log in with Shop" works {%- endcomment -%}
+    <shopify-account
+      {% if menu_id != blank %}
+        menu="{{ menu_id }}"
+      {% endif %}
+    >
+      <div slot="signed-out-avatar">
+        <div
+          class="site-header_account-link-anchor"
+          role="button"
+          tabindex="0"
+        >
+          <span class="site-header__account-icon">
+            {%
+              render 'icon-library',
+              id: 'icon-account',
+            %}
+          </span>
+
+          <span class="site-header_account-link-text">
+            {{ 'header.account.login' | t }}
+          </span>
+        </div>
+      </div>
+    </shopify-account>
+  {%- endif -%}
+{% endif %}
+
+<style>
+  .cl-account { position: relative; display: inline-flex; }
+  .cl-account__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    line-height: 0;
+  }
+  .cl-account__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: var(--color-button-background, #111);
+    color: var(--color-button-text, #fff);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .cl-account__panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: auto;
+    z-index: 60;
+    min-width: 190px;
+    padding: 8px 0;
+    background: var(--color-secondary, #fff);
+    color: var(--color-text, #111);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  }
+  .cl-account__panel[hidden] { display: none; }
+  .cl-account__greeting {
+    margin: 0;
+    padding: 4px 16px 10px;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.75;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .cl-account__panel .cl-account__links {
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 6px 0 0;
+  }
+  .cl-account__panel .cl-account__links li {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    float: none;
+    border: 0;
+  }
+  .cl-account__panel .cl-account__links a {
+    display: block;
+    width: 100%;
+    padding: 9px 16px;
+    font-size: 14px;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 0;
+  }
+  .cl-account__panel .cl-account__links a:hover {
+    background: rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+  }
+  .cl-account__links-sep {
+    margin-top: 6px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 6px;
+  }
+  .cl-account__links-sep a { font-weight: 700; }
+
+  shopify-account {
+    --shopify-account-font-body: var(--element-text-font-family--body);
+    --shopify-account-font-heading: var(--element-text-font-family--heading);
+    --shopify-account-radius-base: 3px;
+    --shopify-account-color-background: var(--color-secondary);
+    --shopify-account-color-accent: var(--color-button-background);
+    --shopify-account-color-accent-text: var(--color-button-text);
+    --shopify-account-color-text: var(--color-text);
+  }
+  shopify-account::part(signed-out-avatar) {
+    font-family: var(--menu-font-family);
+    font-weight: var(--menu-font-weight);
+    font-style: var(--menu-font-style);
+    font-size: var(--font-size-menu-body-small);
+    letter-spacing: var(--menu-letter-spacing);
+    text-transform: var(--menu-font-capitalization);
+  }
+</style>
+
+<script>
+  (function () {
+    if (window.__clAcctInit) return;
+    window.__clAcctInit = true;
+
+    function closeAll(except) {
+      document.querySelectorAll('[data-cl-account]').forEach(function (acct) {
+        if (acct === except) return;
+        var panel = acct.querySelector('[data-cl-acct-panel]');
+        var toggle = acct.querySelector('[data-cl-acct-toggle]');
+        if (panel) panel.hidden = true;
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    document.addEventListener('click', function (e) {
+      var toggle = e.target.closest('[data-cl-acct-toggle]');
+      if (toggle) {
+        e.preventDefault();
+        var acct = toggle.closest('[data-cl-account]');
+        var panel = acct.querySelector('[data-cl-acct-panel]');
+        var isOpen = panel && !panel.hidden;
+        closeAll(acct);
+        if (panel) {
+          panel.hidden = isOpen;
+          toggle.setAttribute('aria-expanded', String(!isOpen));
+        }
+        return;
+      }
+      // click outside any open panel closes them
+      if (!e.target.closest('[data-cl-account]')) closeAll(null);
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAll(null);
+    });
+  })();
+</script>

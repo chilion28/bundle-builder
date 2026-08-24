@@ -1,3 +1,28 @@
+{%- style -%}
+  .account-logout {
+    margin-top: 1.25rem;
+  }
+  a.account-logout__btn {
+    display: inline-block;
+    padding: 0.65em 1.4em;
+    background-color: var(--color-button-background, #111);
+    color: var(--color-button-text, #fff);
+    border: 1px solid var(--color-button-background, #111);
+    border-radius: var(--buttons-radius, 3px);
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  a.account-logout__btn:hover {
+    opacity: 0.85;
+    text-decoration: none;
+  }
+{%- endstyle -%}
+
 <section
   class="account-page account-page-details"
   data-template-account>
@@ -46,7 +71,7 @@
                       {{ order.fulfillment_status_label }}
                     </td>
                     <td class="account-order-list-total">
-                      <span class="money">{{ order.total_price | money }}</span>
+                      <span class="money">{% render 'theme-money', amount: order.total_price, context: 'total' %}</span>
                     </td>
                   </tr>
                 {% endfor %}
@@ -72,6 +97,16 @@
           <p class="account-info-item">
             <a href="mailto:{{ customer.email }}">
               {{ customer.email }}
+            </a>
+          </p>
+
+          <p class="account-logout">
+            <a
+              class="account-logout__btn"
+              href="{{ routes.account_logout_url }}"
+              data-no-instant
+            >
+              {{ 'header.account.logout' | t }}
             </a>
           </p>
         </div>
