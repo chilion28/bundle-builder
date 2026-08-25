@@ -425,6 +425,24 @@
     catch (e) { cb(null); }   // tainted canvas — skip rather than block the order
   }
 
+  // Downscaled JPEG re-encode of the customer's RAW source, used as a fallback
+  // "original" when the true file upload fails (an odd source MIME 415'ing, or a
+  // transient miss). edState.img came from a same-origin object URL so the canvas
+  // isn't tainted; re-encoding also guarantees an allow-listed type (image/jpeg)
+  // and a smaller payload. Long edge capped at 5000px — far more than a small
+  // patch needs, while keeping mobile memory + the blob well under the 25MB cap.
+  function buildOriginalFallbackCanvas() {
+    if (!edState.img || !edState.natW || !edState.natH) return null;
+    var MAX_EDGE = 5000;
+    var scale = Math.min(1, MAX_EDGE / Math.max(edState.natW, edState.natH));
+    var W = Math.max(1, Math.round(edState.natW * scale));
+    var H = Math.max(1, Math.round(edState.natH * scale));
+    var c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    c.getContext('2d').drawImage(edState.img, 0, 0, W, H);
+    return c;
+  }
+
   // CRC-32 (PNG chunk checksum).
   var CRC_TABLE = (function () {
     var t = new Uint32Array(256);
@@ -1385,9 +1403,29 @@
         return Promise.reject(e);
       });
     };
+    // When the raw source upload fails after retries (e.g. an unsupported source
+    // MIME 415'ing, order #406554), re-encode a downscaled JPEG of the source and
+    // upload THAT as the original, so production still gets a usable high-res file
+    // instead of nothing. Fail-soft: if the fallback also fails, resolve '' as before.
+    var uploadFallbackOriginal = function () {
+      var c = buildOriginalFallbackCanvas();
+      if (!c) return Promise.resolve('');
+      return new Promise(function (resolve) {
+        try {
+          c.toBlob(function (b) {
+            if (!b) { resolve(''); return; }
+            retry(function () { return providerUpload(b, nm('original', '-fallback.jpg'), 'original'); }, 3)
+              .then(resolve, function () { resolve(''); });
+          }, 'image/jpeg', 0.92);
+        } catch (e) { resolve(''); }
+      });
+    };
     var origJob = edState.file
       ? retry(function () { return providerUpload(edState.file, nm('original', '-' + origName), 'original'); }, 3)
-          .catch(function () { try { console.warn('[cl-ai-hat] original upload failed after retries'); } catch (e) {} return ''; })
+          .catch(function () {
+            try { console.warn('[cl-ai-hat] original upload failed after retries; trying downscaled fallback'); } catch (e) {}
+            return uploadFallbackOriginal();
+          })
       : Promise.resolve('');
     var jobs = [
       // The PRINT is the critical file (what production actually prints) — retry it
@@ -1395,7 +1433,12 @@
       // land an order with [upload-failed] and no artwork (see order #405134).
       retry(function () { return providerUpload(printBlob, nm('print', '.png'), 'print'); }, 3),
       origJob,
-      soft(previewBlob ? providerUpload(previewBlob, nm('preview', '.png'), 'preview') : Promise.resolve(''))
+      // Preview is fail-soft too, but give it the SAME retries as print/original —
+      // a single transient blip was silently losing the dashboard preview thumbnail
+      // (e.g. order #406647). Still soft so a hard failure never blocks the order.
+      soft(previewBlob
+        ? retry(function () { return providerUpload(previewBlob, nm('preview', '.png'), 'preview'); }, 3)
+        : Promise.resolve(''))
     ];
 
     Promise.all(jobs).then(function (urls) {
