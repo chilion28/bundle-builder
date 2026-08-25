@@ -59,9 +59,34 @@ their leading underscore:
 
 - `_plate_product_handle`
 - `_plate_field_names` (ordered names joined with `|`)
+- `_fxb_design_product_id` (the selected design's Shopify product ID)
+- `_fxb_schema_version` (`2` for the clOrdersApp API contract)
+- `_cl_template` (the current production template returned by clOrdersApp)
 
 Do not rename production-facing customization fields casually. The custom order
 production app maps those names to its Custom 1–4 columns and production files.
+
+### clOrdersApp template lookup (added 2026-08-24)
+
+On Add or Save Changes, `assets/cl-fixed-bundle.js` posts the selected design's
+real Shopify product ID to:
+
+`https://citylocsproduction.com/api/get-product-template`
+
+The response's current `template` value is saved as `_cl_template`. The add is
+blocked when the API fails or returns no template, so a bundle cannot enter
+production without routing information. The Cart Transform explicitly queries
+and copies `_cl_template` to every expanded child line. The product tag is not
+saved in Shopify; Omar confirmed clOrdersApp will retrieve it on the backend.
+
+California was used to verify the contract:
+
+- Shopify product ID: `8993982211`
+- Template: `US License Plates/prt California 60s.ai`
+- Custom 1: `Custom Text`
+- Custom 2: `Custom Text Two`
+- Custom 3: `Month`
+- Custom 4: `Year`
 
 ## Files in the focused change
 

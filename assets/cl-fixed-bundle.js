@@ -8,6 +8,7 @@
   'use strict';
 
   var CART_EDIT_STORAGE_KEY = 'cl-fixed-bundle-cart-edit';
+  var TEMPLATE_API_URL = 'https://citylocsproduction.com/api/get-product-template';
 
   var FIELD_DEFAULTS = {
     'Month':             { maxLength: 3,  placeholder: 'MONTH', required: true },
@@ -108,16 +109,24 @@
     .split('|').map(function (s) { return s.trim(); }).filter(Boolean);
   var productJsonCache = {};
 
+  function getDesignProduct(handle) {
+    if (!handle) return Promise.resolve(null);
+    return productJsonCache[handle] ||
+      (productJsonCache[handle] = fetch('/products/' + encodeURIComponent(handle) + '.js', {
+        headers: { 'Accept': 'application/json' }
+      }).then(function (response) {
+        return response.ok ? response.json() : null;
+      }).catch(function () {
+        return null;
+      }));
+  }
+
   /* Resolve the chosen design's variant GIDs for the promo SKUs. Returns a
    * pipe-joined GID string, or '' if it can't confidently match all SKUs (so
    * the cart transform safely falls back to the metafield). */
   function resolveComponentVariants(handle) {
     if (!handle || COMPONENT_SKUS.length === 0) return Promise.resolve('');
-    var fetchJson = productJsonCache[handle] ||
-      (productJsonCache[handle] = fetch('/products/' + encodeURIComponent(handle) + '.js', {
-        headers: { 'Accept': 'application/json' }
-      }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }));
-    return fetchJson.then(function (data) {
+    return getDesignProduct(handle).then(function (data) {
       if (!data || !Array.isArray(data.variants)) return '';
       var bySku = {};
       data.variants.forEach(function (v) { if (v && v.sku) bySku[String(v.sku).trim()] = v.id; });
@@ -129,6 +138,31 @@
       }
       return gids.join('|');
     }).catch(function () { return ''; });
+  }
+
+  /* clOrdersApp owns the current production-template assignment. Look it up
+   * using the selected design's real Shopify product ID and save only the
+   * template name as a hidden line-item property. A missing template blocks
+   * the add so an order cannot reach production without routing data. */
+  function resolveProductionTemplate(handle) {
+    return getDesignProduct(handle).then(function (product) {
+      if (!product || !product.id) throw new Error('design product not found');
+      return fetch(TEMPLATE_API_URL, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: String(product.id) })
+      }).then(function (response) {
+        if (!response.ok) throw new Error('template lookup failed');
+        return response.json();
+      }).then(function (record) {
+        var template = record && typeof record.template === 'string' ? record.template.trim() : '';
+        if (!template) throw new Error('template missing');
+        return { productId: String(product.id), template: template };
+      });
+    });
   }
   if (stateSelect.dataset.clInit === '1') return;
   stateSelect.dataset.clInit = '1';
@@ -369,6 +403,7 @@
     properties['Plate Design'] = cfg.title;
     properties['_plate_product_handle'] = cfg.handle;
     properties['_plate_field_names'] = cfg.fields.join('|');
+    properties['_fxb_schema_version'] = '2';
     cfg.fields.forEach(function (name) {
       if (values[name]) properties[name] = values[name];
     });
@@ -380,8 +415,17 @@
     var endpoint = editing ? '/cart/change.js' : '/cart/add.js';
 
     delete properties['_component_variants'];
-    resolveComponentVariants(cfg.handle).then(function (componentGids) {
+    delete properties['_cl_template'];
+    delete properties['_fxb_design_product_id'];
+    Promise.all([
+      resolveComponentVariants(cfg.handle),
+      resolveProductionTemplate(cfg.handle)
+    ]).then(function (resolved) {
+      var componentGids = resolved[0];
+      var production = resolved[1];
       if (componentGids) properties['_component_variants'] = componentGids;
+      properties['_fxb_design_product_id'] = production.productId;
+      properties['_cl_template'] = production.template;
       var payload = editing ? {
         id: cartEdit.key,
         quantity: parseInt(cartEdit.quantity, 10) || 1,
@@ -405,7 +449,7 @@
     }).catch(function () {
       cta.disabled = false;
       cta.innerHTML = original;
-      alert('Sorry — we couldn’t add the bundle. Please try again.');
+      alert('Sorry — we couldn’t load the production details for this plate. Please try again or choose another state.');
     });
   }
 

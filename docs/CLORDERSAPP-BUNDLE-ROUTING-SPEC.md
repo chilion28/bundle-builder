@@ -3,9 +3,49 @@
 **Audience:** the developer who maintains **clOrdersApp** (the production automation
 that assigns Illustrator templates to order lines).
 **Author:** CityLocs web (Diane) · **Date:** 2026-07-31
-**Status:** implementation request for Omar — the current SKU bridge works for
-universal SKUs, but this change is required before CityLocs can offer clearance
-SKUs that exist only on the `Bundle Hat` product.
+**Status:** superseded by the final API contract below, agreed with Omar on
+2026-08-24. The earlier inheritance proposal remains in this document as
+background only.
+
+## Final agreed API contract (2026-08-24)
+
+clOrdersApp remains the source of truth for each design's production template.
+When the customer saves a Fixed Bundle, the storefront:
+
+1. Resolves the selected design's real Shopify product ID from its live product
+   JSON.
+2. Sends that ID to `POST
+   https://citylocsproduction.com/api/get-product-template` as
+   `{ "productId": "<Shopify product ID>" }`.
+3. Requires a successful response containing a non-empty `template` value.
+4. Saves that value as the hidden line property `_cl_template` along with
+   `_fxb_design_product_id`.
+5. Blocks Add/Save if the lookup fails, preventing an unroutable order.
+
+The Cart Transform copies `_cl_template` onto all three expanded child hats,
+including generic `Bundle Hat` clearance variants. clOrdersApp reads this exact
+property for its template. The production tag is deliberately **not** passed in
+the order; clOrdersApp retrieves the trusted product tag on its backend.
+
+Omar confirmed the customization order remains:
+
+- Custom 1 = `Custom Text`
+- Custom 2 = `Custom Text Two`
+- Custom 3 = `Month`
+- Custom 4 = `Year`
+
+Example verified response for Shopify product `8993982211`:
+
+```json
+{
+  "name": "California 60's Plate Hat",
+  "template": "US License Plates/prt California 60s.ai",
+  "custom_text": "2"
+}
+```
+
+`custom_text: "2"` means the design accepts two normal custom-text fields;
+Month and Year, where applicable, continue in Custom 3 and Custom 4.
 
 ## Executive request
 
