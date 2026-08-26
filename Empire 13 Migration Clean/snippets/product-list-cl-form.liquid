@@ -623,14 +623,44 @@ j    @param variant_selection_id
             }
 
             try {
-              const productGet = await axios.get("{{ product.handle }}.js");
+              // Use Shopify's native Fetch API rather than relying on the optional
+              // Axios global. The absolute product URL also works from collection
+              // product URLs such as /collections/california-plate-hat/products/… .
+              const productResponse = await fetch('/products/{{ product.handle }}.js', {
+                credentials: 'same-origin'
+              });
+              if (!productResponse.ok) throw new Error(`Variant request failed: ${productResponse.status}`);
+              const productData = await productResponse.json();
 
-              productGet.data.variants.forEach((prodEl, idx) => {
-                if( prodEl.inventory_management != "shopify" ||
-                  (prodEl.inventory_management == "shopify" && prodEl.inventory_quantity > 0) ) {
+              /*
+               * Combined Listings adds "Select Design" ahead of the legacy
+               * Style / Size / Color options. The legacy CityLocs picker
+               * expects option1=Style, option2=Size and option3=Color, so
+               * normalize only Combined Listing children before rendering.
+               */
+              const hasCombinedDesignOption = (productData.options || []).some(
+                (option) => (typeof option === 'string' ? option : option.name) === 'Select Design'
+              );
+
+              productData.variants.forEach((rawVariant) => {
+                const sourceOptions = rawVariant.options || [];
+                const prodEl = hasCombinedDesignOption
+                  ? {
+                      ...rawVariant,
+                      option1: sourceOptions[1] || rawVariant.option2 || '',
+                      option2: sourceOptions[2] || rawVariant.option3 || '',
+                      option3: sourceOptions[3] || ''
+                    }
+                  : rawVariant;
+
+                if (
+                  prodEl.available ||
+                  prodEl.inventory_management !== 'shopify' ||
+                  prodEl.inventory_policy === 'continue'
+                ) {
                   variant.value.push(prodEl);
                 }
-              })
+              });
 
               const selectedVars = variant.value.filter(varEl => varEl.option1 == selected.value);
               options.value = [];
@@ -649,7 +679,9 @@ j    @param variant_selection_id
               }
 
             } catch (error) {
-              console.log(error);
+              console.error('Unable to load hat variants:', error);
+              // Do not leave the customer-facing picker permanently hidden.
+              isLoading.value = false;
             }
         }
 

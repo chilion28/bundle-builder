@@ -19,6 +19,10 @@
 
 
 {%- liquid
+  # The high-variant template renders this snippet from a section block, where
+  # Shopify exposes the current product as closest.product rather than an
+  # explicit render argument.
+  assign product = product | default: closest.product
   assign color_scheme = color_scheme | default: section.settings.color_scheme | default: 'none'
   assign padding = padding | default: section.settings.padding | default: 'none'
   assign form_id = 'section.flex-pdp.form-' | append: section.id
@@ -33,7 +37,10 @@
       assign has_cl_design = true
     endif
   endfor
-  if has_cl_state and has_cl_design
+  # A state-specific Combined Listing parent has only "Select Design". The
+  # original multi-state pilot has both options, so Select Design is the
+  # common, intentional marker for CityLocs' custom combined-listing UI.
+  if has_cl_design
     assign is_cl_combined_listing = true
   endif
 

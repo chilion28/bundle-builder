@@ -31,7 +31,9 @@
       assign has_cl_design = true
     endif
   endfor
-  if has_cl_state and has_cl_design
+  # Both the original multi-state pilot and the new one-state parents use
+  # Select Design. Keep their gallery thumbnails below the main image.
+  if has_cl_design
     assign thumbnail_position = 'bottom'
   endif
   assign autoplay = autoplay | default: block.settings.enable_video_autoplay, allow_false: true | default: false, allow_false: true
