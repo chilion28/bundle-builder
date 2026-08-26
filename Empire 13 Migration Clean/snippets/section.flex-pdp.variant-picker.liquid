@@ -54,54 +54,59 @@
       endif
     endfor
 
-    # State-specific parents deliberately omit Select State. Infer the state
-    # from their title so the existing design preview configuration still
-    # applies to these one-state parents.
+    # ── Preview lookup table ───────────────────────────────────────────────
+    # ONE row per design: "State~Design~Handle~HasDate".
+    #   Design  = the value WITHOUT any " Plate" suffix ("2000 Plate" matches
+    #             "2000" — the selected value is normalized in the lookup below).
+    #   Handle  = a key in CL_PLATE_CFG (assets/cl-pack-grid.js).
+    #   HasDate = 1 shows the Month/Year fields (e.g. California 60's), else 0.
+    # TO ADD A STATE/DESIGN: add a row here. If that design has no CL_PLATE_CFG
+    # entry yet, also add one in cl-pack-grid.js (Zepto pull). The state list for
+    # title-inference is DERIVED from this table, so new rows are all it takes —
+    # no other edits in this file.
+    assign cl_preview_table = ''
+    assign cl_preview_table = cl_preview_table | append: "California~60's~hat-cali-plates~1;"
+    assign cl_preview_table = cl_preview_table | append: "California~Blackout~california-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "California~Sunny~california-sunny-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "California~Blue~hat-80s-cali-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "California~Engraved~california-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "California~White~hat-white-cali~0;"
+    assign cl_preview_table = cl_preview_table | append: "Texas~2000~hat-tex-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Texas~Blackout~texas-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Texas~Black~hat-60s-texas-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Texas~White~texas-classic-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Texas~Engraved~texas-engraved-license-plate~0;"
+    assign cl_rows = cl_preview_table | split: ';'
+
+    # State-specific parents omit "Select State" — infer the state from the
+    # product title, matching against the states present in the table above.
     if cl_selected_state == blank
-      assign cl_parent_title = product.title | downcase
-      if cl_parent_title contains 'california'
-        assign cl_selected_state = 'California'
-      elsif cl_parent_title contains 'texas'
-        assign cl_selected_state = 'Texas'
-      else
-        assign cl_selected_state = product.title | split: ' License Plate Hats' | first | strip
-      endif
+      assign cl_title_dc = product.title | downcase
+      for cl_row in cl_rows
+        assign cl_cols = cl_row | split: '~'
+        assign cl_state_dc = cl_cols[0] | downcase
+        if cl_state_dc != blank and cl_title_dc contains cl_state_dc
+          assign cl_selected_state = cl_cols[0]
+          break
+        endif
+      endfor
     endif
 
+    # Resolve the preview handle (+ date flag) from the table. Normalize the
+    # selected design so a " Plate" suffix can't break the match.
     assign cl_preview_handle = ''
     assign cl_preview_has_date = false
-    if cl_selected_state == 'California'
-      if cl_selected_design == "60's"
-        assign cl_preview_handle = 'hat-cali-plates'
-        assign cl_preview_has_date = true
-      elsif cl_selected_design == 'Blackout'
-        assign cl_preview_handle = 'california-blackout-plate-hat'
-      elsif cl_selected_design == 'Sunny'
-        assign cl_preview_handle = 'california-sunny-plate-hat'
-      elsif cl_selected_design == 'Blue'
-        assign cl_preview_handle = 'hat-80s-cali-plate'
-      elsif cl_selected_design == 'Engraved'
-        assign cl_preview_handle = 'california-engraved-license-plate'
-      elsif cl_selected_design == 'White'
-        assign cl_preview_handle = 'hat-white-cali'
+    assign cl_design_key = cl_selected_design | remove: ' Plate' | strip
+    for cl_row in cl_rows
+      assign cl_cols = cl_row | split: '~'
+      if cl_cols[0] == cl_selected_state and cl_cols[1] == cl_design_key
+        assign cl_preview_handle = cl_cols[2]
+        if cl_cols[3] == '1'
+          assign cl_preview_has_date = true
+        endif
+        break
       endif
-    elsif cl_selected_state == 'Texas'
-      # Design values carry a " Plate" suffix on some listings ("2000 Plate")
-      # and not others ("2000") — normalize so a rename can't silently break the
-      # match again (this is what broke every Texas preview on 2026-08-25).
-      assign cl_tx_design = cl_selected_design | remove: ' Plate' | strip
-      if cl_tx_design == '2000'
-        assign cl_preview_handle = 'hat-tex-plate'
-      elsif cl_tx_design == 'Blackout'
-        assign cl_preview_handle = 'texas-blackout-plate-hat'
-      elsif cl_tx_design == 'Black'
-        assign cl_preview_handle = 'hat-60s-texas-plate'
-      elsif cl_tx_design == 'White'
-        assign cl_preview_handle = 'texas-classic-plate-hat'
-      elsif cl_tx_design == 'Engraved'
-        assign cl_preview_handle = 'texas-engraved-license-plate'
-      endif
-    endif
+    endfor
   endif
 %}
 
