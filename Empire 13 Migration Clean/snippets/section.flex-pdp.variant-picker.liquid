@@ -21,6 +21,10 @@
 {% enddoc %}
 
 {% liquid
+  # Theme blocks receive the product through closest.product. Keep the explicit
+  # render parameter when present, while making the picker work in both
+  # contexts (including Combined Listing parents).
+  assign product = product | default: closest.product
   assign variant_selector_type = variant_selector_type | default: block.settings.variant_selector_type | default: 'radio'
   assign is_cl_combined_listing = false
   assign has_cl_state = false
@@ -33,7 +37,10 @@
       assign has_cl_design = true
     endif
   endfor
-  if has_cl_state and has_cl_design
+  # A state-specific Combined Listing parent has only "Select Design". The
+  # original multi-state pilot has both options, so Select Design is the
+  # common, intentional marker for CityLocs' custom combined-listing UI.
+  if has_cl_design
     assign is_cl_combined_listing = true
   endif
 
@@ -47,6 +54,20 @@
       endif
     endfor
 
+    # State-specific parents deliberately omit Select State. Infer the state
+    # from their title so the existing design preview configuration still
+    # applies to these one-state parents.
+    if cl_selected_state == blank
+      assign cl_parent_title = product.title | downcase
+      if cl_parent_title contains 'california'
+        assign cl_selected_state = 'California'
+      elsif cl_parent_title contains 'texas'
+        assign cl_selected_state = 'Texas'
+      else
+        assign cl_selected_state = product.title | split: ' License Plate Hats' | first | strip
+      endif
+    endif
+
     assign cl_preview_handle = ''
     assign cl_preview_has_date = false
     if cl_selected_state == 'California'
@@ -57,14 +78,28 @@
         assign cl_preview_handle = 'california-blackout-plate-hat'
       elsif cl_selected_design == 'Sunny'
         assign cl_preview_handle = 'california-sunny-plate-hat'
+      elsif cl_selected_design == 'Blue'
+        assign cl_preview_handle = 'hat-80s-cali-plate'
+      elsif cl_selected_design == 'Engraved'
+        assign cl_preview_handle = 'california-engraved-license-plate'
+      elsif cl_selected_design == 'White'
+        assign cl_preview_handle = 'hat-white-cali'
       endif
     elsif cl_selected_state == 'Texas'
-      if cl_selected_design == '2000'
+      # Design values carry a " Plate" suffix on some listings ("2000 Plate")
+      # and not others ("2000") — normalize so a rename can't silently break the
+      # match again (this is what broke every Texas preview on 2026-08-25).
+      assign cl_tx_design = cl_selected_design | remove: ' Plate' | strip
+      if cl_tx_design == '2000'
         assign cl_preview_handle = 'hat-tex-plate'
-      elsif cl_selected_design == 'Black'
-        assign cl_preview_handle = 'hat-60s-texas-plate'
-      elsif cl_selected_design == 'Blackout'
+      elsif cl_tx_design == 'Blackout'
         assign cl_preview_handle = 'texas-blackout-plate-hat'
+      elsif cl_tx_design == 'Black'
+        assign cl_preview_handle = 'hat-60s-texas-plate'
+      elsif cl_tx_design == 'White'
+        assign cl_preview_handle = 'texas-classic-plate-hat'
+      elsif cl_tx_design == 'Engraved'
+        assign cl_preview_handle = 'texas-engraved-license-plate'
       endif
     endif
   endif
@@ -170,6 +205,13 @@
                       endif
                     endif
                     assign cl_design_swatch = cl_design_product.metafields.custom.design_swatch.value
+                    # Cloned child products do not always inherit the custom
+                    # swatch metafield. Use their own featured image as a
+                    # graceful visual fallback instead of rendering text-only
+                    # design controls.
+                    if cl_design_swatch == blank and cl_design_product.featured_media != blank
+                      assign cl_design_swatch = cl_design_product.featured_media.preview_image
+                    endif
                   %}
                   <span class="cl-combined-design-card{% if value.selected %} cl-combined-design-card--selected{% endif %}">
                     {% if cl_design_swatch != blank %}

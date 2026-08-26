@@ -50,12 +50,33 @@
       'Custom Text Two': { cx: 50, cy: 49, w: 54.77, size: 39, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
     }
   };
+  // California Engraved uses its distinct Zepto artwork and warm gold type.
+  CL_PLATE_CFG['california-engraved-license-plate'] = {
+    img: 'California-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50.00, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
   CL_PLATE_CFG['texas-blackout-plate-hat'] = {
     img: 'Texas-Blackout-License-Plate-Preview.jpg',
     f: {
       'Custom Text': { cx: 50, cy: 28, w: 75.62, size: 176, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
       'Custom Text One': { cx: 50, cy: 27, w: 75.97, size: 130, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
       'Custom Text Two': { cx: 50, cy: 49, w: 54.77, size: 39, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Texas Engraved — pulled from Zepto canvas-script (prid 7476389576792), bare-plate
+  // preview; geometry matches the shared engraved-leather template (cf. California Engraved).
+  CL_PLATE_CFG['texas-engraved-license-plate'] = {
+    img: 'Texas-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50.00, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
     }
   };
 
