@@ -76,6 +76,9 @@
     assign cl_preview_table = cl_preview_table | append: "Texas~Black~hat-60s-texas-plate~0;"
     assign cl_preview_table = cl_preview_table | append: "Texas~White~texas-classic-plate-hat~0;"
     assign cl_preview_table = cl_preview_table | append: "Texas~Engraved~texas-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Alabama~Alabama~hat-alabama-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Alabama~Blackout~alabama-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Alabama~Engraved~alabama-engraved-license-plate~0;"
     assign cl_rows = cl_preview_table | split: ';'
 
     # State-specific parents omit "Select State" — infer the state from the

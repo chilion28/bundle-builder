@@ -80,6 +80,27 @@
     }
   };
 
+  // Alabama Blackout — pulled from Zepto canvas-script (prid 8152640880728).
+  CL_PLATE_CFG['alabama-blackout-plate-hat'] = {
+    img: 'Alabama-Blackout-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 29.18, w: 75.62, size: 149, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50, cy: 27.53, w: 75.97, size: 122, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 48, w: 54.69, size: 38, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Alabama Engraved — pulled from Zepto canvas-script (prid 7474831229016); shared
+  // engraved-leather template geometry (cf. California / Texas Engraved).
+  CL_PLATE_CFG['alabama-engraved-license-plate'] = {
+    img: 'Alabama-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50.00, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
   function plateCfg(card) {
     return CL_PLATE_CFG[card.getAttribute('data-cl-handle') || ''] || null;
   }
