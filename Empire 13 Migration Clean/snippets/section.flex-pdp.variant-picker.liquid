@@ -130,8 +130,14 @@
 
       <div class="cl-combined-option cl-combined-option--{{ option.name | handleize }}{% if is_cl_combined_listing and normalized_option_name == 'select state' %} cl-combined-option--state-locked{% endif %}">
       {% if is_cl_combined_listing and normalized_option_name == 'color' %}
+        <details class="cl-combined-perso-accordion cl-combined-qty-accordion" open>
+          <summary class="cl-combined-perso-accordion__summary">
+            <span>Choose colors &amp; quantities</span>
+            <svg class="cl-combined-perso-accordion__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </summary>
         <div class="cl-combined-quantity-grid" data-cl-combined-quantity-grid>
-          <p class="cl-combined-quantity-grid__title">Choose colors &amp; quantities</p>
           <div class="cl-combined-quantity-grid__rows">
             {% for variant in product.variants %}
               {% assign variant_matches = true %}
@@ -166,6 +172,7 @@
             {% endfor %}
           </div>
         </div>
+        </details>
       {% else %}
       {% case option_selector_type %}
         {% when 'radio' %}
@@ -269,7 +276,7 @@
             {% if is_cl_combined_listing and normalized_option_name == 'select design' %}
               <details class="cl-combined-perso-accordion" open>
                 <summary class="cl-combined-perso-accordion__summary">
-                  <span>Live preview &amp; personalization</span>
+                  <span>Customize your plate</span>
                   <svg class="cl-combined-perso-accordion__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -467,6 +474,10 @@
     border: 0;
     border-top: 1px solid #eef0f3;
     border-radius: 0;
+  }
+  .cl-combined-qty-accordion > .cl-combined-quantity-grid {
+    padding: 14px 16px 16px;
+    border-top: 1px solid #eef0f3;
   }
 
   .cl-combined-personalizer {
