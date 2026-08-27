@@ -131,6 +131,78 @@
     }
   };
 
+  // Arizona Blackout / Engraved — pulled from Zepto (prids 8152723914840 / 7476202995800).
+  CL_PLATE_CFG['arizona-blackout-plate-hat'] = {
+    img: 'Arizona-Blackout-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 26.35, w: 75.62, size: 160, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50, cy: 25.41, w: 75.97, size: 138, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 48, w: 54.69, size: 38, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+  CL_PLATE_CFG['arizona-engraved-license-plate'] = {
+    img: 'Arizona-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Arkansas Blackout / Engraved — pulled from Zepto (prids 8152724766808 / 7477316288600).
+  CL_PLATE_CFG['arkansas-blackout-plate-hat'] = {
+    img: 'Arkansas-Blackout-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 29.18, w: 75.62, size: 160, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50, cy: 28.71, w: 75.97, size: 122, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 49.18, w: 54.77, size: 38, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+  CL_PLATE_CFG['arkansas-engraved-license-plate'] = {
+    img: 'Arkansas-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Colorado Blackout / Engraved — pulled from Zepto (prids 8152726732888 / 7476209352792).
+  CL_PLATE_CFG['colorado-blackout-plate-hat'] = {
+    img: 'Colorado-Blackout-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 28.94, w: 75.62, size: 160, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50, cy: 27.06, w: 75.97, size: 138, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 50.12, w: 54.77, size: 38, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+  CL_PLATE_CFG['colorado-engraved-license-plate'] = {
+    img: 'Colorado-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Connecticut Blackout / Engraved — pulled from Zepto (prids 8152728502360 / 7476212891736).
+  CL_PLATE_CFG['connecticut-blackout-plate-hat'] = {
+    img: 'Connecticut-Blackout-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 28.71, w: 75.62, size: 160, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50, cy: 26.82, w: 75.97, size: 134, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 49.41, w: 54.77, size: 38, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+  CL_PLATE_CFG['connecticut-engraved-license-plate'] = {
+    img: 'Connecticut-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
   function plateCfg(card) {
     return CL_PLATE_CFG[card.getAttribute('data-cl-handle') || ''] || null;
   }

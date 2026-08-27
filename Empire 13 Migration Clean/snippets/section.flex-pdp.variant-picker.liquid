@@ -83,6 +83,20 @@
     assign cl_preview_table = cl_preview_table | append: "Alaska~Alaska~test-plate~0;"
     assign cl_preview_table = cl_preview_table | append: "Alaska~Blackout~alaska-blackout-plate-hat~0;"
     assign cl_preview_table = cl_preview_table | append: "Alaska~Engraved~alaska-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arizona~2018~hat-arizona-plate-2018~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arizona~Arizona~hat-arizona-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arizona~Blackout~arizona-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arizona~Engraved~arizona-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arkansas~Arkansas~hat-arkansas-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arkansas~Blackout~arkansas-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Arkansas~Engraved~arkansas-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Colorado~2024~colorado-2024-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Colorado~Colorado~hat-colorado-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Colorado~Blackout~colorado-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Colorado~Engraved~colorado-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Connecticut~Blackout~connecticut-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Connecticut~Engraved~connecticut-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Connecticut~Connecticut~hat-connecticut-plate~0;"
     assign cl_rows = cl_preview_table | split: ';'
 
     # State-specific parents omit "Select State" — infer the state from the
