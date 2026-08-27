@@ -79,17 +79,22 @@
     return src;
   }
 
-  // Intercept thumbnail clicks inside a combined-listing gallery, BEFORE the
-  // Empire media-gallery switches the main image.
+  // Open the lightbox when a variant thumbnail is clicked:
+  //  - the color-variant image in "Choose colors & quantities"
+  //    (.cl-combined-quantity-row__image), and
+  //  - the media-gallery thumbnail strip (.media-gallery__thumb).
+  // Capture phase so we run before Empire's media-gallery switches the main image.
+  var TRIGGER = '.cl-combined-listing-wrapper .cl-combined-quantity-row__image,' +
+                '.cl-combined-listing-wrapper .media-gallery__thumb';
   document.addEventListener(
     'click',
     function (e) {
-      var thumb = e.target.closest('.cl-combined-listing-wrapper .media-gallery__thumb');
-      if (!thumb) return;
-      // Images only (skip video/model thumbs).
-      var mt = thumb.getAttribute('data-media-type');
+      var trigger = e.target.closest(TRIGGER);
+      if (!trigger) return;
+      // Skip non-image media-gallery thumbs (video/model).
+      var mt = trigger.getAttribute && trigger.getAttribute('data-media-type');
       if (mt && mt !== 'image') return;
-      var img = thumb.querySelector('img');
+      var img = trigger.querySelector('img');
       if (!img) return;
       var src = largeSrc(img);
       if (!src) return;
