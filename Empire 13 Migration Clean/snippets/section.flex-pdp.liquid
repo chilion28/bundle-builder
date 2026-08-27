@@ -169,7 +169,16 @@
     the shopify-block id; the gallery copy is a plain render.
   {%- endcomment -%}
   <style>
-    .cl-combined-listing__details [id$="__section_flex_pdp_description"] { display: none !important; }
+    /* Desktop: description shows under the gallery (left) — hide the details-column
+       original. Mobile: keep the description in the details column (natural,
+       buy-first order) and hide the gallery copy so it doesn't sit above the
+       title/price/ATC when the columns stack. */
+    @media (min-width: 768px) {
+      .cl-combined-listing__details [id$="__section_flex_pdp_description"] { display: none !important; }
+    }
+    @media (max-width: 767px) {
+      .cl-combined-listing-wrapper details.cl-combined-desc { display: none !important; }
+    }
   </style>
 {% endif %}
 
