@@ -267,6 +267,13 @@
             {{ option_name }}
             {% render 'layout.stack', horizontal: true, gap: 'xs', slot: option_values %}
             {% if is_cl_combined_listing and normalized_option_name == 'select design' %}
+              <details class="cl-combined-perso-accordion" open>
+                <summary class="cl-combined-perso-accordion__summary">
+                  <span>Live preview &amp; personalization</span>
+                  <svg class="cl-combined-perso-accordion__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </summary>
               <div class="cl-combined-personalizer cl-grid-perso" data-cl-combined-personalizer data-cl-preview-handle="{{ cl_preview_handle }}" data-cl-preview-script="{{ 'cl-pack-grid.js' | asset_url }}">
                 <div class="cl-grid-perso-preview" data-cl-perso-preview aria-live="polite"></div>
 
@@ -295,6 +302,7 @@
                   <input type="text" name="properties[Year]" maxlength="4" placeholder="YEAR" autocomplete="off"{% if cl_preview_has_date %} required{% else %} disabled{% endif %} data-cl-personalization-field="Year">
                 </label>
               </div>
+              </details>
             {% endif %}
           {% endcapture %}
 
@@ -426,6 +434,39 @@
   .cl-combined-option--select-design .element-button {
     min-height: 42px;
     padding-inline: 18px;
+  }
+
+  .cl-combined-perso-accordion {
+    border: 1px solid #e0e3e8;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .cl-combined-perso-accordion__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+  .cl-combined-perso-accordion__summary::-webkit-details-marker { display: none; }
+  .cl-combined-perso-accordion__summary:hover { background: #f6f7f9; }
+  .cl-combined-perso-accordion__chevron {
+    flex: 0 0 auto;
+    transition: transform 0.2s ease;
+    color: #687078;
+  }
+  .cl-combined-perso-accordion[open] .cl-combined-perso-accordion__chevron { transform: rotate(180deg); }
+  .cl-combined-perso-accordion > .cl-combined-personalizer {
+    margin-top: 0;
+    border: 0;
+    border-top: 1px solid #eef0f3;
+    border-radius: 0;
   }
 
   .cl-combined-personalizer {
