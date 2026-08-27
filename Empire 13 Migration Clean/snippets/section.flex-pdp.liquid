@@ -10,6 +10,8 @@
   @param {object} product - A product object
   @param {string} [slot_gallery] - The slot for the gallery
   @param {string} [slot_details] - The slot for the details
+  @param {string} [slot_description] - The slot for the description
+  @param {boolean} [description_in_gallery] - Whether to render the description under the gallery
   @param {string} [color_scheme] - The color scheme to apply to the section
   @param {string} [padding] ('top', 'bottom', 'both', 'none') - The padding to apply to the section
 
@@ -26,6 +28,7 @@
   assign color_scheme = color_scheme | default: section.settings.color_scheme | default: 'none'
   assign padding = padding | default: section.settings.padding | default: 'none'
   assign form_id = 'section.flex-pdp.form-' | append: section.id
+  assign description_in_gallery = description_in_gallery | default: false
   assign is_cl_combined_listing = false
   assign has_cl_state = false
   assign has_cl_design = false
@@ -42,6 +45,13 @@
   # common, intentional marker for CityLocs' custom combined-listing UI.
   if has_cl_design
     assign is_cl_combined_listing = true
+  endif
+
+  # Combined listings show the product description under the image slider (left
+  # column) instead of the details column — enables the description_in_gallery
+  # path below. Combined listings only; other high-variant products unchanged.
+  if is_cl_combined_listing
+    assign description_in_gallery = true
   endif
 
   assign cl_max_width = section.settings.max_width | default: 1200
@@ -79,7 +89,9 @@
     {% render 'section.flex-pdp.buy-buttons', product: product %}
     {% render 'section.flex-pdp.policies', product: product %}
     {% render 'section.flex-pdp.pick-up', product: product %}
-    {% render 'section.flex-pdp.description', product: product %}
+    {% unless description_in_gallery %}
+      {% render 'section.flex-pdp.description', product: product %}
+    {% endunless %}
   {% endcapture %}
 {% endif %}
 
@@ -87,6 +99,36 @@
   {% capture slot_gallery %}
     {% render 'section.flex-pdp.media-grid', product: product %}
   {% endcapture %}
+{% endif %}
+
+{% if description_in_gallery and slot_description == blank %}
+  {% capture slot_description %}
+    {% render 'section.flex-pdp.description', product: product %}
+  {% endcapture %}
+{% endif %}
+
+{% assign gallery_column_slot = slot_gallery %}
+
+{% if description_in_gallery %}
+  {% capture gallery_stack_slot %}
+    {{ slot_gallery }}
+    {{ slot_description }}
+  {% endcapture %}
+
+  {% capture gallery_column_slot %}
+    {% render 'layout.stack', gap_xs: 'md', gap_sm: 'lg', slot: gallery_stack_slot %}
+  {% endcapture %}
+
+  {%- comment -%}
+    The description is now rendered under the gallery (above). The original
+    description block still renders in the details column via `content_for
+    'blocks'` (that comes from the section, not this snippet's default capture),
+    so hide it there to avoid a duplicate. Only the details-column block carries
+    the shopify-block id; the gallery copy is a plain render.
+  {%- endcomment -%}
+  <style>
+    .cl-combined-listing__details [id$="__section_flex_pdp_description"] { display: none !important; }
+  </style>
 {% endif %}
 
 {% capture product_details_stack %}
@@ -245,10 +287,10 @@
 
 {% capture grid_content %}
   {% if is_cl_combined_listing %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: slot_gallery %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: gallery_column_slot %}
     {% render 'layout.grid.cell', span_xs: 20, span_md: cl_details_span, span_lg: cl_details_span, slot: combined_listing_product_form %}
   {% else %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: slot_gallery %}
+    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: gallery_column_slot %}
     {% render 'layout.grid.cell', span_xs: 20, span_md: cl_details_span, span_lg: cl_details_span, slot: standard_listing_product_form %}
   {% endif %}
 {% endcapture %}
