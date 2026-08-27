@@ -75,6 +75,25 @@
     event.stopPropagation();
     event.stopImmediatePropagation();
     sync(product);
+
+    // Enforce required personalization fields (e.g. Custom Text). The combined
+    // add-to-cart bypasses native form validation, so check it ourselves. A
+    // field counts as required only when it's `required` and enabled (Month/Year
+    // and the optional second line are disabled when not in use, so they're
+    // skipped). Open its accordion + focus it so the customer sees what's missing.
+    var personalizationFields = product.querySelectorAll('[data-cl-personalization-field]');
+    for (var pf = 0; pf < personalizationFields.length; pf++) {
+      var pField = personalizationFields[pf];
+      if (pField.required && !pField.disabled && !String(pField.value || '').trim()) {
+        var det = pField.closest('details');
+        if (det && !det.open) det.open = true;
+        pField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try { pField.focus({ preventScroll: true }); } catch (e) { try { pField.focus(); } catch (e2) {} }
+        if (typeof pField.reportValidity === 'function') pField.reportValidity();
+        return;
+      }
+    }
+
     var quantities = store(product).quantities;
     var properties = Array.from(form.elements).reduce(function (result, field) {
       var match = field.name && field.name.match(/^properties\[(.+)\]$/);
