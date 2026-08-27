@@ -101,6 +101,36 @@
     }
   };
 
+  // Alaska (standard) — pulled from Zepto canvas-script (prid 1927328399448, handle test-plate).
+  CL_PLATE_CFG['test-plate'] = {
+    img: 'Alaska-License-Plate-Hat-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 49.29, cy: 29.88, w: 75.62, size: 176, color: '#231c63', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 49.82, cy: 29.88, w: 75.97, size: 130, color: '#231c63', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 51.24, cy: 52.24, w: 54.77, size: 39, color: '#231c63', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Alaska Blackout — pulled from Zepto canvas-script (prid 8152722243672).
+  CL_PLATE_CFG['alaska-blackout-plate-hat'] = {
+    img: 'Alaska-Blackout-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50, cy: 29.18, w: 75.62, size: 149, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50, cy: 27.76, w: 75.97, size: 122, color: '#ffffff', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50, cy: 48, w: 54.69, size: 38, color: '#ffffff', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
+  // Alaska Engraved — pulled from Zepto canvas-script (prid 7476190150744); shared engraved template.
+  CL_PLATE_CFG['alaska-engraved-license-plate'] = {
+    img: 'Alaska-Engraved-License-Plate-Preview.jpg',
+    f: {
+      'Custom Text': { cx: 50.00, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: 'Clocs-license-plate.ttf' }
+    }
+  };
+
   function plateCfg(card) {
     return CL_PLATE_CFG[card.getAttribute('data-cl-handle') || ''] || null;
   }
