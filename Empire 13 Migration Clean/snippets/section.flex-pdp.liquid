@@ -411,3 +411,11 @@
 {% endcapture %}
 
 {% render 'product.hot-reload', section: section, product: product, slot: section_layout %}
+
+{% comment %}
+  Combined-listing gallery lightbox: clicking a thumbnail opens the large image
+  in a no-zoom, click-to-close overlay with an X (all devices).
+{% endcomment %}
+{% if is_cl_combined_listing %}
+  <script src="{{ 'cl-combined-gallery-lightbox.js' | asset_url }}" defer></script>
+{% endif %}
