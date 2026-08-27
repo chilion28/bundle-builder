@@ -203,6 +203,113 @@
     }
   };
 
+  // ── Bulk state configs (pre-scraped from Zepto 2026-08-27) ────────────────
+  // Blackout plates share layout (white text, cx 50); only the per-field cy/size
+  // vary, so bo() takes just those. Engraved plates all share the leather
+  // template, so eng() takes only the image. Keyed by the design product handle
+  // (the CL_PLATE_CFG key the combined-listing table maps each design value to).
+  var CLF = 'Clocs-license-plate.ttf';
+  function bo(img, ay, asz, by, bsz, cy, csz) {
+    return { img: img, f: {
+      'Custom Text': { cx: 50, cy: ay, w: 75.62, size: asz, color: '#ffffff', font: CLF },
+      'Custom Text One': { cx: 50, cy: by, w: 75.97, size: bsz, color: '#ffffff', font: CLF },
+      'Custom Text Two': { cx: 50, cy: cy, w: 54.77, size: csz, color: '#ffffff', font: CLF }
+    } };
+  }
+  function eng(img) {
+    return { img: img, f: {
+      'Custom Text': { cx: 50.00, cy: 28.71, w: 74.56, size: 155, color: '#fdd7ad', font: CLF },
+      'Custom Text One': { cx: 50.09, cy: 27.29, w: 74.73, size: 120, color: '#fdd7ad', font: CLF },
+      'Custom Text Two': { cx: 50.09, cy: 47.53, w: 74.03, size: 39, color: '#fdd7ad', font: CLF }
+    } };
+  }
+  CL_PLATE_CFG['delaware-blackout-plate-hat'] = bo('Delaware-Blackout-License-Plate-Preview.jpg', 29.18,149, 27.76,122, 48,38);
+  CL_PLATE_CFG['delaware-engraved-license-plate'] = eng('Delaware-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['florida-blackout-plate-hat'] = bo('Florida-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,138, 49.65,38);
+  CL_PLATE_CFG['florida-engraved-license-plate'] = eng('Florida-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['georgia-blackout-plate-hat'] = bo('Georgia-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.29,132, 49.18,38);
+  CL_PLATE_CFG['copy-of-florida-engraved-license-plate'] = eng('Georgia-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['hawaii-blackout-plate-hat'] = bo('Hawaii-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.76,122, 48,38);
+  CL_PLATE_CFG['hawaii-engraved-license-plate'] = eng('Hawaii-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['idaho-blackout-plate-hat'] = bo('Idaho-Blackout-License-Plate-Preview.jpg', 28.71,160, 26.82,126, 48,38);
+  CL_PLATE_CFG['idaho-engraved-license-plate-1'] = eng('Idaho-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['illinois-blackout-plate-hat'] = bo('Illinois-Blackout-License-Plate-Preview.jpg', 29.18,160, 28.24,122, 48.94,38);
+  CL_PLATE_CFG['idaho-engraved-license-plate'] = eng('Illinois-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['indiana-blackout-plate-hat'] = bo('Indiana-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.06,136, 49.41,38);
+  CL_PLATE_CFG['indiana-engraved-license-plate'] = eng('Indiana-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['iowa-blackout-plate-hat'] = bo('Iowa-Blackout-License-Plate-Preview.jpg', 29.88,160, 28.47,136, 51.06,38);
+  CL_PLATE_CFG['iowa-engraved-license-plate'] = eng('Iowa-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['kansas-blackout-plate-hat'] = bo('Kansas-Blackout-License-Plate-Preview.jpg', 28.71,160, 27.06,144, 50.82,38);
+  CL_PLATE_CFG['kansas-engraved-license-plate'] = eng('Kansas-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['kentucky-blackout-plate-hat'] = bo('Kentucky-Blackout-License-Plate-Preview.jpg', 29.41,160, 28.47,136, 51.06,38);
+  CL_PLATE_CFG['kentucky-engraved-license-plate'] = eng('Kentucky-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['louisiana-blackout-plate-hat'] = bo('Louisiana-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.06,132, 49.18,38);
+  CL_PLATE_CFG['louisiana-engraved-license-plate'] = eng('Louisiana-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['maine-blackout-plate-hat'] = bo('Maine-Blackout-License-Plate-Preview.jpg', 28.71,160, 25.65,142, 48.94,38);
+  CL_PLATE_CFG['maine-engraved-license-plate'] = eng('Maine-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['maryland-blackout-plate-hat'] = bo('Maryland-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.76,134, 50.12,38);
+  CL_PLATE_CFG['maryland-engraved-license-plate'] = eng('Maryland-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['massachusetts-blackout-plate-hat'] = bo('Massachusetts-Blackout-License-Plate-Preview.jpg', 28.47,160, 25.88,144, 49.88,38);
+  CL_PLATE_CFG['massachusetts-engraved-license-plate'] = eng('Massachusetts-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['michigan-blackout-plate-hat'] = bo('Michigan-Blackout-License-Plate-Preview.jpg', 27.76,160, 25.18,130, 47.06,38);
+  CL_PLATE_CFG['michigan-engraved-license-plate'] = eng('Michigan-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['minnesota-blackout-plate-hat'] = bo('Minnesota-Blackout-License-Plate-Preview.jpg', 28.71,160, 26.35,138, 48.71,38);
+  CL_PLATE_CFG['minnesota-engraved-license-plate'] = eng('Minnesota-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['mississippi-blackout-plate-hat'] = bo('Mississippi-Blackout-License-Plate-Preview.jpg', 29.65,160, 28.71,122, 48.71,38);
+  CL_PLATE_CFG['mississippi-engraved-license-plate'] = eng('Mississippi-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['missouri-blackout-plate-hat'] = bo('Missouri-Blackout-License-Plate-Preview.jpg', 28.94,160, 26.82,132, 48.94,38);
+  CL_PLATE_CFG['missouri-engraved-license-plate'] = eng('Missouri-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['montana-blackout-plate-hat'] = bo('Montana-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,140, 49.88,38);
+  CL_PLATE_CFG['montana-engraved-license-plate'] = eng('Montana-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['nebraska-blackout-plate-hat'] = bo('Nebraska-Blackout-License-Plate-Preview.jpg', 29.18,160, 25.88,148, 50.59,38);
+  CL_PLATE_CFG['nebraska-engraved-license-plate'] = eng('Nebraska-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['nevada-blackout-plate-hat'] = bo('Nevada-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.35,138, 48.94,38);
+  CL_PLATE_CFG['nevada-engraved-license-plate'] = eng('Nevada-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['new-hampshire-blackout-plate-hat'] = bo('New-Hampshire-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.76,122, 48,38);
+  CL_PLATE_CFG['new-hampshire-engraved-license-plate'] = eng('New-Hampshire-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['new-jersey-blackout-plate-hat'] = bo('New-Jersey-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,132, 48.47,38);
+  CL_PLATE_CFG['copy-of-new-hampshire-engraved-license-plate'] = eng('New-Jersey-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['new-mexico-blackout-plate-hat'] = bo('New-Mexico-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,130, 48,38);
+  CL_PLATE_CFG['new-mexico-engraved-license-plate'] = eng('New-Mexico-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['new-york-blackout-plate-hat'] = bo('New-York-Blackout-License-Plate-Preview.jpg', 29.18,160, 25.65,144, 49.18,38);
+  CL_PLATE_CFG['new-york-engraved-license-plate'] = eng('New-York-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['north-carolina-blackout-plate-hat'] = bo('North-Carolina-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.35,150, 51.29,38);
+  CL_PLATE_CFG['north-carolina-engraved-license-plate'] = eng('North-Carolina-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['north-dakota-blackout-plate-hat'] = bo('North-Dakota-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,154, 51.76,38);
+  CL_PLATE_CFG['north-dakota-engraved-license-plate'] = eng('North-Dakota-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['ohio-blackout-plate-hat'] = bo('Ohio-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.76,128, 49.18,38);
+  CL_PLATE_CFG['ohio-engraved-license-plate'] = eng('Ohio-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['oklahoma-blackout-plate-hat'] = bo('Oklahoma-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.82,152, 51.76,38);
+  CL_PLATE_CFG['oklahoma-engraved-license-plate'] = eng('Oklahoma-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['oregon-blackout-plate-hat'] = bo('Oregon-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.76,130, 49.41,38);
+  CL_PLATE_CFG['oregon-engraved-license-plate'] = eng('Oregon-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['pennsylvania-blackout-plate-hat'] = bo('Pennsylvania-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.82,146, 50.82,38);
+  CL_PLATE_CFG['pennsylvania-engraved-license-plate'] = eng('Pennsylvania-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['rhode-island-blackout-plate-hat'] = bo('Rhode-Island-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.82,134, 48.94,38);
+  CL_PLATE_CFG['rhode-island-engraved-license-plate'] = eng('Rhode-Island-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['south-carolina-blackout-plate-hat'] = bo('South-Carolina-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,138, 49.65,38);
+  CL_PLATE_CFG['south-carolina-engraved-license-plate'] = eng('South-Carolina-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['south-dakota-blackout-plate-hat'] = bo('South-Dakota-Blackout-License-Plate-Preview.jpg', 29.18,160, 29.41,130, 50.82,38);
+  CL_PLATE_CFG['south-dakota-engraved-license-plate'] = eng('South-Dakota-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['tennessee-blackout-plate-hat'] = bo('Tennessee-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.53,152, 52.94,38);
+  CL_PLATE_CFG['tennessee-engraved-license-plate'] = eng('Tennessee-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['utah-blackout-plate-hat'] = bo('Utah-Blackout-License-Plate-Preview.jpg', 29.18,160, 27.06,134, 49.88,38);
+  CL_PLATE_CFG['utah-engraved-license-plate'] = eng('Utah-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['vermont-blackout-plate-hat'] = bo('Vermont-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,136, 49.41,38);
+  CL_PLATE_CFG['vermont-engraved-license-plate'] = eng('Vermont-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['virginia-blackout-plate-hat'] = bo('Virginia-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,140, 49.65,38);
+  CL_PLATE_CFG['virginia-engraved-license-plate'] = eng('Virginia-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['washington-blackout-plate-hat'] = bo('Washington-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.35,152, 51.06,38);
+  CL_PLATE_CFG['washington-engraved-license-plate'] = eng('Washington-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['washington-dc-blackout-plate-hat'] = bo('Washington-DC-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.59,132, 48.94,38);
+  CL_PLATE_CFG['washington-dc-engraved-license-plate'] = eng('Washington-DC-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['west-virginia-blackout-plate-hat'] = bo('West-Virginia-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.82,138, 49.41,38);
+  CL_PLATE_CFG['west-virginia-engraved-license-plate'] = eng('West-Virginia-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['wisconsin-blackout-plate-hat'] = bo('Wisconsin-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.35,138, 49.18,38);
+  CL_PLATE_CFG['wisconsin-engraved-license-plate'] = eng('Wisconsin-Engraved-License-Plate-Preview.jpg');
+  CL_PLATE_CFG['wyoming-blackout-plate-hat'] = bo('Wyoming-Blackout-License-Plate-Preview.jpg', 29.18,160, 26.82,142, 50.59,38);
+  CL_PLATE_CFG['wyoming-engraved-license-plate'] = eng('Wyoming-Engraved-License-Plate-Preview.jpg');
+
   function plateCfg(card) {
     return CL_PLATE_CFG[card.getAttribute('data-cl-handle') || ''] || null;
   }
