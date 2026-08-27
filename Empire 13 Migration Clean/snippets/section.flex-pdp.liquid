@@ -103,7 +103,49 @@
 
 {% if description_in_gallery and slot_description == blank %}
   {% capture slot_description %}
-    {% render 'section.flex-pdp.description', product: product %}
+    <details class="cl-combined-desc" open>
+      <summary class="cl-combined-desc__summary">
+        <span>Product Details</span>
+        <svg class="cl-combined-desc__chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="cl-combined-desc__body">
+        {% render 'section.flex-pdp.description', product: product %}
+      </div>
+    </details>
+    <style>
+      .cl-combined-desc {
+        border: 1px solid #e0e3e8;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .cl-combined-desc__summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 18px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        list-style: none;
+        user-select: none;
+      }
+      .cl-combined-desc__summary::-webkit-details-marker { display: none; }
+      .cl-combined-desc__summary:hover { background: #f6f7f9; }
+      .cl-combined-desc__chevron {
+        flex: 0 0 auto;
+        transition: transform 0.2s ease;
+        color: #687078;
+      }
+      .cl-combined-desc[open] .cl-combined-desc__chevron { transform: rotate(180deg); }
+      .cl-combined-desc__body {
+        padding: 4px 18px 18px;
+        border-top: 1px solid #eef0f3;
+      }
+    </style>
   {% endcapture %}
 {% endif %}
 
