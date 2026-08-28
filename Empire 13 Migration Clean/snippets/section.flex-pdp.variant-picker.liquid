@@ -234,18 +234,41 @@
     assign cl_preview_table = cl_preview_table | append: "Virginia~Virginia~hat-virginia~0;"
     assign cl_preview_table = cl_preview_table | append: "Virginia~Blackout~virginia-blackout-plate-hat~0;"
     assign cl_preview_table = cl_preview_table | append: "Virginia~Engraved~virginia-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Washington~Washington~hat-washington~0;"
+    assign cl_preview_table = cl_preview_table | append: "Washington~Blackout~washington-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Washington~Engraved~washington-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Washington DC~Washington DC~copy-of-hat-washington-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Washington DC~Blackout~washington-dc-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Washington DC~Engraved~washington-dc-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "West Virginia~West Virginia~hat-west-virginia-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "West Virginia~Blackout~west-virginia-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "West Virginia~Engraved~west-virginia-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wisconsin~Wisconsin~hat-wisconsin-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wisconsin~Blackout~wisconsin-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wisconsin~Engraved~wisconsin-engraved-license-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wyoming~Wyoming~hat-wyoming-plate~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wyoming~2022~wyoming-2022-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wyoming~Blackout~wyoming-blackout-plate-hat~0;"
+    assign cl_preview_table = cl_preview_table | append: "Wyoming~Engraved~wyoming-engraved-license-plate~0;"
     assign cl_rows = cl_preview_table | split: ';'
 
     # State-specific parents omit "Select State" — infer the state from the
     # product title, matching against the states present in the table above.
+    # Match the LONGEST state name found in the title, not the first. This keeps
+    # substring pairs from colliding: "Washington DC" beats "Washington", and
+    # "West Virginia" beats "Virginia", regardless of table row order.
     if cl_selected_state == blank
       assign cl_title_dc = product.title | downcase
+      assign cl_best_len = 0
       for cl_row in cl_rows
         assign cl_cols = cl_row | split: '~'
         assign cl_state_dc = cl_cols[0] | downcase
         if cl_state_dc != blank and cl_title_dc contains cl_state_dc
-          assign cl_selected_state = cl_cols[0]
-          break
+          assign cl_this_len = cl_state_dc | size
+          if cl_this_len > cl_best_len
+            assign cl_best_len = cl_this_len
+            assign cl_selected_state = cl_cols[0]
+          endif
         endif
       endfor
     endif
