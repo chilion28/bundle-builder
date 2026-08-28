@@ -433,6 +433,17 @@
 
               {%- capture input_attributes -%}
                 {% render 'product.hot-reload.radio-attributes', value: value %}
+                {%- comment %}
+                  Flag the state's own plate (the design whose normalized value
+                  matches the inferred state, e.g. "Washington Plate" for
+                  Washington) so the client can default to it on first load.
+                  Multi-design pilots (CA/TX) have no such match and fall back to
+                  Shopify's default variant.
+                {% endcomment -%}
+                {%- if is_cl_combined_listing and normalized_option_name == 'select design' and cl_selected_state != blank -%}
+                  {%- assign cl_value_key = value | remove: ' Plate' | strip -%}
+                  {%- if cl_value_key == cl_selected_state -%} data-cl-state-plate="1"{%- endif -%}
+                {%- endif -%}
               {%- endcapture -%}
 
               {%- render 'element.radio',

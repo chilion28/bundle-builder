@@ -157,10 +157,41 @@
     scope.querySelectorAll && scope.querySelectorAll('product-hot-reload').forEach(armBatchButton);
   }
 
+  // First-load default: select the state's own plate (tagged
+  // [data-cl-state-plate]) instead of Shopify's default variant (which lands on
+  // whichever design is the first available variant, e.g. Blackout). Only fires
+  // on the initial page load — when the URL carries no ?variant= selection — so
+  // it never overrides a customer who has actively chosen a design. After this
+  // one hot-reload, design switching behaves normally.
+  function defaultToStatePlate(product) {
+    if (!product || product.dataset.clStatePlateDefaulted === 'true') return;
+    if (!product.querySelector('[data-cl-combined-quantity-grid]')) return;
+    // Respect an explicit variant selection carried in the URL.
+    try {
+      if (new URLSearchParams(window.location.search).has('variant')) {
+        product.dataset.clStatePlateDefaulted = 'true';
+        return;
+      }
+    } catch (e) {}
+    var statePlate = product.querySelector('input[type="radio"][data-cl-state-plate]');
+    if (!statePlate) { product.dataset.clStatePlateDefaulted = 'true'; return; }
+    product.dataset.clStatePlateDefaulted = 'true';
+    if (statePlate.checked) return; // already the default — nothing to do
+    // Trigger the theme's normal design-change flow.
+    statePlate.checked = true;
+    statePlate.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function defaultAll(scope) {
+    if (scope.matches && scope.matches('product-hot-reload')) defaultToStatePlate(scope);
+    scope.querySelectorAll && scope.querySelectorAll('product-hot-reload').forEach(defaultToStatePlate);
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { armAllBatchButtons(document); });
+    document.addEventListener('DOMContentLoaded', function () { armAllBatchButtons(document); defaultAll(document); });
   } else {
     armAllBatchButtons(document);
+    defaultAll(document);
   }
 
   window.addEventListener('click', function (event) {
