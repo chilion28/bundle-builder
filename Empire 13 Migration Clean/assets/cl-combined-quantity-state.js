@@ -3,46 +3,142 @@
   window.CLCombinedQuantityState = true;
 
   var stores = new WeakMap();
+  var submitting = new WeakSet();
   function root(el) { return el && el.closest('product-hot-reload'); }
-  function context(product) {
-    function selectedValue(name) {
-      var select = product.querySelector('select[name="' + name + '"]');
-      var radio = product.querySelector('input[type="radio"][name="' + name + '"]:checked');
-      return String((select && select.value) || (radio && radio.value) || '').trim();
-    }
-    return selectedValue('Select State') + '::' + selectedValue('Select Design');
-  }
   function store(el) {
     var product = root(el);
     if (!product) return null;
     if (!stores.has(product)) {
-      stores.set(product, { context: context(product), quantities: new Map() });
+      stores.set(product, { quantities: new Map(), tierKey: '', tiers: null, tierLoading: false, tierAttempted: false });
     }
     return stores.get(product);
+  }
+  function propertiesFor(product) {
+    var form = product && product.querySelector('form[action*="/cart/add"]');
+    if (!form) return {};
+    return Array.from(form.elements).reduce(function (result, field) {
+      var match = field.name && field.name.match(/^properties\[(.+)\]$/);
+      if (!match || field.disabled || ((field.type === 'checkbox' || field.type === 'radio') && !field.checked)) return result;
+      if (field.value !== '') result[match[1]] = field.value;
+      return result;
+    }, {});
+  }
+  function money(cents) { return '$' + (Math.max(0, cents) / 100).toFixed(2); }
+  function setText(element, value) {
+    if (element && element.textContent !== value) element.textContent = value;
+  }
+  function tierIndex(tiers, qty) {
+    var index = 0;
+    for (var i = 0; i < tiers.qtys.length; i++) {
+      if (qty < tiers.qtys[i]) break;
+      index = i;
+    }
+    return index;
+  }
+  function loadTiers(product, panel, state) {
+    var key = panel.dataset.tags || '[]';
+    if (state.tierKey !== key) {
+      state.tierKey = key;
+      state.tiers = null;
+      state.tierAttempted = false;
+    }
+    if (state.tiers || state.tierLoading || state.tierAttempted) return;
+    state.tierAttempted = true;
+
+    // Combined Listing parents currently have no product tags. The pricing
+    // endpoint rejects an empty tag array, so use the established fallback
+    // tiers below without making a request.
+    try {
+      if (!JSON.parse(key).length) return;
+    } catch (error) {
+      return;
+    }
+
+    state.tierLoading = true;
+    fetch('/apps/citylocs/discount-info?tags=' + encodeURIComponent(key))
+      .then(function (response) {
+        if (!response.ok) throw new Error('Discount tier request failed');
+        return response.json();
+      })
+      .then(function (data) {
+        if (data && data.discountBreak && data.discountAmount) {
+          state.tiers = {
+            qtys: [1].concat(data.discountBreak.map(Number)),
+            amounts: [0].concat(data.discountAmount.map(Number))
+          };
+        }
+      })
+      .catch(function () {})
+      .finally(function () {
+        state.tierLoading = false;
+        updateSummary(product);
+      });
+  }
+  function updateSummary(product) {
+    if (!product) return;
+    var panel = product.querySelector('[data-cl-combined-pricing]');
+    if (!panel) return;
+    var state = store(product);
+    loadTiers(product, panel, state);
+
+    var entries = Array.from(state.quantities.values());
+    var qty = entries.reduce(function (sum, entry) { return sum + entry.quantity; }, 0);
+    var subtotal = entries.reduce(function (sum, entry) { return sum + (entry.price * entry.quantity); }, 0);
+    var visiblePrices = Array.from(product.querySelectorAll('[data-cl-combined-quantity-row]')).map(function (row) {
+      return parseInt(row.dataset.price, 10) || 0;
+    }).filter(Boolean);
+    var basePrice = entries.length
+      ? Math.min.apply(null, entries.map(function (entry) { return entry.price; }))
+      : (visiblePrices.length ? Math.min.apply(null, visiblePrices) : 0);
+
+    var tiers = state.tiers || { qtys: [1, 2, 3, 6, 12, 24, 36], amounts: [0, 2, 4, 5, 10, 12, 16] };
+    var index = tierIndex(tiers, qty);
+    var discountCents = Math.round((tiers.amounts[index] || 0) * 100);
+    var savings = discountCents * qty;
+    var estimated = subtotal - savings;
+    var priceEach = qty ? Math.round(estimated / qty) : basePrice;
+
+    setText(panel.querySelector('[data-cl-pricing-qty]'), String(qty));
+    setText(panel.querySelector('[data-cl-pricing-each]'), money(priceEach));
+    setText(panel.querySelector('[data-cl-pricing-subtotal]'), money(subtotal));
+    setText(panel.querySelector('[data-cl-pricing-save]'), '− ' + money(savings));
+    setText(panel.querySelector('[data-cl-pricing-total]'), money(estimated));
+
+    var unlock = panel.querySelector('[data-cl-pricing-unlock]');
+    if (index < tiers.qtys.length - 1) {
+      var nextQty = tiers.qtys[index + 1];
+      var nextPrice = basePrice - Math.round((tiers.amounts[index + 1] || 0) * 100);
+      setText(unlock, 'ORDER ' + (nextQty - qty) + ' MORE AND GET THEM AT ' + money(nextPrice) + ' EACH');
+    } else {
+      setText(unlock, "YOU'VE UNLOCKED OUR BEST PRICE — " + money(basePrice - discountCents) + ' EACH');
+    }
   }
   function sync(product) {
     var state = store(product);
     var quantities = state.quantities;
+    var properties = propertiesFor(product);
     product.querySelectorAll('[data-cl-combined-quantity-row]').forEach(function (row) {
       if (row.dataset.clVirtualRow) return;
       var input = row.querySelector('[data-cl-combined-qty]');
       var qty = Math.max(0, parseInt(input && input.value, 10) || 0);
-      if (qty) quantities.set(row.dataset.variantId, qty);
+      if (qty) quantities.set(row.dataset.variantId, {
+        quantity: qty,
+        price: parseInt(row.dataset.price, 10) || 0,
+        properties: Object.assign({}, properties)
+      });
       else quantities.delete(row.dataset.variantId);
     });
+    updateSummary(product);
   }
   function restore(product) {
     var state = store(product);
-    var nextContext = context(product);
-    if (state.context !== nextContext) {
-      state.context = nextContext;
-      state.quantities.clear();
-    }
     var quantities = state.quantities;
     product.querySelectorAll('[data-cl-combined-quantity-row]:not([data-cl-virtual-row])').forEach(function (row) {
       var input = row.querySelector('[data-cl-combined-qty]');
-      if (input) input.value = quantities.get(row.dataset.variantId) || 0;
+      var entry = quantities.get(row.dataset.variantId);
+      if (input) input.value = entry ? entry.quantity : 0;
     });
+    updateSummary(product);
   }
 
   document.addEventListener('click', function (event) {
@@ -56,13 +152,10 @@
   document.addEventListener('change', function (event) {
     if (!event.target.hasAttribute('data-product-hot-reload-trigger')) return;
     var product = root(event.target);
-    var state = store(product);
     sync(product);
-    var nextContext = context(product);
-    if (state.context !== nextContext) {
-      state.context = nextContext;
-      state.quantities.clear();
-    }
+    // Keep quantities from every design in the same Combined Listing session.
+    // A design change hot-reloads the wrapper contents, but the wrapper itself
+    // survives, so its draft can safely contain variant IDs from sibling products.
     setTimeout(function () { restore(product); }, 700);
   }, true);
   async function submitCombined(event, explicitForm) {
@@ -74,6 +167,12 @@
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
+
+    // The button listener plus Empire/AMP capture fallbacks can observe the same
+    // customer action. Only one handler may validate or send the accumulated draft.
+    if (submitting.has(product)) return;
+    submitting.add(product);
+
     sync(product);
 
     // Enforce required personalization fields (e.g. Custom Text). The combined
@@ -90,25 +189,21 @@
         pField.scrollIntoView({ behavior: 'smooth', block: 'center' });
         try { pField.focus({ preventScroll: true }); } catch (e) { try { pField.focus(); } catch (e2) {} }
         if (typeof pField.reportValidity === 'function') pField.reportValidity();
+        submitting.delete(product);
         return;
       }
     }
 
     var quantities = store(product).quantities;
-    var properties = Array.from(form.elements).reduce(function (result, field) {
-      var match = field.name && field.name.match(/^properties\[(.+)\]$/);
-      if (!match || field.disabled || ((field.type === 'checkbox' || field.type === 'radio') && !field.checked)) return result;
-      if (field.value !== '') result[match[1]] = field.value;
-      return result;
-    }, {});
     var items = Array.from(quantities, function (entry) {
-      return { id: entry[0], quantity: entry[1], properties: properties };
+      return { id: entry[0], quantity: entry[1].quantity, properties: entry[1].properties };
     });
 
     if (!items.length) {
       var grid = product.querySelector('[data-cl-combined-quantity-grid]');
       if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
       window.alert('Please choose a quantity for at least one color.');
+      submitting.delete(product);
       return;
     }
 
@@ -134,6 +229,7 @@
       console.error('Unable to add combined-listing quantities:', error);
       window.alert(error.description || error.message || 'Unable to add the selected hats to the cart.');
     } finally {
+      submitting.delete(product);
       if (submitButton) submitButton.disabled = false;
     }
   }

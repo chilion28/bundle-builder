@@ -1471,3 +1471,8 @@ body.mobile-search-takeover-active [data-site-header-mobile-search-button] .live
   visibility: visible !important;
   transform: translateY(0) !important;
 }
+
+.add-to-cart-button {
+  padding: 1.4em !important;
+  border-radius: 10px !important;
+}

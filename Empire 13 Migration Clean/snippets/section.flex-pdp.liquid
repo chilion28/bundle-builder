@@ -338,11 +338,11 @@
 
 {% capture grid_content %}
   {% if is_cl_combined_listing %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: gallery_column_slot %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_details_span, span_lg: cl_details_span, slot: combined_listing_product_form %}
+    <div class="cl-flex-pdp-grid__gallery">{{ gallery_column_slot }}</div>
+    <div class="cl-flex-pdp-grid__details">{{ combined_listing_product_form }}</div>
   {% else %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_gallery_span, span_lg: cl_gallery_span, slot: gallery_column_slot %}
-    {% render 'layout.grid.cell', span_xs: 20, span_md: cl_details_span, span_lg: cl_details_span, slot: standard_listing_product_form %}
+    <div class="cl-flex-pdp-grid__gallery">{{ gallery_column_slot }}</div>
+    <div class="cl-flex-pdp-grid__details">{{ standard_listing_product_form }}</div>
   {% endif %}
 {% endcapture %}
 
@@ -397,12 +397,29 @@
     </style>
   {% endif %}
   <div class="{% if is_cl_combined_listing %}cl-combined-listing-wrapper{% else %}cl-standard-product-wrapper{% endif %}">
-    {% render 'layout.grid',
-      columns: product_grid_columns,
-      slot: grid_content,
-      gap_xs: cl_mobile_spacing,
-      gap_sm: cl_column_gap
-    %}
+    <style>
+      .cl-flex-pdp-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        row-gap: var(--gap-size-{{ cl_mobile_spacing }});
+      }
+
+      .cl-flex-pdp-grid__gallery,
+      .cl-flex-pdp-grid__details {
+        min-width: 0;
+      }
+
+      @media screen and (min-width: 768px) {
+        .cl-flex-pdp-grid {
+          grid-template-columns: minmax(0, {{ cl_gallery_span }}fr) minmax(0, {{ cl_details_span }}fr);
+          column-gap: var(--gap-size-{{ cl_column_gap }});
+          row-gap: 0;
+        }
+      }
+    </style>
+    <div class="cl-flex-pdp-grid">
+      {{ grid_content }}
+    </div>
   </div>
 {% endcapture %}
 

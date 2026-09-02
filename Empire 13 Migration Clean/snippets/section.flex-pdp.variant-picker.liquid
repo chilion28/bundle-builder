@@ -351,6 +351,16 @@
           </div>
         </div>
         </details>
+        <div class="cl-combined-pricing" data-cl-combined-pricing data-tags="{{ product.tags | json | escape }}">
+          <div class="cl-combined-pricing__unlock" data-cl-pricing-unlock>ORDER 2 MORE AND UNLOCK BULK PRICING</div>
+          <div class="cl-combined-pricing__card">
+            <div><span>Total Hats</span><strong data-cl-pricing-qty>0</strong></div>
+            <div><span>Current Price / Hat</span><strong data-cl-pricing-each>$34.99</strong></div>
+            <div><span>Subtotal</span><strong data-cl-pricing-subtotal>$0.00</strong></div>
+            <div class="cl-combined-pricing__save"><span>You Save</span><strong data-cl-pricing-save>− $0.00</strong></div>
+            <div class="cl-combined-pricing__total"><span>Estimated Total</span><strong data-cl-pricing-total>$0.00</strong></div>
+          </div>
+        </div>
       {% else %}
       {% case option_selector_type %}
         {% when 'radio' %}
@@ -790,6 +800,49 @@
 
   .cl-combined-quantity-row__stepper input::-webkit-inner-spin-button,
   .cl-combined-quantity-row__stepper input::-webkit-outer-spin-button { appearance: none; }
+
+  .cl-combined-pricing {
+    display: grid;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .cl-combined-pricing__unlock {
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #eaf7ff;
+    color: #087bb8;
+    font-size: .875rem;
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .cl-combined-pricing__card {
+    display: grid;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid #dfe3e8;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .cl-combined-pricing__card > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .cl-combined-pricing__save { color: #159ee4; }
+
+  .cl-combined-pricing__total {
+    margin-top: 3px;
+    padding-top: 12px;
+    border-top: 1px solid #e8ebef;
+    font-size: 1.125rem;
+    font-weight: 800;
+  }
 
   @media screen and (max-width: 749px) {
     .cl-combined-personalizer { padding: 12px; }

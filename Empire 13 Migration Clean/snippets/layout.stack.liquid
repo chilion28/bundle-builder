@@ -145,6 +145,15 @@
           max-width: 100%;
         }
       }
+
+      /* Keep long product thumbnail rails inside the gallery. The host uses
+         display: contents, so overflow must be handled by this inner stack. */
+      :host(.media-gallery__thumbnails) .layout-stack {
+        min-width: 0;
+        max-width: 100%;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
     </style>
     {% render 'utility.breakpoint-style', property: '_gap', selector: '.layout-stack', value_type: 'property', value_prefix: '--layout-stack-gap-size-', values: gap_breakpoint_map %}
     {% render 'utility.breakpoint-style', property: '_row-gap', selector: '.layout-stack', value_type: 'property', value_prefix: '--layout-stack-gap-size-', values: gap_row_breakpoint_map %}
