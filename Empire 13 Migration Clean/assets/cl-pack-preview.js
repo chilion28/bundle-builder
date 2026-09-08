@@ -45,6 +45,14 @@
     var text = String((values || {})['Custom Text'] || 'CUSTOM TEXT').trim().toUpperCase();
     var family = fontFamily(field.font);
     host.innerHTML = '<div class="cl-plate-photo"><img class="cl-plate-photo-img" src="' + IMAGE_BASE + encodeURIComponent(entry.img) + '" alt="Personalized product preview" loading="lazy"><div class="cl-plate-field' + (field.vc ? ' cl-plate-field-vc' : '') + '" data-cl-plate-field data-size="' + field.size + '" data-w="' + field.w + '" style="left:' + field.cx + '%;top:' + field.cy + '%;color:' + field.color + ';font-family:\'' + family + '\',Impact,sans-serif"><span class="cl-plate-fitline" data-cl-plate-line>' + escapeHtml(text) + '</span></div></div>';
+    // Force the plate font onto the fit-line with !important. Builder resets such as
+    // `.cl-hypro *{font-family:Inter!important}` otherwise override the (inherited,
+    // non-important) family on .cl-plate-field and drop the preview to a plain sans.
+    host.querySelectorAll('[data-cl-plate-field]').forEach(function (fld) {
+      var ln = fld.querySelector('[data-cl-plate-line]');
+      var fam = fld.style.getPropertyValue('font-family');
+      if (ln && fam) ln.style.setProperty('font-family', fam, 'important');
+    });
     fit(host);
     var refit = function () { fit(host); };
     if (document.fonts && document.fonts.load) document.fonts.load('16px "' + family + '"').then(refit).catch(refit);

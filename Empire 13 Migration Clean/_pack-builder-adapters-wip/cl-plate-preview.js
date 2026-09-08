@@ -133,6 +133,16 @@
         '<img class="cl-plate-photo-img" src="' + PLATE_IMG_BASE + cfgObj.img + '" alt="Plate preview" loading="lazy">' +
         overlay +
       '</div>';
+    // Force the plate font onto the fit-line with !important. Builder resets like
+    // `.cl-hypro *{font-family:Inter!important}` otherwise override the (inherited,
+    // non-important) family set on the parent .cl-plate-field, dropping the preview
+    // to a plain sans. Copy each field's own family down to its line, !important —
+    // font-agnostic (works for any config font).
+    previewEl.querySelectorAll('[data-cl-plate-field]').forEach(function (fld) {
+      var ln = fld.querySelector('[data-cl-plate-line]');
+      var famVal = fld.style.getPropertyValue('font-family');
+      if (ln && famVal) ln.style.setProperty('font-family', famVal, 'important');
+    });
     fitPlateText(previewEl);
     var refit = function () { fitPlateText(previewEl); };
     Object.keys(fams).forEach(function (fam) {
