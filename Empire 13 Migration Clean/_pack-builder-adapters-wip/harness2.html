@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Draft harness</title><style>[hidden]{display:none!important}.cl-plate-photo-img{width:280px}</style></head><body>
+<!-- a "modal host" with the same data-cl-perso-* hooks, fields visible (no accordion) -->
+<div id="modalHost" data-cl-handle="alabama-license-plate-enamel-pin" data-cl-product-type="Enamel Pin" data-cl-perso-fields='["Custom Text","Custom Text Two"]'>
+  <div data-cl-perso>
+    <div data-cl-perso-preview></div>
+    <label><span data-cl-perso-count="Custom Text"></span><input data-cl-perso-input="Custom Text"></label>
+    <label><input type="checkbox" data-cl-perso-second-line> second line</label>
+    <label><span data-cl-perso-count="Custom Text Two"></span><input data-cl-perso-input="Custom Text Two"></label>
+  </div>
+</div>
+<script src="./cl-plate-preview.js"></script><script src="./cl-pack-perso.js"></script>
+<script>
+  const host=document.getElementById('modalHost');
+  const preview=window.CLPackPreview.create({mode:'image_overlay',configUrl:'./cl-plate-config.json'});
+  const perso=window.CLPackPerso.create({mode:'per_item',fieldsMode:'per_product',preview});
+  // Simulate editing an existing 2-line selection:
+  window.__draft=perso.createDraft(host,{handle:host.getAttribute('data-cl-handle'),variantId:42317102186584},
+    {"Custom Text":"OLDTEXT","Custom Text Two":"LINE2"});
+</script></body></html>

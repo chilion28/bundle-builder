@@ -207,18 +207,53 @@
 
   var DEFAULT_BUNDLE_NAME = 'Your Pack';
 
+  function escapeCartHtml(value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function getStoredBuilderUrls() {
+    try { return JSON.parse(localStorage.getItem('cl_bundle_collections') || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+
+  function normalizeBuilderUrl(value, fallbackHandle) {
+    var candidate = value || fallbackHandle || '';
+    if (!candidate) return '';
+    if (candidate.charAt(0) !== '/' && !/^https?:\/\//i.test(candidate)) {
+      candidate = '/collections/' + candidate;
+    }
+    try {
+      var parsed = new URL(candidate, window.location.origin);
+      if (parsed.origin !== window.location.origin) return fallbackHandle ? '/collections/' + fallbackHandle : '';
+      return parsed.pathname + parsed.search + parsed.hash;
+    } catch (e) {
+      return fallbackHandle ? '/collections/' + fallbackHandle : '';
+    }
+  }
+
+  function resolveBuilderUrl(name, handle, stampedUrl) {
+    var stored = getStoredBuilderUrls();
+    var configured = window.CL_BUNDLE_COLLECTIONS || {};
+    return normalizeBuilderUrl(stampedUrl || stored[name] || configured[name], handle);
+  }
+
 
   function getActiveBundleLinks() {
   var seen = {};
   var links = [];
 
-  document.querySelectorAll('.cl-amp-bundle-line[data-cl-collection], .cart-item[data-cartitem-collection]').forEach(function (el) {
+  document.querySelectorAll('.cl-amp-bundle-line[data-cl-collection], .cl-cartpage-bundle-line[data-cl-collection], .cart-item[data-cartitem-collection]').forEach(function (el) {
     var handle = el.dataset.clCollection || el.getAttribute('data-cartitem-collection');
-    if (!handle || seen[handle]) return;
-    seen[handle] = true;
-
     var name = el.dataset.clPackName || DEFAULT_BUNDLE_NAME;
-    links.push({ name: name, handle: handle });
+    var url = el.dataset.clBuilderUrl || resolveBuilderUrl(name, handle, '');
+    if (!url || seen[url]) return;
+    seen[url] = true;
+    links.push({ name: name, handle: handle, url: url });
   });
 
   return links;
@@ -237,7 +272,7 @@
       if (!links.length) { if (existing) existing.remove(); return; }
 
       var linksHtml = links.map(function (link) {
-        return '<a class="cl-pack-edit-hint-link" href="/collections/' + link.handle + '">Edit ' + link.name + '</a>';
+        return '<a class="cl-pack-edit-hint-link" href="' + escapeCartHtml(link.url) + '">Edit ' + escapeCartHtml(link.name) + '</a>';
       }).join('');
 
       var html =
@@ -264,7 +299,7 @@ function showBundleCartNotice(message) {
 
   var links = getActiveBundleLinks();
   var linksHtml = links.map(function (link) {
-    return '<a class="cl-pack-cart-notice-link" href="/collections/' + link.handle + '">Edit your ' + link.name + '</a>';
+    return '<a class="cl-pack-cart-notice-link" href="' + escapeCartHtml(link.url) + '">Edit your ' + escapeCartHtml(link.name) + '</a>';
   }).join('');
 
   [document.querySelector('.amp-cart__cart-lines'),
@@ -292,6 +327,24 @@ document.addEventListener('click', function (e) {
     document.querySelectorAll('.cl-pack-cart-notice').forEach(function (el) { el.remove(); });
   }
 });
+
+// Follow builder edit links before theme/cart click delegates can consume the
+// first click. Keep the click listener as the keyboard-accessible fallback.
+function followBuilderEditLink(e) {
+  if ((typeof e.button === 'number' && e.button !== 0) || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  var target = e.target && e.target.nodeType === 1 ? e.target : e.target.parentElement;
+  var link = target && target.closest('.cl-pack-edit-hint-link, .cl-pack-cart-notice-link');
+  if (!link) return;
+  var destination = normalizeBuilderUrl(link.getAttribute('href'), '');
+  if (!destination) return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+  window.location.assign(destination);
+}
+
+window.addEventListener('pointerup', followBuilderEditLink, true);
+window.addEventListener('click', followBuilderEditLink, true);
 
   // ---- Fetch intercept: surface ONLY our validation rejection (message contains "pack") ----
   if (!window._clFetchWrapped) {
@@ -355,6 +408,7 @@ function decorateAmpBundleCartFromCart(cart) {
   el.classList.remove('cl-amp-bundle-line', 'cl-amp-free-gift-line', 'cl-free-gift-cart-line');
   delete el.dataset.clCollection;
   delete el.dataset.clPackName;
+  delete el.dataset.clBuilderUrl;
 });
 
   var lastBundleId = null;
@@ -369,6 +423,7 @@ function decorateAmpBundleCartFromCart(cart) {
     el.classList.add('cl-amp-bundle-line');
     el.dataset.clCollection = props._bundle_collection || '';
     el.dataset.clPackName = props._bundle_name || DEFAULT_BUNDLE_NAME;
+    el.dataset.clBuilderUrl = resolveBuilderUrl(el.dataset.clPackName, el.dataset.clCollection, props._bundle_builder_url || '');
 
     if (props._bundle_free_gift === 'true') {
       el.classList.add('cl-amp-free-gift-line', 'cl-free-gift-cart-line');
@@ -413,6 +468,18 @@ function decorateAmpBundleCartFromCart(cart) {
       // NEW
         li.classList.add('cl-cartpage-bundle-line');
         li.dataset.clPackName = props._bundle_name || DEFAULT_BUNDLE_NAME;
+        li.dataset.clCollection = props._bundle_collection || '';
+        li.dataset.clBuilderUrl = resolveBuilderUrl(li.dataset.clPackName, li.dataset.clCollection, props._bundle_builder_url || '');
+
+        // Route the item's title/image links back to the builder (the pack lives
+        // there), not the individual product page.
+        if (props._bundle_collection) {
+          li.querySelectorAll('a[href*="/products/"]').forEach(function (a) {
+            if (a.dataset.clRerouted) return;
+            a.dataset.clRerouted = '1';
+            a.setAttribute('href', li.dataset.clBuilderUrl || '/collections/' + props._bundle_collection);
+          });
+        }
 
         var giftBadge = Array.prototype.find.call(
         li.querySelectorAll('.discount-list-item'),
@@ -625,13 +692,13 @@ document.addEventListener('click', function (e) {
   var nav = e.target.closest('.amp-cart__cart-line-title, .amp-cart__cart-line-image');
   if (!nav) return;
 
-  var handle = line.dataset.clCollection;
-  if (!handle) return;
+  var builderUrl = line.dataset.clBuilderUrl || resolveBuilderUrl(line.dataset.clPackName, line.dataset.clCollection, '');
+  if (!builderUrl) return;
 
   e.preventDefault();
   e.stopPropagation();
   e.stopImmediatePropagation();
-  window.location.href = '/collections/' + handle;
+  window.location.href = builderUrl;
 }, true);
 
 document.addEventListener('click', function (e) {
@@ -659,13 +726,13 @@ document.addEventListener('click', function (e) {
   var li = link.closest('.cart-item');
   if (!li) return;
 
-  var handle = li.getAttribute('data-cartitem-collection');
-  if (!handle) return;
+  var builderUrl = li.dataset.clBuilderUrl || resolveBuilderUrl(li.dataset.clPackName, li.dataset.clCollection || li.getAttribute('data-cartitem-collection'), '');
+  if (!builderUrl) return;
 
   e.preventDefault();
   e.stopPropagation();
   e.stopImmediatePropagation();
-  window.location.href = '/collections/' + handle;
+  window.location.href = builderUrl;
 }, true);
   
 

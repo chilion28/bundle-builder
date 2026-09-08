@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "builder": {
+      "type": "cl-pack-builder-section",
+      "settings": {
+        "fixed_total": 5999,
+        "allow_partial_checkout": true,
+        "reward_label": "3 for $59.99",
+        "preview_mode": "image_overlay",
+        "builder_url": "/collections/boonie-hats-bundle?view=boonie-custom-pilot"
+      }
+    }
+  },
+  "order": ["builder"]
+}

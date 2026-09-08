@@ -1,0 +1,53 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "gp_section_635600769332019878": {
+      "settings": {
+        "checksum": "b447f014208ad8aab9f66ed17539a02a6a6369c3108dc78b0af5fa5fcf5a7045_1_1_1_0__1",
+        "gg3gXiboJzh_text": "designed in california",
+        "ggIPLfE8JE5_text": "<p>An original lifestyle brand by CityLocs</p>",
+        "ggKjA33YkQt_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/CL-Logo-Light-1B_2x_a26a8117-919c-4db4-95ad-d34e7a66cba2.png",
+        "ggSWi5aM5Qb_text": "Built for Legends",
+        "ggj37YRIc9J_text": "premium materials",
+        "section_preload": "true"
+      },
+      "type": "gp-section-635600769332019878"
+    },
+    "gp_section_635600769332085414": {
+      "settings": {
+        "checksum": "39f77b9b36d3283a04fcc7c144ad7e2cba2bbe9fd62c9246c9af53a9c9fd9600_1_1_1_0__1",
+        "ggCTyQPLyGO_srcSet_desktop_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/CL-Logo-Light-1B_2x_a26a8117-919c-4db4-95ad-d34e7a66cba2.png",
+        "gg_4QJ57ph__text": "performance sunglasses",
+        "gg_9M7sss9P_text": "HYPRO",
+        "ggjQQNC-WXM_background_desktop_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/hero-image-desktop.png",
+        "ggjQQNC-WXM_background_mobile_image_src": "https://cdn.shopify.com/s/files/1/0519/6401/files/canvas-wallets-hero-1.png",
+        "section_preload": "true"
+      },
+      "type": "gp-section-635600769332085414"
+    },
+    "gp_section_635600769332150950": {
+      "settings": {
+        "checksum": "1dd7e81c21cb61a2ada68918b8b92fdc76763edfb1dd3c632f28adbadca03f92_1_1_1_0__1",
+        "ggBDQpPyzrf_text": "HYPRO Perfomance Sunglasses",
+        "ggZOOMgUl2W_viewLessText": "Show less",
+        "ggZOOMgUl2W_viewMoreText": "Show more",
+        "ggj8TyayEvD_text": "<p>create your bundle</p>",
+        "section_preload": "true"
+      },
+      "type": "gp-section-635600769332150950"
+    }
+  },
+  "order": [
+    "gp_section_635600769332085414",
+    "gp_section_635600769332019878",
+    "gp_section_635600769332150950"
+  ]
+}

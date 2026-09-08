@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Adapter harness</title>
+<style>[hidden]{display:none!important}.cl-plate-photo{position:relative}.cl-plate-photo-img{width:320px}</style></head><body>
+<div data-cl-card data-cl-personalized data-cl-handle="alabama-license-plate-enamel-pin"
+     data-cl-product-type="Enamel Pin" data-cl-perso-fields='["Custom Text","Custom Text Two"]'>
+  <button type="button" data-cl-perso-toggle aria-expanded="false">Personalize</button>
+  <div data-cl-perso hidden>
+    <div data-cl-perso-preview></div>
+    <label><span data-cl-perso-count="Custom Text"></span><input data-cl-perso-input="Custom Text"></label>
+    <label><input type="checkbox" data-cl-perso-second-line> Add a second line</label>
+    <label><span data-cl-perso-count="Custom Text Two"></span><input data-cl-perso-input="Custom Text Two"></label>
+  </div>
+</div>
+<script src="./cl-plate-preview.js"></script><script src="./cl-pack-perso.js"></script>
+<script>
+  const card=document.querySelector('[data-cl-card]');
+  const preview=window.CLPackPreview.create({mode:'image_overlay',configUrl:'./cl-plate-config.json'});
+  window.__ctrl=window.CLPackPerso.create({mode:'per_item',fieldsMode:'per_product',preview}).attach(card,{handle:card.getAttribute('data-cl-handle'),variantId:42317102186584});
+</script></body></html>

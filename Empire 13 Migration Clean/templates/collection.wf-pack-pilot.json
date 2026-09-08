@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "builder": {
+      "type": "cl-pack-builder-section",
+      "settings": {
+        "fixed_total": 4999,
+        "allow_partial_checkout": true,
+        "reward_label": "3 for $49.99",
+        "builder_url": "/collections/wf-signature-sunglasses-bundle?view=wf-pack-pilot"
+      }
+    }
+  },
+  "order": ["builder"]
+}

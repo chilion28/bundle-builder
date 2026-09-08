@@ -1,0 +1,7 @@
+{
+  "boonie-hat-wreckage": {"img":"Wreckage-Boonie-Hat-Patch-Preview.jpg","f":{"Custom Text":{"cx":50,"cy":40,"w":70,"size":128,"color":"#ffffff","font":"Clocs-license-plate.ttf","vc":true}}},
+  "boonie-hat-dark-forrest": {"img":"Tree-Camo-Boonie-Hat-Patch-Preview.jpg","f":{"Custom Text":{"cx":50,"cy":40,"w":70,"size":128,"color":"#ffffff","font":"Clocs-license-plate.ttf","vc":true}}},
+  "boonie-hat-sugar-skull": {"img":"Sugar-Skulls-Boonie-Hat-Patch-Preview.jpg","f":{"Custom Text":{"cx":50,"cy":40,"w":70,"size":128,"color":"#ffffff","font":"Clocs-license-plate.ttf","vc":true}}},
+  "boonie-hat-tropical": {"img":"Palm-Tree-Boonie-Hat-Patch-Preview.jpg","f":{"Custom Text":{"cx":50,"cy":40,"w":70,"size":128,"color":"#ffffff","font":"Clocs-license-plate.ttf","vc":true}}},
+  "boonie-hat-palm-camo": {"img":"Palm-Tree-Camo-Boonie-Hat-Patch-Preview.jpg","f":{"Custom Text":{"cx":50,"cy":40,"w":70,"size":128,"color":"#ffffff","font":"Clocs-license-plate.ttf","vc":true}}}
+}

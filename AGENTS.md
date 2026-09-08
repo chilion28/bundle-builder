@@ -8,7 +8,7 @@ been burned by ignoring them (see "Incidents" below).
 
 ## 1. Golden rule: the LIVE theme is the source of truth — NOT git
 
-The deployed **live OG-Empire theme (`#121696682072`, store `citylocs` / `5196401`)** is
+The deployed **live Empire 13 Migration Clean theme (`#153643909208`, store `citylocs` / `5196401`)** is
 the real state of the world. GemPages, the Shopify theme editor, installed apps, and other
 agent sessions all edit it **out-of-band**. Git only mirrors + pushes our custom files; it
 cannot "drive" the store. The local repo drifts from live constantly.
@@ -19,13 +19,13 @@ config. Pushing a stale local file to live **erases** that live-only work.
 
 ### Before editing ANY theme file
 ```bash
-shopify theme pull --store citylocs --theme 121696682072 --only <path> --path <tmp>
+shopify theme pull --store citylocs --theme 153643909208 --only <path> --path <tmp>
 ```
 Compare against the local copy. Do not trust that the local file is current.
 
 ### After editing
 ```bash
-shopify theme push --store citylocs --theme 121696682072 --allow-live --only <path> --nodelete
+shopify theme push --store citylocs --theme 153643909208 --allow-live --only <path> --nodelete
 ```
 Then **re-pull to verify** — the CDN serves stale asset bytes for minutes, so a re-pull is
 the only remote truth. Push only the file(s) you touched. Never a bulk push.

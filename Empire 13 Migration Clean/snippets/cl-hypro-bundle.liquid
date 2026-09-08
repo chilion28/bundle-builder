@@ -1,0 +1,335 @@
+{% comment %}
+  Modular Hypro builder for GemPages Custom Liquid elements.
+
+    {% render 'cl-hypro-bundle', block: 'config' %}
+    {% render 'cl-hypro-bundle', block: 'engraving' %}
+    {% render 'cl-hypro-bundle', block: 'catalog-tools' %}
+    {% render 'cl-hypro-bundle', block: 'grid' %}
+    {% render 'cl-hypro-bundle', block: 'summary' %}
+    {% render 'cl-hypro-bundle', block: 'editor' %}
+
+  `config` must appear once. The other blocks may be positioned independently
+  anywhere on the same page. Omitting `block` renders all four for backwards
+  compatibility.
+{% endcomment %}
+
+{%- liquid
+  assign cl_block = block | default: 'all'
+  assign cl_collection_handle = collection_handle | default: collection.handle | default: 'hypro'
+  assign cl_collection = collections[cl_collection_handle] | default: collection | default: collections['hypro']
+  assign cl_id = builder_id | default: cl_collection_handle | default: 'hypro-3-pack'
+  assign cl_title = cl_collection.metafields.custom.builder_title.value | default: 'Hypro Sunglasses 3-Pack'
+  assign cl_singular = cl_collection.metafields.custom.builder_item_singular.value | default: 'pair'
+  assign cl_plural = cl_collection.metafields.custom.builder_item_plural.value | default: 'pairs'
+  assign cl_button = cl_collection.metafields.custom.builder_add_button_text.value | default: 'Add 3-Pack to Cart'
+  assign cl_milestones = cl_collection.metafields.custom.builder_milestones.value
+  assign cl_target = cl_milestones | last | default: 3
+  assign cl_milestone_style = cl_collection.metafields.custom.builder_milestone_style.value | default: 'slots'
+  assign cl_mode = personalization_mode | default: cl_collection.metafields.custom.builder_personalization_mode.value | default: 'per_item'
+  assign cl_fields_mode = fields_mode | default: cl_collection.metafields.custom.builder_personalization_fields_mode.value | default: 'per_product'
+  assign cl_preview_mode = preview_mode | default: cl_collection.metafields.custom.builder_preview_mode.value | default: 'none'
+  assign cl_edit_presentation = editing_presentation | default: cl_collection.metafields.custom.builder_editing_presentation.value | default: 'inline'
+  assign cl_catalog_mode = catalog_mode | default: cl_collection.metafields.custom.builder_catalog_mode.value | default: 'none'
+  assign cl_catalog_page_size = catalog_page_size | default: cl_collection.metafields.custom.builder_catalog_page_size.value | default: 12
+  assign cl_gift_metafield = cl_collection.metafields.custom.builder_free_gift_variants
+  assign cl_gift_variants = cl_gift_metafield.value
+  assign cl_gift_tiers = cl_collection.metafields.custom.gift_tiers.value
+  assign cl_gift_minimum = cl_collection.metafields.custom.builder_free_gift_pack_size.value | default: cl_target
+  assign cl_gift_label = cl_collection.metafields.custom.builder_free_gift_label.value | default: 'Free gift included'
+  assign cl_fixed_total_setting = fixed_total | default: cl_collection.metafields.custom.builder_fixed_total.value
+  assign cl_pricing_mode = pricing_mode | default: cl_collection.metafields.custom.builder_pricing_mode.value
+  if cl_pricing_mode == blank
+    if cl_fixed_total_setting != blank
+      assign cl_pricing_mode = 'fixed_total'
+    else
+      assign cl_pricing_mode = 'tiered'
+    endif
+  endif
+  assign cl_fixed_total = cl_fixed_total_setting | default: 9900
+  assign cl_allow_partial = allow_partial_checkout | default: true, allow_false: true
+  assign cl_reward_label = reward_label
+  assign cl_builder_url = builder_url
+  if cl_builder_url == blank
+    assign cl_builder_url = cl_collection_handle | prepend: '/collections/'
+  endif
+-%}
+
+{%- if cl_block == 'config' or cl_block == 'all' -%}
+  {{ 'cl-hypro-bundle.css' | asset_url | stylesheet_tag }}
+  <script type="application/json" data-cl-pack-config>
+    {
+      "schemaVersion": 1,
+      "builder": {
+        "key": {{ cl_id | json }},
+        "title": {{ cl_title | json }},
+        "itemLabel": {{ cl_singular | json }},
+        "itemLabelPlural": {{ cl_plural | json }},
+        "addButtonText": {{ cl_button | json }},
+        "builderUrl": {{ cl_builder_url | json }}
+      },
+      "source": { "mode": "collection", "collectionHandle": {{ cl_collection_handle | json }} },
+      "selection": {
+        "target": {{ cl_target | json }}, "maximum": {{ cl_target | json }}, "minimumCheckout": {% if cl_allow_partial %}1{% else %}{{ cl_target | json }}{% endif %},
+        "milestones": {% if cl_milestones != blank %}{{ cl_milestones | json }}{% else %}[3]{% endif %},
+        "milestoneStyle": {{ cl_milestone_style | json }},
+        "allowPartialCheckout": {{ cl_allow_partial | json }}, "allowDuplicateVariant": true
+      },
+      "personalization": {
+        "mode": {{ cl_mode | json }},
+        "fieldsMode": {% if cl_mode == 'per_item' %}{{ cl_fields_mode | json }}{% else %}"explicit"{% endif %},
+        "fields": [
+          { "property": "Custom Text", "label": "Custom Text", "maxLength": 20, "required": true, "placeholder": "ENTER CUSTOM TEXT", "transform": ["uppercase", "no_emoji"], "eligibleTypes": [], "eligibleHandles": [] }
+        ]
+      },
+      "preview": { "mode": {{ cl_preview_mode | json }}, "keyedBy": "handle"{% if cl_preview_mode == 'image_overlay' %}, "configUrl": {{ 'cl-pack-preview-config.json' | asset_url | json }}{% endif %} },
+      "pricing": { "mode": {{ cl_pricing_mode | json }}, "currency": "USD", "fixedTotal": {{ cl_fixed_total | json }}, "tiers": [], {% if cl_pricing_mode == 'tiered' %}"tagPricingEndpoint": "/apps/citylocs/discount-info", {% endif %}{% if display_unit_price != blank %}"displayUnitPrice": {{ display_unit_price | json }}, {% endif %}{% if cl_reward_label != blank %}"rewardLabel": {{ cl_reward_label | json }}, {% endif %}"discountAuthority": "backend" },
+      "rewards": [
+        {%- assign cl_reward_emitted = false -%}
+        {%- if cl_gift_tiers != blank -%}
+          {%- for gift_tier in cl_gift_tiers -%}
+            {%- assign cl_tier_minimum = gift_tier.minimum_quantity.value -%}
+            {%- for gift_variant in gift_tier.gift_variants.value -%}
+              {%- if gift_variant != blank and gift_variant.id != blank -%}
+              {%- assign cl_gift_image = gift_variant.image | default: gift_variant.product.featured_image -%}
+              {%- if cl_reward_emitted -%},{%- endif -%}
+              {
+                "key": {{ gift_variant.id | append: '-' | append: cl_tier_minimum | prepend: 'gift-' | json }},
+                "type": "free_product",
+                "minimum": {{ cl_tier_minimum | json }},
+                "variantId": {{ gift_variant.id | json }},
+                "title": {{ gift_variant.product.title | json }},
+                "variantTitle": {{ gift_variant.title | json }},
+                "image": {% if cl_gift_image != blank %}{{ cl_gift_image | image_url: width: 160 | json }}{% else %}null{% endif %},
+                "price": {{ gift_variant.price | json }},
+                "label": {{ cl_gift_label | json }},
+                "quantity": 1,
+                "autoAdd": true
+              }
+              {%- assign cl_reward_emitted = true -%}
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endfor -%}
+        {%- elsif cl_gift_metafield.list? -%}
+        {%- for gift_variant in cl_gift_variants -%}
+          {%- if gift_variant != blank and gift_variant.id != blank -%}
+          {%- assign cl_gift_image = gift_variant.image | default: gift_variant.product.featured_image -%}
+          {%- if cl_reward_emitted -%},{%- endif -%}
+          {
+            "key": {{ gift_variant.id | prepend: 'gift-' | json }},
+            "type": "free_product",
+            "minimum": {{ cl_gift_minimum | json }},
+            "variantId": {{ gift_variant.id | json }},
+            "title": {{ gift_variant.product.title | json }},
+            "variantTitle": {{ gift_variant.title | json }},
+            "image": {% if cl_gift_image != blank %}{{ cl_gift_image | image_url: width: 160 | json }}{% else %}null{% endif %},
+            "price": {{ gift_variant.price | json }},
+            "label": {{ cl_gift_label | json }},
+            "quantity": 1,
+            "autoAdd": true
+          }
+          {%- assign cl_reward_emitted = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- elsif cl_gift_variants != blank and cl_gift_variants.id != blank -%}
+          {%- assign cl_gift_image = cl_gift_variants.image | default: cl_gift_variants.product.featured_image -%}
+          {
+            "key": {{ cl_gift_variants.id | prepend: 'gift-' | json }},
+            "type": "free_product",
+            "minimum": {{ cl_gift_minimum | json }},
+            "variantId": {{ cl_gift_variants.id | json }},
+            "title": {{ cl_gift_variants.product.title | json }},
+            "variantTitle": {{ cl_gift_variants.title | json }},
+            "image": {% if cl_gift_image != blank %}{{ cl_gift_image | image_url: width: 160 | json }}{% else %}null{% endif %},
+            "price": {{ cl_gift_variants.price | json }},
+            "label": {{ cl_gift_label | json }},
+            "quantity": 1,
+            "autoAdd": true
+          }
+        {%- endif -%}
+      ],
+      "editing": { "enabled": true, "presentation": {{ cl_edit_presentation | json }}, "showEdit": {% if cl_mode == 'none' %}false{% else %}true{% endif %}, "showRemove": true },
+      "catalogTools": {
+        "enabled": {% if cl_catalog_mode == 'client' %}true{% else %}false{% endif %}, "mode": {{ cl_catalog_mode | json }}, "pageSize": {{ cl_catalog_page_size | json }}, "debounceMs": 150,
+        "search": { "enabled": true, "placeholder": "Search or choose a state…" },
+        "sort": { "enabled": true, "default": "featured", "options": ["featured", "az", "za"] },
+        "showResultCount": true, "emptyMessage": "No matching products found."
+      },
+      "cart": {
+        "bundleIdStrategy": "uuid", "mergePersonalizedLines": false, "restoreOnLoad": true, "clearScope": "bundle_id",
+        "properties": {
+          "pack": "Pack", "builder": "_builder", "bundleName": "_bundle_name", "bundleId": "_bundle_id",
+          "bundleCollection": "_bundle_collection", "bundleItem": "_bundle_item", "bundleSize": "_bundle_size",
+          "bundleMax": "_bundle_max", "bundleBuilderUrl": "_bundle_builder_url", "freeGift": "_bundle_free_gift",
+          "freeGiftMin": "_bundle_free_gift_min", "freeGiftLabel": "_bundle_free_gift_label"
+        }
+      },
+      "checkout": { "destination": "/checkout", "syncBeforeRedirect": true },
+      "ui": { "gridColumnsDesktop": 2, "headerCartAction": "scroll_to_summary", "summarySticky": true, "showSelectionBadges": true, "showUnitSavings": true }
+    }
+  </script>
+  {% if cl_preview_mode == 'image_overlay' %}<script src="{{ 'cl-pack-preview.js' | asset_url }}" defer></script>{% endif %}
+  {% if cl_catalog_mode == 'client' %}<script src="{{ 'cl-pack-catalog.js' | asset_url }}" defer></script>{% endif %}
+  <script src="{{ 'cl-pack-perso.js' | asset_url }}" defer></script>
+  <script src="{{ 'cl-pack-engine.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{%- if cl_mode == 'shared' -%}
+{%- if cl_block == 'engraving' or cl_block == 'all' -%}
+  <section class="cl-hypro cl-hypro__engraving" data-cl-hypro-for="{{ cl_id | escape }}" data-cl-hypro-component="engraving">
+    <label class="cl-hypro__label" for="cl-hypro-engraving-{{ cl_id | handleize }}">Engraving text</label>
+    <div class="cl-hypro__input-wrap">
+      <input id="cl-hypro-engraving-{{ cl_id | handleize }}" class="cl-hypro__input" type="text" maxlength="20" autocomplete="off" placeholder="Enter custom text" data-cl-hypro-engraving>
+      <span class="cl-hypro__counter" data-cl-hypro-counter>0/20</span>
+    </div>
+    <p class="cl-hypro__help">The same engraving will be applied to all three pairs.</p>
+    <p class="cl-hypro__error" data-cl-hypro-error role="alert" hidden></p>
+  </section>
+{%- endif -%}
+{%- endif -%}
+
+{%- if cl_catalog_mode == 'client' -%}
+{%- if cl_block == 'catalog-tools' or cl_block == 'grid' or cl_block == 'all' -%}
+  {%- unless cl_block == 'grid' and catalog_tools_separate -%}
+  <section class="cl-hypro cl-pack-toolbar" data-cl-pack-for="{{ cl_id | escape }}" data-cl-catalog-tools>
+    <div class="cl-pack-tool cl-pack-tool-state">
+      <label class="cl-pack-tool-label" for="cl-state-filter-{{ cl_id | handleize }}">State</label>
+      <div class="cl-pack-state-wrap">
+        <input type="search" id="cl-state-filter-{{ cl_id | handleize }}" class="cl-pack-input" data-cl-state-filter autocomplete="off" placeholder="Search or choose a state…">
+        <button type="button" class="cl-pack-state-clear" data-cl-state-clear aria-label="Clear state filter" hidden>&times;</button>
+      </div>
+    </div>
+    <div class="cl-pack-tool cl-pack-tool-sort">
+      <label class="cl-pack-tool-label" for="cl-sort-{{ cl_id | handleize }}">Sort</label>
+      <select id="cl-sort-{{ cl_id | handleize }}" class="cl-pack-input" data-cl-sort>
+        <option value="featured">Featured</option><option value="az">Name: A–Z</option><option value="za">Name: Z–A</option>
+      </select>
+    </div>
+    <div class="cl-pack-count" data-cl-result-count aria-live="polite"></div>
+  </section>
+  {%- endunless -%}
+{%- endif -%}
+{%- endif -%}
+
+{%- if cl_block == 'grid' or cl_block == 'all' -%}
+  {%- assign cl_state_names = 'District of Columbia|Northern Mariana Islands|U.S. Virgin Islands|US Virgin Islands|West Virginia|South Carolina|North Carolina|South Dakota|North Dakota|Rhode Island|New Hampshire|New Jersey|New Mexico|New York|Puerto Rico|American Samoa|Massachusetts|Pennsylvania|Connecticut|Mississippi|Washington|California|Minnesota|Louisiana|Wisconsin|Tennessee|Kentucky|Nebraska|Colorado|Maryland|Michigan|Missouri|Arkansas|Delaware|Illinois|Oklahoma|Virginia|Vermont|Montana|Alabama|Arizona|Florida|Georgia|Indiana|Kansas|Nevada|Oregon|Wyoming|Alaska|Hawaii|Idaho|Maine|Texas|Ohio|Utah|Iowa|Guam' | split: '|' -%}
+  <section class="cl-hypro cl-hypro__products" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pack-grid>
+    {%- paginate cl_collection.products by 250 -%}
+    {%- for product in cl_collection.products -%}
+      {%- unless product.available -%}{%- continue -%}{%- endunless -%}
+      {%- assign first_variant = product.selected_or_first_available_variant -%}
+      {%- assign cl_product_title_downcase = product.title | downcase -%}
+      {%- assign cl_product_state = '' -%}
+      {%- for cl_state_name in cl_state_names -%}
+        {%- assign cl_state_name_downcase = cl_state_name | downcase -%}
+        {%- assign cl_state_name_length = cl_state_name_downcase | size -%}
+        {%- assign cl_title_prefix = cl_product_title_downcase | slice: 0, cl_state_name_length -%}
+        {%- if cl_title_prefix == cl_state_name_downcase -%}{%- assign cl_product_state = cl_state_name -%}{%- break -%}{%- endif -%}
+      {%- endfor -%}
+      <article class="cl-hypro-card" data-cl-pack-card {% if cl_mode == 'per_item' %}data-cl-personalized{% endif %} data-cl-handle="{{ product.handle | escape }}" data-cl-product-type="{{ product.type | escape }}" data-cl-title="{{ product.title | escape }}" data-cl-catalog-state="{{ cl_product_state | escape }}" data-cl-catalog-search="{{ cl_product_title_downcase | escape }} {{ product.handle | replace: '-', ' ' | escape }}" {% if cl_mode == 'per_item' %}{% if product.metafields.custom.personalization_fields.value != blank %}data-cl-perso-fields="{{ product.metafields.custom.personalization_fields.value | json | escape }}"{% else %}data-cl-perso-fields='["Custom Text"]'{% endif %}{% endif %}>
+        <span class="cl-hypro-card__check" data-cl-pack-card-badge aria-label="0 selected">x0</span>
+        <div class="cl-hypro-card__media">
+          {%- if product.featured_image -%}
+            {{ product.featured_image | image_url: width: 720 | image_tag: class: 'cl-hypro-card__image', loading: 'lazy', widths: '320, 480, 720', sizes: '(max-width: 749px) 50vw, 280px', alt: product.title }}
+          {%- endif -%}
+        </div>
+        <div class="cl-hypro-card__body">
+          <h3 class="cl-hypro-card__title">{{ product.title }}</h3>
+          {%- if product.variants.size > 1 -%}
+            <label class="cl-hypro-card__variant-label">Style
+              <select class="cl-hypro-card__variant" data-cl-pack-variant>
+                {%- for variant in product.variants -%}
+                  <option value="{{ variant.id }}" data-price="{{ variant.price }}" data-image="{{ variant.featured_image | default: product.featured_image | image_url: width: 720 }}" {% unless variant.available %}disabled{% endunless %} {% if variant.id == first_variant.id %}selected{% endif %}>{{ variant.title }}{% unless variant.available %} — Sold out{% endunless %}</option>
+                {%- endfor -%}
+              </select>
+            </label>
+          {%- else -%}
+            <input type="hidden" data-cl-pack-variant data-variant-id="{{ first_variant.id }}" data-price="{{ first_variant.price }}">
+          {%- endif -%}
+          <div class="cl-hypro-card__price" data-cl-hypro-card-price>{{ first_variant.price | money }}</div>
+          {%- if cl_mode == 'per_item' and cl_edit_presentation != 'modal' -%}
+            <button type="button" class="cl-hypro-card__perso-toggle" data-cl-perso-toggle aria-expanded="false">
+              <span>✏️ Personalize this {{ cl_singular }}</span><span class="cl-hypro-card__perso-caret" aria-hidden="true"></span>
+            </button>
+            <label class="cl-hypro-card__engraving" data-cl-perso hidden>
+              {% if cl_preview_mode == 'image_overlay' %}<div class="cl-hypro-card__preview" data-cl-perso-preview aria-label="Personalization preview"></div>{% endif %}
+              <span class="cl-hypro-card__engraving-head"><span>Engraving text</span><span data-cl-perso-count="Custom Text">20/20</span></span>
+              <input class="cl-hypro-card__engraving-input" type="text" maxlength="20" autocomplete="off" placeholder="Enter custom text" data-cl-perso-input="Custom Text">
+            </label>
+          {%- endif -%}
+          <div class="cl-hypro-card__actions">
+            <button type="button" class="cl-hypro-card__add" data-cl-pack-add {% unless first_variant.available %}disabled{% endunless %}>{% if cl_mode == 'per_item' and cl_edit_presentation == 'modal' %}Personalize &amp; Add{% else %}Add to Bundle{% endif %}</button>
+          </div>
+        </div>
+      </article>
+    {%- else -%}
+      <p>No products are assigned to this collection yet.</p>
+    {%- endfor -%}
+    {%- endpaginate -%}
+    <p class="cl-hypro__error cl-hypro__grid-error" data-cl-pack-error role="alert" hidden></p>
+  </section>
+  {%- if cl_catalog_mode == 'client' -%}
+    <p class="cl-hypro cl-pack-empty" data-cl-pack-for="{{ cl_id | escape }}" data-cl-no-results hidden>No matching {{ cl_plural }} found. <button type="button" class="cl-pack-linkbtn" data-cl-state-clear>Show all</button></p>
+    <nav class="cl-hypro cl-pack-pagination" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pagination hidden aria-label="Product pages"></nav>
+  {%- endif -%}
+{%- endif -%}
+
+{%- if cl_block == 'summary' or cl_block == 'all' -%}
+  <section class="cl-hypro" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pack-summary-mount>
+    <aside class="cl-hypro-summary" data-cl-pack-summary>
+      <div class="cl-hypro-summary__head">
+        <div><p class="cl-hypro-summary__eyebrow">Build your bundle</p><h2>{{ cl_title }}</h2></div>
+        <button type="button" class="cl-hypro-summary__clear" data-cl-pack-clear>Clear</button>
+        <button type="button" class="cl-hypro-summary__close" data-cl-pack-close aria-label="Close bundle summary">×</button>
+      </div>
+      <div class="cl-hypro-summary__progress cl-hypro-summary__progress--{{ cl_milestone_style | handleize }}" data-cl-pack-milestone-style="{{ cl_milestone_style | escape }}">
+        <div class="cl-hypro-summary__reward-head">
+          <span>Pack Reward</span>
+          <strong data-cl-pack-reward-pill>{% if cl_reward_label != blank %}{{ cl_reward_label }}{% else %}Unlock bundle pricing when you buy {{ cl_target }}{% endif %}</strong>
+        </div>
+        <div class="cl-hypro-summary__slots" aria-hidden="true">
+          {% if cl_milestone_style == 'dots' and cl_milestones != blank %}
+            {% for cl_milestone in cl_milestones %}<span data-cl-pack-slot data-cl-pack-minimum="{{ cl_milestone }}"><b>{{ cl_milestone }}</b></span>{% endfor %}
+          {% else %}
+            {% for cl_slot in (1..cl_target) %}<span data-cl-pack-slot data-cl-pack-minimum="{{ cl_slot }}"></span>{% endfor %}
+          {% endif %}
+        </div>
+        <div class="cl-hypro-summary__count"><strong><span data-cl-pack-total>0</span></strong> of {{ cl_target }} {{ cl_plural | capitalize }}</div>
+        <p class="cl-hypro-summary__message" data-cl-pack-message>Add {{ cl_target }} {{ cl_plural }} to unlock your bundle.</p>
+      </div>
+      <div class="cl-hypro-summary__items" data-cl-pack-summary-items><p class="cl-hypro-summary__empty">No {{ cl_plural }} added yet.</p></div>
+      <div class="cl-hypro-summary__pricing">
+        <div><span>Total {{ cl_plural | capitalize }}</span><strong data-cl-pack-total-copy>0</strong></div>
+        <div><span>Subtotal</span><strong data-cl-pack-subtotal>$0.00</strong></div>
+        <div class="cl-hypro-summary__savings"><span>You Save</span><strong data-cl-pack-savings>$0.00</strong></div>
+        <div class="cl-hypro-summary__gift-total" data-cl-pack-gift-total hidden><span>Free gift</span><strong>Included</strong></div>
+        <div class="cl-hypro-summary__estimated"><span>Estimated Total</span><strong data-cl-pack-estimated>$0.00</strong></div>
+      </div>
+      <button type="button" class="cl-hypro-summary__checkout" data-cl-pack-checkout disabled>Add {{ cl_plural }} to get started</button>
+      <p class="cl-hypro-summary__fineprint">{% if cl_allow_partial %}Checkout is available with any selection. {% endif %}{% if cl_pricing_mode == 'tiered' %}Bundle pricing updates at each qualifying milestone.{% else %}Add exactly {{ cl_target }} {{ cl_plural }} to unlock the bundle price.{% endif %}</p>
+    </aside>
+    <button type="button" class="cl-hypro-mobile-bar" data-cl-pack-open><span><strong data-cl-pack-mobile-count>0</strong> of {{ cl_target }} selected</span><span>View Bundle</span></button>
+    <div class="cl-hypro-overlay" data-cl-pack-overlay hidden></div>
+  </section>
+  {%- if cl_mode == 'per_item' and cl_edit_presentation == 'modal' -%}
+    <section class="cl-hypro cl-pack-editor" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pack-editor data-cl-personalized data-cl-perso-fields='["Custom Text"]' role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cl-pack-editor-title-{{ cl_id | handleize }}" hidden>
+      <button type="button" class="cl-pack-editor__backdrop" data-cl-pack-editor-close aria-label="Close personalization editor"></button>
+      <div class="cl-pack-editor__dialog">
+        <button type="button" class="cl-pack-editor__close" data-cl-pack-editor-close aria-label="Close">×</button>
+        <div class="cl-pack-editor__preview" data-cl-perso-preview aria-label="Personalization preview"></div>
+        <div class="cl-pack-editor__content">
+          <h3 id="cl-pack-editor-title-{{ cl_id | handleize }}" data-cl-pack-editor-title>Personalize this {{ cl_singular }}</h3>
+          <div class="cl-pack-editor__perso" data-cl-perso>
+            <label class="cl-pack-editor__field" data-cl-perso-field>
+              <span class="cl-hypro-card__engraving-head"><span>Custom Text</span><span data-cl-perso-count="Custom Text">20/20</span></span>
+              <input class="cl-hypro-card__engraving-input" type="text" maxlength="20" autocomplete="off" placeholder="ENTER CUSTOM TEXT" data-cl-perso-input="Custom Text">
+            </label>
+          </div>
+          <div class="cl-pack-editor__actions">
+            <button type="button" class="cl-pack-editor__cancel" data-cl-pack-editor-close>Cancel</button>
+            <button type="button" class="cl-pack-editor__save" data-cl-pack-editor-save>Add to Pack</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  {%- endif -%}
+{%- endif -%}

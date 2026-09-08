@@ -1,0 +1,39 @@
+{% comment %}
+  Generic collection pack-builder host. Business rules are section settings for
+  the pilot; collection-facing labels and gift selection remain metafield-driven.
+{% endcomment %}
+
+<div class="cl-pack-page">
+  <header class="cl-pack-page__header">
+    <p>Create your bundle</p>
+    <h1>{{ collection.metafields.custom.builder_title.value | default: collection.title }}</h1>
+  </header>
+  <div class="cl-pack-page__layout">
+    <div>{% render 'cl-hypro-bundle', block: 'grid', collection_handle: collection.handle, fixed_total: section.settings.fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url, preview_mode: section.settings.preview_mode %}</div>
+    <div>{% render 'cl-hypro-bundle', block: 'summary', collection_handle: collection.handle, fixed_total: section.settings.fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url %}</div>
+  </div>
+</div>
+
+{% render 'cl-hypro-bundle', block: 'config', collection_handle: collection.handle, fixed_total: section.settings.fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url, preview_mode: section.settings.preview_mode %}
+
+<style>
+  .cl-pack-page { max-width: 1240px; margin: 0 auto; padding: 48px 24px 80px; }
+  .cl-pack-page__header { margin: 0 0 36px; text-align: center; }
+  .cl-pack-page__header p { margin: 0 0 8px; letter-spacing: .45em; text-transform: uppercase; }
+  .cl-pack-page__header h1 { margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; }
+  .cl-pack-page__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 36px; align-items: start; }
+  @media (max-width: 989px) { .cl-pack-page__layout { display: block; } }
+</style>
+
+{% schema %}
+{
+  "name": "Collection pack builder",
+  "settings": [
+    { "type": "number", "id": "fixed_total", "label": "Bundle total (cents)", "default": 4999 },
+    { "type": "checkbox", "id": "allow_partial_checkout", "label": "Allow checkout below milestone", "default": true },
+    { "type": "text", "id": "reward_label", "label": "Reward label", "default": "3 for $49.99" }
+    ,{ "type": "select", "id": "preview_mode", "label": "Personalization preview", "default": "none", "options": [{ "value": "none", "label": "None" }, { "value": "image_overlay", "label": "Image overlay" }] }
+    ,{ "type": "text", "id": "builder_url", "label": "Builder URL", "info": "Optional. Used by cart Edit Bundle links." }
+  ]
+}
+{% endschema %}
