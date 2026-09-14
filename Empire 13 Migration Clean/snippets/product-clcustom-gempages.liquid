@@ -299,9 +299,13 @@
 
                 <form data-payment-terms-target style="display: none;"></form>
               </div>
-            <div class="product-details">
-              {% render 'product_preview_option' %}
-            </div>  
+            {% capture product_preview_markup %}{% render 'product_preview_option' %}{% endcapture %}
+            {% assign product_preview_markup = product_preview_markup | strip %}
+            {% if product_preview_markup != blank %}
+              <div class="product-details">
+                {{ product_preview_markup }}
+              </div>
+            {% endif %}
             {% when 'sku' %}
               {% unless onboarding %}
                 <div

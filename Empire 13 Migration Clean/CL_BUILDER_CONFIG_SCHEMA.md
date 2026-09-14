@@ -10,7 +10,7 @@ This document combines the shared engine, product source, selection, pricing, re
 
 - `cl-pack-engine.js` owns selection state, totals, restore/clear, cart synchronization, checkout, rendering coordination, and public events.
 - `cl-pack-perso.js` owns personalization fields, validation, normalized values, and `selectionId` generation. It never writes cart lines.
-- `cl-plate-preview.js` owns optional image-overlay previews. It is not a source of field eligibility.
+- `cl-pack-preview.js` owns optional image-overlay previews. It is not a source of field eligibility.
 - Liquid emits normalized configuration and product/card data. It must not contain a second builder implementation.
 - GemPages controls layout by placing independent mounts for the grid, personalization/shared form, and summary.
 - The discount app/Shopify backend remains authoritative for charged prices. Browser totals are explanatory estimates and must use the same approved rule data.
@@ -140,6 +140,13 @@ Liquid is responsible for resolving Shopify objects. The browser receives normal
 
 `target` is the reward/offer target. `maximum` is the hard UI selection limit. `minimumCheckout` controls when checkout is allowed. Therefore Hypro may checkout with one or two pairs at regular price while three pairs unlock the fixed bundle price.
 
+For a slot-based mixed bundle, each selected product occupies exactly one slot. Slots
+are evaluated in declared order, but eligibility for more than one slot is a
+configuration error: initialization emits `cl:pack:validation-error` rather than
+silently assigning the product. Slot quantities are authoritative for the selection
+bound. If `selection.maximum` is also emitted, it must equal the sum of all
+`slot.quantity` values; a mismatch is a configuration error.
+
 The personalization adapter owns selection identity:
 
 ```text
@@ -164,6 +171,15 @@ Frozen visible Shopify property names are `Custom Text`, `Custom Text One`, `Cus
 Normalization is limited to trimming leading/trailing whitespace, applying the configured `uppercase` transform, omitting empty fields, and preserving internal whitespace. Future filtering requires an explicit field-level transform.
 
 The core calls `perso.attach(cardEl, ctx)` during card initialization. The adapter returns a controller on `cardEl.__clPerso` with `values`, `valid`, `promptMissing()`, and `reset()`. It returns values only; the core spreads those values into `items[].properties`.
+
+`shared` remains unimplemented in the deployed adapter and is net-new work. It uses
+one builder-level controller and broadcasts the same values only to eligible lines.
+Selection identity remains per-line through the unchanged
+`selectionKey(variantId, values)`. Saving a shared edit must re-key all eligible
+selections atomically. Restore hydrates from one eligible line only after confirming
+all other eligible restored lines carry identical shared values; conflicts emit a
+validation error and are never silently reconciled. Ineligible lines receive no
+shared properties.
 
 Required DOM hooks:
 
@@ -217,6 +233,17 @@ single-threshold fields `builder_free_gift_variants`, `builder_free_gift_pack_si
 and `builder_free_gift_label`. If tiered configuration is present, it is authoritative
 and the fallback fields must not emit duplicate rewards. The legacy singular
 `custom.gift_tier` field is not consumed by the unified builder.
+
+Normalization order is authoritative: when `custom.gift_tiers` is non-empty, suppress
+the simple fallback completely, then deduplicate the surviving tiered entries by
+`variantId`. If one variant appears in multiple surviving tiers, retain the lowest
+qualifying `minimum`.
+
+For a future slot-based mixed bundle, a reward qualifies only when both its paid-item
+`minimum` is reached and every required slot is valid and completely filled. Losing
+either condition removes that reward. This rule must be enforced by both the frontend
+and the selected authoritative backend before a mixed bundle ships; the current
+discount app does not consume this configuration or `_bundle_*` properties.
 
 The UI may show locked/unlocked progress, savings, and gifts, but Shopify/app pricing is authoritative. If config and returned cart prices disagree, the UI must refresh from the cart response rather than claim an unverified discount.
 
@@ -394,9 +421,12 @@ The future mixed-product builder can use this envelope and the existing shared a
 1. `_builder` is a stable machine key. `Pack` and `_bundle_name` are display strings. Legacy `_builder` title values remain tolerated and opaque.
 2. `_bundle_id` is the primary instance boundary. `_bundle_collection` is a fallback only for legacy cart lines.
 3. Version 1 tier rules use `{ "minimum": n, "unitPrice": cents }`. Percentage and fixed-amount adjustments are deferred.
-4. `selection.slots` is deferred until a real mixed-product pack is scoped.
+4. `selection.slots` implementation is deferred until a real mixed-product pack is scoped. Its frozen matching rules are one slot per product, multi-slot eligibility is a configuration error, and slot quantity sum is authoritative for the selection bound.
 5. Frontend pricing mirrors rather than owns backend pricing. The authority map in Section 6 is required before any builder migration.
 6. The card snippet renders the accordion and optional-second-line controls; `cl-pack-perso.js` wires `[data-cl-perso-toggle]` and `[data-cl-perso-second-line]`.
+7. Slot-based mixed-bundle gifts require both the paid-item reward minimum and a valid, completely filled slot set. Backend enforcement is a rollout prerequisite.
+8. `shared` personalization preserves per-line `selectionKey(variantId, values)` identity; shared edits re-key all eligible selections atomically and restore rejects conflicting shared values.
+9. Gift normalization suppresses simple fallback before tier deduplication; duplicate variants within surviving tiers keep the lowest qualifying minimum.
 
 ## 13. Approval and rollout gate
 

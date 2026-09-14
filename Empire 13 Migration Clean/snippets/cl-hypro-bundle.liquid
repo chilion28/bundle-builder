@@ -15,6 +15,7 @@
 
 {%- liquid
   assign cl_block = block | default: 'all'
+  assign cl_grid_columns = grid_columns | default: 2
   assign cl_collection_handle = collection_handle | default: collection.handle | default: 'hypro'
   assign cl_collection = collections[cl_collection_handle] | default: collection | default: collections['hypro']
   assign cl_id = builder_id | default: cl_collection_handle | default: 'hypro-3-pack'
@@ -23,6 +24,7 @@
   assign cl_plural = cl_collection.metafields.custom.builder_item_plural.value | default: 'pairs'
   assign cl_button = cl_collection.metafields.custom.builder_add_button_text.value | default: 'Add 3-Pack to Cart'
   assign cl_milestones = cl_collection.metafields.custom.builder_milestones.value
+  assign cl_selection_slots = cl_collection.metafields.custom.builder_selection_slots.value
   assign cl_target = cl_milestones | last | default: 3
   assign cl_milestone_style = cl_collection.metafields.custom.builder_milestone_style.value | default: 'slots'
   assign cl_mode = personalization_mode | default: cl_collection.metafields.custom.builder_personalization_mode.value | default: 'per_item'
@@ -47,6 +49,9 @@
   endif
   assign cl_fixed_total = cl_fixed_total_setting | default: 9900
   assign cl_allow_partial = allow_partial_checkout | default: true, allow_false: true
+  if cl_selection_slots != blank
+    assign cl_allow_partial = false
+  endif
   assign cl_reward_label = reward_label
   assign cl_builder_url = builder_url
   if cl_builder_url == blank
@@ -72,7 +77,8 @@
         "target": {{ cl_target | json }}, "maximum": {{ cl_target | json }}, "minimumCheckout": {% if cl_allow_partial %}1{% else %}{{ cl_target | json }}{% endif %},
         "milestones": {% if cl_milestones != blank %}{{ cl_milestones | json }}{% else %}[3]{% endif %},
         "milestoneStyle": {{ cl_milestone_style | json }},
-        "allowPartialCheckout": {{ cl_allow_partial | json }}, "allowDuplicateVariant": true
+        "allowPartialCheckout": {{ cl_allow_partial | json }}, "allowDuplicateVariant": true,
+        "slots": {% if cl_selection_slots != blank %}{{ cl_selection_slots | json }}{% else %}[]{% endif %}
       },
       "personalization": {
         "mode": {{ cl_mode | json }},
@@ -170,6 +176,7 @@
   {% if cl_preview_mode == 'image_overlay' %}<script src="{{ 'cl-pack-preview.js' | asset_url }}" defer></script>{% endif %}
   {% if cl_catalog_mode == 'client' %}<script src="{{ 'cl-pack-catalog.js' | asset_url }}" defer></script>{% endif %}
   <script src="{{ 'cl-pack-perso.js' | asset_url }}" defer></script>
+  <script src="{{ 'cl-pack-card-gallery.js' | asset_url }}" defer></script>
   <script src="{{ 'cl-pack-engine.js' | asset_url }}" defer></script>
 {%- endif -%}
 
@@ -212,7 +219,7 @@
 
 {%- if cl_block == 'grid' or cl_block == 'all' -%}
   {%- assign cl_state_names = 'District of Columbia|Northern Mariana Islands|U.S. Virgin Islands|US Virgin Islands|West Virginia|South Carolina|North Carolina|South Dakota|North Dakota|Rhode Island|New Hampshire|New Jersey|New Mexico|New York|Puerto Rico|American Samoa|Massachusetts|Pennsylvania|Connecticut|Mississippi|Washington|California|Minnesota|Louisiana|Wisconsin|Tennessee|Kentucky|Nebraska|Colorado|Maryland|Michigan|Missouri|Arkansas|Delaware|Illinois|Oklahoma|Virginia|Vermont|Montana|Alabama|Arizona|Florida|Georgia|Indiana|Kansas|Nevada|Oregon|Wyoming|Alaska|Hawaii|Idaho|Maine|Texas|Ohio|Utah|Iowa|Guam' | split: '|' -%}
-  <section class="cl-hypro cl-hypro__products" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pack-grid>
+  <section class="cl-hypro cl-hypro__products" style="--cl-hypro-grid-columns: {{ cl_grid_columns }}" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pack-grid>
     {%- paginate cl_collection.products by 250 -%}
     {%- for product in cl_collection.products -%}
       {%- unless product.available -%}{%- continue -%}{%- endunless -%}
@@ -227,9 +234,26 @@
       {%- endfor -%}
       <article class="cl-hypro-card" data-cl-pack-card {% if cl_mode == 'per_item' %}data-cl-personalized{% endif %} data-cl-handle="{{ product.handle | escape }}" data-cl-product-type="{{ product.type | escape }}" data-cl-title="{{ product.title | escape }}" data-cl-catalog-state="{{ cl_product_state | escape }}" data-cl-catalog-search="{{ cl_product_title_downcase | escape }} {{ product.handle | replace: '-', ' ' | escape }}" {% if cl_mode == 'per_item' %}{% if product.metafields.custom.personalization_fields.value != blank %}data-cl-perso-fields="{{ product.metafields.custom.personalization_fields.value | json | escape }}"{% else %}data-cl-perso-fields='["Custom Text"]'{% endif %}{% endif %}>
         <span class="cl-hypro-card__check" data-cl-pack-card-badge aria-label="0 selected">x0</span>
-        <div class="cl-hypro-card__media">
+        {%- assign cl_alt_image = product.images[1] -%}
+        {%- assign cl_alt_image_alt = product.title | append: ' alternate view' -%}
+        <div class="cl-hypro-card__media{% if cl_alt_image != blank %} cl-hypro-card__media--gallery{% endif %}" {% if cl_alt_image != blank %}data-cl-card-gallery{% endif %}>
+          <div class="cl-hypro-card__media-viewport" {% if cl_alt_image != blank %}data-cl-card-gallery-viewport{% endif %}>
+            <div class="cl-hypro-card__media-track">
           {%- if product.featured_image -%}
-            {{ product.featured_image | image_url: width: 720 | image_tag: class: 'cl-hypro-card__image', loading: 'lazy', widths: '320, 480, 720', sizes: '(max-width: 749px) 50vw, 280px', alt: product.title }}
+              {{ product.featured_image | image_url: width: 720 | image_tag: class: 'cl-hypro-card__image cl-hypro-card__image--primary', loading: 'lazy', widths: '320, 480, 720', sizes: '(max-width: 749px) 50vw, 280px', alt: product.title }}
+          {%- endif -%}
+          {%- if cl_alt_image != blank -%}
+              {{ cl_alt_image | image_url: width: 720 | image_tag: class: 'cl-hypro-card__image cl-hypro-card__image--alternate', loading: 'lazy', widths: '320, 480, 720', sizes: '(max-width: 749px) 50vw, 280px', alt: cl_alt_image_alt }}
+          {%- endif -%}
+            </div>
+          </div>
+          {%- if cl_alt_image != blank -%}
+            <button type="button" class="cl-hypro-card__gallery-arrow cl-hypro-card__gallery-arrow--prev" data-cl-card-gallery-prev aria-label="Show previous image">&#8249;</button>
+            <button type="button" class="cl-hypro-card__gallery-arrow cl-hypro-card__gallery-arrow--next" data-cl-card-gallery-next aria-label="Show next image">&#8250;</button>
+            <div class="cl-hypro-card__gallery-dots" aria-label="Product images">
+              <button type="button" class="is-active" data-cl-card-gallery-dot="0" aria-label="Show first image" aria-current="true"></button>
+              <button type="button" data-cl-card-gallery-dot="1" aria-label="Show second image"></button>
+            </div>
           {%- endif -%}
         </div>
         <div class="cl-hypro-card__body">
@@ -248,7 +272,7 @@
           <div class="cl-hypro-card__price" data-cl-hypro-card-price>{{ first_variant.price | money }}</div>
           {%- if cl_mode == 'per_item' and cl_edit_presentation != 'modal' -%}
             <button type="button" class="cl-hypro-card__perso-toggle" data-cl-perso-toggle aria-expanded="false">
-              <span>✏️ Personalize this {{ cl_singular }}</span><span class="cl-hypro-card__perso-caret" aria-hidden="true"></span>
+              <span>✏️ Personalize</span><span class="cl-hypro-card__perso-caret" aria-hidden="true"></span>
             </button>
             <label class="cl-hypro-card__engraving" data-cl-perso hidden>
               {% if cl_preview_mode == 'image_overlay' %}<div class="cl-hypro-card__preview" data-cl-perso-preview aria-label="Personalization preview"></div>{% endif %}

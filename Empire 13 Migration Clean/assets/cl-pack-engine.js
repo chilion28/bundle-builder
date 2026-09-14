@@ -31,6 +31,12 @@
     document.dispatchEvent(new CustomEvent(name, { detail: detail }));
   }
 
+  function normalizedList(values) {
+    return Array.isArray(values) ? values.map(function (value) {
+      return String(value == null ? '' : value).trim().toLowerCase();
+    }).filter(Boolean) : [];
+  }
+
   function init(configNode) {
     if (configNode.dataset.clPackReady === 'true') return;
     var config = parseConfig(configNode);
@@ -52,7 +58,19 @@
     var cartConfig = config.cart || {};
     var propNames = cartConfig.properties || {};
     var target = Number(selectionConfig.target) || 1;
-    var maximum = Number(selectionConfig.maximum) || target;
+    var slots = Array.isArray(selectionConfig.slots) && selectionConfig.slots.length ? selectionConfig.slots.map(function (slot) {
+      return {
+        id: String(slot && slot.id || '').trim(),
+        label: String(slot && slot.label || slot && slot.id || '').trim(),
+        quantity: Number(slot && slot.quantity),
+        eligibleProductTypes: normalizedList(slot && slot.eligibleProductTypes),
+        eligibleHandles: normalizedList(slot && slot.eligibleHandles)
+      };
+    }) : [];
+    var hasSlots = slots.length > 0;
+    var slotCapacity = slots.reduce(function (sum, slot) { return sum + slot.quantity; }, 0);
+    var configuredMaximum = Number(selectionConfig.maximum);
+    var maximum = hasSlots ? slotCapacity : (configuredMaximum || target);
     var minimumCheckout = Number(selectionConfig.minimumCheckout) || 1;
     var itemSingular = builder.itemLabel || 'item';
     var itemPlural = builder.itemLabelPlural || itemSingular + 's';
@@ -92,9 +110,41 @@
     var editor = one('[data-cl-pack-editor]');
     var editorTitle = one('[data-cl-pack-editor-title]');
     var editorSave = one('[data-cl-pack-editor-save]');
+    var grid = one('[data-cl-pack-grid]');
+    var slotGuide = null;
+    var slotStatus = null;
+    var cardSlots = new Map();
+    var slotConfigErrors = [];
     if (!cards.length || !summary || !checkout) {
       console.warn('CL pack builder is missing its grid or summary mount.', builder.key);
       return;
+    }
+
+    if (hasSlots) {
+      var slotIds = {};
+      slots.forEach(function (slot) {
+        if (!slot.id) slotConfigErrors.push('Every selection slot requires an id.');
+        else if (slotIds[slot.id]) slotConfigErrors.push('Duplicate selection slot id: ' + slot.id + '.');
+        else slotIds[slot.id] = true;
+        if (!Number.isInteger(slot.quantity) || slot.quantity < 1) slotConfigErrors.push('Selection slot "' + (slot.label || slot.id || 'unnamed') + '" requires a positive whole-number quantity.');
+        if (!slot.eligibleProductTypes.length && !slot.eligibleHandles.length) slotConfigErrors.push('Selection slot "' + (slot.label || slot.id || 'unnamed') + '" requires an eligibility rule.');
+      });
+      if (Object.prototype.hasOwnProperty.call(selectionConfig, 'maximum') && configuredMaximum !== slotCapacity) {
+        slotConfigErrors.push('selection.maximum must equal the total slot quantity (' + slotCapacity + ').');
+      }
+      cards.forEach(function (card) {
+        var handle = String(card.dataset.clHandle || '').trim().toLowerCase();
+        var productType = String(card.dataset.clProductType || '').trim().toLowerCase();
+        var matches = slots.filter(function (slot) {
+          return slot.eligibleHandles.indexOf(handle) !== -1 || slot.eligibleProductTypes.indexOf(productType) !== -1;
+        });
+        if (matches.length > 1) {
+          slotConfigErrors.push('Product "' + (card.dataset.clTitle || handle || 'unknown') + '" matches more than one selection slot.');
+          cardSlots.set(card, null);
+        } else {
+          cardSlots.set(card, matches[0] || null);
+        }
+      });
     }
 
     function variantControl(card) { return card.querySelector('[data-cl-pack-variant]'); }
@@ -110,6 +160,42 @@
       selected.forEach(function (item) { total += item.quantity; });
       return total;
     }
+    function slotForCard(card) { return hasSlots ? cardSlots.get(card) || null : null; }
+    function slotQuantity(slotId, excludeSelectionIds) {
+      var total = 0;
+      excludeSelectionIds = excludeSelectionIds || [];
+      selected.forEach(function (item, selectionId) {
+        if (excludeSelectionIds.indexOf(selectionId) === -1 && item.slotId === slotId) total += item.quantity;
+      });
+      return total;
+    }
+    function slotStates() {
+      return slots.map(function (slot) {
+        var filled = slotQuantity(slot.id);
+        return { id: slot.id, label: slot.label || slot.id, quantity: slot.quantity, filled: filled, complete: filled === slot.quantity };
+      });
+    }
+    function incompleteSlots() {
+      return hasSlots ? slotStates().filter(function (slot) { return !slot.complete; }) : [];
+    }
+    function slotAllows(slot, quantity, excludeSelectionIds) {
+      return !!slot && slotQuantity(slot.id, excludeSelectionIds) + quantity <= slot.quantity;
+    }
+    function slotCanReplace(slot) {
+      return !!slot && slot.quantity === 1 && slotQuantity(slot.id) === 1;
+    }
+    function replaceSlotSelection(slot) {
+      if (!slotCanReplace(slot)) return false;
+      Array.from(selected.entries()).forEach(function (entry) {
+        if (entry[1].slotId === slot.id) selected.delete(entry[0]);
+      });
+      return true;
+    }
+    function validationError(code, message, extra) {
+      var detail = Object.assign({ builderKey: builder.key, bundleId: bundleId, code: code, message: message }, extra || {});
+      dispatch('cl:pack:validation-error', detail);
+      return detail;
+    }
     function showError(message) {
       if (!errorEl) return;
       errorEl.textContent = message || '';
@@ -121,11 +207,61 @@
         builderKey: builder.key,
         bundleId: bundleId,
         items: Array.from(selected.values()).map(function (item) { return Object.assign({}, item); }),
-        totalQuantity: totalQuantity()
+        totalQuantity: totalQuantity(),
+        slots: hasSlots ? slotStates() : []
       };
     }
     function publishChanged(reason) {
       dispatch('cl:pack:changed', { builderKey: builder.key, bundleId: bundleId, state: state(), reason: reason });
+    }
+
+    function installSlotPresentation() {
+      if (!hasSlots || !grid) return;
+      slotGuide = document.createElement('section');
+      slotGuide.className = 'cl-hypro cl-pack-slot-guide';
+      slotGuide.setAttribute('data-cl-pack-slot-guide', '');
+      slotGuide.setAttribute('aria-label', 'Bundle requirements');
+      grid.parentNode.insertBefore(slotGuide, grid);
+
+      var groupedCards = document.createDocumentFragment();
+      slots.forEach(function (slot, index) {
+        var matchingCards = cards.filter(function (card) { return slotForCard(card) === slot; });
+        if (!matchingCards.length) return;
+        var heading = document.createElement('div');
+        heading.className = 'cl-pack-slot-heading';
+        heading.setAttribute('data-cl-pack-slot-heading', slot.id);
+        heading.innerHTML = '<span class="cl-pack-slot-heading__number">' + (index + 1) + '</span>' +
+          '<span><strong>Choose your ' + escapeHtml(slot.label || slot.id) + '</strong><small>Select ' + slot.quantity + ' from this category</small></span>';
+        groupedCards.appendChild(heading);
+        matchingCards.forEach(function (card) { groupedCards.appendChild(card); });
+      });
+      cards.filter(function (card) { return !slotForCard(card); }).forEach(function (card) { groupedCards.appendChild(card); });
+      grid.insertBefore(groupedCards, errorEl || null);
+
+      var summaryProgress = one('.cl-hypro-summary__progress');
+      if (summaryProgress) {
+        slotStatus = document.createElement('div');
+        slotStatus.className = 'cl-pack-slot-status';
+        slotStatus.setAttribute('data-cl-pack-slot-status', '');
+        summaryProgress.insertBefore(slotStatus, one('[data-cl-pack-message]'));
+      }
+    }
+
+    function renderSlotPresentation(totals) {
+      if (!hasSlots) return;
+      var states = slotStates();
+      if (slotGuide) {
+        slotGuide.innerHTML = '<div class="cl-pack-slot-guide__steps">' + states.map(function (slot, index) {
+            return '<span class="' + (slot.complete ? 'is-complete' : '') + '"><b>' + (slot.complete ? '&#10003;' : index + 1) + '</b>' + escapeHtml(slot.label) + '</span>';
+          }).join('') + '</div>';
+      }
+      if (slotStatus) slotStatus.innerHTML = states.map(function (slot) {
+        return '<span class="' + (slot.complete ? 'is-complete' : '') + '"><b>' + (slot.complete ? '&#10003;' : slot.filled + '/' + slot.quantity) + '</b>' + escapeHtml(slot.label) + '</span>';
+      }).join('');
+      slots.forEach(function (slot) {
+        var heading = one('[data-cl-pack-slot-heading="' + CSS.escape(slot.id) + '"]');
+        if (heading) heading.classList.toggle('is-complete', slotQuantity(slot.id) === slot.quantity);
+      });
     }
 
     function cardDataFromRead(card, read) {
@@ -133,6 +269,7 @@
       var option = selectedOption(control);
       var image = card.querySelector('[data-cl-pack-image], .cl-hypro-card__image');
       var id = variantId(card);
+      var slot = slotForCard(card);
       return {
         selectionId: perso.selectionKey(id, read.values),
         variantId: id,
@@ -144,6 +281,7 @@
         unitPrice: Number(option && option.dataset.price) || 0,
         properties: read.values,
         valid: read.valid,
+        slotId: slot ? slot.id : '',
         card: card
       };
     }
@@ -166,16 +304,26 @@
       var badge = card.querySelector('[data-cl-pack-card-badge]');
       var isEditing = !!card.getAttribute('data-cl-editing');
       var modalEditing = editingConfig.presentation === 'modal';
+      var slot = slotForCard(card);
+      var slotUnavailable = hasSlots && (!slot || !slotAllows(slot, 1));
+      var canReplace = hasSlots && !current && slotCanReplace(slot);
+      var configInvalid = slotConfigErrors.length > 0;
       card.classList.toggle('is-selected', aggregate > 0);
+      card.classList.toggle('is-slot-ineligible', hasSlots && !slot);
+      card.classList.toggle('is-slot-full', hasSlots && !!slot && !slotAllows(slot, 1));
+      if (hasSlots) {
+        card.setAttribute('data-cl-pack-slot-id', slot ? slot.id : '');
+        card.setAttribute('aria-disabled', configInvalid || !slot ? 'true' : 'false');
+      }
       if (badge) {
         badge.textContent = 'x' + aggregate;
         badge.setAttribute('aria-label', aggregate + ' selected');
       }
       if (add) {
-        add.textContent = modalEditing ? (total >= maximum ? 'Your pack is full' : 'Personalize & Add') : (isEditing ? 'Update' : (current ? '✓ Added' : (total >= maximum ? 'Your pack is full' : 'Add to Bundle')));
+        add.textContent = configInvalid ? 'Bundle unavailable' : (hasSlots && !slot ? 'Not available for this bundle' : (modalEditing ? (slotUnavailable || total >= maximum ? 'This category is full' : 'Personalize & Add') : (isEditing ? 'Update' : (current ? '✓ Added' : (canReplace ? 'Choose another' : (slotUnavailable || total >= maximum ? 'This category is full' : 'Add to Bundle'))))));
         add.classList.toggle('is-added', modalEditing ? aggregate > 0 : !!current);
         add.classList.toggle('is-editing', isEditing);
-        add.disabled = modalEditing ? total >= maximum : (isEditing ? false : (!!current || total >= maximum));
+        add.disabled = configInvalid || (slotUnavailable && !canReplace) || (modalEditing ? total >= maximum : (isEditing ? false : (!!current || (total >= maximum && !canReplace))));
       }
     }
 
@@ -292,6 +440,7 @@
     function render() {
       var totals = estimate();
       cards.forEach(syncCard);
+      renderSlotPresentation(totals);
       all('[data-cl-pack-total], [data-cl-pack-total-copy], [data-cl-pack-mobile-count]').forEach(function (node) { node.textContent = totals.total; });
       all('[data-cl-pack-slot]').forEach(function (slot, index) {
         var minimum = Number(slot.getAttribute('data-cl-pack-minimum')) || (index + 1);
@@ -314,8 +463,10 @@
       if (messageEl) {
         var remaining = Math.max(0, target - totals.total);
         var unlockedGift = rewards.some(function (reward) { return rewardIsUnlocked(reward, totals.total); });
+        var messageMissingSlots = incompleteSlots();
         messageEl.textContent = totals.unlocked ? '🎉 You\'ve unlocked ' + (totals.tier ? money(totals.tier.unitPrice) + '/' + itemSingular + ' pricing' : 'your ' + money(totals.estimated) + ' bundle') + (unlockedGift ? ' and a free gift!' : '!') :
-          'Add ' + remaining + ' more ' + (remaining === 1 ? itemSingular : itemPlural) + ' to unlock your discount.';
+          (messageMissingSlots.length ? 'Next: choose your ' + messageMissingSlots[0].label + ' to unlock' + (pricing.mode === 'fixed_total' && Number(pricing.fixedTotal) ? ' the ' + money(pricing.fixedTotal) + ' bundle.' : ' your discount.') :
+          'Add ' + remaining + ' more ' + (remaining === 1 ? itemSingular : itemPlural) + ' to unlock your discount.');
       }
       var rewardHtml = rewards.map(function (reward) { return renderReward(reward, totals.total); }).join('');
       var fixedAllocations = fixedTotalUnitAllocations(totals);
@@ -324,8 +475,10 @@
       }).join('') : '<p class="cl-hypro-summary__empty">No ' + escapeHtml(itemPlural) + ' added yet.</p>';
       if (itemsEl) itemsEl.innerHTML = rewardHtml + selectedHtml;
       if (giftTotalEl) giftTotalEl.hidden = !rewards.some(function (reward) { return rewardIsUnlocked(reward, totals.total); });
-      checkout.disabled = totals.total < minimumCheckout;
-      checkout.textContent = totals.total < minimumCheckout ? 'Add ' + itemPlural + ' to get started' : checkoutLabel + ' (' + money(totals.estimated) + ')';
+      var missingSlots = incompleteSlots();
+      checkout.disabled = slotConfigErrors.length > 0 || totals.total < minimumCheckout || missingSlots.length > 0;
+      var checkoutReward = pricing.mode === 'fixed_total' && Number(pricing.fixedTotal) ? ' for ' + money(pricing.fixedTotal) : '';
+      checkout.textContent = slotConfigErrors.length ? 'Bundle configuration unavailable' : (missingSlots.length ? 'Choose your ' + missingSlots[0].label + checkoutReward : (totals.total < minimumCheckout ? 'Add ' + itemPlural + ' to get started' : checkoutLabel + ' (' + money(totals.estimated) + ')'));
     }
 
     function closeEditor() {
@@ -375,6 +528,13 @@
         if (!oldItem) { closeEditor(); return; }
         var existing = data.selectionId === editorSelectionId ? null : selected.get(data.selectionId);
         var mergedQuantity = oldItem.quantity + (existing ? existing.quantity : 0);
+        var editSlot = slotForCard(editorSourceCard);
+        var editExclusions = [editorSelectionId];
+        if (existing) editExclusions.push(data.selectionId);
+        if (hasSlots && !slotAllows(editSlot, mergedQuantity, editExclusions)) {
+          validationError('slot_full', (editSlot ? editSlot.label : 'This category') + ' is already full.', { slotId: editSlot ? editSlot.id : '' });
+          return;
+        }
         if (totalQuantity() - oldItem.quantity - (existing ? existing.quantity : 0) + mergedQuantity > maximum) return;
         selected.delete(editorSelectionId);
         selected.set(data.selectionId, Object.assign({}, oldItem, data, { quantity: mergedQuantity }));
@@ -384,6 +544,11 @@
         return;
       }
       if (totalQuantity() >= maximum) return;
+      var newSlot = slotForCard(editorSourceCard);
+      if (hasSlots && !slotAllows(newSlot, 1)) {
+        validationError(newSlot ? 'slot_full' : 'slot_ineligible', newSlot ? newSlot.label + ' is already full.' : 'This product is not eligible for a bundle slot.', { slotId: newSlot ? newSlot.id : '' });
+        return;
+      }
       var current = selected.get(data.selectionId);
       if (current) selected.set(data.selectionId, Object.assign({}, current, { quantity: current.quantity + 1 }));
       else selected.set(data.selectionId, Object.assign(data, { quantity: 1 }));
@@ -411,6 +576,17 @@
         dispatch('cl:pack:validation-error', { builderKey: builder.key, bundleId: bundleId, code: 'missing_personalization', message: 'Required personalization is missing.' });
         return;
       }
+      var slot = slotForCard(card);
+      if (hasSlots && !slotAllows(slot, 1)) {
+        if (slotCanReplace(slot)) {
+          replaceSlotSelection(slot);
+        } else {
+        var addMessage = slot ? slot.label + ' is already full.' : 'This product is not eligible for a bundle slot.';
+        showError(addMessage);
+        validationError(slot ? 'slot_full' : 'slot_ineligible', addMessage, { slotId: slot ? slot.id : '' });
+        return;
+        }
+      }
       if (totalQuantity() >= maximum) return;
       var existing = selected.get(data.selectionId);
       if (existing) return;
@@ -418,7 +594,7 @@
       selected.set(data.selectionId, Object.assign(data, { quantity: 1 }));
       showError('');
       render();
-      publishChanged('add');
+      publishChanged(hasSlots && slot && slot.quantity === 1 ? 'select-slot' : 'add');
     }
 
     function endEdit() {
@@ -470,10 +646,18 @@
         return;
       }
       var existing = data.selectionId === oldId ? null : selected.get(data.selectionId);
+      var slot = slotForCard(card);
+      var mergedQuantity = oldItem.quantity + (existing ? existing.quantity : 0);
+      var exclusions = [oldId];
+      if (existing) exclusions.push(data.selectionId);
+      if (hasSlots && !slotAllows(slot, mergedQuantity, exclusions)) {
+        validationError(slot ? 'slot_full' : 'slot_ineligible', slot ? slot.label + ' is already full.' : 'This product is not eligible for a bundle slot.', { slotId: slot ? slot.id : '' });
+        return;
+      }
       selected.delete(oldId);
       delete data.valid;
       selected.set(data.selectionId, Object.assign({}, oldItem, data, {
-        quantity: oldItem.quantity + (existing ? existing.quantity : 0)
+        quantity: mergedQuantity
       }));
       endEdit();
       showError('');
@@ -498,7 +682,14 @@
       if (!item) return;
       var next = item.quantity + delta;
       if (next < 1) selected.delete(selectionId);
-      else if (delta < 0 || totalQuantity() < maximum) selected.set(selectionId, Object.assign({}, item, { quantity: next }));
+      else if (delta < 0 || totalQuantity() < maximum) {
+        var slot = hasSlots ? slots.find(function (candidate) { return candidate.id === item.slotId; }) : null;
+        if (delta > 0 && hasSlots && !slotAllows(slot, delta)) {
+          validationError(slot ? 'slot_full' : 'slot_ineligible', slot ? slot.label + ' is already full.' : 'This product is not eligible for a bundle slot.', { slotId: slot ? slot.id : '' });
+          return;
+        }
+        selected.set(selectionId, Object.assign({}, item, { quantity: next }));
+      }
       render();
       publishChanged(delta > 0 ? 'increment' : 'decrement');
     }
@@ -580,6 +771,7 @@
 
     async function restoreFromCart() {
       if (cartConfig.restoreOnLoad === false) return;
+      if (slotConfigErrors.length) return;
       try {
         restoring = true;
         var cart = await readCart();
@@ -594,6 +786,45 @@
           candidate = candidate.filter(function (line) { return (line.properties || {})[propNames.bundleId || '_bundle_id'] === restoredId; });
         }
         selected.clear();
+        if (hasSlots) {
+          candidate.forEach(function (line) {
+            var id = String(line.variant_id || line.id);
+            var card = cardForVariant(id);
+            if (!card) {
+              validationError('restore_slot_ineligible', 'A saved bundle item is no longer eligible and was not restored.', { variantId: id });
+              return;
+            }
+            var slot = slotForCard(card);
+            if (!slot) {
+              validationError('restore_slot_ineligible', (card.dataset.clTitle || 'A saved bundle item') + ' is not eligible for a slot and was not restored.', { variantId: id });
+              return;
+            }
+            var requestedQuantity = Number(line.quantity) || 0;
+            var remaining = Math.max(0, slot.quantity - slotQuantity(slot.id));
+            var quantity = Math.min(requestedQuantity, remaining);
+            if (requestedQuantity > remaining) {
+              validationError('restore_slot_overflow', 'Saved items exceeded the capacity for ' + slot.label + '; the excess was not restored.', { slotId: slot.id, ignoredQuantity: requestedQuantity - remaining });
+            }
+            if (quantity < 1) return;
+            var data;
+            if (editingConfig.presentation === 'modal' && perso.mode === 'per_item') {
+              var values = publicPersonalization(line.properties || {});
+              data = cardDataFromRead(card, { values: values, valid: true });
+            } else {
+              hydrateCard(card, line.properties || {});
+              data = cardData(card);
+            }
+            if (!data.valid) {
+              validationError('restore_invalid_personalization', (card.dataset.clTitle || 'A saved bundle item') + ' has invalid personalization and was not restored.', { variantId: id });
+              return;
+            }
+            delete data.valid;
+            var existing = selected.get(data.selectionId);
+            selected.set(data.selectionId, Object.assign({}, existing || data, data, { quantity: quantity + (existing ? existing.quantity : 0) }));
+          });
+          render();
+          return;
+        }
         var restoredTotal = 0;
         candidate.forEach(function (line) {
           if (restoredTotal >= maximum) return;
@@ -695,6 +926,14 @@
 
     checkout.addEventListener('click', async function () {
       var totals = estimate();
+      if (slotConfigErrors.length) { showError(slotConfigErrors[0]); return; }
+      var missingSlots = incompleteSlots();
+      if (missingSlots.length) {
+        var slotMessage = 'Complete ' + missingSlots.map(function (slot) { return slot.label; }).join(', ') + ' before checkout.';
+        showError(slotMessage);
+        validationError('slots_incomplete', slotMessage, { slots: missingSlots });
+        return;
+      }
       if (totals.total < minimumCheckout) { showError('Please select at least ' + minimumCheckout + ' ' + itemSingular + '.'); return; }
       var items = Array.from(selected.values()).map(function (item) {
         var properties = Object.assign({}, item.properties);
@@ -752,7 +991,12 @@
       }
     });
 
+    installSlotPresentation();
     render();
+    if (slotConfigErrors.length) {
+      showError(slotConfigErrors[0]);
+      validationError('invalid_slot_config', slotConfigErrors.join(' '), { errors: slotConfigErrors.slice() });
+    }
     loadTierPricing();
     restoreFromCart().then(function () {
       dispatch('cl:pack:ready', { builderKey: builder.key, bundleId: bundleId, state: state() });

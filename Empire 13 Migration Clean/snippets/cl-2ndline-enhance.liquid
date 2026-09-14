@@ -1,0 +1,47 @@
+{% comment %}
+  cl-2ndline-enhance — discoverability fix for the Zepto Product Personalizer
+  "Add a 2nd Line" control on plate-hat product pages.
+
+  Problem (order #406804, Colorado 2024 Plate Hat): the second line of custom text
+  is gated behind a tiny 13px checkbox that renders below the first-line field —
+  easy to miss, and below the fold on mobile. Customers couldn't find it, so only
+  line 1 was captured.
+
+  Fix: turn that checkbox + label into a prominent, clearly-OPTIONAL pill. Purely
+  cosmetic — it does NOT change Zepto's logic, the conditional reveal, or pricing
+  (the 2nd line is free). Targets input[name="properties[_2nd Line]"] wherever it
+  renders, so it covers every plate hat that uses this Zepto field.
+{% endcomment %}
+<style>
+  .cl-2ndline-toggle{display:flex!important;align-items:center;gap:10px;margin:10px 0!important;padding:11px 14px!important;border-radius:10px;background:#eef8fe;font-size:15px!important;font-weight:700!important;color:#0a4d6e!important;cursor:pointer;line-height:1.25;width:100%;box-sizing:border-box}
+  .cl-2ndline-toggle input[type="checkbox"]{width:20px!important;height:20px!important;min-width:20px;margin:0!important;accent-color:#00a0ea;cursor:pointer}
+  .cl-2ndline-toggle .cl-2ndline-hint{font-weight:500;color:#5a7a8c;font-size:13px;margin-left:auto}
+</style>
+<script>
+(function () {
+  function enhance(cb) {
+    var l = cb.closest('label') || cb.parentElement;
+    if (!l || l.classList.contains('cl-2ndline-toggle')) return;
+    l.classList.add('cl-2ndline-toggle');
+    if (!l.querySelector('.cl-2ndline-hint')) {
+      var h = document.createElement('span');
+      h.className = 'cl-2ndline-hint';
+      h.textContent = '(optional)';
+      l.appendChild(h);
+    }
+  }
+  function scan() {
+    var list = document.querySelectorAll('input[name="properties[_2nd Line]"]');
+    for (var i = 0; i < list.length; i++) enhance(list[i]);
+  }
+  // Zepto renders (and re-renders on variant change) asynchronously, so scan now,
+  // observe for a while to catch late/re-renders, then stop. enhance() is idempotent.
+  scan();
+  var obs;
+  try {
+    obs = new MutationObserver(scan);
+    obs.observe(document.body || document.documentElement, { childList: true, subtree: true });
+    setTimeout(function () { try { obs.disconnect(); } catch (e) {} scan(); }, 20000);
+  } catch (e) {}
+})();
+</script>

@@ -101,6 +101,31 @@
   text-align: left;
 }
 
+.product--section .gallery-navigation--scroll-button {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: #1d1d1d;
+  background: #fff;
+  border: 1px solid #d2d5d8;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .14);
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.product--section .gallery-navigation--scroll-button.scroll-left { left: 4px; }
+.product--section .gallery-navigation--scroll-button.scroll-right { right: 4px; }
+.product--section .gallery-navigation--scroll-button.scroll-left svg { transform: rotate(90deg); }
+.product--section .gallery-navigation--scroll-button.scroll-right svg { transform: rotate(-90deg); }
+.product--section .gallery-navigation--scroll-button[disabled] { visibility: hidden; }
+
 .product--section .gallery-navigation--scroller {
   padding: .25rem 0;
   overflow-x: auto;
@@ -113,28 +138,110 @@
   position: relative;
   display: inline-block;
   height: 4rem;
-  padding: 2px;
+  padding: 0;
   margin: .1875rem;
   vertical-align: middle;
   cursor: pointer;
-  border-radius: 2px;
-  box-shadow: 0 0 2px transparent;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0;
+  box-shadow: none !important;
 }
 
 .product--section .product-gallery--media-thumbnail[data-gallery-selected="true"] {
-  box-shadow: 0 0 0 1.5px #818181;
+  box-shadow: none !important;
 }
 
 .product--section .product-gallery--media-thumbnail-img-wrapper,
 .product--section .product-gallery--media-thumbnail-img {
   display: block;
   height: 100%;
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 .product--section .product-gallery--media-thumbnail-img {
   width: auto;
   max-width: 100%;
   object-fit: contain;
+}
+
+/* Legacy CityLocs hat-style selector, aligned with the combined-listing pills. */
+.product--section .swatch_options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  height: auto;
+}
+
+.product--section .selection-button-container {
+  flex: 0 0 auto;
+  margin: 0 !important;
+}
+
+.product--section .selection-button {
+  box-sizing: border-box;
+  width: auto;
+  min-height: 44px;
+  height: auto;
+  padding: 10px 20px;
+  color: #252525;
+  font: inherit;
+  font-weight: 400;
+  line-height: 1.2;
+  background: #fff;
+  border: 1px solid #cfd3d8;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.product--section .selection-button.button-on {
+  color: #008fd5;
+  background: #dff3fc;
+  border-color: #8ed8f8;
+}
+
+@media screen and (max-width: 719px) {
+  /* Keep the price and Loox summary on one balanced mobile row. */
+  .product--section .product-details {
+    display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: center;
+  }
+
+  .product--section .product-details > * {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .product--section .product-details > .product-block--price {
+    grid-column: 1;
+    justify-self: start;
+    align-self: center;
+    margin: 0 0 .75rem !important;
+  }
+
+  .product--section .product-details > [class*="product-block--@app"] {
+    grid-column: 2;
+    justify-self: end;
+    align-self: flex-start;
+    width: auto;
+    margin: 0 0 .75rem !important;
+    text-align: right;
+  }
+
+  .product--section .product-block--price .product-pricing,
+  .product--section [class*="product-block--@app"] .product-app {
+    margin: 0 !important;
+  }
+
+  /* The migrated template leaves an unused native-rating block above Loox. */
+  .product--section .product-details > .product-block--rating {
+    display: none;
+  }
 }
 
 @media screen and (min-width: 720px) {

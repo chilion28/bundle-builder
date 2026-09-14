@@ -1472,6 +1472,53 @@ body.mobile-search-takeover-active [data-site-header-mobile-search-button] .live
   transform: translateY(0) !important;
 }
 
+@media (max-width: 719px) {
+  .plate-price {
+    font-size: 30px;
+  }
+
+  .plate-font-2,
+  .plate-font-3 {
+    font-size: 16px;
+  }
+
+  [data-live-search-takeover-cancel] {
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+
+  [data-mobile-search-button],
+  [data-mobile-search-button] * {
+    touch-action: manipulation;
+  }
+
+  body.mobile-search-takeover-active iframe#chat-button,
+  body.mobile-search-takeover-active #chat-button,
+  body.mobile-search-takeover-active #shopify-chat,
+  body.mobile-search-takeover-active #shopify-chat-container {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /* Comfortable touch targets for legacy product personalization fields. */
+  .product--section .product-personalizer input[type="text"],
+  .product--section input[name="properties[Month]"],
+  .product--section input[name="properties[Year]"],
+  .product--section input[name="properties[Custom Text]"],
+  .product--section input[name*="Custom Text Two"],
+  .product--section input[name*="Custom Text Three"],
+  .product--section #user_input,
+  .product--section #second_user_input {
+    box-sizing: border-box !important;
+    min-height: 56px !important;
+    height: auto !important;
+    padding: 15px 16px !important;
+    font-size: 16px !important;
+    line-height: 1.25 !important;
+  }
+}
+
 .add-to-cart-button {
   padding: 1.4em !important;
   border-radius: 10px !important;
