@@ -17,7 +17,9 @@ Codex named four things to preserve; make each a concrete verification item:
    | 1–2 | $0 | $18.99 |
    | 3–5 | $2 | $16.99 |
    | 6–11 | $4 | $14.99 |
-   | 12+ | $6 | $12.99 |
+   | 12–24 | $6 | $12.99 |
+
+   Tier minimums `[1, 3, 6, 12]`; the $12.99 tier runs from 12 through the **max pack quantity 24** (Codex correction 2026-09-16 — ceiling is 24, not 12).
 
    The migration must reproduce this tier table (backend registry tiers + frontend mirror). NOTE it is a **per-item volume discount** (each pin discounted by qty), not a fixed-total pack — different pricing shape from WF/Hypro/mixed (fixed_total).
 2. **Per-item personalization** — pins are uniform **`{Custom Text}`** (no Month/Year, no 2nd line). Use `fieldsMode: explicit` with a collection-level field list (NO per-product backfill). Store-wide policy applies: `["uppercase","no_emoji"]`.
@@ -36,7 +38,7 @@ Editor now saves **registry schema v3** with authoritative eligibility keyed by 
 - **Storefront engine ready:** `cl-pack-engine.js` already supports tiered unit-price display + the `/apps/citylocs/discount-info` endpoint. No engine work.
 - **Editor/registry = new work (Codex):** registry v3 currently models only exact **fixed-total** offers; Pins needs a new **`tiered` mode** storing: `pricing mode: tiered`, `maximum quantity: 12`, tiers (3→$16.99, 6→$14.99, 12→$12.99 each), authoritative eligibility = 84 stable Product GIDs, `discount authority: existing tag-based app`. The `bundle-gift-discount`/fixed-total Function must **ignore** tiered entries (must not treat Pins as fixed-total); checkout validation needs an explicit tiered mode over the generic min/max bounds.
 - **Authority:** the existing tag-based Vue discount (`UV-F116-Enamel-Pin`) stays the authoritative Pins pricing backend; the storefront only mirrors approved tiers.
-- **✅ GATE LIFTED (Codex, 2026-09-16): tiered registry support live in app version 48.** Encode Pins with: `pricingMode: "tiered"`, `maximum quantity: 12`, tiers `1/$18.99, 3/$16.99, 6/$14.99, 12/$12.99`, `allowPartialCheckout: true`, one Pins category = all **84 stable Product GIDs**. Fixed-total Function explicitly ignores tiered offers → `UV-F116-Enamel-Pin` remains sole pricing authority; checkout validator enforces stable-ID eligibility + the 12-item ceiling. Lanyard out of scope.
+- **✅ GATE LIFTED (Codex, 2026-09-16): tiered registry support live in app version 48.** Encode Pins with: `pricingMode: "tiered"`, **`maximum quantity: 24`**, tier minimums `[1, 3, 6, 12]` → `1/$18.99, 3/$16.99, 6/$14.99, 12/$12.99` (the $12.99 tier runs 12→24), `allowPartialCheckout: true`, one Pins category = all **84 stable Product GIDs**. Fixed-total Function explicitly ignores tiered offers → `UV-F116-Enamel-Pin` remains sole pricing authority; checkout validator enforces stable-ID eligibility + the **24-item ceiling**. Lanyard out of scope.
 
 ## Migration steps (all on dev `153606324312`)
 1. **Capture parity baseline** from the live pins section (tier table, perso field list, preview mode, gift/Lanyard, hero) → freeze as the parity checklist.
@@ -48,7 +50,7 @@ Editor now saves **registry schema v3** with authoritative eligibility keyed by 
 7. **Live rollout** (coordinated; live pins code untouched until then).
 
 ## Parity test matrix (must pass before live)
-- Every tier price matches live at each quantity: $18.99 (1–2) / $16.99 (3–5) / $14.99 (6–11) / $12.99 (12+), max qty 12.
+- Every tier price matches live at each quantity: $18.99 (1–2) / $16.99 (3–5) / $14.99 (6–11) / $12.99 (12–24), max qty 24 (ceiling enforced; adding a 25th blocked).
 - (No gift — out of scope.)
 - Each of the 84 pins renders its correct preview (spot-check + a coverage assertion); lazy — configs not fetched until a card shows.
 - Personalization: `{Custom Text}` captured per item, all-caps + emoji-blocked, edit/remove via `createDraft` re-keys correctly.
