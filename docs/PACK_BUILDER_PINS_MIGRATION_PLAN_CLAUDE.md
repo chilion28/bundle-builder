@@ -51,7 +51,13 @@ Editor now saves **registry schema v3** with authoritative eligibility keyed by 
 6. **Diane approves** the dev pilot.
 7. **Live rollout** (coordinated; live pins code untouched until then).
 
-## Parity test matrix (must pass before live)
+## Dev pilot — built (2026-09-16)
+- Template `templates/collection.pins-pack-pilot.json` created + pushed to **dev `153606324312`** (only that file; Codex's `cl-pack-builder-section.liquid`/`cl-hypro-bundle.liquid` untouched — they live on dev, my repo has the live baseline). Settings: `pricing_mode: "auto"` (reads the saved tiered Bundle Offers offer), `preview_mode: "image_overlay"`, `allow_partial_checkout: true`.
+- **Preview needs Diane's authenticated session** (unpublished theme; unauth fetch strips `preview_theme_id` → falls back to live). Test URL (Diane, logged in):
+  `https://citylocs.com/collections/us-license-plate-enamel-pins-copy?view=pins-pack-pilot&preview_theme_id=153606324312`
+- **Check #1 first:** does the builder render the 84 pins with **tiered pricing** (not fixed-total, not blank)? If pricing/eligibility doesn't resolve, the offer may be attached to the non-`copy` collection handle — try `us-license-plate-enamel-pins`, or set the template's `pricing_mode` to `tiered` explicitly.
+
+## Parity test matrix (Diane runs on the dev preview URL; must pass before live)
 - Every tier price matches live at each quantity: $18.99 (1–2) / $16.99 (3–5) / $14.99 (6–11) / $12.99 (12–24), max qty 24 (ceiling enforced; adding a 25th blocked).
 - (No gift — out of scope.)
 - Each of the 84 pins renders its correct preview (spot-check + a coverage assertion); lazy — configs not fetched until a card shows.
