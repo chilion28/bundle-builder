@@ -26,11 +26,17 @@ Codex named four things to preserve; make each a concrete verification item:
 
 Also carry `custom_hero_text` and the NEW `builder_preview_mode` (none|image_overlay).
 
-### ⚠️ Free Lanyard gift — UNCONFIRMED (needs Diane/Codex)
-Could NOT find a live free-Lanyard gift configured on the pins collection page — the "Lanyards" hits there were a mega-menu link, not a gift. The generic gift-cleanup recount logic IS present (removes `_bundle_free_gift` lines when `paidForBundle < _bundle_free_gift_min`), but no gift-ADD with a threshold. My earlier note ("pins MUST consume gift/reward metafields — the free Lanyard") was a **plan item, not confirmed live behavior**, so the Lanyard may be a *planned addition*, not current parity. **Confirm: is a free Lanyard currently live on the pins builder, and at what quantity threshold + which variant?** If not live, it's a post-parity enhancement, not part of the parity baseline. (Also possible the live pins builder is a separate GemPages page I haven't identified — the plain `/collections/us-license-plate-enamel-pins` shows tiers + cart gift-cleanup but not the full add-to-bundle builder UI.)
+### Free Lanyard gift — OUT OF SCOPE (Codex, 2026-09-16)
+Confirmed: there is **no live Pins gift / Lanyard reward to preserve**. Do NOT invent or add it during migration. If wanted later it's a **separate approved enhancement** with an explicit gift product, threshold, and backend qualification test. Removed from the parity baseline and the parity test matrix.
 
 ## Dependency — R-A RESOLVED (Codex, 2026-09-16)
 Editor now saves **registry schema v3** with authoritative eligibility keyed by **stable Shopify Product GIDs**: `eligibilitySource: "product_ids"`, `authoritativeEligibility: { source: "product_ids", productIds: [...] }`, and each slot stores `productIds`. Both the discount and checkout-validation Functions enforce the IDs. Handles remain only in storefront config for matching rendered cards — not pricing authority. → Pins eligibility encoding is unblocked: assign the 84 `us-license-plate-enamel-pins` products' GIDs to the pins offer.
+
+## Pricing ownership + gate (Codex, 2026-09-16)
+- **Storefront engine ready:** `cl-pack-engine.js` already supports tiered unit-price display + the `/apps/citylocs/discount-info` endpoint. No engine work.
+- **Editor/registry = new work (Codex):** registry v3 currently models only exact **fixed-total** offers; Pins needs a new **`tiered` mode** storing: `pricing mode: tiered`, `maximum quantity: 12`, tiers (3→$16.99, 6→$14.99, 12→$12.99 each), authoritative eligibility = 84 stable Product GIDs, `discount authority: existing tag-based app`. The `bundle-gift-discount`/fixed-total Function must **ignore** tiered entries (must not treat Pins as fixed-total); checkout validation needs an explicit tiered mode over the generic min/max bounds.
+- **Authority:** the existing tag-based Vue discount (`UV-F116-Enamel-Pin`) stays the authoritative Pins pricing backend; the storefront only mirrors approved tiers.
+- **🚧 GATE:** **hold final Pins registry encoding** until Codex confirms tiered registry support is deployed. Perso/preview/adapter parity work proceeds now.
 
 ## Migration steps (all on dev `153606324312`)
 1. **Capture parity baseline** from the live pins section (tier table, perso field list, preview mode, gift/Lanyard, hero) → freeze as the parity checklist.
@@ -42,9 +48,9 @@ Editor now saves **registry schema v3** with authoritative eligibility keyed by 
 7. **Live rollout** (coordinated; live pins code untouched until then).
 
 ## Parity test matrix (must pass before live)
-- Every tier price matches live at each quantity (incl. the top tier and any partial/under-min behavior).
-- Free Lanyard gift unlocks at the same threshold; not double-granted (F3 if any simple+tier overlap).
-- Each of the 168 pins renders its correct preview (spot-check + a coverage assertion); lazy — configs not fetched until a card shows.
+- Every tier price matches live at each quantity: $18.99 (1–2) / $16.99 (3–5) / $14.99 (6–11) / $12.99 (12+), max qty 12.
+- (No gift — out of scope.)
+- Each of the 84 pins renders its correct preview (spot-check + a coverage assertion); lazy — configs not fetched until a card shows.
 - Personalization: `{Custom Text}` captured per item, all-caps + emoji-blocked, edit/remove via `createDraft` re-keys correctly.
 - Cart parity: `_bundle_id` scoping, edit link, clear/restore behavior matches live.
 - Security: forged `_bundle_*` / ineligible product cannot join the bundle or trigger tier/gift (server-authoritative eligibility — ties to R-A).
