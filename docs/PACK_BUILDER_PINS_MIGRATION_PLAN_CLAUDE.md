@@ -55,5 +55,14 @@ Editor now saves **registry schema v3** with authoritative eligibility keyed by 
 - Cart parity: `_bundle_id` scoping, edit link, clear/restore behavior matches live.
 - Security: forged `_bundle_*` / ineligible product cannot join the bundle or trigger tier/gift (server-authoritative eligibility — ties to R-A).
 
+## Storefront wiring findings (2026-09-16) + boundary questions
+Migrated builders (WF/Hypro) are hosted by `sections/cl-pack-builder-section.liquid`, which renders **`cl-hypro-bundle`** (Codex-owned — Claude must NOT edit) in `grid`/`summary`/`config` blocks, passing `collection_handle`, **`fixed_total`**, `allow_partial_checkout`, `reward_label`, `builder_url`, `preview_mode` (none|image_overlay). Cards come from `cl-pack-grid.liquid`, which marks a card personalized from each product's **`personalization_fields`** metafield (per-product) and emits `data-cl-perso-fields`. WF template = `templates/collection.wf-pack-pilot.json`.
+
+**Boundary questions for Codex (before I wire anything):**
+1. **Tiered host wiring.** The section/block invocation currently expresses only **fixed-total** (passes `fixed_total`) and routes through Codex's `cl-hypro-bundle`. Pins is **tiered** (no fixed total; pricing via `discount-info`). Is standing up the tiered builder host (a tiered section/block invocation, or a `pricing_mode: tiered` setting on `cl-pack-builder-section.liquid`) **Codex's lane** (engine/block), with Claude supplying perso/preview config? Or is there already a tiered invocation I should point a pins collection template at?
+2. **Perso metafield setup.** Cards personalize from per-product `personalization_fields`, which is outside the editor's write allowlist. Are the 84 pins' `personalization_fields = ["Custom Text"]` already set, or does that need a one-time backfill (and by whom)? (The plan's "explicit fields, no per-product backfill" assumed a collection-level field list; the shared card snippet reads per-product — reconcile.)
+
+**Claude's unambiguous lane meanwhile:** verify the perso adapter (`{Custom Text}` explicit, `["uppercase","no_emoji"]`, `selectionKey`==`makeItemKey`) and preview adapter (84 pins render via `cl-pack-preview.js`, lazy config fetch) using the WIP harness — no live/dev deploy, no Codex files.
+
 ## Ownership (rule 0)
 Claude: perso adapter, preview adapter, `CL_PLATE_CFG`/pins preview config, pins offer inputs, this parity test. Codex: engine, central editor, backend eligibility/pricing registry. No shared files.
