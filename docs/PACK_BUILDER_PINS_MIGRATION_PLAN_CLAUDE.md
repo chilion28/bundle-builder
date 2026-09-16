@@ -6,7 +6,7 @@
 
 ## Prerequisites — status
 - **AC4 (perso adapter) ✅ DONE.** Live `assets/cl-pack-perso.js` now carries the emoji-block + all-caps validators **and** `createDraft` (edit-draft). Confirmed in-file (EMOJI/`hasEmoji`/`uppercase`/`no_emoji` at ~L39–209; `createDraft` present). No merge needed.
-- **AC6 (preview coverage) — groundwork ready.** `_pack-builder-adapters-wip/cl-pins-preview-entries.json` holds **168 pin preview entries** (per-state enamel-pin handles). Remaining: integrate into the on-theme preview config that Codex's `assets/cl-pack-preview.js` fetches via `configUrl`, and **verify coverage == the live pins collection** (no missing handle → no blank preview). Per AC6, the editor must refuse "complete" if any referenced preview handle doesn't resolve.
+- **AC6 (preview coverage) ✅ DONE (verified 2026-09-16).** The **84** pin preview entries (my earlier "168" was a regex miscount — it double-counted each entry's nested `f:{…}` object) are **already present in the live canonical `assets/cl-pack-preview-config.json`, byte-identical** to the WIP source (pulled live; 0 missing, 0 differing). Coverage vs the live collection `us-license-plate-enamel-pins` (84 products) is **1:1 — 0 handles without an entry, 0 stale entries.** No merge, no deploy needed on the preview side. Canonical asset + `configUrl` per Codex: `{{ 'cl-pack-preview-config.json' | asset_url | json }}`. (Do NOT deploy the standalone WIP `cl-plate-config.json`.)
 
 ## Parity baseline (capture from the live Pins section FIRST — step 1)
 Codex named four things to preserve; make each a concrete verification item:
@@ -17,8 +17,8 @@ Codex named four things to preserve; make each a concrete verification item:
 
 Also carry the extra metafields the pins builder consumes (from the earlier metafield plan): the **free Lanyard** gift (`gift_tiers` / `builder_free_gift_*`), `custom_hero_text`, and the NEW `builder_preview_mode` (none|image_overlay).
 
-## Open dependency (blocks eligibility encoding only)
-- **R-A — product IDs vs handles for eligibility.** My Phase-1 review recommended keying eligibility on **stable product IDs**, not handles. **Pins makes this urgent:** it's a large (~168), frequently renamed/added collection — a handle-keyed eligibility list would silently drop renamed pins. **Confirm with Codex whether the editor now keys eligibility on product IDs before I encode the pins eligibility set.** (The perso/preview/adapter parity work below does NOT depend on this and can proceed in parallel.)
+## Dependency — R-A RESOLVED (Codex, 2026-09-16)
+Editor now saves **registry schema v3** with authoritative eligibility keyed by **stable Shopify Product GIDs**: `eligibilitySource: "product_ids"`, `authoritativeEligibility: { source: "product_ids", productIds: [...] }`, and each slot stores `productIds`. Both the discount and checkout-validation Functions enforce the IDs. Handles remain only in storefront config for matching rendered cards — not pricing authority. → Pins eligibility encoding is unblocked: assign the 84 `us-license-plate-enamel-pins` products' GIDs to the pins offer.
 
 ## Migration steps (all on dev `153606324312`)
 1. **Capture parity baseline** from the live pins section (tier table, perso field list, preview mode, gift/Lanyard, hero) → freeze as the parity checklist.
