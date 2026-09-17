@@ -9,6 +9,18 @@
 - **Zeroing = native "Buy X Get Y" discount** ("buy 2, get 1 [hat] free") — the canonical native use case → no code, no Codex dependency. Storefront auto-add manager (Claude) adapts to the 2-item trigger.
 - Sequence: (1) team creates the hat product (on-channel, inventory set); (2) Diane creates the native Buy-2-Get-1 discount targeting it; (3) Claude builds the auto-add manager (testable now with a placeholder variant, real variant swapped in when the hat exists); (4) dev test → live.
 
+## ✅ FINALIZED DIVISION + CONTRACT (2026-09-17)
+**Zeroing route = FUNCTION (Codex), NOT native BXGY.** Reason (Codex): native "Buy X Get Y" makes the Buy-X products ineligible for other product discounts → would break the existing volume promotions. So a `citylocs-functions` discount function is authority.
+
+**Contract (agreed):**
+- Storefront gift line marked **`_free_gift = buy2-hat`** (do NOT reuse `_bundle_free_gift`). ✅ matches `cl-free-gift-buy2.js`.
+- Function authorizes + zeroes **only the configured clearance-hat variant**, requires **≥ 2 non-gift paid units**, caps free qty at **1/order**, and Codex tests coexistence with the tag/Vue volume discounts + pack-builder discounts.
+- Storefront manager stays **INERT** until (a) the real clearance-hat variant ID exists and (b) Codex's backend config is ready. (Currently inert: not loaded anywhere; `giftVariantId` null = no-op.)
+
+**Owners:** Claude = storefront auto-add/remove manager (`cl-free-gift-buy2.js`, commit `a30a364`) + nudge + theme wiring + dev test. Codex = the zeroing function + discount-coexistence. Diane = create the hat product (Online Store channel, inventory = budget cap) + provide the variant ID.
+
+**Activation sequence:** hat product created → variant ID given to Claude (`window.CL_FREE_GIFT_VARIANT_ID`) + Codex's function configured for it → Claude wires the manager into theme.liquid on DEV + builds the nudge → joint dev test (add 2 → hat $0; drop below 2 → removed; gift-only cart → not free → removed) → live on approval.
+
 ---
 
 **Author:** Claude · **Date:** 2026-09-14 · **Status:** Proposal (mechanic updated 2026-09-17; $30 version below is historical).
