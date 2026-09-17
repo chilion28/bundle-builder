@@ -1,0 +1,32 @@
+{%- comment -%}
+  Storefront bridge for the "Buy 2, get a free hat" promo.
+
+  Reads the app-owned authoritative config from the shop JSON metafield
+  `$app:buy2_gift_promo` (single source of truth — the Bundle app's picker
+  writes it, and the discount Function reads the SAME metafield). Converts the
+  stable variant GID to a numeric variant id, exposes it as
+  window.CL_FREE_GIFT_VARIANT_ID, and loads the auto-add manager.
+
+  Inert by default: if the metafield is absent/disabled/empty, nothing loads and
+  the manager never runs. So this can ship ahead of the app writing the config.
+
+  ⚠️ ASSUMED JSON SHAPE (confirm with Codex — keys are the only thing to reconcile):
+    { "enabled": true,
+      "giftVariantId": "gid://shopify/ProductVariant/1234567890",
+      "threshold": 2,
+      "label": "Free gift" }
+{%- endcomment -%}
+{%- liquid
+  assign cl_fg = shop.metafields.app.buy2_gift_promo.value
+  assign cl_fg_gid = cl_fg.giftVariantId | default: cl_fg.variantId
+  assign cl_fg_vid = cl_fg_gid | split: '/' | last
+  assign cl_fg_threshold = cl_fg.threshold | default: 2
+-%}
+{%- if cl_fg.enabled and cl_fg_vid != blank -%}
+  <script>
+    window.CL_FREE_GIFT_VARIANT_ID = {{ cl_fg_vid | json }};
+    window.CL_FREE_GIFT_THRESHOLD = {{ cl_fg_threshold | json }};
+    window.CL_FREE_GIFT_LABEL = {{ cl_fg.label | default: 'Free gift' | json }};
+  </script>
+  <script src="{{ 'cl-free-gift-buy2.js' | asset_url }}" defer></script>
+{%- endif -%}

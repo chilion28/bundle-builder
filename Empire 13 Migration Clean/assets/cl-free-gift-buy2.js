@@ -27,7 +27,7 @@
     // (e.g. a theme setting or inline <script>) so it's a one-line swap when the
     // real hat product is created. PLACEHOLDER 0 = promo inert until set.
     giftVariantId: String(window.CL_FREE_GIFT_VARIANT_ID || '') || null,
-    threshold: 2, // paid units required to earn the gift
+    threshold: parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) > 0 ? parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) : 2, // paid units required to earn the gift
     prop: '_free_gift', // line-item property marking our gift line
     propVal: 'buy2-hat'
   };
