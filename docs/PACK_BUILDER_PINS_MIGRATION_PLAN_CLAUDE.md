@@ -74,6 +74,11 @@ Migrated builders (WF/Hypro) are hosted by `sections/cl-pack-builder-section.liq
 
 **Claude's unambiguous lane meanwhile:** verify the perso adapter (`{Custom Text}` explicit, `["uppercase","no_emoji"]`, `selectionKey`==`makeItemKey`) and preview adapter (84 pins render via `cl-pack-preview.js`, lazy config fetch) using the WIP harness — no live/dev deploy, no Codex files.
 
+## 🔴 CRITICAL PRICING BUG (Diane, 2026-09-16) — auto → fixed_total fallback
+At 24 pins the builder charged **$49.99 total** (~$2.08/pin, "Add **3-Pack** to Cart ($49.99)") and at 3 pins showed **$18.99/pin, $0 saved**. That $49.99/"3-Pack" is the section's **`fixed_total` default (4999)** — so **`pricing_mode: "auto"` did NOT resolve the tiered offer; it fell back to fixed-total** and forced a $49.99 price, overriding the tag discount. Tiered pricing ($16.99/$14.99/$12.99 via `UV-F116-Enamel-Pin` discount-info) never engaged.
+- **Claude fix (my lane):** set the pilot template `pricing_mode: "tiered"` (explicit) → removes the fixed-total fallback. Pushed to dev. Re-test expected: $16.99 (3–5) / $14.99 (6–11) / $12.99 (12–24), total = per-pin × qty, no $49.99.
+- **Codex flag (his lane):** `auto` mis-resolved to `fixed_total` instead of the saved **tiered** offer — auto's offer-detection is broken (other builders relying on `auto` could misprice too). Confirm: (a) how `auto`/`cl-hypro-bundle` maps the registry offer to a collection, (b) which collection the pins offer is attached to (pilot renders `-copy`), (c) tiered mode displays discount-info tiers AND does not force any fixed price. If explicit `tiered` still shows base $18.99 (no discount), the registry/tag tiers aren't resolving for this collection → offer-association issue.
+
 ## Dev parity-test results (Diane, 2026-09-16) — WORKS, with gaps
 ✅ **Working:** tiered per-pin pricing ($18.99 base, resolves), personalization (`{Custom Text}`, renders ALL-CAPS "TEST"), live plate previews per pin, **and a CityLocs Lanyard free gift unlocking at 6 pins renders in BOTH dev pilot and live** (so the Lanyard IS configured/live via metafields — contradicts the earlier "no live gift"; it carries over in the dev pilot).
 
