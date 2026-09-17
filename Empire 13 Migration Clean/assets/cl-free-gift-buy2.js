@@ -204,9 +204,28 @@
       'padding:9px 12px;margin:0 0 8px;font-size:13px;line-height:1.35;text-align:center;}' +
       '.cl-freegift-nudge--page{margin:0 0 14px;}';
     var st = document.createElement('style'); st.textContent = css; (document.head || document.documentElement).appendChild(st);
-    var t;
-    new MutationObserver(function () { clearTimeout(t); t = setTimeout(applyDom, 60); })
-      .observe(document.documentElement, { childList: true, subtree: true });
+    var t, lastLines = -1;
+    new MutationObserver(function () {
+      clearTimeout(t);
+      t = setTimeout(function () {
+        applyDom();
+        // A change in the number of drawer lines means the cart changed via the
+        // drawer (remove/add) — re-evaluate. Our fetch/XHR hook doesn't always
+        // catch iCart's own request path, so this is the reliable drawer signal.
+        var n = document.querySelectorAll('.amp-cart__cart-line').length;
+        if (n !== lastLines) { lastLines = n; if (!busy) { blockedUntilChange = false; schedule(); } }
+      }, 60);
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  })();
+
+  // Chain the AMP drawer's cart-update callback so any drawer-side change
+  // (remove, quantity) re-runs evaluate. Preserves any existing handler.
+  (function () {
+    var prev = window.AMP_CART_UPDATED;
+    window.AMP_CART_UPDATED = function (cart, cartTarget) {
+      if (typeof prev === 'function') { try { prev(cart, cartTarget); } catch (e) {} }
+      if (!busy) { blockedUntilChange = false; schedule(); }
+    };
   })();
 
   function schedule() {
