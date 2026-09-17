@@ -29,7 +29,8 @@
     giftVariantId: String(window.CL_FREE_GIFT_VARIANT_ID || '') || null,
     threshold: parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) > 0 ? parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) : 2, // paid units required to earn the gift
     prop: '_free_gift', // line-item property marking our gift line
-    propVal: 'buy2-hat'
+    propVal: 'buy2-hat',
+    label: window.CL_FREE_GIFT_LABEL || 'Free gift' // reward label (from the app config)
   };
 
   var busy = false; // true while WE mutate the cart (suppress re-entrancy)
@@ -122,10 +123,9 @@
   // can listen for `cl:freegift:state`; we don't inject drawer markup here.
   function emitState(units, giftQty) {
     var remaining = Math.max(0, CONFIG.threshold - (units || 0));
-    document.dispatchEvent(new CustomEvent('cl:freegift:state', {
-      detail: { paidUnits: units || 0, threshold: CONFIG.threshold, remaining: remaining, earned: remaining === 0, giftInCart: !!giftQty }
-    }));
-    scheduleLock();
+    lastState = { paidUnits: units || 0, threshold: CONFIG.threshold, remaining: remaining, earned: remaining === 0, giftInCart: !!giftQty };
+    document.dispatchEvent(new CustomEvent('cl:freegift:state', { detail: lastState }));
+    scheduleDom();
   }
 
   // ----- Disable qty controls on the gift line (AMP drawer + cart page) -----
@@ -155,15 +155,57 @@
       else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, PAGE_SELS); }
     });
   }
+  // ----- Progress nudge ("Add 1 more item to get your free gift!") -----
+  // Injected into the AMP drawer's `.amp-cart__rewards` banner area (same anchor
+  // the pack-builder milestone banners use) and above the cart-page item list.
+  // Stable id so it's updated in place, not duplicated; re-applied on re-render.
+  var lastState = null;
+  function nudgeHtml() {
+    if (!lastState || !CONFIG.giftVariantId) return '';
+    var label = (CONFIG.label || 'free gift');
+    var labelLc = label.toLowerCase();
+    if (lastState.paidUnits <= 0) return ''; // empty cart — don't nag
+    if (lastState.earned) {
+      return lastState.giftInCart
+        ? '🎁 <strong>' + esc(label) + '</strong> unlocked — added to your cart!'
+        : '';
+    }
+    var n = lastState.remaining;
+    return 'Add <strong>' + n + '</strong> more item' + (n === 1 ? '' : 's') + ' to get your ' + esc(labelLc) + '!';
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function renderNudge() {
+    var html = nudgeHtml();
+    // Drawer
+    var rw = document.querySelector('.amp-cart__rewards');
+    if (rw) {
+      var n1 = rw.querySelector('#cl-freegift-nudge');
+      if (!html) { if (n1) n1.remove(); }
+      else { if (!n1) { n1 = document.createElement('div'); n1.id = 'cl-freegift-nudge'; n1.className = 'cl-freegift-nudge'; rw.insertBefore(n1, rw.firstChild); } if (n1.innerHTML !== html) n1.innerHTML = html; }
+      rw.style.display = rw.textContent.trim() ? '' : 'none'; // mirror tidyRewards
+    }
+    // Cart page (above the item list)
+    var list = document.querySelector('[data-cart-item-list]');
+    if (list && list.parentNode) {
+      var n2 = document.getElementById('cl-freegift-nudge-page');
+      if (!html) { if (n2) n2.remove(); }
+      else { if (!n2) { n2 = document.createElement('div'); n2.id = 'cl-freegift-nudge-page'; n2.className = 'cl-freegift-nudge cl-freegift-nudge--page'; list.parentNode.insertBefore(n2, list); } if (n2.innerHTML !== html) n2.innerHTML = html; }
+    }
+  }
+
+  function applyDom() { applyLock(); renderNudge(); }
   // The drawer/cart re-render asynchronously after a cart change (replacing the
-  // line nodes, dropping our attributes) — re-apply on a few delays and on DOM mutation.
-  function scheduleLock() { [0, 150, 500].forEach(function (d) { setTimeout(applyLock, d); }); }
+  // line nodes, dropping our attributes/nudge) — re-apply on a few delays and on DOM mutation.
+  function scheduleDom() { [0, 150, 500].forEach(function (d) { setTimeout(applyDom, d); }); }
   (function () {
     var css = '.cl-buy2-gift-line .amp-cart__line-quantity-selector,' +
-      '.cl-buy2-gift-line .quantity-selector{opacity:.5!important;pointer-events:none!important;cursor:not-allowed!important;}';
+      '.cl-buy2-gift-line .quantity-selector{opacity:.5!important;pointer-events:none!important;cursor:not-allowed!important;}' +
+      '.cl-freegift-nudge{background:#eef8ff;color:#0a4b6e;border:1px solid #bfe4fb;border-radius:8px;' +
+      'padding:9px 12px;margin:0 0 8px;font-size:13px;line-height:1.35;text-align:center;}' +
+      '.cl-freegift-nudge--page{margin:0 0 14px;}';
     var st = document.createElement('style'); st.textContent = css; (document.head || document.documentElement).appendChild(st);
     var t;
-    new MutationObserver(function () { clearTimeout(t); t = setTimeout(applyLock, 60); })
+    new MutationObserver(function () { clearTimeout(t); t = setTimeout(applyDom, 60); })
       .observe(document.documentElement, { childList: true, subtree: true });
   })();
 
