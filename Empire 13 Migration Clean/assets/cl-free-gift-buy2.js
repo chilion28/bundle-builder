@@ -80,6 +80,9 @@
     getCart().then(function (cart) {
       var units = paidUnits(cart);
       var gift = findGift(cart);
+      giftIndex = -1;
+      (cart.items || []).forEach(function (it, i) { if (isGiftLine(it)) giftIndex = i; });
+      giftKey = gift ? gift.key : null;
 
       if (units >= CONFIG.threshold) {
         if (!gift) {
@@ -122,7 +125,47 @@
     document.dispatchEvent(new CustomEvent('cl:freegift:state', {
       detail: { paidUnits: units || 0, threshold: CONFIG.threshold, remaining: remaining, earned: remaining === 0, giftInCart: !!giftQty }
     }));
+    scheduleLock();
   }
+
+  // ----- Disable qty controls on the gift line (AMP drawer + cart page) -----
+  // Prevents the customer bumping the gift qty and briefly seeing an extra unit
+  // at full price. The JS clamp and the Function cap remain safety fallbacks.
+  // Only our property-marked line is affected — a normal purchase of the same
+  // variant keeps its controls (drawer matched by index, cart page by line key).
+  //   - AMP drawer: `.amp-cart__cart-line` correlates by index with cart.items
+  //     (same convention as cl-bundle-cart.liquid); `giftIndex` set in evaluate().
+  //   - Cart page: `.cart-item[data-cartitem-key]` matched by the gift's line key.
+  var giftIndex = -1, giftKey = null;
+  var DRAWER_SELS = ['.amp-cart__line-quantity-selector-input',
+    '.amp-cart__line-quantity-selector-less', '.amp-cart__line-quantity-selector-more'];
+  var PAGE_SELS = ['.quantity-selector__input', '.quantity-selector__button'];
+  function disableIn(el, sels) { sels.forEach(function (s) { var c = el.querySelector(s); if (c) { c.setAttribute('disabled', 'disabled'); c.setAttribute('tabindex', '-1'); } }); }
+  function enableIn(el, sels) { sels.forEach(function (s) { var c = el.querySelector(s); if (c) { c.removeAttribute('disabled'); c.removeAttribute('tabindex'); } }); }
+  function applyLock() {
+    // AMP drawer (by index)
+    document.querySelectorAll('.amp-cart__cart-line').forEach(function (line, i) {
+      if (i === giftIndex && giftIndex >= 0) { line.classList.add('cl-buy2-gift-line'); disableIn(line, DRAWER_SELS); }
+      else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, DRAWER_SELS); }
+    });
+    // Cart page (by line key)
+    document.querySelectorAll('.cart-item[data-cartitem-key]').forEach(function (line) {
+      var isGift = giftKey && line.getAttribute('data-cartitem-key') === giftKey;
+      if (isGift) { line.classList.add('cl-buy2-gift-line'); disableIn(line, PAGE_SELS); }
+      else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, PAGE_SELS); }
+    });
+  }
+  // The drawer/cart re-render asynchronously after a cart change (replacing the
+  // line nodes, dropping our attributes) — re-apply on a few delays and on DOM mutation.
+  function scheduleLock() { [0, 150, 500].forEach(function (d) { setTimeout(applyLock, d); }); }
+  (function () {
+    var css = '.cl-buy2-gift-line .amp-cart__line-quantity-selector,' +
+      '.cl-buy2-gift-line .quantity-selector{opacity:.5!important;pointer-events:none!important;cursor:not-allowed!important;}';
+    var st = document.createElement('style'); st.textContent = css; (document.head || document.documentElement).appendChild(st);
+    var t;
+    new MutationObserver(function () { clearTimeout(t); t = setTimeout(applyLock, 60); })
+      .observe(document.documentElement, { childList: true, subtree: true });
+  })();
 
   function schedule() {
     if (scheduled) return;
