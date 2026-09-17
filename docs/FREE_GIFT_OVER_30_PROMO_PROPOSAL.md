@@ -22,6 +22,33 @@
 
 **Activation sequence:** hat product created → variant ID given to Claude (`window.CL_FREE_GIFT_VARIANT_ID`) + Codex's function configured for it → Claude wires the manager into theme.liquid on DEV + builds the nudge → joint dev test (add 2 → hat $0; drop below 2 → removed; gift-only cart → not free → removed) → live on approval.
 
+## 🚀 GO-LIVE PLAN (safest deploy, 2026-09-17)
+
+**Core safety principle:** the promo's **master switch is the `enabled` flag** in the app's Promotions-page config (`$app:buy2_gift_promo`, shop-level, read by both storefront + Function). The storefront is **inert unless `enabled:true` AND a valid gift variant is set** — so we deploy all code to live while **disabled**, confirm it's dormant, then flip the switch to launch. `enabled:false` is also the **instant kill switch** (no code deploy to stop).
+
+⚠️ Note: the metafield is shop-level and currently `enabled:true` with the TEMP keychain (for dev). **Set `enabled:false` (or leave gift unconfigured) BEFORE pushing storefront to live**, or live would activate the temp keychain the moment the code lands.
+
+**Prereqs (before touching live):**
+1. Boss picks the real clearance hat → create the product, **on the Online Store sales channel**, **inventory = giveaway budget** (natural cap; out-of-stock → manager won't add).
+2. In the Promotions page, set the gift to the real hat, threshold 2 — but keep **`enabled:false`** for now.
+
+**Deploy order (both sides while DISABLED):**
+3. **Codex:** deploy the discount Function to the **live app**.
+4. **Claude:** push storefront to the **live theme 153643909208**:
+   - `assets/cl-free-gift-buy2.js`, `snippets/cl-free-gift-buy2-init.liquid`
+   - `layout/theme.liquid` — **PULL live theme.liquid first, confirm only my `{% render 'cl-free-gift-buy2-init' %}` line differs, then push** (live's theme.liquid is the standard Empire one = my repo baseline, unlike the divergent DEV theme — but pull-first to avoid clobbering any newer live edits). Push with `--allow-live --nodelete --only`.
+
+**Verify inert on live (promo disabled):**
+5. On live (no preview param), console: `window.CLFreeGiftBuy2` should be **undefined** (snippet doesn't load the manager while disabled). Add items → **no** gift auto-adds. Live cart behaves exactly as before. Zero customer impact.
+
+**Launch (flip the switch):**
+6. When ready: Promotions page → gift = real hat, **`enabled:true`**. Promo activates instantly (no code deploy).
+7. **Smoke test on live:** add 2 items → real hat auto-adds at **$0**, "Free gift" discount applies, checkout shows the hat at $0; confirm it coexists with volume/pack-builder discounts; confirm the qty-lock + nudge; drop below 2 → hat removed.
+
+**Kill switch / rollback:** flip **`enabled:false`** in the Promotions page → storefront goes inert, Function stops. The deployed code is additive + inert-by-default, safe to leave in place.
+
+**Extra-safe option (optional):** duplicate the live theme, push the 3 files to the duplicate, preview-test, then publish the duplicate. Heavier; given the code is inert-by-default + additive + already dev-validated, the disabled-first direct push is low-risk and simpler.
+
 ---
 
 **Author:** Claude · **Date:** 2026-09-14 · **Status:** Proposal (mechanic updated 2026-09-17; $30 version below is historical).
