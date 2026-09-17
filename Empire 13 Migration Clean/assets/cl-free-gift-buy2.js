@@ -36,9 +36,14 @@
   var blockedUntilChange = false; // set if the gift came back not-$0; cleared on the next real cart change
   var scheduled = false;
 
+  // A line is OUR gift ONLY if it carries the _free_gift=buy2-hat property. The
+  // configured variant is an ADDITIONAL authorization check — never sufficient
+  // alone, because a customer may legitimately buy that same variant as a paid
+  // item (which must count toward the threshold, not be treated as the gift).
   function isGiftLine(it) {
-    return (CONFIG.giftVariantId && String(it.variant_id) === CONFIG.giftVariantId) ||
-      (it.properties && it.properties[CONFIG.prop] === CONFIG.propVal);
+    var marked = it.properties && it.properties[CONFIG.prop] === CONFIG.propVal;
+    if (!marked) return false;
+    return !CONFIG.giftVariantId || String(it.variant_id) === CONFIG.giftVariantId;
   }
   function paidUnits(cart) {
     return (cart.items || []).reduce(function (n, it) { return isGiftLine(it) ? n : n + it.quantity; }, 0);

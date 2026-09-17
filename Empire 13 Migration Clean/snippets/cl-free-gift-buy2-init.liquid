@@ -10,15 +10,17 @@
   Inert by default: if the metafield is absent/disabled/empty, nothing loads and
   the manager never runs. So this can ship ahead of the app writing the config.
 
-  ⚠️ ASSUMED JSON SHAPE (confirm with Codex — keys are the only thing to reconcile):
-    { "enabled": true,
+  Canonical config (confirmed by Codex 2026-09-17; `version` + `maximumGiftQuantity`
+  are ignored by this bridge — the Function enforces the max):
+    { "version": 1, "enabled": true,
       "giftVariantId": "gid://shopify/ProductVariant/1234567890",
-      "threshold": 2,
-      "label": "Free gift" }
+      "threshold": 2, "maximumGiftQuantity": 1, "label": "Free gift" }
 {%- endcomment -%}
 {%- liquid
-  assign cl_fg = shop.metafields.app.buy2_gift_promo.value
-  assign cl_fg_gid = cl_fg.giftVariantId | default: cl_fg.variantId
+  # App-owned ($app) metafields are always Liquid-accessible (no Storefront API
+  # permission needed) and require bracket notation for the "$app" namespace.
+  assign cl_fg = shop.metafields["$app"].buy2_gift_promo.value
+  assign cl_fg_gid = cl_fg.giftVariantId
   assign cl_fg_vid = cl_fg_gid | split: '/' | last
   assign cl_fg_threshold = cl_fg.threshold | default: 2
 -%}
