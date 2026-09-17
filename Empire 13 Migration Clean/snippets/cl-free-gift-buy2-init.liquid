@@ -17,9 +17,11 @@
       "threshold": 2, "maximumGiftQuantity": 1, "label": "Free gift" }
 {%- endcomment -%}
 {%- liquid
-  # App-owned ($app) metafields are always Liquid-accessible (no Storefront API
-  # permission needed) and require bracket notation for the "$app" namespace.
-  assign cl_fg = shop.metafields["$app"].buy2_gift_promo.value
+  # App-owned metafield. In theme Liquid the `$app` prefix must be given as its
+  # EXPANDED reserved namespace `app--{app_id}--...` (the `.app` / `["$app"]`
+  # forms resolve only inside a theme app extension, not arbitrary theme Liquid).
+  # 387005743105 = the citylocs-functions (Bundle Offers) app id.
+  assign cl_fg = shop.metafields["app--387005743105"].buy2_gift_promo.value
   assign cl_fg_gid = cl_fg.giftVariantId
   assign cl_fg_vid = cl_fg_gid | split: '/' | last
   assign cl_fg_threshold = cl_fg.threshold | default: 2
