@@ -79,6 +79,15 @@ At 24 pins the builder charged **$49.99 total** (~$2.08/pin, "Add **3-Pack** to 
 - **Claude fix (my lane):** set the pilot template `pricing_mode: "tiered"` (explicit) → removes the fixed-total fallback. Pushed to dev. Re-test expected: $16.99 (3–5) / $14.99 (6–11) / $12.99 (12–24), total = per-pin × qty, no $49.99.
 - **Codex flag (his lane):** `auto` mis-resolved to `fixed_total` instead of the saved **tiered** offer — auto's offer-detection is broken (other builders relying on `auto` could misprice too). Confirm: (a) how `auto`/`cl-hypro-bundle` maps the registry offer to a collection, (b) which collection the pins offer is attached to (pilot renders `-copy`), (c) tiered mode displays discount-info tiers AND does not force any fixed price. If explicit `tiered` still shows base $18.99 (no discount), the registry/tag tiers aren't resolving for this collection → offer-association issue.
 
+## ✅ PRICING FIXED + verified (2026-09-16)
+After restoring `pricing_mode: auto` on the original collection, all tiers resolve correctly: 1–2 $18.99 / 3–5 $16.99 (save $2) / 6–11 $14.99 (save $4) / 12–24 $12.99 (save $6); free Lanyard unlocks at 6; max 24; total = per-pin × qty (24 = $311.76, verified). The critical fixed-total mispricing is resolved.
+
+## ⚠️ REMAINING UI ISSUES — all in Codex's `cl-hypro-bundle` (his lane, not template-settable)
+1. **Reward sidebar looks broken/unfinished** — renders gray skeleton/placeholder bars that fill blue, instead of the live builder's clean labeled milestone circles (0/3/6/12/24) + "Next discount"/"Free gift" text. Diane: "super weird, this is bad."
+2. **Base-tier strikethrough** — at 1–2 pins the line shows `$18.99` struck through → `$18.99` with "Save $0.00". No discount exists at the base tier, so it must show a clean `$18.99` (no strikethrough, no savings row) until an actual tier discount applies.
+3. (Still open from before) **Catalog UX**: state search/filter, sort, pagination (12/page) missing.
+Perso/preview/pricing wiring (Claude's lane) is correct; all remaining items are summary/line/catalog rendering in `cl-hypro-bundle` → Codex.
+
 ## Dev parity-test results (Diane, 2026-09-16) — WORKS, with gaps
 ✅ **Working:** tiered per-pin pricing ($18.99 base, resolves), personalization (`{Custom Text}`, renders ALL-CAPS "TEST"), live plate previews per pin, **and a CityLocs Lanyard free gift unlocking at 6 pins renders in BOTH dev pilot and live** (so the Lanyard IS configured/live via metafields — contradicts the earlier "no live gift"; it carries over in the dev pilot).
 
