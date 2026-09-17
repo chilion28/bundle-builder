@@ -14,7 +14,8 @@
 
 **Contract (agreed):**
 - Storefront gift line marked **`_free_gift = buy2-hat`** (do NOT reuse `_bundle_free_gift`). ✅ matches `cl-free-gift-buy2.js`.
-- Function authorizes + zeroes **only the configured clearance-hat variant**, requires **≥ 2 non-gift paid units**, caps free qty at **1/order**, and Codex tests coexistence with the tag/Vue volume discounts + pack-builder discounts.
+- Function authorizes + zeroes **only the configured gift variant**, requires **≥ 2 non-gift paid units**, caps free qty at **1/order**, and Codex tests coexistence with the tag/Vue volume discounts + pack-builder discounts.
+- **Gift variant is a MERCHANT-SELECTABLE app setting (Diane 2026-09-17), not hardcoded** — the app has a product/variant picker (choose ANY catalog item), stored authoritatively as the **single source of truth**. The function reads it; the storefront reads the same value (via `window.CL_FREE_GIFT_VARIANT_ID` sourced from that config) so they can never disagree. Swapping temp item → real hat = change the setting, no redeploy. (Boss still choosing the hat → use a TEMP catalog item now.) Likely reuses the Gift Rewards stable-variant-GID picker/storage.
 - Storefront manager stays **INERT** until (a) the real clearance-hat variant ID exists and (b) Codex's backend config is ready. (Currently inert: not loaded anywhere; `giftVariantId` null = no-op.)
 
 **Owners:** Claude = storefront auto-add/remove manager (`cl-free-gift-buy2.js`, commit `a30a364`) + nudge + theme wiring + dev test. Codex = the zeroing function + discount-coexistence. Diane = create the hat product (Online Store channel, inventory = budget cap) + provide the variant ID.
