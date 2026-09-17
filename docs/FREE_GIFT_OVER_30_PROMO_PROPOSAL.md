@@ -1,6 +1,17 @@
-# Free Gift on Orders Over $30 — Implementation Proposal
+# Free Gift Promo — Implementation Proposal
 
-**Author:** Claude · **Date:** 2026-09-14 · **Status:** Proposal, no code yet.
+## 🔄 UPDATED MECHANIC (Diane, 2026-09-17) — supersedes the $30 version below
+> **Buy any 2 items from the catalog → get 1 free hat**, **no minimum dollar value**, **1 per order**.
+- Trigger is now **quantity (2 paid items)**, not a $30 subtotal.
+- Gift = a specific **non-custom, stock-clearance hat** — **NOT yet in the catalog; will be created first** (its inventory = the natural budget cap; must be on the Online Store channel to be addable).
+- "2 items" assumed to mean **2 paid units** (2 of the same product counts) — confirm if it must be 2 *distinct* products.
+- No $ minimum (boss OK with it; the point is clearing hat stock, so giving hats away is intended).
+- **Zeroing = native "Buy X Get Y" discount** ("buy 2, get 1 [hat] free") — the canonical native use case → no code, no Codex dependency. Storefront auto-add manager (Claude) adapts to the 2-item trigger.
+- Sequence: (1) team creates the hat product (on-channel, inventory set); (2) Diane creates the native Buy-2-Get-1 discount targeting it; (3) Claude builds the auto-add manager (testable now with a placeholder variant, real variant swapped in when the hat exists); (4) dev test → live.
+
+---
+
+**Author:** Claude · **Date:** 2026-09-14 · **Status:** Proposal (mechanic updated 2026-09-17; $30 version below is historical).
 **Ask (boss, via Diane):** customers who spend a minimum amount get a **pre-selected** free gift, auto-added to their cart, similar to the pack-builder free-gift experience.
 
 ## Final decisions (Diane, 2026-09-14)
