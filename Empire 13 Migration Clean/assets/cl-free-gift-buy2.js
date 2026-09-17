@@ -201,8 +201,10 @@
     var css = '.cl-buy2-gift-line .amp-cart__line-quantity-selector,' +
       '.cl-buy2-gift-line .quantity-selector{opacity:.5!important;pointer-events:none!important;cursor:not-allowed!important;}' +
       '.cl-freegift-nudge{background:#eef8ff;color:#0a4b6e;border:1px solid #bfe4fb;border-radius:8px;' +
-      'padding:9px 12px;margin:0 0 8px;font-size:13px;line-height:1.35;text-align:center;}' +
-      '.cl-freegift-nudge--page{margin:0 0 14px;}';
+      'padding:9px 12px;margin:0;font-size:13px;line-height:1.35;text-align:center;}' +
+      '.cl-freegift-nudge--page{margin:0 0 14px;}' +
+      // Hide AMP's empty rewards progress bar in the drawer (Diane 2026-09-17).
+      '.amp-cart__rewards-progress-bar{display:none;}';
     var st = document.createElement('style'); st.textContent = css; (document.head || document.documentElement).appendChild(st);
     var t, lastLines = -1;
     new MutationObserver(function () {
