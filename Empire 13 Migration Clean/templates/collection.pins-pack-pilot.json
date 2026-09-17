@@ -3,11 +3,11 @@
     "builder": {
       "type": "cl-pack-builder-section",
       "settings": {
-        "pricing_mode": "tiered",
+        "pricing_mode": "auto",
         "preview_mode": "image_overlay",
         "allow_partial_checkout": true,
         "reward_label": "Buy more, save more",
-        "builder_url": "/collections/us-license-plate-enamel-pins-copy?view=pins-pack-pilot"
+        "builder_url": "/collections/us-license-plate-enamel-pins?view=pins-pack-pilot"
       }
     }
   },
