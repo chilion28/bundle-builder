@@ -74,5 +74,16 @@ Migrated builders (WF/Hypro) are hosted by `sections/cl-pack-builder-section.liq
 
 **Claude's unambiguous lane meanwhile:** verify the perso adapter (`{Custom Text}` explicit, `["uppercase","no_emoji"]`, `selectionKey`==`makeItemKey`) and preview adapter (84 pins render via `cl-pack-preview.js`, lazy config fetch) using the WIP harness — no live/dev deploy, no Codex files.
 
+## Dev parity-test results (Diane, 2026-09-16) — WORKS, with gaps
+✅ **Working:** tiered per-pin pricing ($18.99 base, resolves), personalization (`{Custom Text}`, renders ALL-CAPS "TEST"), live plate previews per pin, **and a CityLocs Lanyard free gift unlocking at 6 pins renders in BOTH dev pilot and live** (so the Lanyard IS configured/live via metafields — contradicts the earlier "no live gift"; it carries over in the dev pilot).
+
+⚠️ **Parity gaps vs the live `-copy` pins builder — all in Codex's `cl-hypro-bundle.liquid` (his lane; not template-settable, not Claude-editable):**
+1. **State search / filter dropdown** — present live, missing in unified dev builder. (catalog module `cl-pack-catalog.js` is wired inside `cl-hypro-bundle`.)
+2. **Sort dropdown** (Featured / A–Z / Z–A) — missing in dev.
+3. **Pagination** (12/page, "1–12 of 84 pins", pages 1..7) — missing in dev (renders all 84 at once).
+4. **Sidebar reward UI differs** — live shows **labeled milestone circles** (0/3/6/12/24) + "Unlock $16.99/Pin when you buy 3" + "Next discount: 3 more Pins → $16.99/Pin" + "Free gift: 6 more Pins → CityLocs Lanyard". Dev shows a **generic dotted progress bar** + "Buy more, save more" + generic "Add N more Pins to unlock your discount". Same data, much weaker presentation.
+
+**Handoff:** these are catalog + summary rendering in `cl-hypro-bundle` → Codex. My perso/preview/pricing wiring is correct; the gaps are the shared block not replicating the old pins builder's catalog UX + labeled milestone/reward display for a tiered collection. Also flag to Codex: the **Lanyard gift is actually live** (renders at 6 pins) — reconcile with the earlier "out of scope."
+
 ## Ownership (rule 0)
 Claude: perso adapter, preview adapter, `CL_PLATE_CFG`/pins preview config, pins offer inputs, this parity test. Codex: engine, central editor, backend eligibility/pricing registry. No shared files.
