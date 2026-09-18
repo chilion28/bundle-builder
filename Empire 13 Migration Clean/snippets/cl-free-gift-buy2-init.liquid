@@ -31,6 +31,8 @@
     window.CL_FREE_GIFT_VARIANT_ID = {{ cl_fg_vid | json }};
     window.CL_FREE_GIFT_THRESHOLD = {{ cl_fg_threshold | json }};
     window.CL_FREE_GIFT_LABEL = {{ cl_fg.label | default: 'Free gift' | json }};
+    window.CL_FREE_GIFT_ENDS_ON = {{ cl_fg.endsOn | json }};
+    window.CL_FREE_GIFT_TZ = {{ cl_fg.timezone | default: 'America/Los_Angeles' | json }};
   </script>
   <script src="{{ 'cl-free-gift-buy2.js' | asset_url }}" defer></script>
 {%- endif -%}

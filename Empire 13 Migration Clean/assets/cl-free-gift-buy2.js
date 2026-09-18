@@ -30,8 +30,24 @@
     threshold: parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) > 0 ? parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) : 2, // paid units required to earn the gift
     prop: '_free_gift', // line-item property marking our gift line
     propVal: 'buy2-hat',
-    label: window.CL_FREE_GIFT_LABEL || 'Free gift' // reward label (from the app config)
+    label: window.CL_FREE_GIFT_LABEL || 'Free gift', // reward label (from the app config)
+    endsOn: window.CL_FREE_GIFT_ENDS_ON || null, // inclusive last active date "YYYY-MM-DD" (promo timezone), or null = no end
+    timezone: window.CL_FREE_GIFT_TZ || 'America/Los_Angeles'
   };
+
+  // The promo is active THROUGH 11:59:59 PM on endsOn in the promo timezone. We
+  // compare the current date in that timezone (as YYYY-MM-DD) against endsOn:
+  // still that date or earlier = active; rolled past it = expired. String compare
+  // of ISO dates is correct and avoids offset math. Server Function is authority.
+  function isExpired() {
+    if (!CONFIG.endsOn) return false;
+    try {
+      var today = new Intl.DateTimeFormat('en-CA', {
+        timeZone: CONFIG.timezone, year: 'numeric', month: '2-digit', day: '2-digit'
+      }).format(new Date());
+      return today > String(CONFIG.endsOn);
+    } catch (e) { return false; } // if Intl/timezone fails, don't wrongly expire — the Function still enforces it
+  }
 
   var busy = false; // true while WE mutate the cart (suppress re-entrancy)
   var blockedUntilChange = false; // set if the gift came back not-$0; cleared on the next real cart change
@@ -84,6 +100,18 @@
       giftIndex = -1;
       (cart.items || []).forEach(function (it, i) { if (isGiftLine(it)) giftIndex = i; });
       giftKey = gift ? gift.key : null;
+
+      if (isExpired()) {
+        // Promo ended — never add, hide the nudge, and remove any lingering gift
+        // line (the checkout Function also blocks it server-side).
+        if (gift) {
+          busy = true;
+          setQty(gift.key, 0).then(function () { busy = false; document.dispatchEvent(new CustomEvent('cart:refresh')); lastState = null; scheduleDom(); });
+          return;
+        }
+        lastState = null; scheduleDom();
+        return;
+      }
 
       if (units >= CONFIG.threshold) {
         if (!gift) {
