@@ -20,6 +20,41 @@
     <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {%- if request.path == '/products/old-school-snapback-custom' -%}
+      <style>
+        /* GemPages positions this decorative image over the legacy cart button. */
+        #e-1687540938490,
+        #e-1687540938490 * { pointer-events: none !important; }
+      </style>
+      <script>
+        // Zepto Product Personalizer calls this hook after its AJAX add. Defining
+        // it prevents the app's default /cart redirect without bypassing preview
+        // generation or personalized line-item properties.
+        window.pplr_custom_ajaxcart = function () {
+          fetch('/cart.js', { headers: { Accept: 'application/json' } })
+            .then(function (response) { return response.json(); })
+            .then(function (cart) {
+              document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart: cart } }));
+              window.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart: cart } }));
+              document.dispatchEvent(new CustomEvent('cart:open', { detail: { cart: cart } }));
+              window.dispatchEvent(new CustomEvent('cart:open', { detail: { cart: cart } }));
+
+              var attempts = 0;
+              var openAmpCart = window.setInterval(function () {
+                attempts += 1;
+                if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') {
+                  window.clearInterval(openAmpCart);
+                  window.AMP_API.OPEN_CART();
+                } else if (attempts >= 20) {
+                  window.clearInterval(openAmpCart);
+                }
+              }, 250);
+            });
+          if (typeof window.pplr_reset_cart === 'function') window.pplr_reset_cart();
+        };
+      </script>
+    {%- endif -%}
+
     <title>
       {{- page_title -}}
 
