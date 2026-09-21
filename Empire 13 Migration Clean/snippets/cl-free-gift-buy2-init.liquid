@@ -1,36 +1,51 @@
 {%- comment -%}
-  Storefront bridge for the "Buy 2, get a free hat" promo.
+  Storefront bridge for reusable "Buy X, get 1 free gift" promotions.
 
-  Reads the app-owned authoritative config from the shop JSON metafield
-  `$app:buy2_gift_promo` (single source of truth — the Bundle app's picker
-  writes it, and the discount Function reads the SAME metafield). Converts the
-  stable variant GID to a numeric variant id, exposes it as
-  window.CL_FREE_GIFT_VARIANT_ID, and loads the auto-add manager.
+  Reads `$app:buy2_gift_promo`, which may contain the reusable registry or the
+  original single-promotion payload until the merchant saves the one-time
+  upgrade. The storefront and discount Function therefore share one source of
+  truth without interrupting the currently running legacy promotion.
 
   Inert by default: if the metafield is absent/disabled/empty, nothing loads and
   the manager never runs. So this can ship ahead of the app writing the config.
 
-  Canonical config (confirmed by Codex 2026-09-17; `version` + `maximumGiftQuantity`
-  are ignored by this bridge — the Function enforces the max):
-    { "version": 1, "enabled": true,
-      "giftVariantId": "gid://shopify/ProductVariant/1234567890",
-      "threshold": 2, "maximumGiftQuantity": 1, "label": "Free gift" }
+  Registry records carry a stable variant GID, paid-unit threshold, unique cart
+  marker, customer label, and optional inclusive start/end dates. Maximum gift
+  quantity remains fixed at one and is enforced by the Function and cart manager.
 {%- endcomment -%}
 {%- liquid
   # App-owned metafield. In theme Liquid the `$app` prefix must be given as its
   # EXPANDED reserved namespace `app--{app_id}--...` (the `.app` / `["$app"]`
   # forms resolve only inside a theme app extension, not arbitrary theme Liquid).
   # 387005743105 = the citylocs-functions (Bundle Offers) app id.
-  assign cl_fg = shop.metafields["app--387005743105"].buy2_gift_promo.value
+  assign cl_fg_stored = shop.metafields["app--387005743105"].buy2_gift_promo.value
+  assign cl_fg = nil
+  assign cl_fg_enabled = false
+
+  if cl_fg_stored.promotions != blank
+    for cl_fg_candidate in cl_fg_stored.promotions
+      if cl_fg_candidate.id == cl_fg_stored.activePromotionId
+        assign cl_fg = cl_fg_candidate
+        assign cl_fg_enabled = true
+        break
+      endif
+    endfor
+  else
+    assign cl_fg = cl_fg_stored
+    assign cl_fg_enabled = cl_fg.enabled
+  endif
+
   assign cl_fg_gid = cl_fg.giftVariantId
   assign cl_fg_vid = cl_fg_gid | split: '/' | last
   assign cl_fg_threshold = cl_fg.threshold | default: 2
 -%}
-{%- if cl_fg.enabled and cl_fg_vid != blank -%}
+{%- if cl_fg_enabled and cl_fg_vid != blank -%}
   <script>
     window.CL_FREE_GIFT_VARIANT_ID = {{ cl_fg_vid | json }};
     window.CL_FREE_GIFT_THRESHOLD = {{ cl_fg_threshold | json }};
     window.CL_FREE_GIFT_LABEL = {{ cl_fg.label | default: 'Free gift' | json }};
+    window.CL_FREE_GIFT_MARKER = {{ cl_fg.cartMarker | default: 'buy2-hat' | json }};
+    window.CL_FREE_GIFT_STARTS_ON = {{ cl_fg.startsOn | json }};
     window.CL_FREE_GIFT_ENDS_ON = {{ cl_fg.endsOn | json }};
     window.CL_FREE_GIFT_TZ = {{ cl_fg.timezone | default: 'America/Los_Angeles' | json }};
   </script>

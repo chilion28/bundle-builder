@@ -1,12 +1,12 @@
 /*
- * cl-free-gift-buy2.js — "Buy any 2 items, get 1 free hat" auto-gift manager.
+ * cl-free-gift-buy2.js — reusable "Buy X items, get 1 free gift" cart manager.
  *
  * Storefront half of the promo. The ZEROING (making the hat $0) is done by a
- * native Shopify "Buy X Get Y" automatic discount (buy 2 → 1 hat at 100% off);
+ * the citylocs-functions product-discount Function;
  * this script only AUTO-ADDS / AUTO-REMOVES the gift so the customer never has
  * to find it, and never gets charged for it:
- *   - paid units (everything except the gift) >= 2  → add 1 gift hat
- *   - paid units < 2                                → remove the gift
+ *   - paid units (everything except promo gift lines) >= X → add 1 gift
+ *   - paid units < X                                      → remove the gift
  *   - gift present but NOT actually $0 (discount not applied) → remove it
  *     (fail-safe: never let a customer pay for the "free" hat)
  *   - gift quantity is clamped to 1 (extra units would be full price)
@@ -23,14 +23,13 @@
   var origFetch = window.fetch.bind(window);
 
   var CONFIG = {
-    // The stock-clearance hat variant. Set via window.CL_FREE_GIFT_VARIANT_ID
-    // (e.g. a theme setting or inline <script>) so it's a one-line swap when the
-    // real hat product is created. PLACEHOLDER 0 = promo inert until set.
+    // Merchant-selected gift variant supplied by the app-owned registry bridge.
     giftVariantId: String(window.CL_FREE_GIFT_VARIANT_ID || '') || null,
     threshold: parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) > 0 ? parseInt(window.CL_FREE_GIFT_THRESHOLD, 10) : 2, // paid units required to earn the gift
     prop: '_free_gift', // line-item property marking our gift line
-    propVal: 'buy2-hat',
+    propVal: window.CL_FREE_GIFT_MARKER || 'buy2-hat',
     label: window.CL_FREE_GIFT_LABEL || 'Free gift', // reward label (from the app config)
+    startsOn: window.CL_FREE_GIFT_STARTS_ON || null, // inclusive first active date "YYYY-MM-DD"
     endsOn: window.CL_FREE_GIFT_ENDS_ON || null, // inclusive last active date "YYYY-MM-DD" (promo timezone), or null = no end
     timezone: window.CL_FREE_GIFT_TZ || 'America/Los_Angeles'
   };
@@ -39,21 +38,23 @@
   // compare the current date in that timezone (as YYYY-MM-DD) against endsOn:
   // still that date or earlier = active; rolled past it = expired. String compare
   // of ISO dates is correct and avoids offset math. Server Function is authority.
-  function isExpired() {
-    if (!CONFIG.endsOn) return false;
+  function promoDateState() {
+    if (!CONFIG.startsOn && !CONFIG.endsOn) return 'active';
     try {
       var today = new Intl.DateTimeFormat('en-CA', {
         timeZone: CONFIG.timezone, year: 'numeric', month: '2-digit', day: '2-digit'
       }).format(new Date());
-      return today > String(CONFIG.endsOn);
-    } catch (e) { return false; } // if Intl/timezone fails, don't wrongly expire — the Function still enforces it
+      if (CONFIG.startsOn && today < String(CONFIG.startsOn)) return 'scheduled';
+      if (CONFIG.endsOn && today > String(CONFIG.endsOn)) return 'expired';
+      return 'active';
+    } catch (e) { return 'active'; } // the Function remains the authority
   }
 
   var busy = false; // true while WE mutate the cart (suppress re-entrancy)
   var blockedUntilChange = false; // set if the gift came back not-$0; cleared on the next real cart change
   var scheduled = false;
 
-  // A line is OUR gift ONLY if it carries the _free_gift=buy2-hat property. The
+  // A line is OUR gift ONLY if it carries this promotion's _free_gift marker. The
   // configured variant is an ADDITIONAL authorization check — never sufficient
   // alone, because a customer may legitimately buy that same variant as a paid
   // item (which must count toward the threshold, not be treated as the gift).
@@ -62,8 +63,11 @@
     if (!marked) return false;
     return !CONFIG.giftVariantId || String(it.variant_id) === CONFIG.giftVariantId;
   }
+  function isMarkedPromoGift(it) {
+    return !!(it.properties && it.properties[CONFIG.prop]);
+  }
   function paidUnits(cart) {
-    return (cart.items || []).reduce(function (n, it) { return isGiftLine(it) ? n : n + it.quantity; }, 0);
+    return (cart.items || []).reduce(function (n, it) { return isMarkedPromoGift(it) ? n : n + it.quantity; }, 0);
   }
   function findGift(cart) {
     var items = cart.items || [];
@@ -97,11 +101,18 @@
     getCart().then(function (cart) {
       var units = paidUnits(cart);
       var gift = findGift(cart);
+      var staleGift = (cart.items || []).find(function (it) { return isMarkedPromoGift(it) && !isGiftLine(it); });
       giftIndex = -1;
       (cart.items || []).forEach(function (it, i) { if (isGiftLine(it)) giftIndex = i; });
       giftKey = gift ? gift.key : null;
 
-      if (isExpired()) {
+      if (staleGift) {
+        busy = true;
+        setQty(staleGift.key, 0).then(function () { done(true); schedule(); });
+        return;
+      }
+
+      if (promoDateState() !== 'active') {
         // Promo ended — never add, hide the nudge, and remove any lingering gift
         // line (the checkout Function also blocks it server-side).
         if (gift) {
