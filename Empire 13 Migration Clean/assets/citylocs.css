@@ -842,10 +842,12 @@ input[type="text"]::placeholder, input[type="email"]::placeholder, input[type="p
 .cl-pack-options { display: flex; flex-direction: column; gap: 10px; }
 .cl-pack-btn {
   display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px;
-  width: 100%; text-align: left; cursor: pointer;
+  width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
+  text-align: left; cursor: pointer;
   background: #f3f6f8; border: 2px solid #e1e7ea; border-radius: 10px;
   padding: 14px 18px; transition: border-color .15s ease, background .15s ease;
 }
+.cl-pack-btn > span { min-width: 0; }
 .cl-pack-btn:hover { border-color: #00a0ea; background: #eaf6fe; }
 .cl-pack-btn.is-active { border-color: #00a0ea; background: #eaf6fe; box-shadow: 0 0 0 2px rgba(0,160,234,.25); }
 .cl-pack-hint {
