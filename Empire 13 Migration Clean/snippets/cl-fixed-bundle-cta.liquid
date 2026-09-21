@@ -36,19 +36,10 @@
       </button>
     {% endform %}
     {%- comment -%}
-      EMERGENCY STOPGAP (2026-09-21): the Zepto Product Personalizer app embed
-      mounts on this product (template assigned in the Zepto app admin) and
-      hijacks the add-to-cart click, enforcing its own "Custom Text Two required"
-      rule — blocking EVERY add, since that second line is optional and can never
-      be satisfied. The fixed-bundle engine already owns personalization and
-      writes the full production contract itself (_cl_template, _component_variants,
-      _fxb_design_product_id, _plate_product_handle, Plate State/Design + text),
-      verified on the cart line, so Zepto is vestigial here. Until the Zepto app
-      template is unassigned from this product, we remove the Zepto mount
-      (#pplr-<id> / .product-personalizer) so the engine's add-to-cart runs.
-
-      Also: disable native HTML5 validation and route native submits (Enter key)
-      through the engine button so nothing bypasses component expansion.
+      Zepto is unassigned from this product; the fixed-bundle engine owns its
+      personalization fields and line-item properties. Disable native HTML5
+      validation and route native submits (including Enter) through the engine
+      button so nothing bypasses component expansion.
     {%- endcomment -%}
     <script>
       (function () {
@@ -60,17 +51,6 @@
           var btn = form.querySelector('.cl-fxb__cta');
           if (btn) btn.click();
         });
-        // Strip the Zepto/PPLR personalizer mount whenever it appears (it injects
-        // async and may re-inject). Only targets Zepto's own nodes; the engine's
-        // fields live in #cl-fxb-fields-list and are untouched.
-        function stripZepto() {
-          document.querySelectorAll('[id^="pplr-"], .product-personalizer').forEach(function (n) { n.remove(); });
-        }
-        stripZepto();
-        if (window.MutationObserver) {
-          new MutationObserver(stripZepto).observe(document.documentElement, { childList: true, subtree: true });
-        }
-        document.addEventListener('DOMContentLoaded', stripZepto);
       })();
     </script>
   {%- endif -%}
