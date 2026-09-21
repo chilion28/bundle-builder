@@ -112,10 +112,206 @@
   }
   function showToast() {
     ensureToast();
+    toast.textContent = "Emojis and special symbols aren’t allowed here.";
     toast.classList.add('is-on');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toast.classList.remove('is-on'); }, 2600);
   }
+
+  // ---- Required-personalization add-to-cart guard ------------------------
+  // Zepto and several GemPages product forms submit through their own AJAX
+  // handlers. Those handlers do not consistently call form.checkValidity(),
+  // so an input can be correctly marked `required` and still be added blank.
+  // Run before those handlers (capture phase) and stop the add at its source.
+  var REQUIRED_CUSTOM_SELECTOR =
+    '[required][name^="properties["], .cstmfy_c_required, [data-cl-required-customization]';
+  var ADD_BUTTON_SELECTOR =
+    'button[type="submit"], input[type="submit"], .product-form--atc-button, ' +
+    '.gp-button-atc, [data-product-atc], [data-product-add], #product-cl-add-cart';
+
+  function isBlankRequiredField(el, scope) {
+    if (!el || el.disabled) return false;
+    var type = (el.getAttribute('type') || '').toLowerCase();
+    if (type === 'checkbox' || type === 'radio') {
+      if (!el.name) return !el.checked;
+      var group = (scope || document).querySelectorAll('[name="' +
+        String(el.name).replace(/(["\\])/g, '\\$1') + '"]');
+      return !Array.prototype.some.call(group, function (item) { return item.checked; });
+    }
+    if (type === 'file') return !(el.files && el.files.length);
+    // GemPages and older product templates can render desktop/mobile copies of
+    // the same property. Treat the property as complete if either copy has a
+    // value so a hidden duplicate cannot incorrectly block the customer.
+    if (el.name) {
+      var peers = document.querySelectorAll('[name="' +
+        String(el.name).replace(/(["\\])/g, '\\$1') + '"]');
+      if (Array.prototype.some.call(peers, function (item) {
+        return !item.disabled && String(item.value == null ? '' : item.value).trim() !== '';
+      })) return false;
+    }
+    return !String(el.value == null ? '' : el.value).trim();
+  }
+
+  function fieldLabel(el) {
+    var name = el && (el.getAttribute('name') || '');
+    var match = /properties\[([^\]]+)\]/.exec(name);
+    return (match && match[1] ? match[1] : 'customization').replace(/^_+/, '');
+  }
+
+  function showRequiredError(el, message) {
+    var text = message || ('Please enter ' + fieldLabel(el) + ' before adding to cart.');
+    if (el) {
+      try { el.setCustomValidity(text); } catch (_) {}
+      try { el.reportValidity(); } catch (_) {}
+      try { el.focus({ preventScroll: true }); } catch (_) { try { el.focus(); } catch (__) {} }
+      try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) {}
+    }
+    ensureToast();
+    toast.textContent = text;
+    toast.classList.add('is-on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('is-on'); }, 3200);
+  }
+
+  function requiredFieldsFor(form) {
+    if (!form || !form.querySelectorAll) return [];
+    return Array.prototype.filter.call(
+      form.querySelectorAll(REQUIRED_CUSTOM_SELECTOR),
+      function (el) { return isBlankRequiredField(el, form); }
+    );
+  }
+
+  function hasPersonalizeGate(form) {
+    if (!form) return false;
+    var root = form.closest(
+      '.product-form--regular, .product-form, [data-product-wrapper], .shopify-section'
+    ) || document;
+    var trigger = root.querySelector('.pplr-c-button, [data-personalize-trigger]');
+    if (!trigger) return false;
+
+    // Once a modal personalizer has completed, it supplies at least one
+    // non-empty line-item property or its customization id to the product form.
+    var props = form.querySelectorAll('[name^="properties["]');
+    var completed = Array.prototype.some.call(props, function (el) {
+      return String(el.value == null ? '' : el.value).trim() !== '';
+    });
+    return completed ? false : trigger;
+  }
+
+  // ---- Empty-selection guard for the Zepto multi-quantity grid -----------
+  // The plate-hat "SELECT HAT STYLE" grid (Zepto pplr_atc_form with per-color
+  // .qty-box steppers) lets the customer click Add To Cart with every quantity
+  // still 0. Zepto then silently adds nothing while the theme opens the cart
+  // drawer — so the customer gets no feedback and no item. We detect a zero
+  // selection at click time and show an error instead.
+  //
+  // Signal: Zepto keeps a running SUBTOTAL inside the form that reflects the
+  // TOTAL selection across every style tab (not just the visible one), so it is
+  // immune to tab switching (a per-tab qty-box sum is not — Zepto only renders
+  // the active tab's boxes). If the subtotal has no non-zero digit, nothing is
+  // selected. Falls back to summing the visible qty-boxes if no subtotal shows.
+  function zeptoSelectionEmpty(form) {
+    if (!form || !form.matches || !form.matches('form.pplr_atc_form')) return false;
+    if (!form.querySelector('input.qty-box[name="qty"]')) return false; // not a qty grid
+    var subtotalEl = Array.prototype.find.call(
+      form.querySelectorAll('*'),
+      function (el) {
+        return el.children.length === 0 && /subtotal\s*[\$£€¥]/i.test(el.textContent || '');
+      }
+    );
+    if (subtotalEl) return !/[1-9]/.test(subtotalEl.textContent || '');
+    var sum = 0;
+    form.querySelectorAll('input.qty-box[name="qty"]').forEach(function (i) {
+      sum += parseInt(i.value, 10) || 0;
+    });
+    return sum <= 0;
+  }
+
+  function stopAdd(e, form) {
+    if (zeptoSelectionEmpty(form)) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      showRequiredError(null, 'Please choose a hat style and quantity before adding to cart.');
+      return true;
+    }
+
+    var missing = requiredFieldsFor(form);
+    if (missing.length) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      showRequiredError(missing[0]);
+      return true;
+    }
+
+    var personalize = hasPersonalizeGate(form);
+    if (personalize) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      showRequiredError(null, 'Please personalize this item before adding it to cart.');
+      try { personalize.click(); } catch (_) {}
+      return true;
+    }
+    return false;
+  }
+
+  function currentPageBlocker() {
+    var fields = document.querySelectorAll(REQUIRED_CUSTOM_SELECTOR);
+    for (var i = 0; i < fields.length; i += 1) {
+      var scope = fields[i].closest('form') || document;
+      if (isBlankRequiredField(fields[i], scope)) {
+        return {
+          field: fields[i],
+          message: 'Please enter ' + fieldLabel(fields[i]) + ' before adding to cart.'
+        };
+      }
+    }
+    var forms = document.querySelectorAll('form[action*="/cart/add"], form.pplr_atc_form');
+    for (var j = 0; j < forms.length; j += 1) {
+      var trigger = hasPersonalizeGate(forms[j]);
+      if (trigger) {
+        return {
+          trigger: trigger,
+          message: 'Please personalize this item before adding it to cart.'
+        };
+      }
+    }
+    return null;
+  }
+
+  function showPageBlocker(blocker) {
+    if (!blocker) return;
+    showRequiredError(blocker.field || null, blocker.message);
+    if (blocker.trigger) {
+      try { blocker.trigger.click(); } catch (_) {}
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    var button = e.target && e.target.closest && e.target.closest(ADD_BUTTON_SELECTOR);
+    if (!button) return;
+    var form = button.closest('form[action*="/cart/add"], form.pplr_atc_form');
+    if (form) stopAdd(e, form);
+  }, true);
+
+  document.addEventListener('submit', function (e) {
+    var form = e.target;
+    if (!form || !form.matches ||
+        !form.matches('form[action*="/cart/add"], form.pplr_atc_form')) return;
+    stopAdd(e, form);
+  }, true);
+
+  // Remove our custom error as soon as the customer corrects the field.
+  document.addEventListener('input', function (e) {
+    if (!e.target || !e.target.matches || !e.target.matches(REQUIRED_CUSTOM_SELECTOR)) return;
+    try { e.target.setCustomValidity(''); } catch (_) {}
+  }, true);
+  document.addEventListener('change', function (e) {
+    if (!e.target || !e.target.matches || !e.target.matches(REQUIRED_CUSTOM_SELECTOR)) return;
+    try { e.target.setCustomValidity(''); } catch (_) {}
+  }, true);
 
   // Capture phase so we clean the value before framework input handlers read it.
   document.addEventListener('input', onInput, true);
@@ -260,6 +456,20 @@
     window.fetch = function (input, init) {
       try {
         var url = typeof input === 'string' ? input : (input && input.url) || '';
+        if (CART_RE.test(url) && /\/cart\/add/i.test(url)) {
+          var blocker = currentPageBlocker();
+          if (blocker) {
+            showPageBlocker(blocker);
+            return Promise.resolve(new Response(JSON.stringify({
+              status: 422,
+              message: blocker.message,
+              description: blocker.message
+            }), {
+              status: 422,
+              headers: { 'Content-Type': 'application/json' }
+            }));
+          }
+        }
         if (CART_RE.test(url) && init && init.body != null) init.body = cleanBody(init.body);
       } catch (_) {}
       return _fetch.apply(this, arguments);
@@ -271,11 +481,24 @@
     var _open = XMLHttpRequest.prototype.open;
     var _send = XMLHttpRequest.prototype.send;
     XMLHttpRequest.prototype.open = function (method, url) {
-      this.__clCartUrl = CART_RE.test(url || '');
+      var match = /\/cart\/(add|change|update)(?:\.js)?(?:\?|$)/i.exec(url || '');
+      this.__clCartAction = match ? match[1].toLowerCase() : '';
       return _open.apply(this, arguments);
     };
     XMLHttpRequest.prototype.send = function (body) {
-      try { if (this.__clCartUrl && body != null) arguments[0] = cleanBody(body); } catch (_) {}
+      try {
+        if (this.__clCartAction) {
+          if (this.__clCartAction === 'add') {
+            var blocker = currentPageBlocker();
+            if (blocker) {
+              showPageBlocker(blocker);
+              try { this.abort(); } catch (_) {}
+              return;
+            }
+          }
+          if (body != null) arguments[0] = cleanBody(body);
+        }
+      } catch (_) {}
       return _send.apply(this, arguments);
     };
     XMLHttpRequest.prototype.__clWrapped = true;
