@@ -1,0 +1,77 @@
+{%- unless include_assets == false -%}{% render 'cl-fixed-bundle-bootstrap' %}{%- endunless -%}
+{%- comment -%}
+  Optional param `personalized: false` -> plain native add-to-cart for bundles
+  with NO plate/personalization (Canvas Wallet, Boonie, Backyard). It omits the
+  Zepto personalizer mount and gives the button a distinct id so the personalizer
+  JS (which intercepts #cl-fxb-form clicks) never touches it; the form POSTs the
+  bundle variant natively and the cart-transform expands it into its components.
+  Defaults to the personalized form so the 3-Hat bundle is unchanged.
+{%- endcomment -%}
+<div class="cl-fxb__scope cl-fxb__block" data-cl-fxb-scope data-cl-fxb-block="cta">
+  {%- if personalized == false -%}
+    {% form 'product', product, class: 'cl-fxb__form cl-fxb__form--plain' %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <button type="submit" class="cl-fxb__cta" name="add"{% unless product.selected_or_first_available_variant.available %} disabled{% endunless %}>
+        {% if product.selected_or_first_available_variant.available %}{{ cta_label | default: 'ADD BUNDLE TO CART' }} <span aria-hidden="true">→</span>{% else %}SOLD OUT{% endif %}
+      </button>
+    {% endform %}
+  {%- else -%}
+    {% form 'product', product, id: 'cl-fxb-form', class: 'cl-fxb__form' %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="quantity" value="1">
+      {%- comment -%}
+        The legacy PPLR/Zepto personalizer used to mount here via the
+        `product-personalizer` class + `pplr-<id>` id. It hijacked the add-to-cart
+        click and enforced its own "Custom Text Two required" rule, blocking every
+        add (the optional second line could never be satisfied). The fixed-bundle
+        ENGINE owns personalization now — it renders the state/fields/preview UI
+        and writes every Zepto-contract line-item property itself — so PPLR is
+        vestigial here. We keep an inert placeholder but remove every hook PPLR
+        keys on (class/id/data-*) so it never initializes on this form again.
+      {%- endcomment -%}
+      <div class="cl-fxb__mount cl-fxb__zepto-hidden" aria-hidden="true" hidden></div>
+      <button type="submit" class="cl-fxb__cta" name="add">
+        {{ cta_label | default: 'CLAIM MY 3 HAT BUNDLE' }} <span aria-hidden="true">→</span>
+      </button>
+    {% endform %}
+    {%- comment -%}
+      EMERGENCY STOPGAP (2026-09-21): the Zepto Product Personalizer app embed
+      mounts on this product (template assigned in the Zepto app admin) and
+      hijacks the add-to-cart click, enforcing its own "Custom Text Two required"
+      rule — blocking EVERY add, since that second line is optional and can never
+      be satisfied. The fixed-bundle engine already owns personalization and
+      writes the full production contract itself (_cl_template, _component_variants,
+      _fxb_design_product_id, _plate_product_handle, Plate State/Design + text),
+      verified on the cart line, so Zepto is vestigial here. Until the Zepto app
+      template is unassigned from this product, we remove the Zepto mount
+      (#pplr-<id> / .product-personalizer) so the engine's add-to-cart runs.
+
+      Also: disable native HTML5 validation and route native submits (Enter key)
+      through the engine button so nothing bypasses component expansion.
+    {%- endcomment -%}
+    <script>
+      (function () {
+        var form = document.getElementById('cl-fxb-form');
+        if (!form) return;
+        form.setAttribute('novalidate', 'novalidate');
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var btn = form.querySelector('.cl-fxb__cta');
+          if (btn) btn.click();
+        });
+        // Strip the Zepto/PPLR personalizer mount whenever it appears (it injects
+        // async and may re-inject). Only targets Zepto's own nodes; the engine's
+        // fields live in #cl-fxb-fields-list and are untouched.
+        function stripZepto() {
+          document.querySelectorAll('[id^="pplr-"], .product-personalizer').forEach(function (n) { n.remove(); });
+        }
+        stripZepto();
+        if (window.MutationObserver) {
+          new MutationObserver(stripZepto).observe(document.documentElement, { childList: true, subtree: true });
+        }
+        document.addEventListener('DOMContentLoaded', stripZepto);
+      })();
+    </script>
+  {%- endif -%}
+</div>

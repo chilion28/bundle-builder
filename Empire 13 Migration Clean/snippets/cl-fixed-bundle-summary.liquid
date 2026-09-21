@@ -1,0 +1,74 @@
+{%- comment -%}
+  Live fixed-bundle sidebar summary. Place once anywhere on the product page;
+  it mirrors state/design/personalization managed by cl-fixed-bundle.js.
+
+  Optional params (pass from the GemPages custom-code block):
+    personalized: false  -> hides the "YOUR 3 HATS" note + "YOUR CUSTOMIZATION"
+                            block, for bundles with no plate/personalization
+                            (e.g. Canvas Wallet, Boonie, Backyard). Defaults to
+                            ON, so the personalized 3-Hat bundle needs no change.
+    kicker: 'TEXT'       -> overrides the "3-HAT BUNDLE" eyebrow label.
+    heading: 'TEXT'      -> overrides the title (defaults to the product title).
+    includes_note: 'TEXT'-> overrides the "YOUR 3 HATS" note body copy.
+
+  NOTE: this snippet renders the SIDEBAR ONLY — no add-to-cart button. Render
+  `cl-fixed-bundle-cta` separately for the button.
+{%- endcomment -%}
+{% render 'cl-fixed-bundle-bootstrap' %}
+{%- assign fxb_compare_price = product.compare_at_price | default: product.price -%}
+{%- assign fxb_savings = fxb_compare_price | minus: product.price -%}
+<aside class="cl-fxb__scope cl-fxb__block cl-fxb__summary" data-cl-fxb-scope data-cl-fxb-block="summary" data-cl-fxb-summary aria-live="polite">
+  <p class="cl-fxb__summary-kicker">{{ kicker | default: '3-HAT BUNDLE' }}</p>
+  <h3 class="cl-fxb__summary-title">{{ heading | default: product.title }}</h3>
+
+  {%- unless personalized == false -%}
+    <div class="cl-fxb__summary-includes">
+      <p class="cl-fxb__summary-includes-title">YOUR 3 HATS</p>
+      <p>{{ includes_note | default: 'Your selected plate design and personalization will be applied to all three hats.' }}</p>
+    </div>
+  {%- endunless -%}
+
+  <ul class="cl-fxb__summary-components" role="list">
+    {%- for fxb_variant in product.metafields.custom.bundle_components.value -%}
+      {%- assign fxb_image = fxb_variant.image | default: fxb_variant.product.featured_image -%}
+      {%- assign fxb_name = fxb_variant.title -%}
+      {%- if fxb_name == blank or fxb_name == 'Default Title' -%}
+        {%- assign fxb_name = fxb_variant.product.title -%}
+      {%- endif -%}
+      {%- assign fxb_display_name = fxb_name -%}
+      {%- assign fxb_name_parts = fxb_name | split: ' / ' -%}
+      {%- if fxb_name_parts.size >= 3 -%}
+        {%- assign fxb_hat_style = fxb_name_parts | first | strip -%}
+        {%- assign fxb_hat_color = fxb_name_parts | last | strip | remove: ' TR' -%}
+        {%- assign fxb_display_name = fxb_hat_style | append: ' — ' | append: fxb_hat_color -%}
+      {%- endif -%}
+      <li class="cl-fxb__summary-component">
+        <div class="cl-fxb__summary-image">
+          <span class="cl-fxb__summary-number" aria-hidden="true">1x</span>
+          {%- if fxb_image != blank -%}
+            {{ fxb_image | image_url: width: 180 | image_tag: loading: 'lazy', widths: '90, 135, 180', alt: fxb_name }}
+          {%- endif -%}
+        </div>
+        <span>{{ fxb_display_name }}</span>
+      </li>
+    {%- endfor -%}
+  </ul>
+
+  {%- unless personalized == false -%}
+    <div class="cl-fxb__summary-customization">
+      <p class="cl-fxb__summary-heading">YOUR CUSTOMIZATION</p>
+      <div data-cl-fxb-summary-customization>
+        <p class="cl-fxb__summary-empty">Choose a state to see your customization.</p>
+      </div>
+    </div>
+  {%- endunless -%}
+
+  <div class="cl-fxb__summary-price">
+    <span>Price</span>
+    <div>
+      {%- if fxb_compare_price > product.price -%}<s>{{ fxb_compare_price | money }}</s>{%- endif -%}
+      <strong>{{ product.price | money }}</strong>
+      {%- if fxb_savings > 0 -%}<small>You save {{ fxb_savings | money }}</small>{%- endif -%}
+    </div>
+  </div>
+</aside>
