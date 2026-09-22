@@ -212,17 +212,36 @@
   var PAGE_SELS = ['.quantity-selector__input', '.quantity-selector__button'];
   function disableIn(el, sels) { sels.forEach(function (s) { var c = el.querySelector(s); if (c) { c.setAttribute('disabled', 'disabled'); c.setAttribute('tabindex', '-1'); } }); }
   function enableIn(el, sels) { sels.forEach(function (s) { var c = el.querySelector(s); if (c) { c.removeAttribute('disabled'); c.removeAttribute('tabindex'); } }); }
+  function disableProductLinks(el) {
+    el.querySelectorAll('a[href*="/products/"]').forEach(function (link) {
+      if (!link.hasAttribute('data-cl-gift-href')) {
+        link.setAttribute('data-cl-gift-href', link.getAttribute('href') || '');
+      }
+      link.removeAttribute('href');
+      link.setAttribute('aria-disabled', 'true');
+      link.setAttribute('tabindex', '-1');
+    });
+  }
+  function enableProductLinks(el) {
+    el.querySelectorAll('a[data-cl-gift-href]').forEach(function (link) {
+      var href = link.getAttribute('data-cl-gift-href');
+      if (href) link.setAttribute('href', href);
+      link.removeAttribute('data-cl-gift-href');
+      link.removeAttribute('aria-disabled');
+      link.removeAttribute('tabindex');
+    });
+  }
   function applyLock() {
     // AMP drawer (by index)
     document.querySelectorAll('.amp-cart__cart-line').forEach(function (line, i) {
-      if (i === giftIndex && giftIndex >= 0) { line.classList.add('cl-buy2-gift-line'); disableIn(line, DRAWER_SELS); }
-      else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, DRAWER_SELS); }
+      if (i === giftIndex && giftIndex >= 0) { line.classList.add('cl-buy2-gift-line'); disableIn(line, DRAWER_SELS); disableProductLinks(line); }
+      else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, DRAWER_SELS); enableProductLinks(line); }
     });
     // Cart page (by line key)
     document.querySelectorAll('.cart-item[data-cartitem-key]').forEach(function (line) {
       var isGift = giftKey && line.getAttribute('data-cartitem-key') === giftKey;
-      if (isGift) { line.classList.add('cl-buy2-gift-line'); disableIn(line, PAGE_SELS); }
-      else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, PAGE_SELS); }
+      if (isGift) { line.classList.add('cl-buy2-gift-line'); disableIn(line, PAGE_SELS); disableProductLinks(line); }
+      else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, PAGE_SELS); enableProductLinks(line); }
     });
   }
   // ----- Progress nudge ("Add 1 more item to get your free gift!") -----
@@ -270,6 +289,7 @@
   (function () {
     var css = '.cl-buy2-gift-line .amp-cart__line-quantity-selector,' +
       '.cl-buy2-gift-line .quantity-selector{opacity:.5!important;pointer-events:none!important;cursor:not-allowed!important;}' +
+      '.cl-buy2-gift-line a[aria-disabled="true"]{pointer-events:none!important;cursor:default!important;text-decoration:none!important;}' +
       '.cl-freegift-nudge{background:#eef8ff;color:#0a4b6e;border:1px solid #bfe4fb;border-radius:8px;' +
       'padding:9px 12px;margin:0;font-size:13px;line-height:1.35;text-align:center;}' +
       '.cl-freegift-nudge--page{margin:0 0 14px;}' +
