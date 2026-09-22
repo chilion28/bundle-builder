@@ -97,8 +97,8 @@
 
   // Core decision. Fetch the cart, then add/remove/clamp the gift as needed.
   function evaluate() {
-    if (busy || !CONFIG.giftVariantId) { emitState(); return; }
-    getCart().then(function (cart) {
+    if (busy || !CONFIG.giftVariantId) { emitState(); return Promise.resolve(); }
+    return getCart().then(function (cart) {
       var units = paidUnits(cart);
       var gift = findGift(cart);
       var staleGift = (cart.items || []).find(function (it) { return isMarkedPromoGift(it) && !isGiftLine(it); });
@@ -108,8 +108,7 @@
 
       if (staleGift) {
         busy = true;
-        setQty(staleGift.key, 0).then(function () { done(true); schedule(); });
-        return;
+        return setQty(staleGift.key, 0).then(function () { done(true); schedule(); });
       }
 
       if (promoDateState() !== 'active') {
@@ -117,8 +116,7 @@
         // line (the checkout Function also blocks it server-side).
         if (gift) {
           busy = true;
-          setQty(gift.key, 0).then(function () { busy = false; document.dispatchEvent(new CustomEvent('cart:refresh')); lastState = null; scheduleDom(); });
-          return;
+          return setQty(gift.key, 0).then(function () { busy = false; document.dispatchEvent(new CustomEvent('cart:refresh')); lastState = null; scheduleDom(); });
         }
         lastState = null; scheduleDom();
         return;
@@ -128,15 +126,14 @@
         if (!gift) {
           if (blockedUntilChange) { emitState(units, 0); return; }
           busy = true;
-          addGift().then(function () { verifyFreeThenFinish(); });
-          return;
+          return addGift().then(function () { return verifyFreeThenFinish(); });
         }
-        if (gift.quantity !== 1) { busy = true; setQty(gift.key, 1).then(function () { verifyFreeThenFinish(); }); return; }
+        if (gift.quantity !== 1) { busy = true; return setQty(gift.key, 1).then(function () { return verifyFreeThenFinish(); }); }
         // present + qty 1: make sure it's actually free
-        if (gift.final_line_price > 0) { busy = true; blockedUntilChange = true; setQty(gift.key, 0).then(function () { done(true); }); return; }
+        if (gift.final_line_price > 0) { busy = true; blockedUntilChange = true; return setQty(gift.key, 0).then(function () { done(true); }); }
         emitState(units, gift.quantity); // all good
       } else {
-        if (gift) { busy = true; setQty(gift.key, 0).then(function () { done(true); }); return; }
+        if (gift) { busy = true; return setQty(gift.key, 0).then(function () { done(true); }); }
         emitState(units, 0);
       }
     }).catch(function () { busy = false; });
@@ -147,16 +144,37 @@
   // until the next real cart change — so we never charge for the "free" hat and
   // never thrash add/remove.
   function verifyFreeThenFinish() {
-    getCart().then(function (cart) {
+    return getCart().then(function (cart) {
       var gift = findGift(cart);
       if (gift && gift.final_line_price > 0) {
         blockedUntilChange = true;
-        setQty(gift.key, 0).then(function () { done(true); });
+        return setQty(gift.key, 0).then(function () { done(true); });
       } else {
         done(true);
       }
     }).catch(function () { done(true); });
   }
+
+  // Direct-checkout builders call this after adding their paid lines. Waiting
+  // for this promise prevents navigation from winning the normal 250ms cart
+  // observer delay, so the verified $0 promo gift reaches checkout too.
+  window.CLFreeGiftBuy2Reconcile = function () {
+    blockedUntilChange = false;
+    if (!busy) return evaluate();
+    return new Promise(function (resolve) {
+      var attempts = 0;
+      function waitForManager() {
+        if (!busy) {
+          Promise.resolve(evaluate()).then(resolve, resolve);
+        } else if (attempts++ < 40) {
+          setTimeout(waitForManager, 50);
+        } else {
+          resolve();
+        }
+      }
+      waitForManager();
+    });
+  };
 
   // Progress state for a nudge ("Add 1 more item to get a free hat!"). Consumers
   // can listen for `cl:freegift:state`; we don't inject drawer markup here.

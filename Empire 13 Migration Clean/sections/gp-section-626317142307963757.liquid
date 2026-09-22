@@ -4272,6 +4272,10 @@ try {
       return;
     }
 
+    if (typeof window.CLFreeGiftBuy2Reconcile === 'function') {
+      await window.CLFreeGiftBuy2Reconcile();
+    }
+
     btn.textContent = 'Going to checkout...';
     window.location.href = '/checkout';
 
