@@ -1875,6 +1875,14 @@ gp-product.cl-in-pack .gkBonhMcMd {
 .cl-perso-qty { width: 116px; align-self: center; margin: 0; }
 </style>
 
+{%- comment -%}
+  This legacy GemPages builder can navigate directly to checkout before the
+  theme-level promo bridge is evaluated. Render the same authoritative bridge
+  here so the active promotion config exists before the builder script runs.
+  The manager itself is idempotent and safely ignores the theme-level duplicate.
+{%- endcomment -%}
+{% render 'cl-free-gift-buy2-init' %}
+
 <script>
   // Dynamic hero heading (collection metafield → JS swaps the GemPages H1).
   // Falls back to the default when the metafield is empty/unset.

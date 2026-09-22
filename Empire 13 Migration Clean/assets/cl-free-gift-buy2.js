@@ -91,7 +91,15 @@
 
   function done(changed) {
     busy = false;
-    if (changed) document.dispatchEvent(new CustomEvent('cart:refresh'));
+    if (changed) {
+      document.dispatchEvent(new CustomEvent('cart:refresh'));
+      // The AMP drawer reacts to cart:refresh, but the full cart page keeps its
+      // original server-rendered line list. Reload once after our verified cart
+      // mutation so a newly added/removed gift is actually visible there.
+      if (/^\/cart\/?$/.test(window.location.pathname)) {
+        window.setTimeout(function () { window.location.reload(); }, 50);
+      }
+    }
     emitState();
   }
 
@@ -146,7 +154,12 @@
   function verifyFreeThenFinish() {
     return getCart().then(function (cart) {
       var gift = findGift(cart);
-      if (gift && gift.final_line_price > 0) {
+      if (!gift) {
+        // The add was rejected or never persisted. Do not report an unlocked
+        // in-cart gift, and avoid a cart-page reload loop.
+        blockedUntilChange = true;
+        done(false);
+      } else if (gift.final_line_price > 0) {
         blockedUntilChange = true;
         return setQty(gift.key, 0).then(function () { done(true); });
       } else {
