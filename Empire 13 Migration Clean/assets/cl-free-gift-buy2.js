@@ -244,6 +244,22 @@
       else if (line.classList.contains('cl-buy2-gift-line')) { line.classList.remove('cl-buy2-gift-line'); enableIn(line, PAGE_SELS); enableProductLinks(line); }
     });
   }
+
+  // AMP Cart does not render the product title/image as normal anchors. Its
+  // own delegated click handler navigates those elements to the product page,
+  // so removing href attributes alone cannot disable that route. Block only
+  // navigation clicks inside the property-matched promotional gift line;
+  // quantity/remove controls and every normal cart line remain untouched.
+  document.addEventListener('click', function (e) {
+    var line = e.target.closest('.cl-buy2-gift-line');
+    if (!line) return;
+    var nav = e.target.closest('.amp-cart__cart-line-title, .amp-cart__cart-line-image');
+    if (!nav) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+  }, true);
+
   // ----- Progress nudge ("Add 1 more item to get your free gift!") -----
   // Injected into the AMP drawer's `.amp-cart__rewards` banner area (same anchor
   // the pack-builder milestone banners use) and above the cart-page item list.
