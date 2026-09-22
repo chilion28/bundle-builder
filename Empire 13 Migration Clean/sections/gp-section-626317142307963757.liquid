@@ -4250,6 +4250,51 @@ try {
 
     await clearExistingBundleFromCart(bundleCollection);
 
+    // This builder leaves for checkout immediately, so include the currently
+    // active shop-level promo gift in the SAME cart mutation as the paid hats.
+    // The normal promo manager still verifies/clamps it below, but no longer
+    // has to win a race against the checkout navigation.
+    const promoGiftId = String(window.CL_FREE_GIFT_VARIANT_ID || '');
+    const promoThreshold = Math.max(1, Number(window.CL_FREE_GIFT_THRESHOLD) || 2);
+    const promoMarker = window.CL_FREE_GIFT_MARKER || 'buy2-hat';
+    let promoIsActive = Boolean(promoGiftId);
+
+    if (promoIsActive && (window.CL_FREE_GIFT_STARTS_ON || window.CL_FREE_GIFT_ENDS_ON)) {
+      try {
+        const promoToday = new Intl.DateTimeFormat('en-CA', {
+          timeZone: window.CL_FREE_GIFT_TZ || 'America/Los_Angeles',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        }).format(new Date());
+        promoIsActive = (!window.CL_FREE_GIFT_STARTS_ON || promoToday >= String(window.CL_FREE_GIFT_STARTS_ON))
+          && (!window.CL_FREE_GIFT_ENDS_ON || promoToday <= String(window.CL_FREE_GIFT_ENDS_ON));
+      } catch (error) {
+        // The checkout Function remains the expiration authority. If Intl is
+        // unavailable, preserve the manager's fail-open date behavior.
+      }
+    }
+
+    if (promoIsActive) {
+      const currentCart = await fetch('/cart.js', { credentials: 'same-origin' }).then(response => response.json());
+      const currentPaidUnits = (currentCart.items || []).reduce((sum, item) => {
+        return item.properties && item.properties._free_gift ? sum : sum + item.quantity;
+      }, 0);
+      const currentGiftExists = (currentCart.items || []).some(item => {
+        return String(item.variant_id) === promoGiftId
+          && item.properties
+          && item.properties._free_gift === promoMarker;
+      });
+
+      if (!currentGiftExists && currentPaidUnits + totalQty >= promoThreshold) {
+        items.push({
+          id: Number(promoGiftId),
+          quantity: 1,
+          properties: { _free_gift: promoMarker }
+        });
+      }
+    }
+
     const res = await fetch('/cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
