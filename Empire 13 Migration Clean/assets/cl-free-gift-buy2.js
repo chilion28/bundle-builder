@@ -306,6 +306,9 @@
     var css = '.cl-buy2-gift-line .amp-cart__line-quantity-selector,' +
       '.cl-buy2-gift-line .quantity-selector{opacity:.5!important;pointer-events:none!important;cursor:not-allowed!important;}' +
       '.cl-buy2-gift-line a[aria-disabled="true"]{pointer-events:none!important;cursor:default!important;text-decoration:none!important;}' +
+      '.cl-buy2-gift-line .amp-cart__cart-line-title,' +
+      '.cl-buy2-gift-line .amp-cart__cart-line-title:hover,' +
+      '.cl-buy2-gift-line .amp-cart__cart-line-image{cursor:default!important;text-decoration:none!important;}' +
       '.cl-freegift-nudge{background:#eef8ff;color:#0a4b6e;border:1px solid #bfe4fb;border-radius:8px;' +
       'padding:9px 12px;margin:0;font-size:13px;line-height:1.35;text-align:center;}' +
       '.cl-freegift-nudge--page{margin:0 0 14px;}' +
