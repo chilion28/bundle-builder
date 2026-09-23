@@ -62,7 +62,7 @@
     // 1–9 select + "10+" input toggle.
     function setStepperQty(qty) {
       var sel = document.querySelector('[data-quantity-select]');
-      var inp = document.querySelector('[data-quantity-input]');
+      var inp = document.querySelector('[data-quantity-input], product-form [name="quantity"]');
       var selWrap = sel && sel.closest('.form-field--qty-select');
       var inpWrap = inp && inp.closest('.form-field--qty-input');
 
@@ -145,7 +145,11 @@
     function reposition(box) {
       var place = function () {
         var qty = document.querySelector('[data-quantity-wrapper]');
-        if (qty && qty.parentNode && box !== qty.previousElementSibling) qty.parentNode.insertBefore(box, qty);
+        var flexQty = document.querySelector('[id*="section_flex_pdp_quantity_picker"]');
+        var anchor = qty || flexQty;
+        if (anchor && anchor.parentNode && box !== anchor.previousElementSibling) {
+          anchor.parentNode.insertBefore(box, anchor);
+        }
       };
       place();
       [300, 800, 1600].forEach(function (ms) { setTimeout(place, ms); });
@@ -154,7 +158,7 @@
     // ----- qty stepper highlight + next-tier hint -----
     function stepperQty() {
       var sel = document.querySelector('[data-quantity-select]');
-      var inp = document.querySelector('[data-quantity-input]');
+      var inp = document.querySelector('[data-quantity-input], product-form [name="quantity"]');
       if (sel && sel.value && sel.value !== '10+') return parseInt(sel.value, 10) || 0;
       if (inp && inp.value) return parseInt(inp.value, 10) || 0;
       return 1;

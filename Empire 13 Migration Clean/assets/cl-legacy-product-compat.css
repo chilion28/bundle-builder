@@ -203,6 +203,19 @@
   border-color: #8ed8f8;
 }
 
+/* Keep all five hat-style pills on one row in the desktop product column. */
+@media (min-width: 768px) {
+  .product--section .swatch_options {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .product--section .selection-button {
+    padding-inline: 10px;
+    white-space: nowrap;
+  }
+}
+
 @media screen and (max-width: 719px) {
   /* Keep the price and Loox summary on one balanced mobile row. */
   .product--section .product-details {

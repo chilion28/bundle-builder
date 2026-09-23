@@ -8,6 +8,7 @@
   'use strict';
 
   var CART_EDIT_STORAGE_KEY = 'cl-fixed-bundle-cart-edit';
+  var TEMPLATE_API_URL = 'https://citylocsproduction.com/api/get-product-template';
 
   var FIELD_DEFAULTS = {
     'Month':             { maxLength: 3,  placeholder: 'MONTH', required: true },
@@ -96,6 +97,7 @@
   var fieldsList = document.getElementById('cl-fxb-fields-list');
   var previewEl = document.getElementById('cl-fxb-preview');
   var form = document.getElementById('cl-fxb-form');
+  var summaryEls = document.querySelectorAll('[data-cl-fxb-summary]');
   if (!stateSelect || !searchInput || !stateMenu || !fieldsList || !previewEl || !form) return;
 
   /* SKU-bridge: the promo Bundle Hat component variants share a SKU with a
@@ -103,21 +105,29 @@
    * "SKU|SKU|SKU"; resolved at add-time against /products/<handle>.js so each
    * order line becomes the customer's REAL chosen design product (routable by
    * the production app). Falls back to the parent metafield if unresolved. */
-  var personalizerRoot = document.getElementById('cl-fxb-personalizer');
-  var COMPONENT_SKUS = ((personalizerRoot && personalizerRoot.getAttribute('data-component-skus')) || '')
+  var personalizerConfig = document.querySelector('[data-cl-fxb-config]');
+  var COMPONENT_SKUS = ((personalizerConfig && personalizerConfig.getAttribute('data-component-skus')) || '')
     .split('|').map(function (s) { return s.trim(); }).filter(Boolean);
   var productJsonCache = {};
+
+  function getDesignProduct(handle) {
+    if (!handle) return Promise.resolve(null);
+    return productJsonCache[handle] ||
+      (productJsonCache[handle] = fetch('/products/' + encodeURIComponent(handle) + '.js', {
+        headers: { 'Accept': 'application/json' }
+      }).then(function (response) {
+        return response.ok ? response.json() : null;
+      }).catch(function () {
+        return null;
+      }));
+  }
 
   /* Resolve the chosen design's variant GIDs for the promo SKUs. Returns a
    * pipe-joined GID string, or '' if it can't confidently match all SKUs (so
    * the cart transform safely falls back to the metafield). */
   function resolveComponentVariants(handle) {
     if (!handle || COMPONENT_SKUS.length === 0) return Promise.resolve('');
-    var fetchJson = productJsonCache[handle] ||
-      (productJsonCache[handle] = fetch('/products/' + encodeURIComponent(handle) + '.js', {
-        headers: { 'Accept': 'application/json' }
-      }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }));
-    return fetchJson.then(function (data) {
+    return getDesignProduct(handle).then(function (data) {
       if (!data || !Array.isArray(data.variants)) return '';
       var bySku = {};
       data.variants.forEach(function (v) { if (v && v.sku) bySku[String(v.sku).trim()] = v.id; });
@@ -130,11 +140,37 @@
       return gids.join('|');
     }).catch(function () { return ''; });
   }
+
+  /* clOrdersApp owns the current production-template assignment. Look it up
+   * using the selected design's real Shopify product ID and save only the
+   * template name as a hidden line-item property. A missing template blocks
+   * the add so an order cannot reach production without routing data. */
+  function resolveProductionTemplate(handle) {
+    return getDesignProduct(handle).then(function (product) {
+      if (!product || !product.id) throw new Error('design product not found');
+      return fetch(TEMPLATE_API_URL, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ productId: String(product.id) })
+      }).then(function (response) {
+        if (!response.ok) throw new Error('template lookup failed');
+        return response.json();
+      }).then(function (record) {
+        var template = record && typeof record.template === 'string' ? record.template.trim() : '';
+        if (!template) throw new Error('template missing');
+        return { productId: String(product.id), template: template };
+      });
+    });
+  }
   if (stateSelect.dataset.clInit === '1') return;
   stateSelect.dataset.clInit = '1';
 
   var cartEdit = null;
   var editLineKey = '';
+  var selectionInteracted = false;
   var editParams = new URLSearchParams(window.location.search);
   function usableCartEdit(edit) {
     return !!(edit && edit.properties && STATE_DESIGNS[edit.properties['Plate State']]);
@@ -229,7 +265,13 @@
   // On focus: select the current text (so typing replaces it) and show the FULL
   // list — no need to delete the current state before searching a new one.
   searchInput.addEventListener('focus', function () { searchInput.select(); comboActiveIdx = -1; comboOpen(true); });
-  searchInput.addEventListener('input', function () { stateSelect.value = ''; comboActiveIdx = -1; updateClearBtn(); comboOpen(false); });
+  searchInput.addEventListener('input', function () {
+    selectionInteracted = true;
+    stateSelect.value = '';
+    comboActiveIdx = -1;
+    updateClearBtn();
+    comboOpen(false);
+  });
   if (comboClear) comboClear.addEventListener('click', comboClearState);
   updateClearBtn();
   stateMenu.addEventListener('mousedown', function (event) {
@@ -296,8 +338,35 @@
     return values;
   }
 
+  function renderSummary() {
+    if (!summaryEls.length) return;
+    var cfg = activeDesign();
+    var values = activeValues();
+    summaryEls.forEach(function (summary) {
+      var target = summary.querySelector('[data-cl-fxb-summary-customization]');
+      if (!target) return;
+      if (!cfg) {
+        target.innerHTML = '<p class="cl-fxb__summary-empty">Choose a state to see your customization.</p>';
+        return;
+      }
+      var rows = [
+        ['State', stateSelect.value],
+        ['Design', cfg.title]
+      ];
+      cfg.fields.forEach(function (name) {
+        var defaults = FIELD_DEFAULTS[name] || {};
+        if (defaults.required === false && !values[name]) return;
+        rows.push([name, values[name] || '—']);
+      });
+      target.innerHTML = '<dl class="cl-fxb__summary-values">' + rows.map(function (row) {
+        return '<div><dt>' + escapeHtml(row[0]) + '</dt><dd>' + escapeHtml(row[1]) + '</dd></div>';
+      }).join('') + '</dl>';
+    });
+  }
+
   function renderPreview() {
     var cfg = activeDesign();
+    renderSummary();
     if (!cfg) {
       previewEl.innerHTML = '<div class="cl-perso-empty">Choose a state to preview its featured plate.</div>';
       return;
@@ -312,14 +381,19 @@
     if (counter) counter.textContent = input.value.length + '/' + input.maxLength;
   }
 
-  stateSelect.addEventListener('change', function () { renderFields(activeDesign()); });
+  stateSelect.addEventListener('change', function () {
+    selectionInteracted = true;
+    renderFields(activeDesign());
+  });
   fieldsList.addEventListener('input', function (event) {
     if (!event.target.matches('[data-cl-property-name]')) return;
+    selectionInteracted = true;
     updateCount(event.target);
     renderPreview();
   });
   fieldsList.addEventListener('change', function (event) {
     if (!event.target.matches('[data-cl-second-line-toggle]')) return;
+    selectionInteracted = true;
     var secondLineField = fieldsList.querySelector('[data-cl-second-line-field]');
     var secondLineInput = secondLineField && secondLineField.querySelector('[data-cl-property-name="Custom Text Two"]');
     secondLineField.hidden = !event.target.checked;
@@ -369,6 +443,7 @@
     properties['Plate Design'] = cfg.title;
     properties['_plate_product_handle'] = cfg.handle;
     properties['_plate_field_names'] = cfg.fields.join('|');
+    properties['_fxb_schema_version'] = '2';
     cfg.fields.forEach(function (name) {
       if (values[name]) properties[name] = values[name];
     });
@@ -380,8 +455,17 @@
     var endpoint = editing ? '/cart/change.js' : '/cart/add.js';
 
     delete properties['_component_variants'];
-    resolveComponentVariants(cfg.handle).then(function (componentGids) {
+    delete properties['_cl_template'];
+    delete properties['_fxb_design_product_id'];
+    Promise.all([
+      resolveComponentVariants(cfg.handle),
+      resolveProductionTemplate(cfg.handle)
+    ]).then(function (resolved) {
+      var componentGids = resolved[0];
+      var production = resolved[1];
       if (componentGids) properties['_component_variants'] = componentGids;
+      properties['_fxb_design_product_id'] = production.productId;
+      properties['_cl_template'] = production.template;
       var payload = editing ? {
         id: cartEdit.key,
         quantity: parseInt(cartEdit.quantity, 10) || 1,
@@ -405,7 +489,7 @@
     }).catch(function () {
       cta.disabled = false;
       cta.innerHTML = original;
-      alert('Sorry — we couldn’t add the bundle. Please try again.');
+      alert('Sorry — we couldn’t load the production details for this plate. Please try again or choose another state.');
     });
   }
 
@@ -417,26 +501,32 @@
     if (event.target && event.target.id === 'cl-fxb-form') addToCart(event);
   }, true);
 
-  function applyCartEdit(edit) {
-    cartEdit = edit;
-    if (!cartEdit || !cartEdit.properties || !STATE_DESIGNS[cartEdit.properties['Plate State']]) {
+  function applySelection(properties) {
+    if (!properties || !STATE_DESIGNS[properties['Plate State']]) {
       renderFields(null);
-      return;
+      return false;
     }
-    stateSelect.value = cartEdit.properties['Plate State'];
+    stateSelect.value = properties['Plate State'];
     comboSyncFromValue();
     renderFields(activeDesign());
     fieldsList.querySelectorAll('[data-cl-property-name]').forEach(function (input) {
       var name = input.getAttribute('data-cl-property-name');
-      input.value = cartEdit.properties[name] || '';
+      input.value = properties[name] || '';
       updateCount(input);
     });
     var secondToggle = fieldsList.querySelector('[data-cl-second-line-toggle]');
     var secondField = fieldsList.querySelector('[data-cl-second-line-field]');
     if (secondToggle && secondField) {
-      secondToggle.checked = !!cartEdit.properties['Custom Text Two'];
+      secondToggle.checked = !!properties['Custom Text Two'];
       secondField.hidden = !secondToggle.checked;
     }
+    renderPreview();
+    return true;
+  }
+
+  function applyCartEdit(edit) {
+    cartEdit = edit;
+    if (!cartEdit || !applySelection(cartEdit.properties)) return;
     var notice = document.createElement('div');
     notice.className = 'cl-fxb__editing-notice';
     notice.innerHTML = '<span>Editing bundle from your cart</span><button type="button" class="cl-fxb__editing-cancel">Cancel</button>';
@@ -447,7 +537,6 @@
     });
     var editCta = form.querySelector('.cl-fxb__cta');
     if (editCta) editCta.innerHTML = 'SAVE CHANGES <span aria-hidden="true">→</span>';
-    renderPreview();
   }
 
   if (cartEdit) {
@@ -481,7 +570,28 @@
         message.querySelector('button').addEventListener('click', function () { window.location.href = '/cart'; });
       });
   } else {
-    renderFields(null);
+    stateSelect.value = 'Alabama';
+    comboSyncFromValue();
+    renderFields(activeDesign());
+    var currentProductId = (personalizerConfig && personalizerConfig.getAttribute('data-product-id')) || '';
+    if (currentProductId) {
+      fetch('/cart.js', { headers: { 'Accept': 'application/json' } })
+        .then(function (response) {
+          if (!response.ok) throw new Error('cart load failed');
+          return response.json();
+        })
+        .then(function (cart) {
+          if (selectionInteracted) return;
+          var item = (cart.items || []).find(function (candidate) {
+            return String(candidate.product_id || '') === String(currentProductId) &&
+              usableCartEdit({ properties: candidate.properties });
+          });
+          if (item) applySelection(item.properties);
+        })
+        .catch(function () {
+          // Keep the Alabama fresh-start default when the cart cannot be read.
+        });
+    }
   }
   var tries = 0;
   var timer = setInterval(function () {

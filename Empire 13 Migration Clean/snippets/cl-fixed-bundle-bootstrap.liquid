@@ -1,0 +1,16 @@
+{%- comment -%}Shared assets and product configuration for independently placeable fixed-bundle controls. Safe to render more than once.{%- endcomment -%}
+{{ 'cl-pack-grid.css' | asset_url | stylesheet_tag }}
+{{ 'cl-fixed-bundle.css' | asset_url | stylesheet_tag }}
+{%- assign fxb_component_skus = '' -%}
+{%- for fxb_variant in product.metafields.custom.bundle_components.value -%}
+  {%- if fxb_variant.sku and fxb_variant.sku != blank -%}
+    {%- if fxb_component_skus == '' -%}
+      {%- assign fxb_component_skus = fxb_variant.sku -%}
+    {%- else -%}
+      {%- assign fxb_component_skus = fxb_component_skus | append: '|' | append: fxb_variant.sku -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+<span data-cl-fxb-config data-product-id="{{ product.id }}" data-component-skus="{{ fxb_component_skus | escape }}" hidden></span>
+<script src="{{ 'cl-pack-grid.js' | asset_url }}" defer></script>
+<script src="{{ 'cl-fixed-bundle.js' | asset_url }}" defer></script>

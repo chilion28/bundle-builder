@@ -1,0 +1,11 @@
+{%- unless include_assets == false -%}{% render 'cl-fixed-bundle-bootstrap' %}{%- endunless -%}
+{%- assign fxb_show_heading = true -%}
+{%- if show_heading == false or hide_heading == true -%}
+  {%- assign fxb_show_heading = false -%}
+{%- endif -%}
+<div class="cl-fxb__scope cl-fxb__block" data-cl-fxb-scope data-cl-fxb-block="fields">
+  <fieldset id="cl-fxb-fields" class="cl-fxb__fields" hidden>
+    {%- if fxb_show_heading -%}<legend class="cl-fxb__field-label">2 · Personalize your plate</legend>{%- endif -%}
+    <div id="cl-fxb-fields-list" class="cl-fxb__fields-list"></div>
+  </fieldset>
+</div>

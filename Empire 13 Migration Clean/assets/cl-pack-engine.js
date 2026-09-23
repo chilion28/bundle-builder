@@ -37,6 +37,60 @@
     }).filter(Boolean) : [];
   }
 
+  function sentenceList(values) {
+    if (values.length < 2) return values[0] || '';
+    if (values.length === 2) return values[0] + ' and ' + values[1];
+    return values.slice(0, -1).join(', ') + ', and ' + values[values.length - 1];
+  }
+
+  function replaceStyledText(element, value) {
+    if (!element) return;
+    var walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    var textNodes = [];
+    var node;
+
+    while ((node = walker.nextNode())) {
+      if (node.nodeValue && node.nodeValue.trim()) textNodes.push(node);
+    }
+
+    if (!textNodes.length) {
+      element.textContent = value;
+      return;
+    }
+
+    textNodes[0].nodeValue = value;
+    textNodes.slice(1).forEach(function (textNode) {
+      textNode.nodeValue = '';
+    });
+  }
+
+  function syncMixedTemplateContent(target, slots, pricing, itemPlural) {
+    var fixedTotal = Number(pricing && pricing.fixedTotal);
+    var price = fixedTotal > 0 ? money(fixedTotal) : '';
+    var requirements = slots.map(function (slot) {
+      return slot.quantity + ' ' + (slot.label || slot.id);
+    });
+    var packSize = document.querySelector('.cl-mixed-pack-size');
+    var heroOffer = document.querySelector('.cl-mixed-hero-offer');
+    var instructionsTitle = document.querySelector('.cl-mixed-instructions-title');
+    var instructionsPrice = document.querySelector('.cl-mixed-instructions-price');
+
+    replaceStyledText(packSize, target + '-PACK');
+    if (heroOffer) {
+      replaceStyledText(heroOffer, slots.length
+        ? 'Choose ' + target + ' ' + itemPlural + '—1 from each category' + (price ? '—for just ' + price : '')
+        : 'Choose any ' + target + ' ' + itemPlural + (price ? ' for just ' + price : ''));
+    }
+    if (instructionsTitle && requirements.length) {
+      replaceStyledText(instructionsTitle, 'Choose ' + sentenceList(requirements));
+    }
+    if (instructionsPrice && price) {
+      replaceStyledText(instructionsPrice, slots.length
+        ? 'Complete all categories to get the ' + price + ' bundle price.'
+        : 'Complete your pack to get the ' + price + ' bundle price.');
+    }
+  }
+
   function init(configNode) {
     if (configNode.dataset.clPackReady === 'true') return;
     var config = parseConfig(configNode);
@@ -68,6 +122,7 @@
       };
     }) : [];
     var hasSlots = slots.length > 0;
+    var allowPartialCheckout = selectionConfig.allowPartialCheckout === true;
     var slotCapacity = slots.reduce(function (sum, slot) { return sum + slot.quantity; }, 0);
     var configuredMaximum = Number(selectionConfig.maximum);
     var maximum = hasSlots ? slotCapacity : (configuredMaximum || target);
@@ -75,11 +130,14 @@
     var itemSingular = builder.itemLabel || 'item';
     var itemPlural = builder.itemLabelPlural || itemSingular + 's';
     var checkoutLabel = builder.addButtonText || 'Go to Checkout';
+    syncMixedTemplateContent(target, slots, pricing, itemPlural);
     var componentSelector = '[data-cl-pack-for="' + CSS.escape(builder.key) + '"]';
     var components = Array.from(document.querySelectorAll(componentSelector));
     var cards = [];
     var selected = new Map();
     var bundleId = uid(builder.key);
+    var selectionCacheKey = 'cl-pack-selection:' + builder.key;
+    var reconciledCart = null;
     var userHasInteracted = false;
     var restoring = false;
     var editingSelectionId = '';
@@ -112,7 +170,6 @@
     var editorSave = one('[data-cl-pack-editor-save]');
     var grid = one('[data-cl-pack-grid]');
     var slotGuide = null;
-    var slotStatus = null;
     var cardSlots = new Map();
     var slotConfigErrors = [];
     if (!cards.length || !summary || !checkout) {
@@ -211,40 +268,89 @@
         slots: hasSlots ? slotStates() : []
       };
     }
+    function cacheSelection() {
+      try {
+        if (!selected.size) {
+          window.sessionStorage.removeItem(selectionCacheKey);
+          return;
+        }
+        window.sessionStorage.setItem(selectionCacheKey, JSON.stringify({
+          bundleId: bundleId,
+          items: Array.from(selected.values()).map(function (item) {
+            return {
+              variantId: item.variantId,
+              quantity: item.quantity,
+              properties: item.properties || {}
+            };
+          })
+        }));
+      } catch (error) {}
+    }
+    function clearSelectionCache() {
+      try { window.sessionStorage.removeItem(selectionCacheKey); } catch (error) {}
+    }
+    function restoreCachedSelection() {
+      if (cartConfig.restoreOnLoad === false) return false;
+      try {
+        var cached = JSON.parse(window.sessionStorage.getItem(selectionCacheKey) || 'null');
+        if (!cached || !Array.isArray(cached.items) || !cached.items.length) return false;
+        var restored = new Map();
+        var restoredTotal = 0;
+        if (cached.bundleId) bundleId = cached.bundleId;
+        cached.items.forEach(function (item) {
+          if (restoredTotal >= maximum) return;
+          var card = cardForVariant(item.variantId);
+          if (!card) return;
+          var data = cardDataFromRead(card, { values: item.properties || {}, valid: true });
+          var quantity = Math.min(Number(item.quantity) || 0, maximum - restoredTotal);
+          var slot = hasSlots ? slotForCard(card) : null;
+          if (hasSlots && !slot) return;
+          if (hasSlots) quantity = Math.min(quantity, Math.max(0, slot.quantity - Array.from(restored.values()).filter(function (entry) { return entry.slotId === slot.id; }).reduce(function (sum, entry) { return sum + entry.quantity; }, 0)));
+          if (quantity < 1) return;
+          delete data.valid;
+          restored.set(data.selectionId, Object.assign(data, { quantity: quantity }));
+          restoredTotal += quantity;
+        });
+        if (!restored.size) { clearSelectionCache(); return false; }
+        selected = restored;
+        return true;
+      } catch (error) {
+        clearSelectionCache();
+        return false;
+      }
+    }
     function publishChanged(reason) {
+      cacheSelection();
       dispatch('cl:pack:changed', { builderKey: builder.key, bundleId: bundleId, state: state(), reason: reason });
     }
 
     function installSlotPresentation() {
       if (!hasSlots || !grid) return;
-      slotGuide = document.createElement('section');
-      slotGuide.className = 'cl-hypro cl-pack-slot-guide';
-      slotGuide.setAttribute('data-cl-pack-slot-guide', '');
-      slotGuide.setAttribute('aria-label', 'Bundle requirements');
-      grid.parentNode.insertBefore(slotGuide, grid);
+      if (slots.length > 1) {
+        slotGuide = document.createElement('section');
+        slotGuide.className = 'cl-hypro cl-pack-slot-guide';
+        slotGuide.setAttribute('data-cl-pack-slot-guide', '');
+        slotGuide.setAttribute('aria-label', 'Bundle requirements');
+        grid.parentNode.insertBefore(slotGuide, grid);
+      }
 
       var groupedCards = document.createDocumentFragment();
       slots.forEach(function (slot, index) {
         var matchingCards = cards.filter(function (card) { return slotForCard(card) === slot; });
         if (!matchingCards.length) return;
-        var heading = document.createElement('div');
-        heading.className = 'cl-pack-slot-heading';
-        heading.setAttribute('data-cl-pack-slot-heading', slot.id);
-        heading.innerHTML = '<span class="cl-pack-slot-heading__number">' + (index + 1) + '</span>' +
-          '<span><strong>Choose your ' + escapeHtml(slot.label || slot.id) + '</strong><small>Select ' + slot.quantity + ' from this category</small></span>';
-        groupedCards.appendChild(heading);
+        if (slots.length > 1) {
+          var heading = document.createElement('div');
+          heading.className = 'cl-pack-slot-heading';
+          heading.setAttribute('data-cl-pack-slot-heading', slot.id);
+          heading.innerHTML = '<span class="cl-pack-slot-heading__number">' + (index + 1) + '</span>' +
+            '<span><strong>Choose your ' + escapeHtml(slot.label || slot.id) + '</strong><small>Select ' + slot.quantity + ' from this category</small></span>';
+          groupedCards.appendChild(heading);
+        }
         matchingCards.forEach(function (card) { groupedCards.appendChild(card); });
       });
       cards.filter(function (card) { return !slotForCard(card); }).forEach(function (card) { groupedCards.appendChild(card); });
       grid.insertBefore(groupedCards, errorEl || null);
 
-      var summaryProgress = one('.cl-hypro-summary__progress');
-      if (summaryProgress) {
-        slotStatus = document.createElement('div');
-        slotStatus.className = 'cl-pack-slot-status';
-        slotStatus.setAttribute('data-cl-pack-slot-status', '');
-        summaryProgress.insertBefore(slotStatus, one('[data-cl-pack-message]'));
-      }
     }
 
     function renderSlotPresentation(totals) {
@@ -255,9 +361,6 @@
             return '<span class="' + (slot.complete ? 'is-complete' : '') + '"><b>' + (slot.complete ? '&#10003;' : index + 1) + '</b>' + escapeHtml(slot.label) + '</span>';
           }).join('') + '</div>';
       }
-      if (slotStatus) slotStatus.innerHTML = states.map(function (slot) {
-        return '<span class="' + (slot.complete ? 'is-complete' : '') + '"><b>' + (slot.complete ? '&#10003;' : slot.filled + '/' + slot.quantity) + '</b>' + escapeHtml(slot.label) + '</span>';
-      }).join('');
       slots.forEach(function (slot) {
         var heading = one('[data-cl-pack-slot-heading="' + CSS.escape(slot.id) + '"]');
         if (heading) heading.classList.toggle('is-complete', slotQuantity(slot.id) === slot.quantity);
@@ -416,7 +519,7 @@
       var propertyHtml = Object.keys(item.properties || {}).map(function (key) {
         return '<span class="cl-hypro-summary-item__personalization"><span>' + escapeHtml(key) + '</span><strong>' + escapeHtml(item.properties[key]) + '</strong></span>';
       }).join('');
-      var priceHtml = totals.unlocked
+      var priceHtml = totals.unlocked && savings > 0
         ? (configuredUnit
           ? '<span class="cl-hypro-summary-item__prices"><s>' + money(item.unitPrice) + '</s> <strong>' + money(unit) + '</strong> each <em>Save ' + money(savings) + '</em></span>'
           : '<span class="cl-hypro-summary-item__prices"><s>' + money(item.unitPrice) + '</s> <strong>' +
@@ -448,18 +551,24 @@
       });
       var subtotalEl = one('[data-cl-pack-subtotal]');
       var savingsEl = one('[data-cl-pack-savings]');
+      var savingsRowEl = one('[data-cl-pack-savings-row]');
       var estimatedEl = one('[data-cl-pack-estimated]');
       var messageEl = one('[data-cl-pack-message]');
+      var nextDiscountEl = one('[data-cl-pack-next-discount]');
+      var nextGiftEl = one('[data-cl-pack-next-gift]');
       var rewardEl = one('[data-cl-pack-reward-pill]');
       var giftTotalEl = one('[data-cl-pack-gift-total]');
       var itemsEl = one('[data-cl-pack-summary-items]');
       if (subtotalEl) subtotalEl.textContent = money(totals.subtotal);
       if (savingsEl) savingsEl.textContent = totals.savings ? '- ' + money(totals.savings) : '$0.00';
+      if (savingsRowEl) savingsRowEl.hidden = totals.savings <= 0;
       if (estimatedEl) estimatedEl.textContent = money(totals.estimated);
       var displayUnit = Number(pricing.displayUnitPrice) || 0;
       if (rewardEl) rewardEl.textContent = totals.unlocked
         ? ((pricing.rewardLabel || (totals.tier ? money(totals.tier.unitPrice) + '/' + itemSingular : money(totals.estimated))) + ' ✓')
-        : (pricing.rewardLabel || ('Unlock ' + money(displayUnit) + '/' + itemSingular + ' when you buy ' + target));
+        : (pricing.rewardLabel || (pricing.mode === 'fixed_total' && Number(pricing.fixedTotal)
+          ? 'Unlock ' + money(Number(pricing.fixedTotal)) + ' when you buy ' + target
+          : 'Unlock ' + money(displayUnit) + '/' + itemSingular + ' when you buy ' + target));
       if (messageEl) {
         var remaining = Math.max(0, target - totals.total);
         var unlockedGift = rewards.some(function (reward) { return rewardIsUnlocked(reward, totals.total); });
@@ -467,6 +576,26 @@
         messageEl.textContent = totals.unlocked ? '🎉 You\'ve unlocked ' + (totals.tier ? money(totals.tier.unitPrice) + '/' + itemSingular + ' pricing' : 'your ' + money(totals.estimated) + ' bundle') + (unlockedGift ? ' and a free gift!' : '!') :
           (messageMissingSlots.length ? 'Next: choose your ' + messageMissingSlots[0].label + ' to unlock' + (pricing.mode === 'fixed_total' && Number(pricing.fixedTotal) ? ' the ' + money(pricing.fixedTotal) + ' bundle.' : ' your discount.') :
           'Add ' + remaining + ' more ' + (remaining === 1 ? itemSingular : itemPlural) + ' to unlock your discount.');
+      }
+      if (nextDiscountEl) {
+        var baseTier = pricingTiers.slice().sort(function (a, b) { return Number(a.minimum) - Number(b.minimum); })[0];
+        var currentUnit = totals.tier ? Number(totals.tier.unitPrice) : (baseTier ? Number(baseTier.unitPrice) : Infinity);
+        var nextTier = pricingTiers.filter(function (tier) {
+          return Number(tier.minimum) > totals.total && Number(tier.unitPrice) < currentUnit;
+        }).sort(function (a, b) { return Number(a.minimum) - Number(b.minimum); })[0];
+        nextDiscountEl.textContent = nextTier
+          ? 'Next discount: ' + (Number(nextTier.minimum) - totals.total) + ' more \u2192 ' + money(Number(nextTier.unitPrice)) + '/' + itemSingular
+          : (totals.tier ? 'Best price unlocked: ' + money(Number(totals.tier.unitPrice)) + '/' + itemSingular : '');
+        nextDiscountEl.hidden = !nextDiscountEl.textContent;
+      }
+      if (nextGiftEl) {
+        var nextGift = rewards.filter(function (reward) { return !rewardIsUnlocked(reward, totals.total); }).sort(function (a, b) {
+          return (Number(a.minimum) || target) - (Number(b.minimum) || target);
+        })[0];
+        nextGiftEl.textContent = nextGift
+          ? 'Free gift: ' + ((Number(nextGift.minimum) || target) - totals.total) + ' more \u2192 ' + (nextGift.title || nextGift.label || 'Gift')
+          : (rewards.length ? 'Free gift unlocked' : '');
+        nextGiftEl.hidden = !nextGiftEl.textContent;
       }
       var rewardHtml = rewards.map(function (reward) { return renderReward(reward, totals.total); }).join('');
       var fixedAllocations = fixedTotalUnitAllocations(totals);
@@ -476,9 +605,12 @@
       if (itemsEl) itemsEl.innerHTML = rewardHtml + selectedHtml;
       if (giftTotalEl) giftTotalEl.hidden = !rewards.some(function (reward) { return rewardIsUnlocked(reward, totals.total); });
       var missingSlots = incompleteSlots();
-      checkout.disabled = slotConfigErrors.length > 0 || totals.total < minimumCheckout || missingSlots.length > 0;
+      checkout.disabled = slotConfigErrors.length > 0 || totals.total < minimumCheckout || (!allowPartialCheckout && missingSlots.length > 0);
       var checkoutReward = pricing.mode === 'fixed_total' && Number(pricing.fixedTotal) ? ' for ' + money(pricing.fixedTotal) : '';
-      checkout.textContent = slotConfigErrors.length ? 'Bundle configuration unavailable' : (missingSlots.length ? 'Choose your ' + missingSlots[0].label + checkoutReward : (totals.total < minimumCheckout ? 'Add ' + itemPlural + ' to get started' : checkoutLabel + ' (' + money(totals.estimated) + ')'));
+      checkout.textContent = slotConfigErrors.length ? 'Bundle configuration unavailable' :
+        (totals.total < minimumCheckout ? 'Add ' + itemPlural + ' to get started' :
+          (missingSlots.length && !allowPartialCheckout ? 'Choose your ' + missingSlots[0].label + checkoutReward :
+            (missingSlots.length ? 'Checkout (' + money(totals.estimated) + ')' : checkoutLabel + ' (' + money(totals.estimated) + ')')));
     }
 
     function closeEditor() {
@@ -714,11 +846,12 @@
     async function readCart() {
       var response = await fetch('/cart.js', { headers: { Accept: 'application/json' } });
       if (!response.ok) throw new Error('The cart could not be read.');
-      return response.json();
+      reconciledCart = await response.json();
+      return reconciledCart;
     }
 
     async function removeCurrentBundle() {
-      var cart = await readCart();
+      var cart = reconciledCart || await readCart();
       var updates = {};
       (cart.items || []).forEach(function (line) {
         var props = line.properties || {};
@@ -732,7 +865,33 @@
         body: JSON.stringify({ updates: updates })
       });
       if (!response.ok) throw new Error('The existing bundle could not be updated.');
-      return response.json();
+      reconciledCart = await response.json();
+      return reconciledCart;
+    }
+
+    function cartAlreadyMatches(items) {
+      if (!reconciledCart || !Array.isArray(reconciledCart.items)) return false;
+      var existing = reconciledCart.items.filter(function (line) {
+        var properties = line.properties || {};
+        return properties[propNames.bundleId || '_bundle_id'] === bundleId && matchesBuilder(properties);
+      });
+      if (existing.length !== items.length) return false;
+      var used = new Set();
+      return items.every(function (item) {
+        for (var index = 0; index < existing.length; index += 1) {
+          if (used.has(index)) continue;
+          var line = existing[index];
+          if (String(line.variant_id || line.id) !== String(item.id) || Number(line.quantity) !== Number(item.quantity)) continue;
+          var properties = line.properties || {};
+          var matches = Object.keys(item.properties || {}).every(function (key) {
+            return String(properties[key] == null ? '' : properties[key]) === String(item.properties[key] == null ? '' : item.properties[key]);
+          });
+          if (!matches) continue;
+          used.add(index);
+          return true;
+        }
+        return false;
+      });
     }
 
     function cardForVariant(id) {
@@ -779,7 +938,12 @@
         var candidate = (cart.items || []).filter(function (line) {
           return matchesBuilder(line.properties) && (line.properties || {})[propNames.bundleItem || '_bundle_item'] === 'true';
         });
-        if (!candidate.length) return;
+        if (!candidate.length) {
+          selected.clear();
+          clearSelectionCache();
+          render();
+          return;
+        }
         var restoredId = (candidate[0].properties || {})[propNames.bundleId || '_bundle_id'];
         if (restoredId) {
           bundleId = restoredId;
@@ -823,6 +987,7 @@
             selected.set(data.selectionId, Object.assign({}, existing || data, data, { quantity: quantity + (existing ? existing.quantity : 0) }));
           });
           render();
+          cacheSelection();
           return;
         }
         var restoredTotal = 0;
@@ -846,6 +1011,7 @@
           restoredTotal += quantity;
         });
         render();
+        cacheSelection();
       } catch (error) {
         console.warn('The existing pack could not be restored.', error);
       } finally {
@@ -928,7 +1094,7 @@
       var totals = estimate();
       if (slotConfigErrors.length) { showError(slotConfigErrors[0]); return; }
       var missingSlots = incompleteSlots();
-      if (missingSlots.length) {
+      if (missingSlots.length && !allowPartialCheckout) {
         var slotMessage = 'Complete ' + missingSlots.map(function (slot) { return slot.label; }).join(', ') + ' before checkout.';
         showError(slotMessage);
         validationError('slots_incomplete', slotMessage, { slots: missingSlots });
@@ -968,6 +1134,12 @@
         properties[propNames.freeGiftLabel || '_bundle_free_gift_label'] = reward.label || 'Free gift included';
         items.push({ id: Number(reward.variantId), quantity: Number(reward.quantity) || 1, properties: properties });
       });
+      if (cartAlreadyMatches(items)) {
+        cacheSelection();
+        if (typeof window.CLFreeGiftBuy2Reconcile === 'function') await window.CLFreeGiftBuy2Reconcile();
+        window.location.assign((config.checkout || {}).destination || '/checkout');
+        return;
+      }
       checkout.disabled = true;
       checkout.textContent = 'Adding your bundle...';
       try {
@@ -981,8 +1153,8 @@
           var body = await response.json().catch(function () { return {}; });
           throw new Error(body.description || body.message || 'The bundle could not be added.');
         }
-        var cart = await readCart();
-        dispatch('cl:pack:cart-synced', { builderKey: builder.key, bundleId: bundleId, cart: cart, state: state() });
+        cacheSelection();
+        if (typeof window.CLFreeGiftBuy2Reconcile === 'function') await window.CLFreeGiftBuy2Reconcile();
         window.location.assign((config.checkout || {}).destination || '/checkout');
       } catch (error) {
         window.clCheckoutInProgress = false;
@@ -992,6 +1164,7 @@
     });
 
     installSlotPresentation();
+    restoreCachedSelection();
     render();
     if (slotConfigErrors.length) {
       showError(slotConfigErrors[0]);

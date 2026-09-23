@@ -2,6 +2,7 @@
   Modular Hypro builder for GemPages Custom Liquid elements.
 
     {% render 'cl-hypro-bundle', block: 'config' %}
+    {% render 'cl-hypro-bundle', block: 'heading' %}
     {% render 'cl-hypro-bundle', block: 'engraving' %}
     {% render 'cl-hypro-bundle', block: 'catalog-tools' %}
     {% render 'cl-hypro-bundle', block: 'grid' %}
@@ -19,17 +20,66 @@
   assign cl_collection_handle = collection_handle | default: collection.handle | default: 'hypro'
   assign cl_collection = collections[cl_collection_handle] | default: collection | default: collections['hypro']
   assign cl_id = builder_id | default: cl_collection_handle | default: 'hypro-3-pack'
+  assign cl_atomic_config = cl_collection.metafields.custom.builder_config.value
+  assign cl_atomic_ready = cl_collection.metafields.custom.builder_config_ready.value
+  assign cl_atomic_active = false
+  assign cl_atomic_disabled = false
+  if cl_atomic_config.version != blank and cl_atomic_config.version == cl_atomic_ready
+    assign cl_atomic_active = true
+    if cl_atomic_config.active == false
+      assign cl_atomic_disabled = true
+    endif
+  endif
   assign cl_title = cl_collection.metafields.custom.builder_title.value | default: 'Hypro Sunglasses 3-Pack'
   assign cl_singular = cl_collection.metafields.custom.builder_item_singular.value | default: 'pair'
   assign cl_plural = cl_collection.metafields.custom.builder_item_plural.value | default: 'pairs'
   assign cl_button = cl_collection.metafields.custom.builder_add_button_text.value | default: 'Add 3-Pack to Cart'
   assign cl_milestones = cl_collection.metafields.custom.builder_milestones.value
   assign cl_selection_slots = cl_collection.metafields.custom.builder_selection_slots.value
+  assign cl_milestone_style_setting = cl_collection.metafields.custom.builder_milestone_style.value | default: 'slots'
+  assign cl_personalization_setting = cl_collection.metafields.custom.builder_personalization_mode.value | default: 'per_item'
+  assign cl_preview_setting = cl_collection.metafields.custom.builder_preview_mode.value | default: 'none'
+  assign cl_fixed_total_setting = cl_collection.metafields.custom.builder_fixed_total.value
+  assign cl_allow_partial_setting = cl_collection.metafields.custom.builder_allow_partial_checkout.value
+  assign cl_pricing_mode_setting = cl_collection.metafields.custom.builder_pricing_mode.value
+  assign cl_pricing_tiers = blank
+  assign cl_maximum = blank
+  if cl_atomic_active
+    assign cl_title = cl_atomic_config.title | default: cl_title
+    assign cl_singular = cl_atomic_config.itemSingular | default: cl_singular
+    assign cl_plural = cl_atomic_config.itemPlural | default: cl_plural
+    assign cl_button = cl_atomic_config.addButtonText | default: cl_button
+    assign cl_milestones = cl_atomic_config.milestones
+    assign cl_selection_slots = cl_atomic_config.selectionSlots
+    assign cl_milestone_style_setting = cl_atomic_config.milestoneStyle | default: cl_milestone_style_setting
+    assign cl_personalization_setting = cl_atomic_config.personalizationMode | default: cl_personalization_setting
+    assign cl_preview_setting = cl_atomic_config.previewMode | default: cl_preview_setting
+    assign cl_fixed_total_setting = cl_atomic_config.fixedTotal
+    assign cl_allow_partial_setting = cl_atomic_config.allowPartialCheckout
+    assign cl_pricing_mode_setting = cl_atomic_config.pricingMode | default: cl_pricing_mode_setting
+    assign cl_pricing_tiers = cl_atomic_config.pricingTiers
+    assign cl_maximum = cl_atomic_config.maximumQuantity
+  endif
+  assign cl_heading_title = heading_title | default: cl_title
+  assign cl_heading_eyebrow = heading_eyebrow | default: 'Create your bundle'
+  assign cl_show_heading = show_heading | default: true, allow_false: true
+  assign cl_show_heading_eyebrow = show_heading_eyebrow | default: true, allow_false: true
   assign cl_target = cl_milestones | last | default: 3
-  assign cl_milestone_style = cl_collection.metafields.custom.builder_milestone_style.value | default: 'slots'
-  assign cl_mode = personalization_mode | default: cl_collection.metafields.custom.builder_personalization_mode.value | default: 'per_item'
+  if cl_maximum == blank and cl_selection_slots != blank
+    assign cl_maximum = 0
+    for cl_selection_slot in cl_selection_slots
+      assign cl_slot_quantity = cl_selection_slot.quantity | default: 0
+      assign cl_maximum = cl_maximum | plus: cl_slot_quantity
+    endfor
+  endif
+  assign cl_maximum = cl_maximum | default: cl_target
+  if cl_pricing_mode_setting == 'tiered'
+    assign cl_target = cl_maximum
+  endif
+  assign cl_milestone_style = cl_milestone_style_setting
+  assign cl_mode = personalization_mode | default: cl_personalization_setting
   assign cl_fields_mode = fields_mode | default: cl_collection.metafields.custom.builder_personalization_fields_mode.value | default: 'per_product'
-  assign cl_preview_mode = preview_mode | default: cl_collection.metafields.custom.builder_preview_mode.value | default: 'none'
+  assign cl_preview_mode = preview_mode | default: cl_preview_setting
   assign cl_edit_presentation = editing_presentation | default: cl_collection.metafields.custom.builder_editing_presentation.value | default: 'inline'
   assign cl_catalog_mode = catalog_mode | default: cl_collection.metafields.custom.builder_catalog_mode.value | default: 'none'
   assign cl_catalog_page_size = catalog_page_size | default: cl_collection.metafields.custom.builder_catalog_page_size.value | default: 12
@@ -38,8 +88,8 @@
   assign cl_gift_tiers = cl_collection.metafields.custom.gift_tiers.value
   assign cl_gift_minimum = cl_collection.metafields.custom.builder_free_gift_pack_size.value | default: cl_target
   assign cl_gift_label = cl_collection.metafields.custom.builder_free_gift_label.value | default: 'Free gift included'
-  assign cl_fixed_total_setting = fixed_total | default: cl_collection.metafields.custom.builder_fixed_total.value
-  assign cl_pricing_mode = pricing_mode | default: cl_collection.metafields.custom.builder_pricing_mode.value
+  assign cl_fixed_total_setting = fixed_total | default: cl_fixed_total_setting
+  assign cl_pricing_mode = pricing_mode | default: cl_pricing_mode_setting
   if cl_pricing_mode == blank
     if cl_fixed_total_setting != blank
       assign cl_pricing_mode = 'fixed_total'
@@ -47,10 +97,13 @@
       assign cl_pricing_mode = 'tiered'
     endif
   endif
+  if cl_pricing_mode == 'tiered'
+    assign cl_milestone_style = 'dots'
+  endif
   assign cl_fixed_total = cl_fixed_total_setting | default: 9900
-  assign cl_allow_partial = allow_partial_checkout | default: true, allow_false: true
-  if cl_selection_slots != blank
-    assign cl_allow_partial = false
+  assign cl_allow_partial = cl_allow_partial_setting
+  if cl_allow_partial == blank
+    assign cl_allow_partial = allow_partial_checkout | default: false, allow_false: true
   endif
   assign cl_reward_label = reward_label
   assign cl_builder_url = builder_url
@@ -58,6 +111,17 @@
     assign cl_builder_url = cl_collection_handle | prepend: '/collections/'
   endif
 -%}
+
+{%- unless cl_atomic_disabled -%}
+
+{%- if cl_block == 'heading' or cl_block == 'all' -%}
+  {%- if cl_show_heading -%}
+    <header class="cl-hypro cl-pack-heading" data-cl-pack-for="{{ cl_id | escape }}" data-cl-pack-heading>
+      {%- if cl_show_heading_eyebrow and cl_heading_eyebrow != blank -%}<p>{{ cl_heading_eyebrow }}</p>{%- endif -%}
+      <h1>{{ cl_heading_title }}</h1>
+    </header>
+  {%- endif -%}
+{%- endif -%}
 
 {%- if cl_block == 'config' or cl_block == 'all' -%}
   {{ 'cl-hypro-bundle.css' | asset_url | stylesheet_tag }}
@@ -74,7 +138,7 @@
       },
       "source": { "mode": "collection", "collectionHandle": {{ cl_collection_handle | json }} },
       "selection": {
-        "target": {{ cl_target | json }}, "maximum": {{ cl_target | json }}, "minimumCheckout": {% if cl_allow_partial %}1{% else %}{{ cl_target | json }}{% endif %},
+        "target": {{ cl_target | json }}, "maximum": {{ cl_maximum | json }}, "minimumCheckout": {% if cl_allow_partial %}1{% else %}{{ cl_target | json }}{% endif %},
         "milestones": {% if cl_milestones != blank %}{{ cl_milestones | json }}{% else %}[3]{% endif %},
         "milestoneStyle": {{ cl_milestone_style | json }},
         "allowPartialCheckout": {{ cl_allow_partial | json }}, "allowDuplicateVariant": true,
@@ -88,7 +152,7 @@
         ]
       },
       "preview": { "mode": {{ cl_preview_mode | json }}, "keyedBy": "handle"{% if cl_preview_mode == 'image_overlay' %}, "configUrl": {{ 'cl-pack-preview-config.json' | asset_url | json }}{% endif %} },
-      "pricing": { "mode": {{ cl_pricing_mode | json }}, "currency": "USD", "fixedTotal": {{ cl_fixed_total | json }}, "tiers": [], {% if cl_pricing_mode == 'tiered' %}"tagPricingEndpoint": "/apps/citylocs/discount-info", {% endif %}{% if display_unit_price != blank %}"displayUnitPrice": {{ display_unit_price | json }}, {% endif %}{% if cl_reward_label != blank %}"rewardLabel": {{ cl_reward_label | json }}, {% endif %}"discountAuthority": "backend" },
+      "pricing": { "mode": {{ cl_pricing_mode | json }}, "currency": "USD", "fixedTotal": {{ cl_fixed_total | json }}, "tiers": {% if cl_pricing_tiers != blank %}{{ cl_pricing_tiers | json }}{% else %}[]{% endif %}, {% if cl_pricing_mode == 'tiered' %}"tagPricingEndpoint": "/apps/citylocs/discount-info", {% endif %}{% if display_unit_price != blank %}"displayUnitPrice": {{ display_unit_price | json }}, {% endif %}{% if cl_reward_label != blank %}"rewardLabel": {{ cl_reward_label | json }}, {% endif %}"discountAuthority": "backend" },
       "rewards": [
         {%- assign cl_reward_emitted = false -%}
         {%- if cl_gift_tiers != blank -%}
@@ -312,24 +376,27 @@
         </div>
         <div class="cl-hypro-summary__slots" aria-hidden="true">
           {% if cl_milestone_style == 'dots' and cl_milestones != blank %}
-            {% for cl_milestone in cl_milestones %}<span data-cl-pack-slot data-cl-pack-minimum="{{ cl_milestone }}"><b>{{ cl_milestone }}</b></span>{% endfor %}
+            <span data-cl-pack-slot data-cl-pack-minimum="0"><b>0</b></span>
+            {% for cl_milestone in cl_milestones %}{% unless cl_pricing_mode == 'tiered' and cl_milestone == 1 %}<span data-cl-pack-slot data-cl-pack-minimum="{{ cl_milestone }}"><b>{{ cl_milestone }}</b></span>{% endunless %}{% endfor %}
+            {% if cl_pricing_mode == 'tiered' and cl_maximum != cl_milestones.last %}<span data-cl-pack-slot data-cl-pack-minimum="{{ cl_maximum }}"><b>{{ cl_maximum }}</b></span>{% endif %}
           {% else %}
             {% for cl_slot in (1..cl_target) %}<span data-cl-pack-slot data-cl-pack-minimum="{{ cl_slot }}"></span>{% endfor %}
           {% endif %}
         </div>
         <div class="cl-hypro-summary__count"><strong><span data-cl-pack-total>0</span></strong> of {{ cl_target }} {{ cl_plural | capitalize }}</div>
         <p class="cl-hypro-summary__message" data-cl-pack-message>Add {{ cl_target }} {{ cl_plural }} to unlock your bundle.</p>
+        {% if cl_pricing_mode == 'tiered' %}<div class="cl-hypro-summary__next"><p data-cl-pack-next-discount></p><p data-cl-pack-next-gift></p></div>{% endif %}
       </div>
       <div class="cl-hypro-summary__items" data-cl-pack-summary-items><p class="cl-hypro-summary__empty">No {{ cl_plural }} added yet.</p></div>
       <div class="cl-hypro-summary__pricing">
         <div><span>Total {{ cl_plural | capitalize }}</span><strong data-cl-pack-total-copy>0</strong></div>
         <div><span>Subtotal</span><strong data-cl-pack-subtotal>$0.00</strong></div>
-        <div class="cl-hypro-summary__savings"><span>You Save</span><strong data-cl-pack-savings>$0.00</strong></div>
+        <div class="cl-hypro-summary__savings" data-cl-pack-savings-row hidden><span>You Save</span><strong data-cl-pack-savings>$0.00</strong></div>
         <div class="cl-hypro-summary__gift-total" data-cl-pack-gift-total hidden><span>Free gift</span><strong>Included</strong></div>
         <div class="cl-hypro-summary__estimated"><span>Estimated Total</span><strong data-cl-pack-estimated>$0.00</strong></div>
       </div>
       <button type="button" class="cl-hypro-summary__checkout" data-cl-pack-checkout disabled>Add {{ cl_plural }} to get started</button>
-      <p class="cl-hypro-summary__fineprint">{% if cl_allow_partial %}Checkout is available with any selection. {% endif %}{% if cl_pricing_mode == 'tiered' %}Bundle pricing updates at each qualifying milestone.{% else %}Add exactly {{ cl_target }} {{ cl_plural }} to unlock the bundle price.{% endif %}</p>
+      <p class="cl-hypro-summary__fineprint">{% if cl_allow_partial %}Incomplete bundles checkout at regular item prices and do not include the free gift. {% endif %}{% if cl_pricing_mode == 'tiered' %}Bundle pricing updates at each qualifying milestone.{% else %}Add exactly {{ cl_target }} {{ cl_plural }} to unlock the bundle price.{% endif %}</p>
     </aside>
     <button type="button" class="cl-hypro-mobile-bar" data-cl-pack-open><span><strong data-cl-pack-mobile-count>0</strong> of {{ cl_target }} selected</span><span>View Bundle</span></button>
     <div class="cl-hypro-overlay" data-cl-pack-overlay hidden></div>
@@ -357,3 +424,4 @@
     </section>
   {%- endif -%}
 {%- endif -%}
+{%- endunless -%}

@@ -187,7 +187,11 @@
 {% endcapture %}
 
 {% capture product_form %}
-  {% render 'form.product', product: product, id: form_id, slot: product_details_stack %}
+  {% capture product_form_slot %}
+    {{ product_details_stack }}
+    {% render 'cl-pack-size' %}
+  {% endcapture %}
+  {% render 'form.product', product: product, id: form_id, slot: product_form_slot %}
 {% endcapture %}
 
 {% unless is_cl_combined_listing %}

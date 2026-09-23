@@ -1,0 +1,20 @@
+{%- unless include_assets == false -%}{% render 'cl-fixed-bundle-bootstrap' %}{%- endunless -%}
+{%- assign fxb_show_heading = true -%}
+{%- if show_heading == false or hide_heading == true -%}
+  {%- assign fxb_show_heading = false -%}
+{%- endif -%}
+<div class="cl-fxb__scope cl-fxb__block" data-cl-fxb-scope data-cl-fxb-block="state">
+  <div class="cl-fxb__field">
+    {%- if fxb_show_heading -%}<span class="cl-fxb__field-label">1 · Choose your state</span>{%- endif -%}
+    <div class="cl-fxb__combo" data-cl-combo>
+      <input type="text" id="cl-fxb-state-search" class="cl-fxb__input cl-fxb__combo-input" placeholder="Search or choose a state…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="cl-fxb-state-menu" aria-autocomplete="list">
+      <input type="hidden" id="cl-fxb-state" value="">
+      <button type="button" class="cl-fxb__combo-clear" data-cl-combo-clear aria-label="Clear state" hidden>&times;</button>
+      <ul class="cl-fxb__combo-menu" id="cl-fxb-state-menu" role="listbox" hidden></ul>
+    </div>
+  </div>
+  <div id="cl-fxb-design" class="cl-fxb__design" hidden aria-live="polite">
+    <span class="cl-fxb__design-label">Featured plate design</span>
+    <strong id="cl-fxb-design-name"></strong>
+  </div>
+</div>

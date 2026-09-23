@@ -3,36 +3,46 @@
   the pilot; collection-facing labels and gift selection remain metafield-driven.
 {% endcomment %}
 
-<div class="cl-pack-page">
-  <header class="cl-pack-page__header">
-    <p>Create your bundle</p>
-    <h1>{{ collection.metafields.custom.builder_title.value | default: collection.title }}</h1>
-  </header>
-  <div class="cl-pack-page__layout">
-    <div>{% render 'cl-hypro-bundle', block: 'grid', collection_handle: collection.handle, fixed_total: section.settings.fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url, preview_mode: section.settings.preview_mode %}</div>
-    <div>{% render 'cl-hypro-bundle', block: 'summary', collection_handle: collection.handle, fixed_total: section.settings.fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url %}</div>
+{%- liquid
+  assign cl_section_pricing_mode = section.settings.pricing_mode
+  assign cl_section_fixed_total = section.settings.fixed_total
+  if cl_section_pricing_mode == 'auto'
+    assign cl_section_pricing_mode = nil
+    assign cl_section_fixed_total = nil
+  endif
+-%}
+
+<div class="cl-pack-builder-page">
+  {% render 'cl-hypro-bundle', block: 'heading', collection_handle: collection.handle, show_heading: section.settings.show_heading, show_heading_eyebrow: section.settings.show_heading_eyebrow, heading_eyebrow: section.settings.heading_eyebrow, heading_title: section.settings.heading_title %}
+  <div class="cl-pack-builder-page__layout">
+    <div>{% render 'cl-hypro-bundle', block: 'grid', collection_handle: collection.handle, pricing_mode: cl_section_pricing_mode, fixed_total: cl_section_fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url, preview_mode: section.settings.preview_mode, catalog_mode: section.settings.catalog_mode, catalog_page_size: section.settings.catalog_page_size %}</div>
+    <div>{% render 'cl-hypro-bundle', block: 'summary', collection_handle: collection.handle, pricing_mode: cl_section_pricing_mode, fixed_total: cl_section_fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url %}</div>
   </div>
 </div>
 
-{% render 'cl-hypro-bundle', block: 'config', collection_handle: collection.handle, fixed_total: section.settings.fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url, preview_mode: section.settings.preview_mode %}
+{% render 'cl-hypro-bundle', block: 'config', collection_handle: collection.handle, pricing_mode: cl_section_pricing_mode, fixed_total: cl_section_fixed_total, allow_partial_checkout: section.settings.allow_partial_checkout, reward_label: section.settings.reward_label, builder_url: section.settings.builder_url, preview_mode: section.settings.preview_mode, catalog_mode: section.settings.catalog_mode, catalog_page_size: section.settings.catalog_page_size %}
 
 <style>
-  .cl-pack-page { max-width: 1240px; margin: 0 auto; padding: 48px 24px 80px; }
-  .cl-pack-page__header { margin: 0 0 36px; text-align: center; }
-  .cl-pack-page__header p { margin: 0 0 8px; letter-spacing: .45em; text-transform: uppercase; }
-  .cl-pack-page__header h1 { margin: 0; font-size: clamp(32px, 5vw, 52px); line-height: 1.08; }
-  .cl-pack-page__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 36px; align-items: start; }
-  @media (max-width: 989px) { .cl-pack-page__layout { display: block; } }
+  .cl-pack-builder-page { max-width: 1240px; margin: 0 auto; padding: 48px 24px 80px; }
+  .cl-pack-builder-page__layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, 430px); gap: 36px; align-items: start; }
+  @media (max-width: 989px) { .cl-pack-builder-page__layout { display: block; } }
 </style>
 
 {% schema %}
 {
   "name": "Collection pack builder",
   "settings": [
+    { "type": "checkbox", "id": "show_heading", "label": "Show bundle heading", "default": true },
+    { "type": "checkbox", "id": "show_heading_eyebrow", "label": "Show heading eyebrow", "default": true },
+    { "type": "text", "id": "heading_eyebrow", "label": "Heading eyebrow", "default": "Create your bundle" },
+    { "type": "text", "id": "heading_title", "label": "Heading title override", "info": "Leave blank to use the Bundle Offers title." },
+    { "type": "select", "id": "pricing_mode", "label": "Pricing mode", "default": "auto", "options": [{ "value": "auto", "label": "Use Bundle Offers configuration" }, { "value": "fixed_total", "label": "Fixed bundle total" }, { "value": "tiered", "label": "Per-item volume tiers" }] },
     { "type": "number", "id": "fixed_total", "label": "Bundle total (cents)", "default": 4999 },
     { "type": "checkbox", "id": "allow_partial_checkout", "label": "Allow checkout below milestone", "default": true },
     { "type": "text", "id": "reward_label", "label": "Reward label", "default": "3 for $49.99" }
     ,{ "type": "select", "id": "preview_mode", "label": "Personalization preview", "default": "none", "options": [{ "value": "none", "label": "None" }, { "value": "image_overlay", "label": "Image overlay" }] }
+    ,{ "type": "select", "id": "catalog_mode", "label": "Catalog controls", "default": "client", "options": [{ "value": "client", "label": "Search, filter, sort, and pagination" }, { "value": "none", "label": "Show all products" }] }
+    ,{ "type": "range", "id": "catalog_page_size", "label": "Products per page", "min": 6, "max": 36, "step": 6, "default": 12 }
     ,{ "type": "text", "id": "builder_url", "label": "Builder URL", "info": "Optional. Used by cart Edit Bundle links." }
   ]
 }
