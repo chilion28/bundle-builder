@@ -13,6 +13,18 @@
   elsif request.page_type == 'password'
     assign og_url = request.origin
   endif
+
+  # Shopify's `page_image` global does NOT resolve collection images, so
+  # collection pages (e.g. GemPages landing collections) shared to Slack/
+  # Facebook/LinkedIn had no og:image. Fall back to the collection's own image,
+  # then its first product's image, so the preview always has a thumbnail.
+  if og_image == blank
+    if request.page_type == 'collection'
+      assign og_image = collection.image | default: collection.products.first.featured_image
+    elsif request.page_type == 'product'
+      assign og_image = product.featured_image
+    endif
+  endif
 %}
 
 {% if og_image != blank %}
@@ -73,7 +85,7 @@
 
 {% assign twitter_title = page_title | default: shop.name %}
 {% assign twitter_description = page_description | default: shop.description | default: shop.name %}
-{% assign twitter_image = page_image %}
+{% assign twitter_image = og_image %}
 
 {% if twitter_handle == blank %}
   {% assign twitter_handle = settings.social_twitter_handle | split: 'twitter.com/' | last %}
