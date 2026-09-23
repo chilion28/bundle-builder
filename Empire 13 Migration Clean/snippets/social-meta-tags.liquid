@@ -43,13 +43,22 @@
       {% assign width = height | times: og_image.aspect_ratio | round %}
     {% endif %}
     {% capture request_url %}{{ width }}x{{ height }}{% endcapture %}
+    {%- comment -%}
+      Serve og:image as a JPG rendition. Source images are often heavy PNGs (e.g.
+      a 985KB collection photo) that Slack/Facebook's image proxy silently skips,
+      leaving a blank preview even though the tag is correct. `format: 'jpg'`
+      returns a ~140KB JPG that unfurls reliably. The scheme guard covers
+      image_url returning a protocol-relative URL.
+    {%- endcomment -%}
+    {%- assign og_image_src = og_image | image_url: width: width, format: 'jpg' -%}
+    {%- unless og_image_src contains 'http' -%}{%- assign og_image_src = 'https:' | append: og_image_src -%}{%- endunless -%}
     <meta
       property="og:image"
-      content="https:{{ og_image | img_url: request_url }}"
+      content="{{ og_image_src }}"
     />
     <meta
       property="og:image:secure_url"
-      content="https:{{ og_image | img_url: request_url }}"
+      content="{{ og_image_src }}"
     />
     <meta property="og:image:width" content="{{ width }}" />
     <meta property="og:image:height" content="{{ height }}" />
@@ -122,9 +131,11 @@
       <meta name="twitter:card" content="summary_large_image">
     {% endif %}
     {% capture request_url %}{{ width }}x{{ height }}{% endcapture %}
+    {%- assign twitter_image_src = twitter_image | image_url: width: width, height: height, crop: 'center', format: 'jpg' -%}
+    {%- unless twitter_image_src contains 'http' -%}{%- assign twitter_image_src = 'https:' | append: twitter_image_src -%}{%- endunless -%}
     <meta
       property="twitter:image"
-      content="https:{{ twitter_image | img_url: request_url, crop: 'center' }}"
+      content="{{ twitter_image_src }}"
     />
     <meta property="twitter:image:width" content="{{ width }}" />
     <meta property="twitter:image:height" content="{{ height }}" />
