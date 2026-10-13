@@ -10,6 +10,65 @@
   var CART_EDIT_STORAGE_KEY = 'cl-fixed-bundle-cart-edit';
   var TEMPLATE_API_URL = 'https://citylocsproduction.com/api/get-product-template';
 
+  /* Last-known-good clOrdersApp routing snapshot (refreshed 2026-10-13).
+   * The live API remains authoritative and is always tried first. This cache is
+   * used only when the browser cannot reach it (for example, a TLS outage), so
+   * customers can still submit production-routable bundles. Product IDs are
+   * checked before a cached template is accepted. */
+  var PRODUCTION_TEMPLATE_FALLBACKS = {
+    'hat-alabama-plate': ['1307208155204', 'US License Plates/prt Alabama.ai'],
+    'test-plate': ['1927328399448', 'US License Plates/prt Alaska.ai'],
+    'hat-arizona-plate-2018': ['1337703858264', 'US License Plates/prt Arizona 2018.ai'],
+    'hat-arkansas-plate': ['1307208351812', 'US License Plates/prt Arkansas.ai'],
+    'hat-cali-plates': ['8993982211', 'US License Plates/prt California 60s.ai'],
+    'hat-colorado-plate': ['10557545422', 'US License Plates/prt Colorado.ai'],
+    'hat-connecticut-plate': ['1307208450116', 'US License Plates/prt Connecticut.ai'],
+    'hat-delaware-plate': ['1307208581188', 'US License Plates/prt Delaware.ai'],
+    'copy-of-hat-washington-plate': ['1308169306180', 'US License Plates/prt Washington DC.ai'],
+    'hat-florida': ['18988105752', 'US License Plates/prt Florida.ai'],
+    'hat-georgia-plate': ['1307208679492', 'US License Plates/prt Georgia.ai'],
+    'hat-hawaii-plate': ['1307208876100', 'US License Plates/prt Hawaii.ai'],
+    'hat-idaho-plate': ['1307209007172', 'US License Plates/prt Idaho.ai'],
+    'hat-illinois': ['169356361752', 'US License Plates/prt Illinois.ai'],
+    'hat-indiana-plate': ['1307208941636', 'US License Plates/prt Indiana.ai'],
+    'hat-iowa-plate': ['1307209039940', 'US License Plates/prt Iowa.ai'],
+    'hat-kansas': ['169434185752', 'US License Plates/prt Kansas.ai'],
+    'hat-kentucky-plate': ['1307209171012', 'US License Plates/prt Kentucky.ai'],
+    'louisiana-2022-plate-hat': ['7152441458776', 'US License Plates/prt Louisiana 2022.ai'],
+    'hat-maine-plate': ['1307209433156', 'US License Plates/prt Maine.ai'],
+    'hat-maryland-plate': ['1307209564228', 'US License Plates/prt Maryland.ai'],
+    'hat-massachusetts': ['169393258520', 'US License Plates/prt Massachusetts.ai'],
+    'hat-michigan': ['1306938802244', 'US License Plates/prt Michigan.ai'],
+    'hat-minnesota-plate': ['1307209629764', 'US License Plates/prt Minnesota.ai'],
+    'mississippi-2022-plate-hat': ['7152448143448', 'US License Plates/prt Mississippi 2022.ai'],
+    'missouri-plate-hat-v2': ['7360937361496', 'US License Plates/prt Missouri 2022.ai'],
+    'hat-montana': ['169362980888', 'US License Plates/prt Montana.ai'],
+    'nebraska-2023-plate-hat': ['8341009760344', 'US License Plates/prt Nebraska 2023.ai'],
+    'hat-nevada-plate': ['10350387086', 'US License Plates/prt Nevada.ai'],
+    'hat-new-hampshire-plate': ['1307212218436', 'US License Plates/prt New Hampshire.ai'],
+    'hat-new-jersey': ['169329262616', 'US License Plates/prt New Jersey.ai'],
+    'new-mexico-chile-plate-hat': ['7854085668952', 'US License Plates/prt New Mexico Chiles.ai'],
+    'new-york-2022-plate-hat': ['7152496967768', 'US License Plates/prt New York 2022.ai'],
+    'hat-north-carolina-plate': ['1307212644420', 'US License Plates/prt North Carolina.ai'],
+    'hat-north-dakota-plate': ['1307212775492', 'US License Plates/prt North Dakota.ai'],
+    'hat-ohio-plate': ['10557539982', 'US License Plates/prt Ohio.ai'],
+    'oklahoma-red-plate-hat': ['8112186982488', 'US License Plates/prt Oklahoma RED.ai'],
+    'hat-oregon': ['169417375768', 'US License Plates/prt Oregon.ai'],
+    'pennsylvania-2025-plate-hat': ['8112220962904', 'US License Plates/prt Pennsylvania 2025.ai'],
+    'hat-rhode-island-plate': ['1307213004868', 'US License Plates/prt Rhode Island.ai'],
+    'south-carolina-2022-plate-hat': ['7152537501784', 'US License Plates/prt South Carolina 2022.ai'],
+    'hat-south-dakota-plate': ['1307213234244', 'US License Plates/prt South Dakota.ai'],
+    'tennessee-2022-plate-hat': ['7152551166040', 'US License Plates/prt Tennessee 2022.ai'],
+    'hat-60s-texas-plate': ['9338073870', 'US License Plates/prt Texas Black.ai'],
+    'hat-utah-plate': ['1307213332548', 'US License Plates/prt Utah.ai'],
+    'hat-vermont-plate': ['1307213365316', 'US License Plates/prt Vermont.ai'],
+    'hat-virginia': ['1307067088964', 'US License Plates/prt Virginia.ai'],
+    'hat-washington': ['169405808664', 'US License Plates/prt Washington.ai'],
+    'hat-west-virginia-plate': ['1307213463620', 'US License Plates/prt West Virginia.ai'],
+    'hat-wisconsin-plate': ['1307213660228', 'US License Plates/prt Wisconsin.ai'],
+    'wyoming-2022-plate-hat': ['7153809195096', 'US License Plates/prt Wyoming 2022.ai']
+  };
+
   var FIELD_DEFAULTS = {
     'Month':             { maxLength: 3,  placeholder: 'MONTH', required: true },
     'Year':              { maxLength: 4,  placeholder: 'YEAR', required: true },
@@ -147,20 +206,30 @@
   function resolveProductionTemplate(handle) {
     return getDesignProduct(handle).then(function (product) {
       if (!product || !product.id) throw new Error('design product not found');
+      var productId = String(product.id);
+      var fallback = PRODUCTION_TEMPLATE_FALLBACKS[handle];
+      function trustedFallback() {
+        if (!fallback || fallback[0] !== productId || !fallback[1]) {
+          throw new Error('template lookup failed and no trusted fallback exists');
+        }
+        return { productId: productId, template: fallback[1] };
+      }
       return fetch(TEMPLATE_API_URL, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ productId: String(product.id) })
+        body: JSON.stringify({ productId: productId })
       }).then(function (response) {
         if (!response.ok) throw new Error('template lookup failed');
         return response.json();
       }).then(function (record) {
         var template = record && typeof record.template === 'string' ? record.template.trim() : '';
         if (!template) throw new Error('template missing');
-        return { productId: String(product.id), template: template };
+        return { productId: productId, template: template };
+      }).catch(function () {
+        return trustedFallback();
       });
     });
   }
