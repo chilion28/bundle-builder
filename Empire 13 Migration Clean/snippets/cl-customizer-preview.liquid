@@ -1,0 +1,39 @@
+{%- comment -%}
+  cl-customizer-preview — the live "YOUR PATCH" preview block. One of the split
+  customizer blocks. Place anywhere in GemPages:
+      {% render 'cl-customizer-preview' %}
+  REQUIRES {% render 'cl-customizer-bootstrap' %} once on the same page.
+  Reads custom.customizer_config for the shape(s) + frame/mask images.
+  Optional param: preview_title.
+{%- endcomment -%}
+{%- assign cfg = product.metafields.custom.customizer_config.value -%}
+{%- assign shape_key = cfg.shape_name | default: 'Rectangle' -%}
+{%- assign shape_list = shape_key | split: ',' -%}
+{%- assign frame_url = '' -%}
+{%- assign mask_url = '' -%}
+{%- if cfg.frame_image != blank -%}{%- assign frame_url = cfg.frame_image | image_url: width: 2000 -%}{%- endif -%}
+{%- if cfg.mask_image != blank -%}{%- assign mask_url = cfg.mask_image | image_url: width: 2000 -%}{%- endif -%}
+{%- assign shape0_slug = shape_list[0] | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
+
+<div class="cl-ai__step cl-ai-b__preview">
+  <div class="cl-ai__step-head">
+    <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
+    <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>
+  </div>
+  <div class="cl-ai-pf" data-cl-ai-patchframe data-shape="{{ shape0_slug }}"
+       {%- for sh in shape_list %}{%- assign sh_slug = sh | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' %} data-mask-{{ sh_slug }}="{% if forloop.first and mask_url != blank %}{{ mask_url }}{% else %}{{ 'cl-patch-mask-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}" data-frame-{{ sh_slug }}="{% if forloop.first and frame_url != blank %}{{ frame_url }}{% else %}{{ 'cl-patch-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}"{% endfor %}>
+    <div class="cl-ai-pf__art" data-cl-ai-pf-art></div>
+    <div class="cl-ai-pf__hint" data-cl-ai-pf-hint>Upload your artwork to preview it here</div>
+    {%- for sh in shape_list -%}
+      {%- assign sh_slug = sh | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
+      <img class="cl-ai-pf__frame" data-frame="{{ sh_slug }}"
+           src="{% if forloop.first and frame_url != blank %}{{ frame_url }}{% else %}{{ 'cl-patch-' | append: sh_slug | append: '.png' | asset_url }}{% endif %}"
+           alt="{{ sh }} patch frame" loading="lazy">
+    {%- endfor -%}
+  </div>
+  <div class="cl-ai-b__placed-actions" data-cl-ai-actions hidden>
+    <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-edit>✎ Edit image</button>
+    <button type="button" class="cl-ai-b__placed-btn" data-cl-ai-replace>↻ Replace</button>
+  </div>
+  <div class="cl-ai-b__drop-status" data-cl-ai-upload-status></div>
+</div>

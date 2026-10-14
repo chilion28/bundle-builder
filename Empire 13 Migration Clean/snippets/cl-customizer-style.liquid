@@ -1,0 +1,54 @@
+{%- comment -%}
+  cl-customizer-style — patch-shape selector (multi-shape only) + hat-style pills.
+  One of the split customizer blocks. Place anywhere in GemPages:
+      {% render 'cl-customizer-style' %}
+  REQUIRES {% render 'cl-customizer-bootstrap' %} once on the same page.
+  Reads the product's Style option + custom.customizer_config shape(s).
+{%- endcomment -%}
+{%- assign cfg = product.metafields.custom.customizer_config.value -%}
+{%- assign shape_key = cfg.shape_name | default: 'Rectangle' -%}
+{%- assign shape_list = shape_key | split: ',' -%}
+{%- assign style_opt = null -%}
+{%- for opt in product.options_with_values -%}
+  {%- assign dn = opt.name | downcase -%}
+  {%- if dn contains 'style' -%}{%- assign style_opt = opt -%}{%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Patch shape — only when the product offers more than one. {%- endcomment -%}
+{%- if shape_list.size > 1 -%}
+<div class="cl-ai-b__field">
+  <label class="cl-ai-b__label">Patch Shape</label>
+  <div class="cl-ai-b__shapes" data-cl-ai-shapes role="radiogroup" aria-label="Patch shape">
+    {%- for sh in shape_list -%}
+      <button type="button" class="cl-ai-b__shape cl-ai-b__shape--{{ sh | downcase }}{% if forloop.first %} is-active{% endif %}"
+              data-cl-ai-shape data-value="{{ sh }}" role="radio" aria-label="{{ sh }}"
+              aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+        <img class="cl-ai-b__shape-icon"
+             src="{{ 'cl-patch-' | append: sh | downcase | append: '.png' | asset_url }}"
+             alt="{{ sh }}" loading="lazy">
+      </button>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{%- comment -%} Hat style pills {%- endcomment -%}
+<div class="cl-ai-b__field">
+  <label class="cl-ai-b__label">Style: <span data-cl-ai-style-label>{% if style_opt %}{{ style_opt.selected_value }}{% else %}Trucker{% endif %}</span></label>
+  <div class="cl-ai-b__pills" data-cl-ai-styles role="radiogroup" aria-label="Style">
+    {%- if style_opt -%}
+      {%- for val in style_opt.values -%}
+        <button type="button" class="cl-ai-b__pill{% if val == style_opt.selected_value %} is-active{% endif %}"
+                data-cl-ai-style data-value="{{ val | escape }}" role="radio"
+                aria-checked="{% if val == style_opt.selected_value %}true{% else %}false{% endif %}">{{ val }}</button>
+      {%- endfor -%}
+    {%- else -%}
+      {%- assign defaults = 'Snapback,Trucker,Flex Fit' | split: ',' -%}
+      {%- for val in defaults -%}
+        <button type="button" class="cl-ai-b__pill{% if val == 'Trucker' %} is-active{% endif %}"
+                data-cl-ai-style data-value="{{ val }}" role="radio"
+                aria-checked="{% if val == 'Trucker' %}true{% else %}false{% endif %}">{{ val }}</button>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>

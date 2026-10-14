@@ -1,0 +1,54 @@
+{%- comment -%}
+  cl-customizer-prompt — STEP 1 "Generate your AI artwork" prompt block.
+  One of the split customizer blocks. Place anywhere in GemPages:
+      {% render 'cl-customizer-prompt' %}
+  REQUIRES {% render 'cl-customizer-bootstrap' %} once on the same page.
+  Optional params: step1_title, prompt_text, prompt_hint, prompt_example.
+{%- endcomment -%}
+<div class="cl-ai__step">
+  <div class="cl-ai__step-head">
+    <span class="cl-ai__step-num">STEP 1</span>
+    <h2 class="cl-ai__step-title">{{ step1_title | default: 'GENERATE YOUR AI ARTWORK' }}</h2>
+  </div>
+  <div class="cl-ai__prompt-head">
+    <span class="cl-ai__prompt-label">
+      <span class="cl-ai__gpt-mark" aria-hidden="true">◍</span>
+      Copy this prompt into ChatGPT
+    </span>
+    <button type="button" class="cl-ai__copy-btn" data-cl-ai-copy>
+      <span data-cl-ai-copy-label>COPY PROMPT</span> ⧉
+    </button>
+  </div>
+  {%- comment -%} [[SIZE]] is swapped by cl-ai-hat.js for the ASPECT RATIO of the selected shape. {%- endcomment -%}
+  <pre class="cl-ai__prompt" data-cl-ai-prompt>{{ prompt_text | default: 'Create artwork for a custom hat patch.
+
+IMPORTANT — image size:
+[[SIZE]]
+
+Make a normal, full-bleed RECTANGULAR image (like a poster or photo).
+It is NOT a badge, sticker, or shaped patch — do not draw the patch outline.
+The artwork must completely fill the whole rectangle, edge to edge.
+DO NOT include:
+- Any text, words, letters, numbers, titles, or captions
+- A hexagon, circle, oval, or any patch/badge shape or outline
+- Stitching
+- Embroidery texture
+- Leather texture
+- Borders
+- Mockups
+- Shadows
+- White frames or empty margins
+
+Keep the main subject centered.
+Leave a 10% safe margin.
+Use bold shapes and strong contrast.
+Avoid tiny details.
+Now create:' }}</pre>
+  <p class="cl-ai__prompt-hint">↳ {{ prompt_hint | default: 'Add your idea after “Now create:”' }}</p>
+  {%- if prompt_example != blank -%}
+    <div class="cl-ai__prompt-example">
+      <span class="cl-ai__example-tag">EXAMPLE</span>
+      <em>{{ prompt_example }}</em>
+    </div>
+  {%- endif -%}
+</div>

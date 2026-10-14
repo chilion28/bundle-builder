@@ -1,0 +1,70 @@
+{%- comment -%}
+  cl-customizer-colors — the colour/quantity picker. One of the split customizer
+  blocks. Place anywhere in GemPages:
+      {% render 'cl-customizer-colors' %}
+  REQUIRES {% render 'cl-customizer-bootstrap' %} once on the same page.
+  Multi-variant products show the colour + quantity grid; single-variant products
+  (pass show_variants: false) show a simple −/+ quantity stepper instead.
+  Reads the product's Color option.
+{%- endcomment -%}
+{%- assign color_opt = null -%}
+{%- for opt in product.options_with_values -%}
+  {%- assign dn = opt.name | downcase -%}
+  {%- if dn contains 'color' or dn contains 'colour' -%}{%- assign color_opt = opt -%}{%- endif -%}
+{%- endfor -%}
+
+{%- if show_variants != false -%}
+
+{%- comment -%} Colour swatches — hidden data layer for the per-colour images; the
+  visible picker is the quantity grid below (built by JS from these swatches). {%- endcomment -%}
+<div class="cl-ai-b__field cl-ai-b__field--colordata" aria-hidden="true">
+  <label class="cl-ai-b__label">Color: <span data-cl-ai-color-label>{% if color_opt %}{{ color_opt.selected_value }}{% else %}Black{% endif %}</span></label>
+  <div class="cl-ai-b__swatches" data-cl-ai-colors role="radiogroup" aria-label="Color">
+    {%- if color_opt -%}
+      {%- for val in color_opt.values -%}
+        {%- assign swatch_img = null -%}
+        {%- for v in product.variants -%}
+          {%- if v.options contains val and v.image -%}{%- assign swatch_img = v.image -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+        <button type="button" class="cl-ai-b__swatch{% if swatch_img %} cl-ai-b__swatch--img{% endif %}{% if val == color_opt.selected_value %} is-active{% endif %}"
+                data-cl-ai-color data-value="{{ val | escape }}" role="radio" title="{{ val | escape }}"
+                {% if swatch_img %}data-swatch-img="{{ swatch_img | image_url: width: 900 }}"{% endif %}
+                aria-checked="{% if val == color_opt.selected_value %}true{% else %}false{% endif %}">
+          {%- if swatch_img -%}
+            <img class="cl-ai-b__swatch-img" src="{{ swatch_img | image_url: width: 120 }}" alt="{{ val | escape }}" width="120" height="120" loading="lazy">
+          {%- else -%}
+            <span class="cl-ai-b__swatch-chip" data-color-name="{{ val | escape }}"></span>
+          {%- endif -%}
+        </button>
+      {%- endfor -%}
+    {%- else -%}
+      {%- assign defaults = 'Black,White,Brown,Camo,Olive' | split: ',' -%}
+      {%- for val in defaults -%}
+        <button type="button" class="cl-ai-b__swatch{% if forloop.first %} is-active{% endif %}"
+                data-cl-ai-color data-value="{{ val }}" role="radio" title="{{ val }}"
+                aria-checked="{% if forloop.first %}true{% else %}false{% endif %}">
+          <span class="cl-ai-b__swatch-chip" data-color-name="{{ val }}"></span>
+        </button>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{%- comment -%} Choose colours & quantities — rows built by JS from the swatches. {%- endcomment -%}
+<div class="cl-ai-b__field">
+  <label class="cl-ai-b__label">Choose colours &amp; quantities</label>
+  <div class="cl-ai-b__grid" data-cl-ai-grid role="group" aria-label="Colours and quantities"></div>
+</div>
+
+{%- else -%}
+{%- comment -%} Single-variant: a −/+ quantity stepper (JS SIMPLE-add path). {%- endcomment -%}
+<div class="cl-ai-b__field">
+  <label class="cl-ai-b__label">Quantity</label>
+  <div class="cl-ai-b__qty">
+    <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-simple-minus aria-label="Decrease quantity">−</button>
+    <input class="cl-ai-b__qty-input" id="cl-ai-simple-qty" type="text" inputmode="numeric"
+           value="1" data-cl-ai-simple-qty aria-label="Quantity">
+    <button type="button" class="cl-ai-b__qty-btn" data-cl-ai-simple-plus aria-label="Increase quantity">+</button>
+  </div>
+</div>
+{%- endif -%}

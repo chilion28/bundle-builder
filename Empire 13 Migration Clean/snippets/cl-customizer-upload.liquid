@@ -1,0 +1,63 @@
+{%- comment -%}
+  cl-customizer-upload — STEP 2 upload (drag/drop + tips) and the print quality
+  check. One of the split customizer blocks. Place anywhere in GemPages:
+      {% render 'cl-customizer-upload' %}
+  REQUIRES {% render 'cl-customizer-bootstrap' %} once on the same page.
+  Optional params: upload_step, upload_title, upload_note, show_prompt_tip,
+                   qc_step, qc_title.
+{%- endcomment -%}
+<div class="cl-ai__step">
+  <div class="cl-ai__step-head">
+    <span class="cl-ai__step-num">STEP {{ upload_step | default: 2 }}</span>
+    <h2 class="cl-ai__step-title">{{ upload_title | default: 'UPLOAD YOUR AI ARTWORK' }}</h2>
+  </div>
+
+  <input type="file" class="cl-ai-b__file" data-cl-ai-file
+         accept="image/png,image/jpeg,image/webp" hidden>
+
+  <div class="cl-ai-b__drop" data-cl-ai-drop tabindex="0" role="button"
+       aria-label="Upload your artwork — drag and drop or choose a file">
+    <div class="cl-ai-b__drop-idle" data-cl-ai-drop-idle>
+      <span class="cl-ai-b__drop-icon" aria-hidden="true">⤒</span>
+      <p class="cl-ai-b__drop-title">Drag &amp; Drop Your Image Here</p>
+      <p class="cl-ai-b__drop-or">or</p>
+      <button type="button" class="cl-ai-b__choose" data-cl-ai-choose>CHOOSE FILE</button>
+      <p class="cl-ai-b__drop-note">{{ upload_note | default: 'JPG, PNG, WEBP up to 25MB' }}</p>
+    </div>
+  </div>
+
+  <div class="cl-ai-b__tips">
+    <span class="cl-ai-b__tips-title">💡 TIPS FOR BEST RESULTS</span>
+    <ul role="list">
+      {%- if show_prompt_tip != false -%}<li>Use the prompt above</li>{%- endif -%}
+      <li>Keep main subject centered</li>
+      <li>Avoid small text</li>
+      <li>High detail works best</li>
+      <li>We'll check it before printing!</li>
+    </ul>
+  </div>
+</div>
+
+{%- comment -%} PRINT QUALITY CHECK — appears automatically after an upload passes. {%- endcomment -%}
+<div class="cl-ai__step cl-ai-b__qc" data-cl-ai-qc hidden>
+  <div class="cl-ai__step-head">
+    <span class="cl-ai__step-num">STEP {{ qc_step | default: 3 }}</span>
+    <h2 class="cl-ai__step-title">{{ qc_title | default: 'PRINT QUALITY CHECK' }}</h2>
+  </div>
+
+  <div class="cl-ai-b__qc-body">
+    <img class="cl-ai-b__qc-thumb" data-cl-ai-qc-thumb alt="Artwork being checked">
+    <ul class="cl-ai-b__qc-list" role="list">
+      <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="resolution"></span> Resolution <b data-cl-ai-qc-resolution>—</b></li>
+      <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="margins"></span> Safe Margins <b data-cl-ai-qc-margins>—</b></li>
+      <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="quality"></span> Print Quality <b data-cl-ai-qc-quality>—</b></li>
+      <li><span class="cl-ai-b__qc-dot" data-cl-ai-qc-dot="filetype"></span> File Type <b data-cl-ai-qc-filetype>—</b></li>
+    </ul>
+  </div>
+
+  <div class="cl-ai-b__qc-verdict" data-cl-ai-qc-verdict hidden>
+    <span class="cl-ai-b__qc-check" aria-hidden="true">✓</span>
+    <strong data-cl-ai-qc-verdict-title>READY TO PRINT!</strong>
+    <span data-cl-ai-qc-verdict-text>Your artwork looks great. Add to cart when you're ready.</span>
+  </div>
+</div>

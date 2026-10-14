@@ -1,0 +1,18 @@
+{%- comment -%}
+  cl-customizer-cta — the Add-to-Cart button. One of the split customizer blocks.
+  Place anywhere in GemPages:
+      {% render 'cl-customizer-cta' %}
+  REQUIRES {% render 'cl-customizer-bootstrap' %} once on the same page.
+
+  Wrapped in a product form with id="cl-ai-hat-form": the engine listens for that
+  form's submit and runs its own add-to-cart (reads the hidden property inputs +
+  variant globally, POSTs /cart/add.js). The form's native submit never fires
+  (the engine preventDefaults). Optional params: cta_label, price_display.
+{%- endcomment -%}
+{% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form cl-ai-b__form--cta' %}
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-cl-ai-variant-id>
+  <button type="submit" class="cl-ai-b__cta" data-cl-ai-cta>
+    <span data-cl-ai-cta-label>{{ cta_label | default: 'ADD TO CART' }}</span>
+    <span class="cl-ai-b__cta-price"> · <span data-cl-ai-cta-price>{{ price_display | default: product.price | money }}</span></span>
+  </button>
+{% endform %}
