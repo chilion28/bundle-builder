@@ -126,6 +126,10 @@
         <div class="cl-ai-ed__mask-safe"></div>
       </div>
       <img class="cl-ai-ed__frame" data-cl-ai-ed-frame alt="" aria-hidden="true">
+      {%- comment -%} Transform handles draw here (z-index above the frame) so an opaque
+        bezel/rivets can't hide the resize corners. Engine falls back to the base canvas
+        if this is absent. {%- endcomment -%}
+      <canvas class="cl-ai-ed__overlay" data-cl-ai-ed-overlay aria-hidden="true"></canvas>
     </div>
     <p class="cl-ai-ed__warn" data-cl-ai-ed-warn hidden>⚠ Part of your artwork is outside the dashed line and may be trimmed when printed. Zoom out, drag it, or switch to “Fit whole image” to keep it inside.</p>
 
