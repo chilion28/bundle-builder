@@ -66,6 +66,20 @@
   // dataset — a hyphenated data-cl-ai-* attr maps to dataset.clAiX, an easy trap.
   var filePrefix = (root.getAttribute('data-cl-ai-file-prefix') || 'image-hat').replace(/[^a-z0-9-]/gi, '') || 'image-hat';
 
+  // Bulk "buy more, save more" tiers for the live pricing summary (image hats).
+  // Mirrors the standard hat footer: dollars OFF per hat at each quantity break.
+  var TIER_QTYS = [1, 2, 3, 6, 12, 24, 36];
+  var TIER_OFF  = [0, 2, 4, 5, 10, 12, 16];   // $ off each vs base price
+  function tierIndex(qty) {
+    var idx = 0;
+    for (var i = 0; i < TIER_QTYS.length; i++) {
+      if (qty === TIER_QTYS[i]) { idx = i; break; }
+      else if (qty < TIER_QTYS[i]) { idx = i - 1; break; }
+      else idx = TIER_QTYS.length - 1;
+    }
+    return Math.max(0, idx);
+  }
+
   /* ---- config-driven per-shape geometry (optional) ----
    * A product can carry its own patch geometry via a [data-cl-ai-config] JSON
    * block (emitted by the builder snippet's config_json param — the seam a
@@ -327,6 +341,7 @@
   var edStage = $('[data-cl-ai-ed-stage]');
   var edMask = $('[data-cl-ai-ed-mask]');
   var edFrame = $('[data-cl-ai-ed-frame]');
+  var edOverlay = $('[data-cl-ai-ed-overlay]');   // handles/box layer above the frame
   var edZoom = $('[data-cl-ai-ed-zoom]');
   var edWarn = $('[data-cl-ai-ed-warn]');
   var edBoxToggle = $('[data-cl-ai-ed-box]');
@@ -401,13 +416,38 @@
     }
     var pv = document.createElement('canvas'); pv.width = W; pv.height = H;
     var pctx = pv.getContext('2d');
-    pctx.drawImage(art, 0, 0);
-    pctx.drawImage(frame, 0, 0, W, H);
+    if (frameBehind(shape)) {
+      // Opaque product (plate/wallet/case): art prints on top of the product.
+      pctx.drawImage(frame, 0, 0, W, H);
+      pctx.drawImage(art, 0, 0);
+    } else {
+      // Patch: art first, then the border frame with its transparent window on top.
+      pctx.drawImage(art, 0, 0);
+      pctx.drawImage(frame, 0, 0, W, H);
+    }
     return pv;
   }
   function safeToBlob(canvas, cb) {
     try { canvas.toBlob(function (b) { cb(b); }, 'image/png'); }
     catch (e) { cb(null); }   // tainted canvas — skip rather than block the order
+  }
+
+  // Downscaled JPEG re-encode of the customer's RAW source, used as a fallback
+  // "original" when the true file upload fails (an odd source MIME 415'ing, or a
+  // transient miss). edState.img came from a same-origin object URL so the canvas
+  // isn't tainted; re-encoding also guarantees an allow-listed type (image/jpeg)
+  // and a smaller payload. Long edge capped at 5000px — far more than a small
+  // patch needs, while keeping mobile memory + the blob well under the 25MB cap.
+  function buildOriginalFallbackCanvas() {
+    if (!edState.img || !edState.natW || !edState.natH) return null;
+    var MAX_EDGE = 5000;
+    var scale = Math.min(1, MAX_EDGE / Math.max(edState.natW, edState.natH));
+    var W = Math.max(1, Math.round(edState.natW * scale));
+    var H = Math.max(1, Math.round(edState.natH * scale));
+    var c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    c.getContext('2d').drawImage(edState.img, 0, 0, W, H);
+    return c;
   }
 
   // CRC-32 (PNG chunk checksum).
@@ -501,6 +541,14 @@
   var FRAME_ASPECT = {};   // pendant + others come from config (frame_aspect)
   applyShapeCfg(FRAME_ASPECT, 'frame_aspect');
   function frameAspect(shape) { return FRAME_ASPECT[sh(shape)] || 1; }
+  /* Opaque-faced products (license plates, wallets, phone cases): the "frame" PNG
+     is the solid product, not a border with a transparent window, so the artwork
+     prints ON it. For these shapes the frame renders BEHIND the art (editor +
+     export) instead of on top. Any shape with frame_behind:true in its config
+     opts in — no per-product PNG surgery needed. */
+  var FRAME_BEHIND = {};
+  applyShapeCfg(FRAME_BEHIND, 'frame_behind');
+  function frameBehind(shape) { return !!FRAME_BEHIND[sh(shape)]; }
   /* The dashed guide on each frame is the safe area: production needs artwork —
      especially text and logos — to sit inside it, or they have to nudge it by
      hand. Measured from the frames, as a fraction of the window. */
@@ -558,6 +606,8 @@
       var src = currentFrameSrc();
       if (src && edFrame.getAttribute('src') !== src) edFrame.setAttribute('src', src);
     }
+    // Opaque products: drop the frame BEHIND the art canvas (CSS does the z-order).
+    if (edStage) edStage.classList.toggle('cl-ai-ed__stage--framebehind', frameBehind(state.shape));
     var rot = ((edState.rotation % 360) + 360) % 360;
     var iw = (rot === 90 || rot === 270) ? edState.natH : edState.natW;
     var ih = (rot === 90 || rot === 270) ? edState.natW : edState.natH;
@@ -578,13 +628,19 @@
   }
 
   function clampOffset() {
-    // Pan within the slack in BOTH directions: a larger-than-window image pans
-    // the crop (fill); a smaller-than-window image (fit / zoomed out) can be
-    // nudged around inside the padding. Old code zeroed the range when the image
-    // was smaller than the window, which killed dragging in Fit mode.
+    // Let the customer pan the artwork PARTIALLY OFF the window (push it up/down/
+    // off-canvas), not just crop within it — previously the edge of the art
+    // couldn't pass the edge of the window, so you had to zoom in first to get any
+    // slack. We now allow moving the art out until only a sliver (KEEP) of it
+    // remains inside the window, so it can never be dragged away completely.
+    // KEEP is a fraction of the smaller of art/window in each axis, so both a big
+    // (fill) and small (fit) image keep a sensible amount visible.
+    var KEEP = 0.25;
     var ext = edExtent();
-    var maxX = Math.abs(ext.ew - edState.maskW) / 2;
-    var maxY = Math.abs(ext.eh - edState.maskH) / 2;
+    var keepX = Math.min(ext.ew, edState.maskW) * KEEP;
+    var keepY = Math.min(ext.eh, edState.maskH) * KEEP;
+    var maxX = Math.max(0, (ext.ew + edState.maskW) / 2 - keepX);
+    var maxY = Math.max(0, (ext.eh + edState.maskH) / 2 - keepY);
     edState.offsetX = Math.max(-maxX, Math.min(maxX, edState.offsetX));
     edState.offsetY = Math.max(-maxY, Math.min(maxY, edState.offsetY));
   }
@@ -722,7 +778,9 @@
     clampOffset();
     if (edBgWrap) edBgWrap.hidden = !needsPad();   // show whenever the background is padding something
     // Dimmed full image (shows what's cropped out), then bright inside the window.
-    ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore();
+    // Skipped when the frame is behind the art: the art canvas sits above the
+    // opaque product, so a stage-wide dim would tint the product itself.
+    if (!frameBehind(state.shape)) { ctx.save(); ctx.globalAlpha = 0.28; paintImage(ctx, W, H); ctx.restore(); }
     var mimg = edMasks[sh(state.shape)];
     if (mimg && mimg.complete && mimg.naturalWidth) {
       // Pixel-perfect: paint bright image on an offscreen, keep only the window via the mask.
@@ -740,9 +798,21 @@
       // Fallback (mask not loaded yet): clip via traced shape path.
       ctx.save(); edShapePath(ctx, W / 2, H / 2, edState.maskW, edState.maskH); ctx.clip(); paintImage(ctx, W, H); ctx.restore();
     }
-    if (edState.showBox) drawTransformBox(ctx, W, H); else edBox.handles = null;
-    drawEditorText(ctx, W, H);
-    drawGuides(ctx, W, H);
+    // Paint the transform box + handles + caption box + guides on the OVERLAY
+    // canvas (z-index above the frame) so the frame's opaque bezel/rivets can't
+    // hide the resize corners. Falls back to the base ctx if the overlay element
+    // isn't in the DOM (stale cached markup).
+    var octx2 = ctx;
+    if (edOverlay) {
+      edOverlay.width = W * dpr; edOverlay.height = H * dpr;
+      edOverlay.style.width = W + 'px'; edOverlay.style.height = H + 'px';
+      octx2 = edOverlay.getContext('2d');
+      octx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+      octx2.clearRect(0, 0, W, H);
+    }
+    if (edState.showBox) drawTransformBox(octx2, W, H); else edBox.handles = null;
+    drawEditorText(octx2, W, H);
+    drawGuides(octx2, W, H);
     updateWarn();
   }
 
@@ -883,7 +953,7 @@
     function handleHit(px, py) {
       if (!edBox.handles) return -1;
       for (var i = 0; i < edBox.handles.length; i += 1) {
-        if (Math.abs(px - edBox.handles[i][0]) <= 12 && Math.abs(py - edBox.handles[i][1]) <= 12) return i;
+        if (Math.abs(px - edBox.handles[i][0]) <= 16 && Math.abs(py - edBox.handles[i][1]) <= 16) return i;
       }
       return -1;
     }
@@ -978,11 +1048,18 @@
       }
       if (!dragging) {   // hover cursor hint over the various handles
         var h = stageXY(e);
+        // Diagonal cursor that matches which corner is under the pointer: a corner
+        // in the TL/BR direction → nwse, TR/BL → nesw. Derived from the handle's
+        // position vs the box centre, so it stays right when the art is rotated.
+        var cornerCur = function (hx, hy, cx, cy) {
+          return ((hx - cx) * (hy - cy) >= 0) ? 'nwse-resize' : 'nesw-resize';
+        };
+        var th = textHandleHit(h[0], h[1]);
         var hb = edState.showBox ? handleHit(h[0], h[1]) : -1;
-        edStage.style.cursor = textHandleHit(h[0], h[1]) >= 0 ? 'nwse-resize'
+        edStage.style.cursor = th >= 0 ? cornerCur(edTextBox.handles[th][0], edTextBox.handles[th][1], edTextBox.cx, edTextBox.cy)
           : textBodyHit(h[0], h[1]) ? 'move'
           : hb >= 4 ? ((hb === 5 || hb === 7) ? 'ew-resize' : 'ns-resize')
-          : hb >= 0 ? 'nwse-resize' : 'grab';
+          : hb >= 0 ? cornerCur(edBox.handles[hb][0], edBox.handles[hb][1], edBox.cx, edBox.cy) : 'grab';
         return;
       }
       rawX += e.clientX - lastX; rawY += e.clientY - lastY;
@@ -1345,9 +1422,29 @@
         return Promise.reject(e);
       });
     };
+    // When the raw source upload fails after retries (e.g. an unsupported source
+    // MIME 415'ing, order #406554), re-encode a downscaled JPEG of the source and
+    // upload THAT as the original, so production still gets a usable high-res file
+    // instead of nothing. Fail-soft: if the fallback also fails, resolve '' as before.
+    var uploadFallbackOriginal = function () {
+      var c = buildOriginalFallbackCanvas();
+      if (!c) return Promise.resolve('');
+      return new Promise(function (resolve) {
+        try {
+          c.toBlob(function (b) {
+            if (!b) { resolve(''); return; }
+            retry(function () { return providerUpload(b, nm('original', '-fallback.jpg'), 'original'); }, 3)
+              .then(resolve, function () { resolve(''); });
+          }, 'image/jpeg', 0.92);
+        } catch (e) { resolve(''); }
+      });
+    };
     var origJob = edState.file
       ? retry(function () { return providerUpload(edState.file, nm('original', '-' + origName), 'original'); }, 3)
-          .catch(function () { try { console.warn('[cl-ai-hat] original upload failed after retries'); } catch (e) {} return ''; })
+          .catch(function () {
+            try { console.warn('[cl-ai-hat] original upload failed after retries; trying downscaled fallback'); } catch (e) {}
+            return uploadFallbackOriginal();
+          })
       : Promise.resolve('');
     var jobs = [
       // The PRINT is the critical file (what production actually prints) — retry it
@@ -1355,7 +1452,12 @@
       // land an order with [upload-failed] and no artwork (see order #405134).
       retry(function () { return providerUpload(printBlob, nm('print', '.png'), 'print'); }, 3),
       origJob,
-      soft(previewBlob ? providerUpload(previewBlob, nm('preview', '.png'), 'preview') : Promise.resolve(''))
+      // Preview is fail-soft too, but give it the SAME retries as print/original —
+      // a single transient blip was silently losing the dashboard preview thumbnail
+      // (e.g. order #406647). Still soft so a hard failure never blocks the order.
+      soft(previewBlob
+        ? retry(function () { return providerUpload(previewBlob, nm('preview', '.png'), 'preview'); }, 3)
+        : Promise.resolve(''))
     ];
 
     Promise.all(jobs).then(function (urls) {
@@ -1562,7 +1664,12 @@
     var win = WINDOW[shape]; if (!win) return;
     patchframe.style.aspectRatio = String(frameAspect(state.shape));
     var fr = patchframe.querySelector('.cl-ai-pf__frame[data-frame="' + shape + '"]');
-    if (fr) fr.style.setProperty('display', 'block', 'important');
+    if (fr) {
+      fr.style.setProperty('display', 'block', 'important');
+      // Opaque products: frame (the product) sits BEHIND the art (z-index:1) so the
+      // design shows on its face; patches keep the frame on top (CSS z-index:2).
+      if (frameBehind(shape)) fr.style.setProperty('z-index', '0'); else fr.style.removeProperty('z-index');
+    }
     if (pfArt) {
       pfArt.style.left = (win.l * 100) + '%'; pfArt.style.top = (win.t * 100) + '%';
       pfArt.style.width = (win.w * 100) + '%'; pfArt.style.height = (win.h * 100) + '%';
@@ -1627,12 +1734,31 @@
   }
   function totalQty() { var t = 0; Object.keys(qtySel).forEach(function (k) { t += qtySel[k]; }); return t; }
 
+  var priceQtyEl = $('[data-cl-ai-price-qty]'), priceUnitEl = $('[data-cl-ai-price-unit]'),
+      priceNextEl = $('[data-cl-ai-price-next]'), priceSubEl = $('[data-cl-ai-price-sub]');
+
   function updateTotals() {
-    var q = 0, total = 0;
-    variants.forEach(function (v) { var n = qtySel[v.id] || 0; if (n) { q += n; total += n * v.price; } });
-    if (ctaPrice) ctaPrice.textContent = formatMoney(q ? total : basePrice());
+    var q = totalQty();
+    var base = basePrice();                                  // cents
+    var idx = tierIndex(q);
+    var unit = q > 0 ? (base - TIER_OFF[idx] * 100) : 0;     // discounted unit price, cents
+    var sub = unit * q;                                      // discounted subtotal, cents
+    if (ctaPrice) ctaPrice.textContent = formatMoney(q ? sub : base);
     var lbl = $('[data-cl-ai-cta-label]');
     if (lbl) lbl.textContent = q ? (ctaDefaultLabel + ' · ' + q + ' hat' + (q === 1 ? '' : 's')) : ctaDefaultLabel;
+    // Live "buy more, save more" summary
+    if (priceQtyEl) priceQtyEl.textContent = q;
+    if (priceUnitEl) priceUnitEl.textContent = formatMoney(unit);
+    if (priceSubEl) priceSubEl.textContent = formatMoney(sub);
+    if (priceNextEl) {
+      if (idx >= TIER_QTYS.length - 1) {
+        priceNextEl.textContent = 'You saved ' + formatMoney(TIER_OFF[TIER_OFF.length - 1] * 100) + ' per hat!';
+      } else {
+        var toNext = TIER_QTYS[idx + 1] - q;
+        var nextUnit = (base - TIER_OFF[idx + 1] * 100) / 100;
+        priceNextEl.textContent = 'Order ' + toNext + ' more and get them at $' + nextUnit.toFixed(2) + ' each';
+      }
+    }
   }
 
   function setRowQty(vid, n) {
