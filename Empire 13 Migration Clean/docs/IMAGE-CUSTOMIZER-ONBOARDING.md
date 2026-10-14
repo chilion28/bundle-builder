@@ -152,7 +152,48 @@ Vercel — commit + push through GitHub Desktop.
 
 ---
 
-## 7. One-line summary
+## 7. Placing the customizer in GemPages (split blocks)
+
+The customizer can be placed as 7 independent blocks so you can lay it out freely
+(columns, rows, anywhere) in GemPages. In GemPages add each as a **Liquid** element
+(a.k.a. "Custom Code" / "Liquid") and paste the matching render tag.
+
+Legacy all-in-one (`cl-ai-hat-builder.liquid`) still works and is untouched — use the
+split blocks only when you want custom layout.
+
+### Two setup rules
+1. **Must be a Product page.** The blocks read `product.*` (metafields, options, variants),
+   so the GemPages template must have product context. On a plain page they render empty.
+2. **`cl-customizer-bootstrap` goes on the page exactly once** — invisible infrastructure
+   (variant data, config, the editor modal, CSS/JS). Place it anywhere (top is fine).
+   Every visible block requires it on the same page.
+
+### The blocks (place in any layout)
+```liquid
+{% render 'cl-customizer-bootstrap' %}   {%- comment -%} 1. once, invisible — place first {%- endcomment -%}
+{% render 'cl-customizer-prompt' %}      {%- comment -%} 2. Step 1 prompt {%- endcomment -%}
+{% render 'cl-customizer-upload' %}      {%- comment -%} 3. upload + quality check {%- endcomment -%}
+{% render 'cl-customizer-preview' %}     {%- comment -%} 4. live "YOUR PATCH" preview {%- endcomment -%}
+{% render 'cl-customizer-style' %}       {%- comment -%} 5. patch shape + hat style pills {%- endcomment -%}
+{% render 'cl-customizer-colors' %}      {%- comment -%} 6. color + quantity picker {%- endcomment -%}
+{% render 'cl-customizer-cta' %}         {%- comment -%} 7. add-to-cart button {%- endcomment -%}
+```
+
+### Optional params (override defaults only if needed)
+```liquid
+{% render 'cl-customizer-prompt', step1_title: 'DESCRIBE YOUR IDEA', prompt_text: '...', prompt_hint: '...', prompt_example: '...' %}
+{% render 'cl-customizer-upload', upload_step: 2, upload_title: 'UPLOAD YOUR AI ARTWORK', upload_note: 'JPG, PNG, WEBP up to 25MB', show_prompt_tip: true, qc_step: 3, qc_title: 'PRINT QUALITY CHECK' %}
+{% render 'cl-customizer-preview', preview_title: 'YOUR PATCH' %}
+{% render 'cl-customizer-colors', show_variants: false %}   {%- comment -%} single-variant product → simple qty stepper instead of the color grid {%- endcomment -%}
+{% render 'cl-customizer-cta', cta_label: 'ADD TO CART', price_display: '' %}
+```
+
+**Single-variant products** (one color): pass `show_variants: false` to block 6 for a −/+
+quantity stepper. Multi-variant: omit it (defaults to the color + quantity grid).
+
+---
+
+## 8. One-line summary
 
 **`frame_behind`** picks the layer order (patch = frame on top, solid product = frame
 behind). **The mask** picks which pixels are printable (face yes, screw holes no). A solid
