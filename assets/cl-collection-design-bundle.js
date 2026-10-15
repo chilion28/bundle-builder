@@ -184,7 +184,7 @@
       }).join('');
       preview.innerHTML = '<div class="cl-cdb__preview-stage"><img src="' + PREVIEW_IMAGE_BASE +
         encodeURIComponent(config.image) + '" alt="Preview of ' + escapeHtml(active.title) + '">' + overlays +
-        '</div><p class="cl-cdb__preview-note">This is just a preview. Text will be adjusted to look its best.</p>';
+        '</div>';
       preview.hidden = false;
       var image = preview.querySelector('img');
       if (image) image.addEventListener('load', fitPreview, { once: true });

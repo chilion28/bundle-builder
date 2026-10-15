@@ -90,12 +90,13 @@
 
         <ul class="cl-cdb__components" role="list">
           {%- for component in cdb_components -%}
+            {%- assign cdb_component_label = component.title | replace: ' / One Size Fits All / ', ' — ' | replace: ' TR', '' -%}
             <li>
               <span class="cl-cdb__qty">{{ cdb_multiplier }}×</span>
               {%- if component.image != blank -%}
                 <img src="{{ component.image | image_url: width: 140 }}" alt="" width="70" height="70" loading="lazy">
               {%- endif -%}
-              <span>{{ component.product.title }} — {{ component.title }}</span>
+              <span>{{ cdb_component_label }}</span>
             </li>
           {%- endfor -%}
         </ul>
