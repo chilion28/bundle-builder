@@ -3,6 +3,10 @@
 {%- assign cdb_multiplier = product.metafields.custom.bundle_component_multiplier.value | default: 1 | plus: 0 -%}
 {%- if cdb_multiplier < 1 -%}{%- assign cdb_multiplier = 1 -%}{%- endif -%}
 {%- assign cdb_hat_count = cdb_components.size | times: cdb_multiplier -%}
+{%- assign cdb_design_layout = layout | default: 'grid' | downcase -%}
+{%- unless cdb_design_layout == 'grid' or cdb_design_layout == 'carousel' or cdb_design_layout == 'dropdown' -%}
+  {%- assign cdb_design_layout = 'grid' -%}
+{%- endunless -%}
 
 {%- unless cdb_embedded -%}
   {{ 'cl-collection-design-bundle.css' | asset_url | stylesheet_tag }}
@@ -37,6 +41,8 @@
         {%- endfor -%}
       ]
     </script>
-    <div class="cl-cdb__design-grid" data-cl-cdb-design-grid></div>
+    <div class="cl-cdb__design-selector cl-cdb__design-selector--{{ cdb_design_layout }}"
+         data-cl-cdb-design-grid
+         data-cl-cdb-layout="{{ cdb_design_layout }}"></div>
   </div>
 </section>

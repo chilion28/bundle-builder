@@ -93,6 +93,8 @@
     try { designs = JSON.parse(configNode.textContent || '[]'); } catch (e) { designs = []; }
     var componentSkus = text(root.dataset.componentSkus).split('|').map(text).filter(Boolean);
     var multiplier = Math.max(1, parseInt(root.dataset.componentMultiplier, 10) || 1);
+    var designLayout = text(grid.dataset.clCdbLayout || 'grid').toLowerCase();
+    if (['grid', 'carousel', 'dropdown'].indexOf(designLayout) === -1) designLayout = 'grid';
     var active = null;
     var productCache = {};
 
@@ -236,13 +238,24 @@
       grid.querySelectorAll('.cl-cdb__design').forEach(function (item) {
         item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
       });
+      var dropdown = grid.querySelector('[data-cl-cdb-design-select]');
+      if (dropdown && dropdown.value !== design.handle) dropdown.value = design.handle;
+      var dropdownImage = grid.querySelector('[data-cl-cdb-dropdown-image]');
+      var dropdownTitle = grid.querySelector('[data-cl-cdb-dropdown-title]');
+      var dropdownChoice = grid.querySelector('[data-cl-cdb-dropdown-choice]');
+      if (dropdownImage) {
+        dropdownImage.src = design.image || '';
+        dropdownImage.alt = '';
+      }
+      if (dropdownTitle) dropdownTitle.textContent = design.title;
+      if (dropdownChoice) dropdownChoice.hidden = false;
       selected.textContent = design.title;
       renderFields(design);
       renderPreview();
       showError('');
     }
 
-    designs.forEach(function (design) {
+    function renderDesignButton(design, container) {
       var button = document.createElement('button');
       button.type = 'button';
       button.className = 'cl-cdb__design';
@@ -250,8 +263,47 @@
       button.innerHTML = '<img src="' + escapeHtml(design.image) + '" alt="" loading="lazy">' +
         '<strong>' + escapeHtml(design.title) + '</strong>';
       button.addEventListener('click', function () { choose(design, button); });
-      grid.appendChild(button);
-    });
+      container.appendChild(button);
+    }
+
+    if (designLayout === 'dropdown') {
+      grid.innerHTML = '<label class="cl-cdb__design-select-label">' +
+        '<span>Select a design</span>' +
+        '<select class="cl-cdb__design-select" data-cl-cdb-design-select>' +
+          '<option value="">Choose a design…</option>' +
+          designs.map(function (design) {
+            return '<option value="' + escapeHtml(design.handle) + '">' + escapeHtml(design.title) + '</option>';
+          }).join('') +
+        '</select>' +
+      '</label>' +
+      '<div class="cl-cdb__dropdown-choice" data-cl-cdb-dropdown-choice hidden>' +
+        '<img data-cl-cdb-dropdown-image alt="">' +
+        '<strong data-cl-cdb-dropdown-title></strong>' +
+      '</div>';
+      grid.querySelector('[data-cl-cdb-design-select]').addEventListener('change', function (event) {
+        var design = designs.find(function (item) { return item.handle === event.target.value; });
+        if (design) choose(design, null);
+      });
+    } else if (designLayout === 'carousel') {
+      var carousel = document.createElement('div');
+      carousel.className = 'cl-cdb__design-carousel';
+      carousel.setAttribute('data-cl-cdb-carousel', '');
+      designs.forEach(function (design) { renderDesignButton(design, carousel); });
+      grid.appendChild(carousel);
+      var controls = document.createElement('div');
+      controls.className = 'cl-cdb__carousel-controls';
+      controls.innerHTML = '<button type="button" data-cl-cdb-carousel-prev aria-label="Previous designs">‹</button>' +
+        '<button type="button" data-cl-cdb-carousel-next aria-label="Next designs">›</button>';
+      controls.addEventListener('click', function (event) {
+        var direction = event.target.closest('[data-cl-cdb-carousel-prev]') ? -1 :
+          (event.target.closest('[data-cl-cdb-carousel-next]') ? 1 : 0);
+        if (direction) carousel.scrollBy({ left: direction * Math.max(240, carousel.clientWidth * .8), behavior: 'smooth' });
+      });
+      grid.appendChild(controls);
+    } else {
+      grid.classList.add('cl-cdb__design-grid');
+      designs.forEach(function (design) { renderDesignButton(design, grid); });
+    }
     window.addEventListener('resize', fitPreview);
 
     addButton.addEventListener('click', function () {
