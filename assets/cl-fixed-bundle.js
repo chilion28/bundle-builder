@@ -9,6 +9,7 @@
 
   var CART_EDIT_STORAGE_KEY = 'cl-fixed-bundle-cart-edit';
   var TEMPLATE_API_URL = 'https://citylocsproduction.com/api/get-product-template';
+  var PREVIEW_UPLOAD_URL = 'https://citylocs-dashboard.vercel.app/api/upload';
 
   /* Last-known-good clOrdersApp routing snapshot (refreshed 2026-10-13).
    * The live API remains authoritative and is always tried first. This cache is
@@ -409,6 +410,89 @@
     previewEl.innerHTML = '<div class="cl-perso-empty">Preview loading…</div>';
   }
 
+  /* Flatten the same plate artwork + text customers see into a permanent PNG
+   * for production paperwork. This is additive only: a preview upload failure
+   * never changes or blocks the stable bundle/cart contract. */
+  function buildPlatePreviewBlob() {
+    var photo = previewEl.querySelector('.cl-plate-photo');
+    var source = photo && photo.querySelector('.cl-plate-photo-img');
+    if (!photo || !source || !source.src) return Promise.resolve(null);
+
+    var loadImage = fetch(source.src, { mode: 'cors' })
+      .then(function (response) {
+        if (!response.ok) throw new Error('preview artwork unavailable');
+        return response.blob();
+      })
+      .then(function (blob) {
+        return new Promise(function (resolve, reject) {
+          var image = new Image();
+          var objectUrl = URL.createObjectURL(blob);
+          image.onload = function () { URL.revokeObjectURL(objectUrl); resolve(image); };
+          image.onerror = function () { URL.revokeObjectURL(objectUrl); reject(new Error('preview artwork invalid')); };
+          image.src = objectUrl;
+        });
+      });
+    var fontsReady = document.fonts && document.fonts.ready
+      ? document.fonts.ready.catch(function () {})
+      : Promise.resolve();
+
+    return Promise.all([loadImage, fontsReady]).then(function (ready) {
+      var image = ready[0];
+      var canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth || 800;
+      canvas.height = image.naturalHeight || 490;
+      var context = canvas.getContext('2d');
+      if (!context) return null;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      previewEl.querySelectorAll('[data-cl-plate-field]').forEach(function (field) {
+        var line = field.querySelector('[data-cl-plate-line]');
+        var text = line && (line.textContent || '').trim().toUpperCase();
+        if (!line || !text) return;
+        var fieldStyle = window.getComputedStyle(field);
+        var left = parseFloat(field.style.left) || 50;
+        var top = parseFloat(field.style.top) || 0;
+        var size = parseFloat(field.getAttribute('data-size')) || 40;
+        var maxWidth = (parseFloat(field.getAttribute('data-w')) || 100) / 100 * canvas.width;
+        var fontSize = size * canvas.width / 800;
+        var family = fieldStyle.fontFamily || 'CLLicensePlate, Impact, sans-serif';
+
+        context.save();
+        context.fillStyle = fieldStyle.color || '#000000';
+        context.font = fontSize + 'px ' + family;
+        context.textAlign = 'center';
+        context.textBaseline = field.classList.contains('cl-plate-field-vc') ? 'middle' : 'top';
+        context.fillText(text, left / 100 * canvas.width, top / 100 * canvas.height, maxWidth);
+        context.restore();
+      });
+
+      return new Promise(function (resolve) {
+        canvas.toBlob(function (blob) { resolve(blob || null); }, 'image/png');
+      });
+    }).catch(function () { return null; });
+  }
+
+  function uploadPlatePreview() {
+    return buildPlatePreviewBlob().then(function (blob) {
+      if (!blob) return '';
+      var stateSlug = String(stateSelect.value || 'plate').toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'plate';
+      return fetch(PREVIEW_UPLOAD_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'image/png',
+          'X-Upload-Kind': 'preview',
+          'X-Upload-Name': encodeURIComponent('fixed-bundle-' + stateSlug + '-preview-' + Date.now() + '.png')
+        },
+        body: blob
+      }).then(function (response) {
+        if (!response.ok) throw new Error('preview upload failed');
+        return response.json();
+      }).then(function (result) {
+        return result && result.url ? String(result.url) : '';
+      }).catch(function () { return ''; });
+    });
+  }
+
   function updateCount(input) {
     var propertyName = input.getAttribute('data-cl-property-name');
     var counter = fieldsList.querySelector('[data-cl-count-for="' + CSS.escape(propertyName) + '"]');
@@ -486,15 +570,19 @@
     delete properties['_component_variants'];
     delete properties['_cl_template'];
     delete properties['_fxb_design_product_id'];
+    delete properties['_Plate Preview Image'];
     Promise.all([
       resolveComponentVariants(cfg.handle),
-      resolveProductionTemplate(cfg.handle)
+      resolveProductionTemplate(cfg.handle),
+      uploadPlatePreview()
     ]).then(function (resolved) {
       var componentGids = resolved[0];
       var production = resolved[1];
+      var previewUrl = resolved[2];
       if (componentGids) properties['_component_variants'] = componentGids;
       properties['_fxb_design_product_id'] = production.productId;
       properties['_cl_template'] = production.template;
+      if (previewUrl) properties['_Plate Preview Image'] = previewUrl;
       var payload = editing ? {
         id: cartEdit.key,
         quantity: parseInt(cartEdit.quantity, 10) || 1,
