@@ -27,8 +27,9 @@
 .cl-cdb__carousel-controls button{display:grid!important;place-items:center;width:40px!important;height:40px!important;margin:0!important;border:1px solid var(--line)!important;border-radius:999px!important;background:#fff!important;color:var(--navy)!important;font:700 28px/1 Arial,sans-serif!important;box-shadow:none!important;cursor:pointer}
 .cl-cdb__carousel-controls button:hover{border-color:var(--blue)!important;color:var(--blue)!important}
 .cl-cdb__design-combo{position:relative}
-.cl-cdb__design-search{width:100%;min-height:50px;border:1px solid #aeb6c2;border-radius:9px;background:#fff;padding:10px 44px 10px 12px;color:var(--ink);font:inherit}
-.cl-cdb__design-search:focus{outline:2px solid var(--blue);outline-offset:1px}
+[data-cl-cdb-product] .cl-cdb__design-search{box-sizing:border-box!important;width:100%!important;min-height:50px!important;height:50px!important;margin:0!important;border:1px solid #aeb6c2!important;border-radius:9px!important;background:#fff!important;padding:12px 44px 12px 14px!important;color:var(--ink)!important;font:400 16px/1.3 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;text-indent:0!important;box-shadow:none!important}
+[data-cl-cdb-product] .cl-cdb__design-search:focus{outline:2px solid var(--blue)!important;outline-offset:1px!important;border-color:var(--blue)!important}
+.cl-cdb-dropdown-open{overflow:visible!important}
 .cl-cdb__design-clear{position:absolute;z-index:2;top:25px;right:10px;transform:translateY(-50%);display:grid!important;place-items:center;width:26px!important;height:26px!important;margin:0!important;border:0!important;border-radius:50%!important;background:#e9eaec!important;color:#555!important;font:500 17px/1 Arial,sans-serif!important;cursor:pointer;box-shadow:none!important}
 .cl-cdb__design-clear[hidden]{display:none!important}
 .cl-cdb__design-menu{position:absolute;z-index:50;top:calc(100% + 5px);right:0;left:0;max-height:310px;margin:0!important;padding:5px!important;overflow-y:auto;border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:0 10px 28px rgba(16,43,93,.16);list-style:none!important}

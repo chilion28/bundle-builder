@@ -233,6 +233,15 @@
       fieldsPanel.hidden = false;
       updateReady();
     }
+    function setDropdownOverflow(open) {
+      var parent = grid.parentElement;
+      while (parent && parent !== document.body) {
+        if (parent.matches('.gp-accordion-item_body, .gp-accordion-item, .gp-overflow-clip')) {
+          parent.classList.toggle('cl-cdb-dropdown-open', open);
+        }
+        parent = parent.parentElement;
+      }
+    }
     function choose(design, button) {
       active = design;
       grid.querySelectorAll('.cl-cdb__design').forEach(function (item) {
@@ -246,6 +255,7 @@
         dropdownSearch.setAttribute('aria-expanded', 'false');
       }
       if (dropdownMenu) dropdownMenu.hidden = true;
+      setDropdownOverflow(false);
       if (dropdownClear) dropdownClear.hidden = false;
       var dropdownImage = grid.querySelector('[data-cl-cdb-dropdown-image]');
       var dropdownTitle = grid.querySelector('[data-cl-cdb-dropdown-title]');
@@ -324,11 +334,13 @@
         renderDesignMenu(showAll);
         menu.hidden = false;
         search.setAttribute('aria-expanded', 'true');
+        setDropdownOverflow(true);
       }
       function closeDesignMenu() {
         menu.hidden = true;
         activeOption = -1;
         search.setAttribute('aria-expanded', 'false');
+        setDropdownOverflow(false);
         if (active) search.value = active.title;
       }
       search.addEventListener('focus', function () {
