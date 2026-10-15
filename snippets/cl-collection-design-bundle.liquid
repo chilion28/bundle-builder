@@ -1,0 +1,116 @@
+{%- comment -%}
+  Collection Design Bundle — GemPages storefront block.
+
+  Add to a GemPages Custom Code element with:
+    {% render 'cl-collection-design-bundle' %}
+
+  Product configuration:
+    custom.bundle_mode = collection_design
+    custom.bundle_design_collection = one collection reference
+    custom.bundle_components = list.variant_reference
+    custom.bundle_component_multiplier = integer (1 for 3-pack, 2 for 6-pack)
+{%- endcomment -%}
+
+{%- assign cdb_mode = product.metafields.custom.bundle_mode.value | default: product.metafields.custom.bundle_mode -%}
+{%- assign cdb_collection = product.metafields.custom.bundle_design_collection.value -%}
+{%- assign cdb_components = product.metafields.custom.bundle_components.value -%}
+{%- assign cdb_multiplier = product.metafields.custom.bundle_component_multiplier.value | default: 1 | plus: 0 -%}
+{%- if cdb_multiplier < 1 -%}{%- assign cdb_multiplier = 1 -%}{%- endif -%}
+{%- assign cdb_hat_count = cdb_components.size | times: cdb_multiplier -%}
+
+{{ 'cl-collection-design-bundle.css' | asset_url | stylesheet_tag }}
+
+{%- if cdb_mode != 'collection_design' -%}
+  <div class="cl-cdb__notice">This product is not configured as a collection design bundle.</div>
+{%- elsif cdb_collection == blank or cdb_components == blank -%}
+  <div class="cl-cdb__notice">Bundle configuration is incomplete.</div>
+{%- else -%}
+  {%- assign cdb_component_skus = '' -%}
+  {%- for component in cdb_components -%}
+    {%- if component.sku != blank -%}
+      {%- if cdb_component_skus != '' -%}{%- assign cdb_component_skus = cdb_component_skus | append: '|' -%}{%- endif -%}
+      {%- assign cdb_component_skus = cdb_component_skus | append: component.sku -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  <div class="cl-cdb"
+       data-cl-collection-bundle
+       data-product-id="{{ product.id }}"
+       data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+       data-component-skus="{{ cdb_component_skus | escape }}"
+       data-component-multiplier="{{ cdb_multiplier }}">
+    <script type="application/json" data-cl-cdb-designs>
+      [
+        {%- assign emitted_design = false -%}
+        {%- for design in cdb_collection.products -%}
+          {%- if design.type contains 'Hat' -%}
+            {%- if emitted_design -%},{%- endif -%}
+            {
+              "id": {{ design.id | json }},
+              "handle": {{ design.handle | json }},
+              "title": {{ design.title | json }},
+              "image": {{ design.featured_image | image_url: width: 600 | json }},
+              "fields": {%- if design.metafields.custom.personalization_fields.value != blank -%}{{ design.metafields.custom.personalization_fields.value | json }}{%- else -%}["Custom Initial","Custom Text"]{%- endif -%}
+            }
+            {%- assign emitted_design = true -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    </script>
+
+    <div class="cl-cdb__layout">
+      <div class="cl-cdb__main">
+        <section class="cl-cdb__panel" aria-labelledby="cl-cdb-design-heading-{{ product.id }}">
+          <div class="cl-cdb__step">1</div>
+          <div class="cl-cdb__panel-body">
+            <h2 id="cl-cdb-design-heading-{{ product.id }}">Choose your design</h2>
+            <p>Select one design. It will be applied to all {{ cdb_hat_count }} hats.</p>
+            <div class="cl-cdb__design-grid" data-cl-cdb-design-grid></div>
+          </div>
+        </section>
+
+        <section class="cl-cdb__panel" data-cl-cdb-fields-panel hidden aria-labelledby="cl-cdb-fields-heading-{{ product.id }}">
+          <div class="cl-cdb__step">2</div>
+          <div class="cl-cdb__panel-body">
+            <h2 id="cl-cdb-fields-heading-{{ product.id }}">Add your custom text</h2>
+            <p>Enter the personalization exactly as you want it submitted.</p>
+            <div class="cl-cdb__fields" data-cl-cdb-fields></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="cl-cdb__summary">
+        <p class="cl-cdb__eyebrow">YOUR {{ cdb_hat_count }}-HAT BUNDLE</p>
+        <h2>{{ product.title }}</h2>
+        <div class="cl-cdb__selected" data-cl-cdb-selected>
+          <span>Selected design</span>
+          <strong>Choose a design to continue</strong>
+        </div>
+        <img class="cl-cdb__preview" data-cl-cdb-preview alt="Selected bundle design" hidden>
+
+        <ul class="cl-cdb__components" role="list">
+          {%- for component in cdb_components -%}
+            <li>
+              <span class="cl-cdb__qty">{{ cdb_multiplier }}×</span>
+              {%- if component.image != blank -%}
+                <img src="{{ component.image | image_url: width: 140 }}" alt="" width="70" height="70" loading="lazy">
+              {%- endif -%}
+              <span>{{ component.product.title }} — {{ component.title }}</span>
+            </li>
+          {%- endfor -%}
+        </ul>
+
+        <div class="cl-cdb__price">
+          <span>Price</span>
+          <strong>{{ product.price | money }}</strong>
+        </div>
+        <button class="cl-cdb__cta" type="button" data-cl-cdb-add disabled>
+          ADD MY {{ cdb_hat_count }}-HAT BUNDLE <span aria-hidden="true">→</span>
+        </button>
+        <p class="cl-cdb__error" data-cl-cdb-error role="alert" hidden></p>
+      </aside>
+    </div>
+  </div>
+
+  <script src="{{ 'cl-collection-design-bundle.js' | asset_url }}" defer></script>
+{%- endif -%}
