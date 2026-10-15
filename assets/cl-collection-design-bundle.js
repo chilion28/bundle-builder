@@ -238,8 +238,15 @@
       grid.querySelectorAll('.cl-cdb__design').forEach(function (item) {
         item.setAttribute('aria-pressed', item === button ? 'true' : 'false');
       });
-      var dropdown = grid.querySelector('[data-cl-cdb-design-select]');
-      if (dropdown && dropdown.value !== design.handle) dropdown.value = design.handle;
+      var dropdownSearch = grid.querySelector('[data-cl-cdb-design-search]');
+      var dropdownMenu = grid.querySelector('[data-cl-cdb-design-menu]');
+      var dropdownClear = grid.querySelector('[data-cl-cdb-design-clear]');
+      if (dropdownSearch) {
+        dropdownSearch.value = design.title;
+        dropdownSearch.setAttribute('aria-expanded', 'false');
+      }
+      if (dropdownMenu) dropdownMenu.hidden = true;
+      if (dropdownClear) dropdownClear.hidden = false;
       var dropdownImage = grid.querySelector('[data-cl-cdb-dropdown-image]');
       var dropdownTitle = grid.querySelector('[data-cl-cdb-dropdown-title]');
       var dropdownChoice = grid.querySelector('[data-cl-cdb-dropdown-choice]');
@@ -267,23 +274,103 @@
     }
 
     if (designLayout === 'dropdown') {
-      grid.innerHTML = '<label class="cl-cdb__design-select-label">' +
-        '<span>Select a design</span>' +
-        '<select class="cl-cdb__design-select" data-cl-cdb-design-select>' +
-          '<option value="">Choose a design…</option>' +
-          designs.map(function (design) {
-            return '<option value="' + escapeHtml(design.handle) + '">' + escapeHtml(design.title) + '</option>';
-          }).join('') +
-        '</select>' +
-      '</label>' +
+      grid.innerHTML = '<div class="cl-cdb__design-combo" data-cl-cdb-design-combo>' +
+        '<input class="cl-cdb__design-search" type="text" autocomplete="off" ' +
+          'placeholder="Search or choose a design…" role="combobox" aria-autocomplete="list" ' +
+          'aria-expanded="false" aria-controls="cl-cdb-design-menu-' + escapeHtml(productId) + '" ' +
+          'data-cl-cdb-design-search>' +
+        '<button class="cl-cdb__design-clear" type="button" aria-label="Clear selected design" ' +
+          'data-cl-cdb-design-clear hidden>×</button>' +
+        '<ul class="cl-cdb__design-menu" id="cl-cdb-design-menu-' + escapeHtml(productId) + '" ' +
+          'role="listbox" data-cl-cdb-design-menu hidden></ul>' +
+      '</div>' +
       '<div class="cl-cdb__dropdown-choice" data-cl-cdb-dropdown-choice hidden>' +
         '<img data-cl-cdb-dropdown-image alt="">' +
-        '<strong data-cl-cdb-dropdown-title></strong>' +
+        '<div><span>Selected Design</span><strong data-cl-cdb-dropdown-title></strong></div>' +
       '</div>';
-      grid.querySelector('[data-cl-cdb-design-select]').addEventListener('change', function (event) {
-        var design = designs.find(function (item) { return item.handle === event.target.value; });
+      var combo = grid.querySelector('[data-cl-cdb-design-combo]');
+      var search = grid.querySelector('[data-cl-cdb-design-search]');
+      var menu = grid.querySelector('[data-cl-cdb-design-menu]');
+      var clear = grid.querySelector('[data-cl-cdb-design-clear]');
+      var filteredDesigns = designs.slice();
+      var activeOption = -1;
+
+      function clearDropdownSelection() {
+        active = null;
+        selected.textContent = 'Choose a design';
+        fields.innerHTML = '';
+        fieldsPanel.hidden = true;
+        preview.innerHTML = '';
+        preview.hidden = true;
+        grid.querySelector('[data-cl-cdb-dropdown-choice]').hidden = true;
+        clear.hidden = true;
+        addButton.disabled = true;
+      }
+      function renderDesignMenu(showAll) {
+        var query = showAll ? '' : text(search.value).toLowerCase();
+        filteredDesigns = designs.filter(function (design) {
+          return !query || design.title.toLowerCase().indexOf(query) !== -1;
+        });
+        activeOption = Math.min(activeOption, filteredDesigns.length - 1);
+        menu.innerHTML = filteredDesigns.length ? filteredDesigns.map(function (design, index) {
+          return '<li class="cl-cdb__design-option' + (index === activeOption ? ' is-active' : '') + '" ' +
+            'role="option" data-cl-cdb-design-option="' + escapeHtml(design.handle) + '">' +
+              '<img src="' + escapeHtml(design.image) + '" alt="" loading="lazy">' +
+              '<span>' + escapeHtml(design.title) + '</span>' +
+            '</li>';
+        }).join('') : '<li class="cl-cdb__design-no-results">No designs found</li>';
+      }
+      function openDesignMenu(showAll) {
+        renderDesignMenu(showAll);
+        menu.hidden = false;
+        search.setAttribute('aria-expanded', 'true');
+      }
+      function closeDesignMenu() {
+        menu.hidden = true;
+        activeOption = -1;
+        search.setAttribute('aria-expanded', 'false');
+        if (active) search.value = active.title;
+      }
+      search.addEventListener('focus', function () {
+        search.select();
+        activeOption = -1;
+        openDesignMenu(true);
+      });
+      search.addEventListener('input', function () {
+        clearDropdownSelection();
+        activeOption = -1;
+        clear.hidden = !text(search.value);
+        openDesignMenu(false);
+      });
+      search.addEventListener('keydown', function (event) {
+        if (event.key === 'ArrowDown') {
+          event.preventDefault();
+          if (menu.hidden) openDesignMenu(false);
+          activeOption = Math.min(activeOption + 1, filteredDesigns.length - 1);
+          renderDesignMenu(false);
+        } else if (event.key === 'ArrowUp') {
+          event.preventDefault();
+          activeOption = Math.max(activeOption - 1, 0);
+          renderDesignMenu(false);
+        } else if (event.key === 'Enter' && activeOption >= 0 && filteredDesigns[activeOption]) {
+          event.preventDefault();
+          choose(filteredDesigns[activeOption], null);
+        } else if (event.key === 'Escape') closeDesignMenu();
+      });
+      menu.addEventListener('mousedown', function (event) {
+        var option = event.target.closest('[data-cl-cdb-design-option]');
+        if (!option) return;
+        event.preventDefault();
+        var design = designs.find(function (item) { return item.handle === option.dataset.clCdbDesignOption; });
         if (design) choose(design, null);
       });
+      clear.addEventListener('click', function () {
+        search.value = '';
+        clearDropdownSelection();
+        search.focus();
+        openDesignMenu(true);
+      });
+      document.addEventListener('click', function (event) { if (!combo.contains(event.target)) closeDesignMenu(); });
     } else if (designLayout === 'carousel') {
       var carousel = document.createElement('div');
       carousel.className = 'cl-cdb__design-carousel';
