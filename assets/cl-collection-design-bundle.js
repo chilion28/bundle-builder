@@ -85,6 +85,7 @@
     var fields = findPart('[data-cl-cdb-fields]');
     var selected = findPart('[data-cl-cdb-selected] strong');
     var preview = findPart('[data-cl-cdb-preview]');
+    var previewComponent = preview && preview.closest('.cl-cdb-preview-component');
     var addButton = root.querySelector('[data-cl-cdb-add]');
     var error = root.querySelector('[data-cl-cdb-error]');
     if (!configNode || !grid || !fields || !selected || !preview || !addButton) return;
@@ -165,6 +166,10 @@
       });
       addButton.disabled = !ready;
     }
+    function setPreviewHidden(hidden) {
+      preview.hidden = hidden;
+      if (previewComponent) previewComponent.hidden = hidden;
+    }
     function fitPreview() {
       var stage = preview.querySelector('.cl-cdb__preview-stage');
       if (!stage || !stage.clientWidth) return;
@@ -183,7 +188,7 @@
       var config = PREVIEW_CONFIG[active.handle];
       if (!config) {
         preview.innerHTML = '<img src="' + escapeHtml(active.image) + '" alt="' + escapeHtml(active.title) + '">';
-        preview.hidden = !active.image;
+        setPreviewHidden(!active.image);
         return;
       }
       var current = values();
@@ -198,7 +203,7 @@
       preview.innerHTML = '<div class="cl-cdb__preview-stage"><img src="' + PREVIEW_IMAGE_BASE +
         encodeURIComponent(config.image) + '" alt="Preview of ' + escapeHtml(active.title) + '">' + overlays +
         '</div>';
-      preview.hidden = false;
+      setPreviewHidden(false);
       var image = preview.querySelector('img');
       if (image) image.addEventListener('load', fitPreview, { once: true });
       Object.keys(loadedFonts).forEach(function (family) {
@@ -311,7 +316,7 @@
         fields.innerHTML = '';
         fieldsPanel.hidden = true;
         preview.innerHTML = '';
-        preview.hidden = true;
+        setPreviewHidden(true);
         grid.querySelector('[data-cl-cdb-dropdown-choice]').hidden = true;
         clear.hidden = true;
         addButton.disabled = true;

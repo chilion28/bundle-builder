@@ -5,6 +5,7 @@
 .cl-cdb-component.cl-cdb__summary{position:static;top:auto}
 .cl-cdb-component--headerless.cl-cdb__panel{display:block}
 .cl-cdb-preview-component{position:relative;width:100%;padding:16px!important;border:1px solid var(--line);border-radius:12px;background:#f5f6f8}
+.cl-cdb-preview-component[hidden]{display:none!important}
 .cl-cdb-preview-component .cl-cdb__preview{max-width:none;margin-bottom:0;border:0;border-radius:8px;background:transparent}
 .cl-cdb__preview-badge{position:absolute;z-index:2;top:24px;left:24px;padding:4px 8px!important;border-radius:4px;background:var(--navy);color:#fff;font:800 10px/1 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;letter-spacing:.08em;text-transform:uppercase;pointer-events:none}
 .cl-cdb__layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:28px;align-items:start}
