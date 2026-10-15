@@ -8,15 +8,17 @@
   {{ 'cl-collection-design-bundle.css' | asset_url | stylesheet_tag }}
 {%- endunless -%}
 
-<section class="{% unless cdb_embedded %}cl-cdb cl-cdb-component {% endunless %}cl-cdb__panel"
+<section class="{% unless cdb_embedded %}cl-cdb cl-cdb-component {% if show_heading == false %}cl-cdb-component--headerless {% endif %}{% endunless %}cl-cdb__panel"
          data-cl-cdb-product="{{ product.id }}"
          {% if show_heading == false %}aria-label="Choose your design"{% else %}aria-labelledby="cl-cdb-design-heading-{{ product.id }}"{% endif %}>
-  <div class="cl-cdb__step">1</div>
+  {%- unless show_heading == false -%}
+    <div class="cl-cdb__step">1</div>
+  {%- endunless -%}
   <div class="cl-cdb__panel-body">
     {%- unless show_heading == false -%}
       <h2 id="cl-cdb-design-heading-{{ product.id }}">Choose your design</h2>
+      <p>Select one design. It will be applied to all {{ cdb_hat_count }} hats.</p>
     {%- endunless -%}
-    <p>Select one design. It will be applied to all {{ cdb_hat_count }} hats.</p>
     <script type="application/json" data-cl-cdb-designs>
       [
         {%- assign emitted_design = false -%}
