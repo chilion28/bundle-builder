@@ -68,15 +68,26 @@
   roots.forEach(function (root) {
     if (root.dataset.clCdbReady === '1') return;
     root.dataset.clCdbReady = '1';
-    var configNode = root.querySelector('[data-cl-cdb-designs]');
-    var grid = root.querySelector('[data-cl-cdb-design-grid]');
-    var fieldsPanel = root.querySelector('[data-cl-cdb-fields-panel]');
-    var fields = root.querySelector('[data-cl-cdb-fields]');
-    var selected = root.querySelector('[data-cl-cdb-selected] strong');
-    var preview = root.querySelector('[data-cl-cdb-preview]');
+    var productId = root.dataset.productId;
+    var componentScope = document.querySelectorAll('[data-cl-cdb-product="' + productId + '"]');
+    function findPart(selector) {
+      var local = root.querySelector(selector);
+      if (local) return local;
+      for (var i = 0; i < componentScope.length; i += 1) {
+        var match = componentScope[i].matches(selector) ? componentScope[i] : componentScope[i].querySelector(selector);
+        if (match) return match;
+      }
+      return null;
+    }
+    var configNode = findPart('[data-cl-cdb-designs]');
+    var grid = findPart('[data-cl-cdb-design-grid]');
+    var fieldsPanel = findPart('[data-cl-cdb-fields-panel]');
+    var fields = findPart('[data-cl-cdb-fields]');
+    var selected = findPart('[data-cl-cdb-selected] strong');
+    var preview = findPart('[data-cl-cdb-preview]');
     var addButton = root.querySelector('[data-cl-cdb-add]');
     var error = root.querySelector('[data-cl-cdb-error]');
-    if (!configNode || !grid || !fields || !addButton) return;
+    if (!configNode || !grid || !fields || !selected || !preview || !addButton) return;
 
     var designs = [];
     try { designs = JSON.parse(configNode.textContent || '[]'); } catch (e) { designs = []; }

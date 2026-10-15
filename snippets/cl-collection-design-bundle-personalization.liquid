@@ -1,0 +1,12 @@
+<section class="{% unless cdb_embedded %}cl-cdb cl-cdb-component {% endunless %}cl-cdb__panel"
+         data-cl-cdb-product="{{ product.id }}"
+         data-cl-cdb-fields-panel
+         hidden
+         aria-labelledby="cl-cdb-fields-heading-{{ product.id }}">
+  <div class="cl-cdb__step">2</div>
+  <div class="cl-cdb__panel-body">
+    <h2 id="cl-cdb-fields-heading-{{ product.id }}">Add your custom text</h2>
+    <p>Enter the personalization exactly as you want it submitted.</p>
+    <div class="cl-cdb__fields" data-cl-cdb-fields></div>
+  </div>
+</section>

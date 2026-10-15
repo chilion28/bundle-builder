@@ -1,5 +1,8 @@
 .cl-cdb{--blue:#36a8ed;--navy:#102b5d;--ink:#171717;--muted:#657087;--line:#dfe4ea;width:100%;max-width:1240px;margin:0 auto;padding:24px 18px;color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .cl-cdb *{box-sizing:border-box}
+.cl-cdb-component{max-width:none;padding:0}
+.cl-cdb-preview-component{width:100%}
+.cl-cdb-preview-component .cl-cdb__preview{max-width:none;margin-bottom:0}
 .cl-cdb__layout{display:grid;grid-template-columns:minmax(0,1fr) 370px;gap:28px;align-items:start}
 .cl-cdb__main{display:grid;gap:18px;min-width:0}
 .cl-cdb__panel,.cl-cdb__summary{border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 8px 28px rgba(16,43,93,.07)}

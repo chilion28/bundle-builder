@@ -1,0 +1,55 @@
+{%- assign cdb_components = product.metafields.custom.bundle_components.value -%}
+{%- assign cdb_multiplier = product.metafields.custom.bundle_component_multiplier.value | default: 1 | plus: 0 -%}
+{%- if cdb_multiplier < 1 -%}{%- assign cdb_multiplier = 1 -%}{%- endif -%}
+{%- assign cdb_hat_count = cdb_components.size | times: cdb_multiplier -%}
+{%- assign cdb_component_skus = '' -%}
+{%- for component in cdb_components -%}
+  {%- if component.sku != blank -%}
+    {%- if cdb_component_skus != '' -%}{%- assign cdb_component_skus = cdb_component_skus | append: '|' -%}{%- endif -%}
+    {%- assign cdb_component_skus = cdb_component_skus | append: component.sku -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<aside class="{% unless cdb_embedded %}cl-cdb cl-cdb-component {% endunless %}cl-cdb__summary"
+       data-cl-collection-bundle
+       data-cl-cdb-product="{{ product.id }}"
+       data-product-id="{{ product.id }}"
+       data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+       data-component-skus="{{ cdb_component_skus | escape }}"
+       data-component-multiplier="{{ cdb_multiplier }}">
+  <p class="cl-cdb__eyebrow">YOUR {{ cdb_hat_count }}-HAT BUNDLE</p>
+  <h2>{{ product.title }}</h2>
+  <div class="cl-cdb__selected" data-cl-cdb-selected>
+    <span>Selected design</span>
+    <strong>Choose a design to continue</strong>
+  </div>
+  {%- if cdb_include_preview -%}
+    {% render 'cl-collection-design-bundle-preview', cdb_embedded: true %}
+  {%- endif -%}
+
+  <ul class="cl-cdb__components" role="list">
+    {%- for component in cdb_components -%}
+      {%- assign cdb_component_label = component.title | replace: ' / One Size Fits All / ', ' — ' | replace: ' TR', '' -%}
+      <li>
+        <span class="cl-cdb__qty">{{ cdb_multiplier }}×</span>
+        {%- if component.image != blank -%}
+          <img src="{{ component.image | image_url: width: 140 }}" alt="" width="70" height="70" loading="lazy">
+        {%- endif -%}
+        <span>{{ cdb_component_label }}</span>
+      </li>
+    {%- endfor -%}
+  </ul>
+
+  <div class="cl-cdb__price">
+    <span>Price</span>
+    <strong>{{ product.price | money }}</strong>
+  </div>
+  <button class="cl-cdb__cta" type="button" data-cl-cdb-add disabled>
+    ADD MY {{ cdb_hat_count }}-HAT BUNDLE <span aria-hidden="true">→</span>
+  </button>
+  <p class="cl-cdb__error" data-cl-cdb-error role="alert" hidden></p>
+</aside>
+
+{%- unless cdb_embedded -%}
+  <script src="{{ 'cl-collection-design-bundle.js' | asset_url }}" defer></script>
+{%- endunless -%}
