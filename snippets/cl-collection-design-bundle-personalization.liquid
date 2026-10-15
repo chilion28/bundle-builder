@@ -2,10 +2,12 @@
          data-cl-cdb-product="{{ product.id }}"
          data-cl-cdb-fields-panel
          hidden
-         aria-labelledby="cl-cdb-fields-heading-{{ product.id }}">
+         {% if show_heading == false %}aria-label="Add your custom text"{% else %}aria-labelledby="cl-cdb-fields-heading-{{ product.id }}"{% endif %}>
   <div class="cl-cdb__step">2</div>
   <div class="cl-cdb__panel-body">
-    <h2 id="cl-cdb-fields-heading-{{ product.id }}">Add your custom text</h2>
+    {%- unless show_heading == false -%}
+      <h2 id="cl-cdb-fields-heading-{{ product.id }}">Add your custom text</h2>
+    {%- endunless -%}
     <p>Enter the personalization exactly as you want it submitted.</p>
     <div class="cl-cdb__fields" data-cl-cdb-fields></div>
   </div>

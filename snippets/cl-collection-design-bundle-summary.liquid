@@ -17,8 +17,10 @@
        data-variant-id="{{ product.selected_or_first_available_variant.id }}"
        data-component-skus="{{ cdb_component_skus | escape }}"
        data-component-multiplier="{{ cdb_multiplier }}">
-  <p class="cl-cdb__eyebrow">YOUR {{ cdb_hat_count }}-HAT BUNDLE</p>
-  <h2>{{ product.title }}</h2>
+  {%- unless show_heading == false -%}
+    <p class="cl-cdb__eyebrow">YOUR {{ cdb_hat_count }}-HAT BUNDLE</p>
+    <h2>{{ product.title }}</h2>
+  {%- endunless -%}
   <div class="cl-cdb__selected" data-cl-cdb-selected>
     <span>Selected design</span>
     <strong>Choose a design to continue</strong>
