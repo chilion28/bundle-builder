@@ -157,6 +157,7 @@
   var fieldsList = document.getElementById('cl-fxb-fields-list');
   var previewEl = document.getElementById('cl-fxb-preview');
   var form = document.getElementById('cl-fxb-form');
+  var summaryEls = document.querySelectorAll('[data-cl-fxb-summary]');
   if (!stateSelect || !searchInput || !stateMenu || !fieldsList || !previewEl || !form) return;
 
   /* SKU-bridge: the promo Bundle Hat component variants share a SKU with a
@@ -400,8 +401,35 @@
     return values;
   }
 
+  function renderSummary() {
+    if (!summaryEls.length) return;
+    var cfg = activeDesign();
+    var values = activeValues();
+    summaryEls.forEach(function (summary) {
+      var target = summary.querySelector('[data-cl-fxb-summary-customization]');
+      if (!target) return;
+      if (!cfg) {
+        target.innerHTML = '<p class="cl-fxb__summary-empty">Choose a state to see your customization.</p>';
+        return;
+      }
+      var rows = [
+        ['State', stateSelect.value],
+        ['Design', cfg.title]
+      ];
+      cfg.fields.forEach(function (name) {
+        var defaults = FIELD_DEFAULTS[name] || {};
+        if (defaults.required === false && !values[name]) return;
+        rows.push([name, values[name] || '—']);
+      });
+      target.innerHTML = '<dl class="cl-fxb__summary-values">' + rows.map(function (row) {
+        return '<div><dt>' + escapeHtml(row[0]) + '</dt><dd>' + escapeHtml(row[1]) + '</dd></div>';
+      }).join('') + '</dl>';
+    });
+  }
+
   function renderPreview() {
     var cfg = activeDesign();
+    renderSummary();
     if (!cfg) {
       previewEl.innerHTML = '<div class="cl-perso-empty">Choose a state to preview its featured plate.</div>';
       return;
