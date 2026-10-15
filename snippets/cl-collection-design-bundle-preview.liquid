@@ -1,5 +1,8 @@
 <div class="{% unless cdb_embedded %}cl-cdb cl-cdb-component cl-cdb-preview-component{% endunless %}"
      data-cl-cdb-product="{{ product.id }}">
+  {% unless cdb_embedded %}
+    <span class="cl-cdb__preview-badge">Preview</span>
+  {% endunless %}
   <div class="cl-cdb__preview"
        data-cl-cdb-preview
        aria-label="Selected design preview"

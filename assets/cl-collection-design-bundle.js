@@ -174,7 +174,7 @@
         line.style.fontSize = fontSize + 'px';
         line.style.transform = 'none';
         var target = Number(previewFieldEl.dataset.width || 100) / 100 * stage.clientWidth;
-        var measured = line.offsetWidth;
+        var measured = Math.max(line.scrollWidth, line.getBoundingClientRect().width);
         line.style.transform = measured > target ? 'scaleX(' + (target / measured) + ')' : 'none';
       });
     }
@@ -191,7 +191,7 @@
         var display = current[item.property] || item.placeholder || '';
         var family = fontFamily(item.font);
         return '<span class="cl-cdb__preview-field" data-cl-cdb-preview-field data-size="' + item.size +
-          '" data-width="' + item.width + '" style="left:' + item.cx + '%;top:' + item.cy + '%;color:' +
+          '" data-width="' + item.width + '" style="left:' + item.cx + '%;top:' + item.cy + '%;width:' + item.width + '%;color:' +
           item.color + ';font-family:\'' + family + '\',sans-serif"><span class="cl-cdb__preview-line">' +
           escapeHtml(display) + '</span></span>';
       }).join('');
