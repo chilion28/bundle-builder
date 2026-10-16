@@ -21,9 +21,9 @@
     <p class="cl-cdb__eyebrow">YOUR {{ cdb_hat_count }}-HAT BUNDLE</p>
     <h2>{{ product.title }}</h2>
   {%- endunless -%}
-  <div class="cl-cdb__selected" data-cl-cdb-selected>
-    <span>Selected design</span>
-    <strong>Choose a design to continue</strong>
+  <div class="cl-cdb__includes">
+    <p class="cl-cdb__includes-title">YOUR {{ cdb_hat_count }} HATS</p>
+    <p>Your selected design and personalization will be applied to all {{ cdb_hat_count }} hats.</p>
   </div>
   {%- if cdb_include_preview -%}
     {% render 'cl-collection-design-bundle-preview', cdb_embedded: true %}
@@ -41,6 +41,13 @@
       </li>
     {%- endfor -%}
   </ul>
+
+  <div class="cl-cdb__customization">
+    <p class="cl-cdb__customization-heading">YOUR CUSTOMIZATION</p>
+    <div data-cl-cdb-summary-customization aria-live="polite">
+      <p class="cl-cdb__customization-empty">Choose a design to see your customization.</p>
+    </div>
+  </div>
 
   <div class="cl-cdb__price">
     <span>Price</span>

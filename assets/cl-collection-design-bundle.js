@@ -84,12 +84,12 @@
     var grid = findPart('[data-cl-cdb-design-grid]');
     var fieldsPanel = findPart('[data-cl-cdb-fields-panel]');
     var fields = findPart('[data-cl-cdb-fields]');
-    var selected = findPart('[data-cl-cdb-selected] strong');
+    var summaryCustomization = root.querySelector('[data-cl-cdb-summary-customization]');
     var preview = findPart('[data-cl-cdb-preview]');
     var previewComponent = preview && preview.closest('.cl-cdb-preview-component');
     var addButton = root.querySelector('[data-cl-cdb-add]');
     var error = root.querySelector('[data-cl-cdb-error]');
-    if (!configNode || !grid || !fields || !selected || !preview || !addButton) return;
+    if (!configNode || !grid || !fields || !preview || !addButton) return;
 
     var designs = [];
     try { designs = JSON.parse(configNode.textContent || '[]'); } catch (e) { designs = []; }
@@ -159,6 +159,21 @@
         result[input.dataset.clCdbProperty] = text(input.value);
       });
       return result;
+    }
+    function renderSummary() {
+      if (!summaryCustomization) return;
+      if (!active) {
+        summaryCustomization.innerHTML = '<p class="cl-cdb__customization-empty">Choose a design to see your customization.</p>';
+        return;
+      }
+      var current = values();
+      var rows = [['Design', active.title]];
+      activeFields(active).forEach(function (field) {
+        rows.push([field.label || field.property, current[field.property] || '—']);
+      });
+      summaryCustomization.innerHTML = '<dl class="cl-cdb__customization-values">' + rows.map(function (row) {
+        return '<div><dt>' + escapeHtml(row[0]) + '</dt><dd>' + escapeHtml(row[1]) + '</dd></div>';
+      }).join('') + '</dl>';
     }
     function updateReady() {
       var ready = !!active;
@@ -250,6 +265,7 @@
           if (settings.transform === 'uppercase') input.value = input.value.toUpperCase();
           count.textContent = input.value.length + '/' + settings.max;
           updateReady();
+          renderSummary();
           renderPreview();
         });
         fields.appendChild(wrap);
@@ -290,8 +306,8 @@
       }
       if (dropdownTitle) dropdownTitle.textContent = design.title;
       if (dropdownChoice) dropdownChoice.hidden = false;
-      selected.textContent = design.title;
       renderFields(design);
+      renderSummary();
       renderPreview();
       showError('');
     }
@@ -331,7 +347,6 @@
 
       function clearDropdownSelection() {
         active = null;
-        selected.textContent = 'Choose a design';
         fields.innerHTML = '';
         fieldsPanel.hidden = true;
         preview.innerHTML = '';
@@ -339,6 +354,7 @@
         grid.querySelector('[data-cl-cdb-dropdown-choice]').hidden = true;
         clear.hidden = true;
         addButton.disabled = true;
+        renderSummary();
       }
       function renderDesignMenu(showAll) {
         var query = showAll ? '' : text(search.value).toLowerCase();
