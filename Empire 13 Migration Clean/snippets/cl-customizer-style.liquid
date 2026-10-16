@@ -32,23 +32,18 @@
 </div>
 {%- endif -%}
 
-{%- comment -%} Hat style pills {%- endcomment -%}
+{%- comment -%} Hat style pills — ONLY when the product actually has a Style
+  option. Products without one (e.g. a metal plate) render nothing here instead
+  of fake Snapback/Trucker/Flex Fit pills. {%- endcomment -%}
+{%- if style_opt -%}
 <div class="cl-ai-b__field">
-  <label class="cl-ai-b__label">Style: <span data-cl-ai-style-label>{% if style_opt %}{{ style_opt.selected_value }}{% else %}Trucker{% endif %}</span></label>
+  <label class="cl-ai-b__label">Style: <span data-cl-ai-style-label>{{ style_opt.selected_value }}</span></label>
   <div class="cl-ai-b__pills" data-cl-ai-styles role="radiogroup" aria-label="Style">
-    {%- if style_opt -%}
-      {%- for val in style_opt.values -%}
-        <button type="button" class="cl-ai-b__pill{% if val == style_opt.selected_value %} is-active{% endif %}"
-                data-cl-ai-style data-value="{{ val | escape }}" role="radio"
-                aria-checked="{% if val == style_opt.selected_value %}true{% else %}false{% endif %}">{{ val }}</button>
-      {%- endfor -%}
-    {%- else -%}
-      {%- assign defaults = 'Snapback,Trucker,Flex Fit' | split: ',' -%}
-      {%- for val in defaults -%}
-        <button type="button" class="cl-ai-b__pill{% if val == 'Trucker' %} is-active{% endif %}"
-                data-cl-ai-style data-value="{{ val }}" role="radio"
-                aria-checked="{% if val == 'Trucker' %}true{% else %}false{% endif %}">{{ val }}</button>
-      {%- endfor -%}
-    {%- endif -%}
+    {%- for val in style_opt.values -%}
+      <button type="button" class="cl-ai-b__pill{% if val == style_opt.selected_value %} is-active{% endif %}"
+              data-cl-ai-style data-value="{{ val | escape }}" role="radio"
+              aria-checked="{% if val == style_opt.selected_value %}true{% else %}false{% endif %}">{{ val }}</button>
+    {%- endfor -%}
   </div>
 </div>
+{%- endif -%}

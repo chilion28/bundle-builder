@@ -2,6 +2,15 @@
    Loaded by sections/cl-ai-hat.liquid + snippets/cl-ai-hat-builder.liquid.
    Behaviour: assets/cl-ai-hat.js */
 
+/* The split customizer blocks are NOT wrapped in .cl-ai (each block is placed
+   independently in GemPages), so the design tokens below must also live on
+   :root or every var() collapses. Forked file only — the stable page keeps the
+   .cl-ai-scoped tokens and is unaffected. */
+:root {
+  --green:#00a0ea; --green-dk:#0088c7; --ink:#1a1f26; --muted:#6b7280;
+  --line:#e5e7eb; --panel:#eef7fc; --radius:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 8px 24px rgba(0,0,0,.05);
+}
 .cl-ai {
   --green:#00a0ea;        /* CityLocs blue — primary accent (CTA, step chips) */
   --green-dk:#0088c7;
@@ -320,6 +329,23 @@
   font-size:17px;font-weight:800;letter-spacing:.02em;margin-top:6px;transition:background .15s;box-shadow:var(--shadow)}
 .cl-ai-b__cta:hover{background:var(--green-dk)}
 .cl-ai-b__cta:disabled{opacity:.6;cursor:not-allowed}
+/* ====================================================================
+   GemPages armor — GemPages' global CSS resets buttons/form controls
+   (background, padding, font-weight) and wins on equal specificity via
+   load order, so re-assert the customizer's interactive styles with
+   !important. Forked file only; stable cl-ai-hat.css is untouched.
+   ==================================================================== */
+.cl-ai-b__cta{width:100%!important;background:#00a0ea!important;color:#fff!important;border:none!important;border-radius:12px!important;padding:17px!important;font-size:17px!important;font-weight:800!important;line-height:normal!important}
+.cl-ai-b__cta:hover{background:#0088c7!important}
+.cl-ai-b__choose{background:#1a1f26!important;color:#fff!important;border:none!important;border-radius:8px!important;padding:9px 20px!important;font-weight:700!important;font-size:13px!important}
+.cl-ai-b__choose:hover{background:#000!important}
+.cl-ai-b__qty{display:flex!important;border:1.5px solid var(--line)!important;border-radius:10px!important;overflow:hidden!important;width:fit-content!important}
+.cl-ai-b__qty-btn{width:44px!important;height:46px!important;border:none!important;background:#fff!important;font-size:20px!important;color:#374151!important;padding:0!important}
+.cl-ai-b__qty-input{width:56px!important;height:46px!important;border:none!important;border-left:1.5px solid var(--line)!important;border-right:1.5px solid var(--line)!important;background:#fff!important;text-align:center!important}
+.cl-ai-b__pill{background:#fff!important;border:1.5px solid var(--line)!important;border-radius:10px!important;padding:12px 10px!important;font-weight:600!important;color:#374151!important}
+.cl-ai-b__pill.is-active{border-color:var(--green)!important;background:#e4f4fd!important;color:var(--green-dk)!important}
+.cl-ai-b__swatch{width:60px!important;height:60px!important;padding:0!important;border:2px solid var(--line)!important;border-radius:12px!important;background:#fff!important}
+.cl-ai-b__drop{border:2px dashed #b6dcf4!important;background:#f7fbfe!important}
 .cl-ai-b__cta-price{font-weight:800}
 .cl-ai-b__reassure{list-style:none;display:flex;justify-content:center;gap:26px;margin:16px 0 0;padding:0;
   font-size:13px;color:var(--muted)}
