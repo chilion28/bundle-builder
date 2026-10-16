@@ -1993,6 +1993,12 @@
       if (propOrig && propOrig.value) props['_Artwork Original'] = propOrig.value; // for Photoshop
       if (propPdf && propPdf.value) props['_Artwork PDF'] = propPdf.value;
       if (propPreview && propPreview.value) props['_Artwork Preview'] = propPreview.value; // framed patch visual
+      if (state.aiSource) {                   // AI-studio provenance (set by the bridge)
+        if (propAiGen && propAiGen.value) props['_AI Generation ID'] = propAiGen.value;
+        if (propAiPrompt && propAiPrompt.value) props['AI Prompt'] = propAiPrompt.value;
+        if (propAiStyle && propAiStyle.value) props['AI Style'] = propAiStyle.value;
+        if (propAiAspect && propAiAspect.value) props['AI Aspect Ratio'] = propAiAspect.value;
+      }
       if (state.text) {                       // ~90% of orders have no patch text
         props['Custom Text'] = state.text;
         props['Text Color'] = state.textFill;
