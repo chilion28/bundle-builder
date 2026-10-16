@@ -2,15 +2,21 @@
 {%- assign cdb_multiplier = product.metafields.custom.bundle_component_multiplier.value | default: 1 | plus: 0 -%}
 {%- if cdb_multiplier < 1 -%}{%- assign cdb_multiplier = 1 -%}{%- endif -%}
 {%- assign cdb_hat_count = cdb_components.size | times: cdb_multiplier -%}
-{%- assign cdb_compare_price = product.compare_at_price | default: product.price -%}
-{%- assign cdb_savings = cdb_compare_price | minus: product.price -%}
+{%- assign cdb_component_retail_total = 0 -%}
 {%- assign cdb_component_skus = '' -%}
 {%- for component in cdb_components -%}
+  {%- assign cdb_component_retail = component.price | times: cdb_multiplier -%}
+  {%- assign cdb_component_retail_total = cdb_component_retail_total | plus: cdb_component_retail -%}
   {%- if component.sku != blank -%}
     {%- if cdb_component_skus != '' -%}{%- assign cdb_component_skus = cdb_component_skus | append: '|' -%}{%- endif -%}
     {%- assign cdb_component_skus = cdb_component_skus | append: component.sku -%}
   {%- endif -%}
 {%- endfor -%}
+{%- assign cdb_compare_price = product.compare_at_price | default: 0 -%}
+{%- if cdb_compare_price <= product.price and cdb_component_retail_total > product.price -%}
+  {%- assign cdb_compare_price = cdb_component_retail_total -%}
+{%- endif -%}
+{%- assign cdb_savings = cdb_compare_price | minus: product.price -%}
 
 <aside class="{% unless cdb_embedded %}cl-cdb cl-cdb-component {% endunless %}cl-cdb__summary"
        data-cl-collection-bundle
