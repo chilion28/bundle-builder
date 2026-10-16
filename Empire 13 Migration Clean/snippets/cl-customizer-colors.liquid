@@ -13,6 +13,7 @@
   {%- if dn contains 'color' or dn contains 'colour' -%}{%- assign color_opt = opt -%}{%- endif -%}
 {%- endfor -%}
 
+<div class="cl-ai cl-ai--block">
 {%- if show_variants != false -%}
 
 {%- comment -%} Colour swatches — hidden data layer for the per-colour images; the
@@ -68,3 +69,4 @@
   </div>
 </div>
 {%- endif -%}
+</div>

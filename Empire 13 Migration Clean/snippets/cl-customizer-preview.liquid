@@ -15,7 +15,7 @@
 {%- if cfg.mask_image != blank -%}{%- assign mask_url = cfg.mask_image | image_url: width: 2000 -%}{%- endif -%}
 {%- assign shape0_slug = shape_list[0] | downcase | replace: ' ', '' | replace: '-', '' | replace: '_', '' -%}
 
-<div class="cl-ai__step cl-ai-b__preview">
+<div class="cl-ai cl-ai--block cl-ai__step cl-ai-b__preview">
   <div class="cl-ai__step-head">
     <span class="cl-ai__step-num cl-ai__step-num--alt">PREVIEW</span>
     <h2 class="cl-ai__step-title">{{ preview_title | default: 'YOUR PATCH' }}</h2>

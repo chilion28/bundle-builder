@@ -9,7 +9,7 @@
   variant globally, POSTs /cart/add.js). The form's native submit never fires
   (the engine preventDefaults). Optional params: cta_label, price_display.
 {%- endcomment -%}
-{% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai-b__form cl-ai-b__form--cta' %}
+{% form 'product', product, id: 'cl-ai-hat-form', class: 'cl-ai cl-ai--block cl-ai-b__form cl-ai-b__form--cta' %}
   <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-cl-ai-variant-id>
   <button type="submit" class="cl-ai-b__cta" data-cl-ai-cta>
     <span data-cl-ai-cta-label>{{ cta_label | default: 'ADD TO CART' }}</span>

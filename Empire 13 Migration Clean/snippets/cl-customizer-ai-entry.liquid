@@ -24,7 +24,7 @@
 
 {%- if ai_enabled != true -%}
   {%- comment -%} AI off for this product: plain upload, no tabs. {%- endcomment -%}
-  {% render 'cl-customizer-upload' %}
+  <div class="cl-ai cl-ai--block">{% render 'cl-customizer-upload' %}</div>
 {%- else -%}
 <style>
   .cl-aie__tabs{display:flex;gap:8px;margin:0 0 16px}
@@ -43,7 +43,7 @@
   .cl-aie__modal-x{position:absolute;top:12px;right:12px;border:none;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:#6b7280}
 </style>
 
-<div class="cl-aie" data-cl-aie data-default="{{ default_view }}" data-display="{{ ai_display }}">
+<div class="cl-aie cl-ai cl-ai--block" data-cl-aie data-default="{{ default_view }}" data-display="{{ ai_display }}">
   <div class="cl-aie__tabs" role="tablist" aria-label="Choose how to add your design">
     <button type="button" class="cl-aie__tab" data-aie-tab="upload" role="tab">
       Upload photo<small>I already have my design</small>

@@ -27,6 +27,10 @@
   padding:24px 18px 56px;
 }
 .cl-ai *{box-sizing:border-box}
+/* Each split block is wrapped in `.cl-ai cl-ai--block` so the existing
+   `.gps .cl-ai …` GemPages armor applies, but WITHOUT the page-level layout
+   (max-width/margin/padding) that `.cl-ai` adds for the legacy one-wrapper page. */
+.cl-ai.cl-ai--block{max-width:none;margin:0;padding:0}
 .cl-ai button{font-family:inherit;cursor:pointer}
 
 /* ---------- HERO ---------- */
