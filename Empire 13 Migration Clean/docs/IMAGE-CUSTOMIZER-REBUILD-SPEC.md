@@ -145,13 +145,48 @@ Dashboard production queue reads `_Artwork Print` as it does today.
 
 ---
 
-## 9. Status / open items (as of 2026-10-16)
+## 9. Reusing across product types
 
-- **Approved:** unified tabs, the three metafields, inline/modal, dynamic steps,
-  AI-path has no manual text, select-event payload, upscale-on-purchase (paid order).
-- **Pending Omar's tests:** 4K upscale quality, the regeneration cap, confirming the
-  `_Artwork Print` read on paid orders.
-- **To build (Claude):** unified Step 1 block (tabs + 3 metafields), the
-  `cl:ai-image:selected` bridge listener, the AI-source flag that hides "Add text",
-  dynamic step numbering.
+The whole system is config-driven — the same blocks/engine serve any product type
+(hat, mini plate, full 12" plate, wallet, phone case, patch, …) with **zero per-product
+code**. To add a product type you only touch config:
+
+1. **Geometry + mask** — run the frame through the geometry generator and fill that
+   product's `custom.customizer_config` metaobject (window, frame_aspect, safe, patch_in,
+   `frame_behind`, and a mask with any cut-outs/screw holes). See the onboarding guide.
+2. **Metafields** — set `customizer_ai_enabled` / `customizer_default_view` /
+   `customizer_ai_display` on the product.
+3. **Page** — place the same split blocks in GemPages (ai-bootstrap + ai-entry + preview/
+   style/colors/cta).
+
+The engine is shape-agnostic (fit → mask → composite). Product differences are all config:
+- **`frame_behind`** → solid product (art on top) vs patch (art through a window).
+- **mask** → which pixels print (punch out hardware/cut-outs).
+- **variants** → color+qty grid; **simple** → qty stepper (`show_variants`).
+- **Style option present** → style pills; absent → nothing.
+- **multiple shapes in config** → shape picker appears automatically.
+
+Per-type backend note: the **4K upscale is gated per product** in Omar's app (only the
+12" plate needs it; small items ship as-is).
+
+---
+
+## 10. Status / open items (as of 2026-10-16)
+
+- **Built + verified live (isolated, stable `image-hat-rectangle` byte-identical throughout):**
+  forked engine/CSS/bootstrap, unified Step-1 tabs + 3 metafields, inline/modal, the
+  `cl:ai-image:selected` bridge, AI-source hides "Add text", AI provenance written to the
+  order, dynamic steps, dev mock studio. GemPages styling fixed (tokens on `:root` + `.cl-ai`
+  wrappers so the existing `.gps .cl-ai` armor applies; tab styles specificity-boosted).
+- **End-to-end confirmed:** real add-to-cart carries `_Artwork Print` (R2) + all four AI
+  provenance props, no Custom Text. Full positioning editor available on the AI path.
+- **Pending Omar (this afternoon):** his real studio widget mounts at
+  `[data-cl-ai-studio-mount]` (replaces the dev mock); his tests — 4K upscale quality, the
+  regeneration cap, confirming the `_Artwork Print` read on paid orders.
+- **Housekeeping:** remove the leftover ChatGPT-prompt block from the GemPages page; `.cl-ai`
+  wrapper not yet added to `cl-customizer-style` (renders nothing on no-style products, so
+  only needed when a product uses style pills).
 - **Watch:** AI text legibility on first real orders.
+- **Cache note:** theme changes to inline snippet HTML are edge-cached by Shopify; a browser
+  hard-refresh does not clear it — use `?cb=…` or wait a few minutes. Asset files (`.css`/`.js`)
+  self-bust via `?v=`.
