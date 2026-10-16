@@ -1,0 +1,48 @@
+{%- comment -%}
+  cl-ai-studio-mock — DEV-ONLY stand-in for Omar's AI generation studio.
+
+  Injects a small panel into every [data-cl-ai-studio-mount] (the AI tab in
+  cl-customizer-ai-entry) that fires the REAL `cl:ai-image:selected` event, so
+  the full flow can be tested before Omar's widget lands. It is also the exact
+  integration reference: this is the event shape to dispatch.
+
+  REMOVE this render from the page once Omar's real widget is mounted.
+{%- endcomment -%}
+<script>
+(function () {
+  function fire(url, prompt, style, aspect) {
+    document.dispatchEvent(new CustomEvent('cl:ai-image:selected', {
+      bubbles: true,
+      detail: {
+        imageUrl: url,
+        generationId: 'mock-' + Date.now().toString(36),
+        prompt: prompt || '',
+        styleName: style || '',
+        aspectRatio: aspect || ''
+      }
+    }));
+  }
+  function mountInto(el) {
+    if (!el || el.dataset.mockReady) return;
+    el.dataset.mockReady = '1';
+    el.innerHTML =
+      '<div style="border:1.5px dashed #c4b5fd;border-radius:12px;padding:14px;background:#faf8ff">' +
+        '<p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#7c3aed">DEV mock AI studio — remove before launch</p>' +
+        '<label style="font-size:12px;display:block;margin-bottom:4px;color:#475569">Image URL (paste a real ai-design from Files, or use the preset)</label>' +
+        '<input class="mk-url" type="text" style="width:100%;box-sizing:border-box;padding:7px;font-size:12px;border:1px solid #cbd5e1;border-radius:7px" value="https://citylocs.com/cdn/shop/files/Mini-Metal-License-Plate-Frame.png">' +
+        '<div style="display:flex;gap:8px;margin-top:8px">' +
+          '<input class="mk-prompt" placeholder="prompt" style="flex:1;padding:7px;font-size:12px;border:1px solid #cbd5e1;border-radius:7px" value="a bold retro poster">' +
+          '<input class="mk-style" placeholder="style" style="width:120px;padding:7px;font-size:12px;border:1px solid #cbd5e1;border-radius:7px" value="Realistic (3:2)">' +
+        '</div>' +
+        '<button class="mk-fire" type="button" style="margin-top:10px;width:100%;padding:10px;border:none;border-radius:8px;background:#7c3aed;color:#fff;font-size:13px;cursor:pointer">Use this design &rarr; fire cl:ai-image:selected</button>' +
+      '</div>';
+    el.querySelector('.mk-fire').addEventListener('click', function () {
+      var u = el.querySelector('.mk-url').value.trim();
+      if (!u) return;
+      fire(u, el.querySelector('.mk-prompt').value, el.querySelector('.mk-style').value, 'landscape');
+    });
+  }
+  function init() { document.querySelectorAll('[data-cl-ai-studio-mount]').forEach(mountInto); }
+  if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
+})();
+</script>

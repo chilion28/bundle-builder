@@ -1,0 +1,36 @@
+{%- comment -%}
+  AI customizer TEST template (ISOLATED — Option A).
+  Renders the forked AI bootstrap (loads cl-ai-hat-ai.js/.css) + the unified
+  tabbed entry + the DEV mock studio + the shared visible blocks. The stable
+  image-hat-rectangle page and cl-ai-hat.js are untouched.
+
+  Setup: give this product a `custom.customizer_config` metaobject, set the AI
+  metafields (customizer_ai_enabled = true, customizer_default_view,
+  customizer_ai_display), and assign this theme template.
+  See docs/IMAGE-CUSTOMIZER-REBUILD-SPEC.md.
+{%- endcomment -%}
+{%- assign cfg = product.metafields.custom.customizer_config.value -%}
+<div style="max-width:1120px;margin:0 auto;padding:28px 18px">
+  <p style="font:700 12px/1 -apple-system,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#00a0ea;margin:0 0 6px">CityLocs · AI customizer (test)</p>
+  <h1 style="font:800 30px/1.1 -apple-system,sans-serif;letter-spacing:-.02em;margin:0 0 20px">{{ product.title }}</h1>
+
+  {%- if cfg == blank -%}
+    <div style="padding:16px;border:1px solid #f0c0c0;background:#fdecec;border-radius:10px;color:#a33">
+      This product has no <code>custom.customizer_config</code> metaobject. Assign one first (see the onboarding guide).
+    </div>
+  {%- else -%}
+    {% render 'cl-customizer-ai-bootstrap' %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;align-items:start">
+      <div>
+        {% render 'cl-customizer-ai-entry' %}
+        {% render 'cl-ai-studio-mock' %}
+      </div>
+      <div>
+        {% render 'cl-customizer-preview' %}
+        {% render 'cl-customizer-style' %}
+        {% render 'cl-customizer-colors' %}
+        {% render 'cl-customizer-cta' %}
+      </div>
+    </div>
+  {%- endif -%}
+</div>
