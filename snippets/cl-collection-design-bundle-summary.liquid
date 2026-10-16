@@ -2,6 +2,8 @@
 {%- assign cdb_multiplier = product.metafields.custom.bundle_component_multiplier.value | default: 1 | plus: 0 -%}
 {%- if cdb_multiplier < 1 -%}{%- assign cdb_multiplier = 1 -%}{%- endif -%}
 {%- assign cdb_hat_count = cdb_components.size | times: cdb_multiplier -%}
+{%- assign cdb_compare_price = product.compare_at_price | default: product.price -%}
+{%- assign cdb_savings = cdb_compare_price | minus: product.price -%}
 {%- assign cdb_component_skus = '' -%}
 {%- for component in cdb_components -%}
   {%- if component.sku != blank -%}
@@ -51,7 +53,11 @@
 
   <div class="cl-cdb__price">
     <span>Price</span>
-    <strong>{{ product.price | money }}</strong>
+    <div>
+      {%- if cdb_compare_price > product.price -%}<s>{{ cdb_compare_price | money }}</s>{%- endif -%}
+      <strong>{{ product.price | money }}</strong>
+      {%- if cdb_savings > 0 -%}<small>You save {{ cdb_savings | money }}</small>{%- endif -%}
+    </div>
   </div>
   <button class="cl-cdb__cta" type="button" data-cl-cdb-add disabled>
     ADD MY {{ cdb_hat_count }}-HAT BUNDLE <span aria-hidden="true">→</span>

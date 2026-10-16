@@ -79,7 +79,10 @@
 [data-cl-collection-bundle].cl-cdb__summary .cl-cdb__customization-values dt{color:#687389!important;font-size:12px!important;font-weight:700!important;text-align:left!important}
 [data-cl-collection-bundle].cl-cdb__summary .cl-cdb__customization-values dd{margin:0!important;color:var(--ink)!important;font-size:13px!important;font-weight:800!important;overflow-wrap:anywhere!important;text-align:left!important}
 [data-cl-collection-bundle].cl-cdb__summary .cl-cdb__price{display:flex!important;justify-content:space-between!important;align-items:baseline!important;gap:16px!important;margin:0!important;padding:16px 0 0!important;border-top:1px solid #e5e7eb!important;color:#111!important;font-size:16px!important;text-align:left!important}
+[data-cl-collection-bundle].cl-cdb__summary .cl-cdb__price>div{display:flex!important;flex-wrap:wrap!important;justify-content:flex-end!important;align-items:baseline!important;gap:7px!important}
+[data-cl-collection-bundle].cl-cdb__summary .cl-cdb__price s{color:#9299a6!important;font-size:15px!important}
 [data-cl-collection-bundle].cl-cdb__summary .cl-cdb__price strong{color:#111!important;font-size:30px!important;line-height:1!important}
+[data-cl-collection-bundle].cl-cdb__summary .cl-cdb__price small{flex-basis:100%!important;color:#14953f!important;font-size:13px!important;font-weight:800!important;text-align:right!important}
 [data-cl-collection-bundle].cl-cdb__summary button.cl-cdb__cta{display:flex!important;align-items:center!important;justify-content:center!important;gap:10px!important;width:100%!important;min-height:54px!important;margin:0!important;padding:16px 20px!important;border:0!important;border-radius:10px!important;background:var(--blue)!important;color:#fff!important;font:800 15px/1 Inter,sans-serif!important;letter-spacing:.02em!important;text-align:center!important;cursor:pointer!important;box-shadow:none!important;text-transform:none!important}
 [data-cl-collection-bundle].cl-cdb__summary button.cl-cdb__cta:hover{background:#2399df!important}
 [data-cl-collection-bundle].cl-cdb__summary button.cl-cdb__cta:disabled{cursor:not-allowed!important;opacity:.48!important}
