@@ -21,13 +21,13 @@
     'pink-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-PINK-Patch-Preview.jpg', '#e61d5e'),
     'token-monogram-custom-hat': previewConfig('Token-Patch-Preview.jpg', [
       previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 372, 50.09, 455.8, 68.73, '#fed7af', 'A'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 66.6667, 49.91, 350.16, 45, '#fed7af', '', 325.16)
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 66.6667, 49.91, 350.16, 45, '#fed7af', '', 325.16, null, true)
     ], 720, 800)
   };
   var loadedFonts = {};
 
-  function previewField(property, label, max, font, size, cx, baseline, width, color, placeholder, baselineAnchor, startX) {
-    return { property: property, label: label, max: max, font: font, size: size, cx: cx, baseline: baseline, width: width, color: color, placeholder: placeholder, baselineAnchor: baselineAnchor, startX: startX };
+  function previewField(property, label, max, font, size, cx, baseline, width, color, placeholder, baselineAnchor, startX, hardMaxWidth) {
+    return { property: property, label: label, max: max, font: font, size: size, cx: cx, baseline: baseline, width: width, color: color, placeholder: placeholder, baselineAnchor: baselineAnchor, startX: startX, hardMaxWidth: hardMaxWidth };
   }
   function previewConfig(image, fields, width, height, cover) {
     return { image: image, fields: fields, width: width || 800, height: height || 600, cover: cover || '' };
@@ -197,7 +197,12 @@
         drawContext.fillStyle = item.color;
         drawContext.textAlign = item.startX == null ? 'center' : 'start';
         drawContext.textBaseline = 'alphabetic';
-        drawContext.fillText(display.toUpperCase(), item.startX == null ? item.cx / 100 * config.width : item.startX, baseline);
+        var drawX = item.startX == null ? item.cx / 100 * config.width : item.startX;
+        if (item.hardMaxWidth) {
+          drawContext.fillText(display.toUpperCase(), drawX, baseline, maxWidth);
+        } else {
+          drawContext.fillText(display.toUpperCase(), drawX, baseline);
+        }
       });
     }
     function renderPreview() {
