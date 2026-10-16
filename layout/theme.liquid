@@ -20,6 +20,41 @@
     <script src="https://unpkg.com/vue@3.2.37/dist/vue.global.prod.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
+    {%- if request.path == '/products/old-school-snapback-custom' -%}
+      <style>
+        /* GemPages positions this decorative image over the legacy cart button. */
+        #e-1687540938490,
+        #e-1687540938490 * { pointer-events: none !important; }
+      </style>
+      <script>
+        // Zepto Product Personalizer calls this hook after its AJAX add. Defining
+        // it prevents the app's default /cart redirect without bypassing preview
+        // generation or personalized line-item properties.
+        window.pplr_custom_ajaxcart = function () {
+          fetch('/cart.js', { headers: { Accept: 'application/json' } })
+            .then(function (response) { return response.json(); })
+            .then(function (cart) {
+              document.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart: cart } }));
+              window.dispatchEvent(new CustomEvent('cart:refresh', { detail: { cart: cart } }));
+              document.dispatchEvent(new CustomEvent('cart:open', { detail: { cart: cart } }));
+              window.dispatchEvent(new CustomEvent('cart:open', { detail: { cart: cart } }));
+
+              var attempts = 0;
+              var openAmpCart = window.setInterval(function () {
+                attempts += 1;
+                if (window.AMP_API && typeof window.AMP_API.OPEN_CART === 'function') {
+                  window.clearInterval(openAmpCart);
+                  window.AMP_API.OPEN_CART();
+                } else if (attempts >= 20) {
+                  window.clearInterval(openAmpCart);
+                }
+              }, 250);
+            });
+          if (typeof window.pplr_reset_cart === 'function') window.pplr_reset_cart();
+        };
+      </script>
+    {%- endif -%}
+
     <title>
       {{- page_title -}}
 
@@ -280,8 +315,6 @@
       or template.suffix == 'swap-patch-redirect'
     %}
       {{ 'cl-legacy-product-compat.css' | asset_url | stylesheet_tag }}
-      {{ 'cl-legacy-gallery.css' | asset_url | stylesheet_tag }}
-      <script src="{{ 'cl-legacy-gallery.js' | asset_url }}" defer></script>
     {% endif %}
 
     {% unless settings.reduce_animations %}
@@ -315,7 +348,10 @@
 
     <!-- GemPages v6 header integration. Required by migrated GemPages templates. -->
     {% render 'gem-app-header-scripts' %}
-  </head>
+  <!--Gem_Page_Header_Script-->
+{% render 'gem-app-header-scripts' %}
+<!--End_Gem_Page_Header_Script-->
+</head>
 
   <body class="template-{{ template.name }}" data-instant-allow-query-string {% if settings.reduce_animations %}data-reduce-animations{% endif %}>
     <script>
@@ -731,9 +767,10 @@
     {% render 'cl-bundle-cart' %}
     {% render 'cl-amp-milestone' %}
     {% render 'cl-builder-product-guard' %}
-    <script src="{{ 'cl-mobile-image-zoom.js' | asset_url }}" defer></script>
     <script src="{{ 'cl-input-validation.js' | asset_url }}"></script>
-    <script src="{{ 'cl-pack-builder.js' | asset_url }}" defer></script>
+    <script src="{{ 'cl-mobile-image-zoom.js' | asset_url }}" defer></script>
+    <script src="{{ 'cl-hide-combined-suffix.js' | asset_url }}" defer></script>
+    {% render 'cl-free-gift-buy2-init' %}
 
     {%- liquid
       assign gp_template_suffix = template.suffix
@@ -761,5 +798,35 @@
     {% endif %}
 
     <script>(function(n, v) {/* eslint-disable-next-line max-len */if (window.Shopify && window.Shopify.theme && navigator && navigator.sendBeacon && window.Shopify.designMode) {if (sessionStorage.getItem('oots_beacon')) return;navigator.sendBeacon('https://app.outofthesandbox.com/beacon', new URLSearchParams({shop_domain: window.Shopify.shop.toLowerCase(),shop_id: '{{ shop.id }}',shop_email: '{{ shop.email }}',theme_name: n.toLowerCase(),theme_version: v.toLowerCase(),theme_store_id: window.Shopify.theme.theme_store_id,theme_id: window.Shopify.theme.id,theme_role: window.Shopify.theme.role,}));sessionStorage.setItem('oots_beacon', '');}}('empire','13.0.0'))</script>
-  </body>  
+  <!--Gem_Page_Footer_Script-->
+  {%- liquid
+    assign gpTemplateSuffix = template.suffix
+    assign arrSplitSuffix = gpTemplateSuffix | split: '-'
+    if gpTemplateSuffix contains 'gem-' and gpTemplateSuffix contains '-template' and arrSplitSuffix.size == 3
+      assign isV6GpTemplate = true
+    endif
+    assign gpShopMeta = shop.metafields.gempages
+    if gpShopMeta
+      if gpShopMeta['productV6-default'] == 'true' and request.page_type == 'product'
+        assign isProductDefault = true
+      endif
+      if gpShopMeta['collectionV6-default'] == 'true' and request.page_type == 'collection'
+        assign isCollectionDefault = true
+      endif
+      if gpShopMeta['indexV6-default'] == 'true' and request.page_type == 'index'
+        assign isIndexDefault = true
+      endif
+      if isProductDefault or isCollectionDefault or isIndexDefault or isPreviewV6
+        assign isV6GpTemplate = true
+      endif
+    endif
+  %}
+  {% if isV6GpTemplate %}
+    {% render 'gem-app-footer-scripts', GEM_FOOTER_SCRIPT: GEM_FOOTER_SCRIPT %}
+  {% endif %}
+<!--End_Gem_Page_Footer_Script-->
+{% if request.page_type == 'product' %}
+  {% render 'cl-klaviyo-added-to-cart' %}
+{% endif %}
+</body>
 </html>

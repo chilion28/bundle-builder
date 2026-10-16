@@ -1,0 +1,80 @@
+{% comment %}
+  Global Klaviyo Added to Cart tracking for product pages.
+  Covers native product forms and CityLocs bundle builders using fetch or XHR.
+{% endcomment %}
+<script>
+  (function () {
+    if (window.__clKlaviyoAddedToCartInstalled) return;
+    window.__clKlaviyoAddedToCartInstalled = true;
+    window._learnq = window._learnq || [];
+
+    function isCartAddRequest(url, method) {
+      if (String(method || 'GET').toUpperCase() !== 'POST') return false;
+
+      try {
+        return new URL(url, window.location.origin).pathname === '/cart/add.js';
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function trackAddedToCart() {
+      window.fetch('/cart.js', { credentials: 'same-origin' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Unable to load cart');
+          return response.json();
+        })
+        .then(function (data) {
+          window._learnq.push(['track', 'Added to Cart', {
+            total_price: data.total_price / 100,
+            $value: data.total_price / 100,
+            total_discount: data.total_discount,
+            original_total_price: data.original_total_price / 100,
+            items: data.items
+          }]);
+        })
+        .catch(function () {
+          // Cart tracking should never interrupt the customer's add-to-cart flow.
+        });
+    }
+
+    var originalFetch = window.fetch;
+    if (typeof originalFetch === 'function') {
+      window.fetch = function () {
+        var input = arguments[0];
+        var options = arguments[1] || {};
+        var url = input && input.url ? input.url : input;
+        var method = options.method || (input && input.method) || 'GET';
+        var responsePromise = originalFetch.apply(this, arguments);
+
+        if (isCartAddRequest(url, method)) {
+          responsePromise.then(function (response) {
+            if (response.ok) trackAddedToCart();
+          }).catch(function () {});
+        }
+
+        return responsePromise;
+      };
+    }
+
+    if (window.XMLHttpRequest) {
+      var originalOpen = XMLHttpRequest.prototype.open;
+      var originalSend = XMLHttpRequest.prototype.send;
+
+      XMLHttpRequest.prototype.open = function (method, url) {
+        this.__clKlaviyoCartAdd = isCartAddRequest(url, method);
+        return originalOpen.apply(this, arguments);
+      };
+
+      XMLHttpRequest.prototype.send = function () {
+        if (this.__clKlaviyoCartAdd) {
+          this.addEventListener('load', function () {
+            if (this.status >= 200 && this.status < 300) trackAddedToCart();
+          }, { once: true });
+        }
+
+        return originalSend.apply(this, arguments);
+      };
+    }
+  })();
+</script>
