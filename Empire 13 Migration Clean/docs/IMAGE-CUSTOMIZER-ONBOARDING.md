@@ -191,6 +191,34 @@ split blocks only when you want custom layout.
 **Single-variant products** (one color): pass `show_variants: false` to block 6 for a −/+
 quantity stepper. Multi-variant: omit it (defaults to the color + quantity grid).
 
+### AI page variant (AI studio integration)
+
+The AI build is kept fully ISOLATED (Option A — see
+[IMAGE-CUSTOMIZER-REBUILD-SPEC.md](IMAGE-CUSTOMIZER-REBUILD-SPEC.md)): a forked engine
+(`cl-ai-hat-ai.js`) so the stable `image-hat-rectangle` page is never touched. Build the
+AI page in GemPages with these blocks instead of the normal ones:
+
+```liquid
+{% render 'cl-customizer-ai-bootstrap' %}
+{% render 'cl-customizer-ai-entry' %}
+{% render 'cl-ai-studio-mock' %}
+{% render 'cl-customizer-preview' %}
+{% render 'cl-customizer-style' %}
+{% render 'cl-customizer-colors' %}
+{% render 'cl-customizer-cta' %}
+```
+
+Rules:
+- Use the **`-ai-` bootstrap**, not `cl-customizer-bootstrap` — it loads the forked engine.
+  Only one bootstrap per page.
+- Do NOT render `cl-customizer-upload` or `cl-customizer-prompt` separately — the entry
+  renders the upload form inside its "Upload photo" tab, and the ChatGPT prompt is skipped.
+- `cl-ai-studio-mock` is a DEV stand-in that fires `cl:ai-image:selected`. Omar's real
+  widget mounts at `[data-cl-ai-studio-mount]` and fires the same event; remove the mock
+  once it is in.
+- Set the 3 product metafields: `custom.customizer_ai_enabled` (true),
+  `customizer_default_view` (`upload`|`ai`), `customizer_ai_display` (`inline`|`modal`).
+
 ---
 
 ## 8. One-line summary
