@@ -4,15 +4,16 @@
   var TEMPLATE_API_URL = 'https://citylocsproduction.com/api/get-product-template';
   var PREVIEW_IMAGE_BASE = 'https://cdn-zeptoapps.com/product-personalizer/images/citylocs.myshopify.com/';
   var PREVIEW_FONT_BASE = 'https://cdn-zeptoapps.com/product-personalizer/font/citylocs.myshopify.com/';
-  var PREVIEW_CANVAS_WIDTH = 720;
+  var PREVIEW_CANVAS_WIDTH = 800;
+  var PREVIEW_CANVAS_HEIGHT = 600;
   var PREVIEW_CONFIG = {
     'monogram-custom-hat': previewConfig('Blank-Monogram-Patch-Preview.jpg', [
-      previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 256, 50.45, 18.82, 68.65, '#fed7af', 'A'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 42, 49.61, 36, 54.58, '#fed7af', '')
+      previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 409.333, 50.45, 457.56, 68.65, '#fed7af', 'A'),
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 50.6667, 49.61, 332, 54.58, '#fed7af', '', 313)
     ]),
     'monogram-2-letter-custom-hat': previewConfig('2-Letter-Engraved-Monogram-Patch-Preview.jpg', [
-      previewField('Custom Text', 'Custom Initials', 2, 'Cl-amarillo-low.ttf', 230, 51.07, 19.33, 68.65, '#fed7af', 'AA'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 42, 49.89, 35.01, 54.58, '#fed7af', '')
+      previewField('Custom Text', 'Custom Initials', 2, 'Cl-amarillo-low.ttf', 276, 51.07, 322.98, 68.65, '#fed7af', 'AA'),
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 49.3333, 49.89, 247.06, 54.58, '#fed7af', '', 228.56)
     ]),
     'two-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-GOLD-Patch-Preview.jpg', '#e3af26'),
     'silver-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-SILVER-Patch-Preview.jpg', '#b3b3b3'),
@@ -21,20 +22,20 @@
     'blue-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-BLUE-Patch-Preview.jpg', '#0394fe'),
     'pink-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-PINK-Patch-Preview.jpg', '#e61d5e'),
     'token-monogram-custom-hat': previewConfig('Token-Patch-Preview.jpg', [
-      previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 233, 50.09, 22.1, 68.73, '#fed7af', 'A'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 42, 49.91, 37.52, 54.59, '#fed7af', '')
+      previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 372, 50.09, 455.8, 68.73, '#fed7af', 'A'),
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 50.6667, 49.91, 344.16, 54.59, '#fed7af', '', 325.16)
     ])
   };
   var loadedFonts = {};
 
-  function previewField(property, label, max, font, size, cx, cy, width, color, placeholder) {
-    return { property: property, label: label, max: max, font: font, size: size, cx: cx, cy: cy, width: width, color: color, placeholder: placeholder };
+  function previewField(property, label, max, font, size, cx, baseline, width, color, placeholder, baselineAnchor) {
+    return { property: property, label: label, max: max, font: font, size: size, cx: cx, baseline: baseline, width: width, color: color, placeholder: placeholder, baselineAnchor: baselineAnchor };
   }
   function previewConfig(image, fields) { return { image: image, fields: fields }; }
   function twoLetterConfig(image, color) {
     return previewConfig(image, [
-      previewField('Custom Letter', 'Custom Initials', 2, 'Eurostile-bold-extended.ttf', 213, 51.15, 21.45, 62.97, color, 'AA'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 42, 50.1, 58.5, 54.6, '#020000', 'CUSTOM')
+      previewField('Custom Letter', 'Custom Initials', 2, 'Eurostile-bold-extended.ttf', 238.667, 51.15, 313.7, 62.97, color, 'AA'),
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 49.3333, 50.1, 388, 54.6, '#020000', 'CUSTOM', 369.5)
     ]);
   }
   var roots = document.querySelectorAll('[data-cl-collection-bundle]');
@@ -171,16 +172,28 @@
       if (previewComponent) previewComponent.hidden = hidden;
     }
     function fitPreview() {
-      var stage = preview.querySelector('.cl-cdb__preview-stage');
-      if (!stage || !stage.clientWidth) return;
-      preview.querySelectorAll('[data-cl-cdb-preview-field]').forEach(function (previewFieldEl) {
-        var line = previewFieldEl.querySelector('.cl-cdb__preview-line');
-        var fontSize = Number(previewFieldEl.dataset.size || 40) * stage.clientWidth / PREVIEW_CANVAS_WIDTH;
-        line.style.fontSize = fontSize + 'px';
-        line.style.transform = 'none';
-        var target = Number(previewFieldEl.dataset.width || 100) / 100 * stage.clientWidth;
-        var measured = Math.max(line.scrollWidth, line.getBoundingClientRect().width);
-        line.style.transform = measured > target ? 'scaleX(' + (target / measured) + ')' : 'none';
+      var canvas = preview.querySelector('[data-cl-cdb-preview-canvas]');
+      var config = active && PREVIEW_CONFIG[active.handle];
+      if (!canvas || !config) return;
+      var context = canvas.getContext('2d');
+      var current = values();
+      context.clearRect(0, 0, PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT);
+      config.fields.forEach(function (item) {
+        var display = current[item.property] || item.placeholder || '';
+        if (!display) return;
+        var family = fontFamily(item.font);
+        var fontSize = item.size;
+        var maxWidth = item.width / 100 * PREVIEW_CANVAS_WIDTH;
+        context.font = fontSize + 'px "' + family + '"';
+        while (fontSize > 8 && context.measureText(display).width > maxWidth) {
+          fontSize = Math.max(8, fontSize - 4 / 3);
+          context.font = fontSize + 'px "' + family + '"';
+        }
+        var baseline = item.baselineAnchor == null ? item.baseline : item.baselineAnchor + fontSize * .375;
+        context.fillStyle = item.color;
+        context.textAlign = 'center';
+        context.textBaseline = 'alphabetic';
+        context.fillText(display.toUpperCase(), item.cx / 100 * PREVIEW_CANVAS_WIDTH, baseline);
       });
     }
     function renderPreview() {
@@ -191,17 +204,11 @@
         setPreviewHidden(!active.image);
         return;
       }
-      var current = values();
-      var overlays = config.fields.map(function (item) {
-        var display = current[item.property] || item.placeholder || '';
-        var family = fontFamily(item.font);
-        return '<span class="cl-cdb__preview-field" data-cl-cdb-preview-field data-size="' + item.size +
-          '" data-width="' + item.width + '" style="left:' + item.cx + '%;top:' + item.cy + '%;width:' + item.width + '%;color:' +
-          item.color + ';font-family:\'' + family + '\',sans-serif"><span class="cl-cdb__preview-line">' +
-          escapeHtml(display) + '</span></span>';
-      }).join('');
+      config.fields.forEach(function (item) { fontFamily(item.font); });
       preview.innerHTML = '<div class="cl-cdb__preview-stage"><img src="' + PREVIEW_IMAGE_BASE +
-        encodeURIComponent(config.image) + '" alt="Preview of ' + escapeHtml(active.title) + '">' + overlays +
+        encodeURIComponent(config.image) + '" alt="Preview of ' + escapeHtml(active.title) + '">' +
+        '<canvas class="cl-cdb__preview-canvas" data-cl-cdb-preview-canvas width="' + PREVIEW_CANVAS_WIDTH +
+        '" height="' + PREVIEW_CANVAS_HEIGHT + '" aria-hidden="true"></canvas>' +
         '</div>';
       setPreviewHidden(false);
       var image = preview.querySelector('img');
