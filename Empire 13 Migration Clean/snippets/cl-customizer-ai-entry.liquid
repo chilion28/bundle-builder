@@ -1,0 +1,108 @@
+{%- comment -%}
+  cl-customizer-ai-entry — unified Step 1 for the AI build: two tabs,
+  "Upload photo" and "Create with AI", driven by product metafields. Only one
+  panel shows at a time; both feed the SAME editor/preview/cart downstream.
+
+  Place anywhere in GemPages (ONE per page):
+      {% render 'cl-customizer-ai-entry' %}
+  REQUIRES {% render 'cl-customizer-ai-bootstrap' %} once on the same page.
+  Reuses {% render 'cl-customizer-upload' %} for the upload panel (shared markup).
+
+  Per-product metafields (see docs/IMAGE-CUSTOMIZER-REBUILD-SPEC.md):
+    custom.customizer_ai_enabled   boolean  false -> no tabs, upload only
+    custom.customizer_default_view  text     'upload' | 'ai'
+    custom.customizer_ai_display    text     'inline' | 'modal'
+
+  Omar's AI studio widget mounts into [data-cl-ai-studio-mount]. The widget
+  fires `cl:ai-image:selected` on document; the forked engine's bridge
+  (cl-ai-hat-ai.js) pulls the image into the editor.
+{%- endcomment -%}
+
+{%- assign ai_enabled = product.metafields.custom.customizer_ai_enabled.value -%}
+{%- assign default_view = product.metafields.custom.customizer_default_view.value | default: 'upload' -%}
+{%- assign ai_display = product.metafields.custom.customizer_ai_display.value | default: 'inline' -%}
+
+{%- if ai_enabled != true -%}
+  {%- comment -%} AI off for this product: plain upload, no tabs. {%- endcomment -%}
+  {% render 'cl-customizer-upload' %}
+{%- else -%}
+<style>
+  .cl-aie__tabs{display:flex;gap:8px;margin:0 0 16px}
+  .cl-aie__tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 12px;
+    border:1.5px solid var(--line,#e5e7eb);border-radius:10px;background:#fff;cursor:pointer;line-height:1.25;font:inherit}
+  .cl-aie__tab small{font-size:11.5px;color:#6b7280;font-weight:400}
+  .cl-aie__tab.is-active{border-color:#0088c7;background:#eaf6fc;color:#0088c7}
+  .cl-aie__tab.is-active small{color:#0a6d9e}
+  .cl-aie__panel[hidden]{display:none}
+  .cl-aie__studio-open{display:inline-flex;align-items:center;gap:6px;padding:11px 18px;border:none;border-radius:10px;
+    background:#111;color:#fff;font:inherit;font-size:14px;cursor:pointer}
+  .cl-aie__modal{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.5);padding:16px}
+  .cl-aie__modal[hidden]{display:none}
+  .cl-aie__modal-card{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:18px 20px;position:relative}
+  .cl-aie__modal-x{position:absolute;top:12px;right:12px;border:none;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:#6b7280}
+</style>
+
+<div class="cl-aie" data-cl-aie data-default="{{ default_view }}" data-display="{{ ai_display }}">
+  <div class="cl-aie__tabs" role="tablist" aria-label="Choose how to add your design">
+    <button type="button" class="cl-aie__tab" data-aie-tab="upload" role="tab">
+      Upload photo<small>I already have my design</small>
+    </button>
+    <button type="button" class="cl-aie__tab" data-aie-tab="ai" role="tab">
+      Create with AI<small>Make one from a photo</small>
+    </button>
+  </div>
+
+  <div class="cl-aie__panel" data-aie-panel="upload">
+    {% render 'cl-customizer-upload' %}
+  </div>
+
+  <div class="cl-aie__panel" data-aie-panel="ai" hidden>
+    {%- if ai_display == 'modal' -%}
+      <div style="text-align:center;padding:22px;border:1.5px dashed var(--line,#e5e7eb);border-radius:12px">
+        <p style="margin:0 0 12px;color:#6b7280;font-size:13px">The AI studio opens in a window.</p>
+        <button type="button" class="cl-aie__studio-open" data-aie-modal-open>Open AI studio</button>
+      </div>
+    {%- else -%}
+      {%- comment -%} Omar's AI studio widget mounts here (inline). {%- endcomment -%}
+      <div data-cl-ai-studio-mount></div>
+    {%- endif -%}
+  </div>
+
+  {%- if ai_display == 'modal' -%}
+  <div class="cl-aie__modal" data-aie-modal hidden role="dialog" aria-modal="true" aria-label="Create with AI">
+    <div class="cl-aie__modal-card">
+      <button type="button" class="cl-aie__modal-x" data-aie-modal-close aria-label="Close">&times;</button>
+      {%- comment -%} Omar's AI studio widget mounts here (modal). {%- endcomment -%}
+      <div data-cl-ai-studio-mount></div>
+    </div>
+  </div>
+  {%- endif -%}
+</div>
+
+<script>
+(function () {
+  var root = document.querySelector('[data-cl-aie]');
+  if (!root) return;
+  var tabs = root.querySelectorAll('[data-aie-tab]');
+  var panels = root.querySelectorAll('[data-aie-panel]');
+  var display = root.getAttribute('data-display') || 'inline';
+  var modal = root.querySelector('[data-aie-modal]');
+  function activate(which, openModal) {
+    tabs.forEach(function (t) { t.classList.toggle('is-active', t.getAttribute('data-aie-tab') === which); });
+    panels.forEach(function (p) { p.hidden = p.getAttribute('data-aie-panel') !== which; });
+    if (which === 'ai' && display === 'modal' && modal && openModal) { modal.hidden = false; }
+  }
+  tabs.forEach(function (t) { t.addEventListener('click', function () { activate(t.getAttribute('data-aie-tab'), true); }); });
+  if (modal) {
+    var openBtn = root.querySelector('[data-aie-modal-open]');
+    var closeBtn = root.querySelector('[data-aie-modal-close]');
+    if (openBtn) openBtn.addEventListener('click', function () { modal.hidden = false; });
+    if (closeBtn) closeBtn.addEventListener('click', function () { modal.hidden = true; });
+    modal.addEventListener('click', function (e) { if (e.target === modal) modal.hidden = true; });
+  }
+  var def = root.getAttribute('data-default') === 'ai' ? 'ai' : 'upload';
+  activate(def, false);
+})();
+</script>
+{%- endif -%}

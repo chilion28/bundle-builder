@@ -1,0 +1,201 @@
+{%- comment -%}
+  ============================================================================
+  cl-customizer-AI-bootstrap — ISOLATED fork for the AI-studio integration.
+  Loads the FORKED engine cl-ai-hat-ai.js + cl-ai-hat-ai.css so the stable
+  production page (image-hat-rectangle, legacy cl-ai-hat-builder.liquid) and
+  its cl-ai-hat.js are NEVER touched while the AI flow is experimental.
+  Use this ONLY on the isolated AI test page. See
+  docs/IMAGE-CUSTOMIZER-REBUILD-SPEC.md (Option A). Consolidate back into the
+  single engine once the AI flow is proven.
+  ============================================================================
+  cl-customizer-bootstrap — invisible infrastructure for the SPLIT customizer
+  blocks (cl-customizer-prompt / -upload / -preview / -style / -colors / -cta).
+
+  Renders ONCE per page the pieces the engine (cl-ai-hat.js) needs no matter
+  which visible blocks are placed, and WHERE they are placed in GemPages:
+    · the [data-cl-ai-builder] root (config attributes the engine reads)
+    · the hidden line-item property inputs (read/written by global data-* lookups)
+    · the product variant data + optional per-shape geometry config
+    · the crop/zoom editor modal + the image lightbox (hidden overlays)
+    · the CSS + JS
+
+  The engine finds every visible piece by GLOBAL document lookups (no root-scoped
+  queries), so the blocks can live in any GemPages row/column. Legacy
+  cl-ai-hat-builder / cl-customizer-embed are untouched — this is a parallel set.
+
+  Drop one line into any block on the product page (invisible):
+      {% render 'cl-customizer-bootstrap' %}
+
+  Idempotent: guards so config/data/CSS/JS emit only once even if rendered twice.
+  Requires `product` in scope. Reads custom.customizer_config (same as
+  cl-customizer-embed) for shape/geometry/frame/mask/flags.
+{%- endcomment -%}
+
+{%- unless cl_customizer_booted -%}
+{%- assign cl_customizer_booted = true -%}
+
+{{ 'cl-ai-hat-ai.css' | asset_url | stylesheet_tag }}
+
+{%- comment -%} ---- read the product's customizer metaobject (shape + geometry) ---- {%- endcomment -%}
+{%- assign cfg = product.metafields.custom.customizer_config.value -%}
+{%- assign shape_key = cfg.shape_name | default: 'Rectangle' -%}
+{%- assign file_prefix = cfg.file_prefix | default: 'image-hat' -%}
+{%- assign frame_url = '' -%}
+{%- assign mask_url = '' -%}
+{%- if cfg.frame_image != blank -%}{%- assign frame_url = cfg.frame_image | image_url: width: 2000 -%}{%- endif -%}
+{%- if cfg.mask_image != blank -%}{%- assign mask_url = cfg.mask_image | image_url: width: 2000 -%}{%- endif -%}
+
+{%- if cfg.shapes_json != blank -%}
+  {%- assign customizer_config = cfg.shapes_json -%}
+{%- else -%}
+  {%- capture customizer_config -%}
+{
+  "shapes": {
+    "{{ shape_key | downcase }}": {
+      "window":      { "l": {{ cfg.window_l | default: 0 }}, "t": {{ cfg.window_t | default: 0 }}, "w": {{ cfg.window_w | default: 1 }}, "h": {{ cfg.window_h | default: 1 }} },
+      "frame_aspect": {{ cfg.frame_aspect | default: 1 }},
+      "safe":        { "w": {{ cfg.safe_w | default: 0.95 }}, "h": {{ cfg.safe_h | default: 0.95 }} },
+      "patch_in":    { "w": {{ cfg.patch_in_w | default: 2 }}, "h": {{ cfg.patch_in_h | default: 2 }} },
+      "usable": {{ cfg.usable | default: 0.9 }},
+      "text_y": {{ cfg.text_y | default: 0.86 }},
+      "text_maxw": {{ cfg.text_maxw | default: 0.86 }}
+    }
+  }
+}
+  {%- endcapture -%}
+{%- endif -%}
+
+{%- comment -%} Locate Style / Color options (for the variant-resolution data) {%- endcomment -%}
+{%- assign style_opt = null -%}
+{%- assign color_opt = null -%}
+{%- for opt in product.options_with_values -%}
+  {%- assign dn = opt.name | downcase -%}
+  {%- if dn contains 'style' -%}{%- assign style_opt = opt -%}{%- endif -%}
+  {%- if dn contains 'color' or dn contains 'colour' -%}{%- assign color_opt = opt -%}{%- endif -%}
+{%- endfor -%}
+
+{%- assign shape_list = shape_key | split: ',' -%}
+
+{%- comment -%} ---- the engine root: config holder (no two-column layout) ---- {%- endcomment -%}
+<div class="cl-customizer-boot" data-cl-ai-builder
+     data-cl-ai-default-shape="{{ shape_list[0] }}"
+     data-cl-ai-file-prefix="{{ file_prefix }}"
+     data-patch-font="{{ 'AkzidenzGrotesk-Black.woff2' | asset_url }}"
+     style="display:none">
+
+  {%- comment -%} hidden line-item properties (read/written by data-* lookups) {%- endcomment -%}
+  <input type="hidden" name="properties[Patch Shape]" value="{{ shape_list[0] }}" data-cl-ai-prop-shape>
+  <input type="hidden" name="properties[_Artwork Print]" value="" data-cl-ai-prop-art>
+  <input type="hidden" name="properties[_Artwork Original]" value="" data-cl-ai-prop-orig>
+  <input type="hidden" name="properties[_Artwork PDF]" value="" data-cl-ai-prop-pdf>
+  <input type="hidden" name="properties[_Artwork Preview]" value="" data-cl-ai-prop-preview>
+  <input type="hidden" name="properties[Custom Text]" value="" data-cl-ai-prop-text>
+  <input type="hidden" name="properties[Text Color]" value="" data-cl-ai-prop-textcolor>
+  <input type="hidden" name="properties[_Quality Score]" value="" data-cl-ai-prop-score>
+
+  {%- comment -%} Variant data for the JS (Style|Color → variant id) {%- endcomment -%}
+  <script type="application/json" data-cl-ai-hat-data>
+  {
+    "productId": {{ product.id | json }},
+    "styleOptionIndex": {% if style_opt %}{{ style_opt.position }}{% else %}0{% endif %},
+    "colorOptionIndex": {% if color_opt %}{{ color_opt.position }}{% else %}0{% endif %},
+    "moneyFormat": {{ shop.money_format | json }},
+    "variants": [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id }},
+          "available": {{ v.available }},
+          "price": {{ v.price }},
+          "option1": {{ v.option1 | json }},
+          "option2": {{ v.option2 | json }},
+          "option3": {{ v.option3 | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  </script>
+
+  {%- if customizer_config != blank -%}
+  <script type="application/json" data-cl-ai-config>
+  {{ customizer_config }}
+  </script>
+  {%- endif -%}
+</div>
+
+{%- comment -%} ===== CROP / ZOOM / ROTATE EDITOR (modal; portaled to <body> by JS) ===== {%- endcomment -%}
+<div class="cl-ai-ed" data-cl-ai-editor hidden role="dialog" aria-modal="true" aria-label="Position your artwork">
+  <div class="cl-ai-ed__backdrop" data-cl-ai-ed-backdrop></div>
+  <div class="cl-ai-ed__panel">
+    <p class="cl-ai-ed__title">Position your artwork</p>
+    <p class="cl-ai-ed__hint">Drag to move · scroll or slider to zoom · buttons to rotate. Keep the subject inside the dashed line.</p>
+
+    <div class="cl-ai-ed__stage" data-cl-ai-ed-stage>
+      <canvas class="cl-ai-ed__canvas" data-cl-ai-ed-canvas></canvas>
+      <div class="cl-ai-ed__mask" data-cl-ai-ed-mask data-shape="rectangle" aria-hidden="true">
+        <div class="cl-ai-ed__mask-safe"></div>
+      </div>
+      <img class="cl-ai-ed__frame" data-cl-ai-ed-frame alt="" aria-hidden="true">
+      {%- comment -%} Transform handles draw here (z-index above the frame) so an opaque
+        bezel/rivets can't hide the resize corners. Engine falls back to the base canvas
+        if this is absent. {%- endcomment -%}
+      <canvas class="cl-ai-ed__overlay" data-cl-ai-ed-overlay aria-hidden="true"></canvas>
+    </div>
+    <p class="cl-ai-ed__warn" data-cl-ai-ed-warn hidden>⚠ Part of your artwork is outside the dashed line and may be trimmed when printed. Zoom out, drag it, or switch to “Fit whole image” to keep it inside.</p>
+
+    <div class="cl-ai-ed__modes">
+      <button type="button" class="cl-ai-ed__mode is-active" data-cl-ai-ed-mode="fill">Fill patch</button>
+      <button type="button" class="cl-ai-ed__mode" data-cl-ai-ed-mode="fit">Fit whole image</button>
+      <label class="cl-ai-ed__bg" data-cl-ai-ed-bgwrap hidden>
+        Background
+        <input type="color" data-cl-ai-ed-bg value="#ffffff" aria-label="Background colour">
+      </label>
+      <label class="cl-ai-ed__boxtoggle"><input type="checkbox" data-cl-ai-ed-box checked> Show box</label>
+    </div>
+
+    <div class="cl-ai-ed__controls">
+      <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-l aria-label="Rotate left">⟲</button>
+      <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-out aria-label="Zoom out">−</button>
+      <input type="range" class="cl-ai-ed__zoom" data-cl-ai-ed-zoom min="0.4" max="4" step="0.01" value="1" aria-label="Zoom">
+      <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-zoom-in aria-label="Zoom in">+</button>
+      <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-rotate-r aria-label="Rotate right">⟳</button>
+      <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-center aria-label="Center artwork">Center</button>
+      <button type="button" class="cl-ai-ed__ctl" data-cl-ai-ed-reset aria-label="Reset">Reset</button>
+    </div>
+
+    <div class="cl-ai-ed__textrow">
+      <label class="cl-ai-ed__textcheck"><input type="checkbox" data-cl-ai-text-toggle> Add text</label>
+      <div class="cl-ai-ed__text-group" data-cl-ai-text-group hidden>
+        <input type="text" class="cl-ai-ed__textinput" maxlength="30"
+               placeholder="Type text, then drag &amp; resize it on the patch" data-cl-ai-text autocomplete="off">
+        <label class="cl-ai-ed__tclabel">Text
+          <input type="color" data-cl-ai-text-fill value="#000000" aria-label="Text colour">
+        </label>
+        <div class="cl-ai-ed__outline" data-cl-ai-text-outline role="radiogroup" aria-label="Text outline">
+          <span class="cl-ai-ed__tclabel">Outline</span>
+          <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--white is-active" data-cl-ai-outline data-value="white" role="radio" aria-checked="true" aria-label="White outline"></button>
+          <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--black" data-cl-ai-outline data-value="black" role="radio" aria-checked="false" aria-label="Black outline"></button>
+          <button type="button" class="cl-ai-ed__ol cl-ai-ed__ol--none" data-cl-ai-outline data-value="none" role="radio" aria-checked="false" aria-label="No outline" title="No outline"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-ai-ed__actions">
+      <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--ghost" data-cl-ai-ed-cancel>Cancel</button>
+      <button type="button" class="cl-ai-ed__btn cl-ai-ed__btn--primary" data-cl-ai-ed-confirm>Use this image</button>
+    </div>
+  </div>
+</div>
+
+{%- comment -%} Hat image lightbox — populated by the quantity-grid thumbnail buttons. {%- endcomment -%}
+<div class="cl-ai-imgbox" data-cl-ai-imgbox hidden role="dialog" aria-modal="true" aria-labelledby="cl-ai-imgbox-title">
+  <button type="button" class="cl-ai-imgbox__backdrop" data-cl-ai-imgbox-close aria-label="Close image preview"></button>
+  <div class="cl-ai-imgbox__panel">
+    <button type="button" class="cl-ai-imgbox__close" data-cl-ai-imgbox-close aria-label="Close image preview">×</button>
+    <img class="cl-ai-imgbox__image" data-cl-ai-imgbox-image src="" alt="">
+    <p class="cl-ai-imgbox__title" id="cl-ai-imgbox-title" data-cl-ai-imgbox-title></p>
+  </div>
+</div>
+
+<script src="{{ 'cl-ai-hat-ai.js' | asset_url }}" defer></script>
+
+{%- endunless -%}
