@@ -21,8 +21,8 @@
     'pink-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-PINK-Patch-Preview.jpg', '#e61d5e'),
     'token-monogram-custom-hat': previewConfig('Token-Patch-Preview.jpg', [
       previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 372, 50.09, 455.8, 68.73, '#fed7af', 'A'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 50.6667, 49.91, 344.16, 54.59, '#fed7af', '', 325.16)
-    ])
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 66.6667, 49.91, 350.16, 54.59, '#fed7af', '', 325.16)
+    ], 720, 800)
   };
   var loadedFonts = {};
 
