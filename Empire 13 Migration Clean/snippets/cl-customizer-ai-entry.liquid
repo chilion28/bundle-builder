@@ -88,6 +88,9 @@
   var panels = root.querySelectorAll('[data-aie-panel]');
   var display = root.getAttribute('data-display') || 'inline';
   var modal = root.querySelector('[data-aie-modal]');
+  // Portal the modal to <body> so position:fixed is measured against the viewport,
+  // not trapped by a GemPages wrapper with a transform/filter/contain.
+  if (modal && modal.parentNode !== document.body) document.body.appendChild(modal);
   function activate(which, openModal) {
     tabs.forEach(function (t) { t.classList.toggle('is-active', t.getAttribute('data-aie-tab') === which); });
     panels.forEach(function (p) { p.hidden = p.getAttribute('data-aie-panel') !== which; });
