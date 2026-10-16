@@ -11,7 +11,7 @@
     ], 720, 800),
     'monogram-2-letter-custom-hat': previewConfig('2-Letter-Engraved-Monogram-Patch-Preview.jpg', [
       previewField('Custom Text', 'Custom Initials', 2, 'Cl-amarillo-low.ttf', 276, 51.07, 322.98, 68.65, '#fed7af', 'AA'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 49.3333, 49.89, 247.06, 54.58, '#fed7af', '', 228.56)
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 49.3333, 49.89, 247.06, 48, '#fed7af', '', 228.56)
     ], 800, 600, '2-Letter-Engraved-Monogram-Patch-Cover-Bar-Thin.png'),
     'two-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-GOLD-Patch-Preview.jpg', '#e3af26'),
     'silver-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-SILVER-Patch-Preview.jpg', '#b3b3b3'),
@@ -21,7 +21,7 @@
     'pink-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-PINK-Patch-Preview.jpg', '#e61d5e'),
     'token-monogram-custom-hat': previewConfig('Token-Patch-Preview.jpg', [
       previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 372, 50.09, 455.8, 68.73, '#fed7af', 'A'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 66.6667, 49.91, 350.16, 52, '#fed7af', '', 325.16)
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 66.6667, 49.91, 350.16, 45, '#fed7af', '', 325.16)
     ], 720, 800)
   };
   var loadedFonts = {};
