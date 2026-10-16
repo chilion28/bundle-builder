@@ -136,8 +136,11 @@
     textFill: '#000000',       // caption colour (full picker)
     textOutline: 'white',      // caption outline: 'white' | 'black' | 'none'
     artUrl: '',
-    score: ''
+    score: '',
+    aiSource: false            // true when the image came from the AI studio (no manual text)
   };
+  // Last `cl:ai-image:selected` payload, for writing AI provenance properties.
+  var lastAiDetail = null;
 
   /* =====================================================================
    * STEP 1 — copy prompt
@@ -298,9 +301,12 @@
     else if (e.target.closest('[data-cl-ai-edit]')) { if (edState.img) openEditor(false); }
   });
 
-  function handleFile(file) {
+  function handleFile(file, isAi) {
     if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) { setStatus('err', 'Please upload a JPG, PNG or WEBP image.'); return; }
     if (file.size > CL_AI_HAT.maxFileMB * 1024 * 1024) { setStatus('err', 'File is over ' + CL_AI_HAT.maxFileMB + 'MB.'); return; }
+    // AI-sourced images skip the manual text overlay and carry AI provenance.
+    state.aiSource = !!isAi;
+    if (isAi && lastAiDetail) { setAiProps(lastAiDetail); } else { clearAiProps(); }
     var localUrl = URL.createObjectURL(file);
     var img = new Image();
     img.onload = function () {
@@ -917,6 +923,11 @@
     if (isNew) { edState.scale = 1; edState.rotation = 0; edState.offsetX = 0; edState.offsetY = 0; edState.stretchX = 1; edState.stretchY = 1; }
     if (edMask) edMask.setAttribute('data-shape', sh(state.shape));
     if (edZoom) edZoom.value = edState.scale;
+    // AI-sourced images: the text is part of the generation, so hide the whole
+    // manual "Add text" row and force the caption off. Upload path is unchanged.
+    var textRow = (textToggle && textToggle.closest) ? textToggle.closest('.cl-ai-ed__textrow') : null;
+    if (textRow) textRow.hidden = !!state.aiSource;
+    if (state.aiSource) { state.text = ''; }
     // Reflect any existing caption in the modal's text controls.
     if (textToggle) textToggle.checked = !!state.text;
     if (textGroup) textGroup.hidden = !state.text;
@@ -1905,6 +1916,42 @@
       state.textOutline = btn.dataset.value;
       syncText();
     });
+  });
+
+  /* =====================================================================
+   * AI STUDIO BRIDGE — receive a generated image from Omar's studio.
+   * The widget fires `cl:ai-image:selected` on document with the final,
+   * full-res, CORS-safe Shopify Files URL. We fetch it as a blob (a blob
+   * object URL is same-origin, so the canvas stays untainted and exportable),
+   * run it through the SAME ingest as an upload, flag it AI-sourced (no manual
+   * text), and record provenance line-item properties.
+   * ===================================================================== */
+  var propAiGen    = $('[data-cl-ai-prop-aigen]');
+  var propAiPrompt = $('[data-cl-ai-prop-aiprompt]');
+  var propAiStyle  = $('[data-cl-ai-prop-aistyle]');
+  var propAiAspect = $('[data-cl-ai-prop-aiaspect]');
+  function setAiProps(d) {
+    if (propAiGen)    propAiGen.value    = d.generationId || '';
+    if (propAiPrompt) propAiPrompt.value = d.prompt || '';
+    if (propAiStyle)  propAiStyle.value  = d.styleName || '';
+    if (propAiAspect) propAiAspect.value = d.aspectRatio || '';
+  }
+  function clearAiProps() {
+    [propAiGen, propAiPrompt, propAiStyle, propAiAspect].forEach(function (p) { if (p) p.value = ''; });
+  }
+  document.addEventListener('cl:ai-image:selected', function (e) {
+    var d = (e && e.detail) || {};
+    if (!d.imageUrl) return;
+    lastAiDetail = d;
+    setStatus('', 'Loading your AI design…');
+    fetch(d.imageUrl, { mode: 'cors', credentials: 'omit' })
+      .then(function (r) { if (!r.ok) throw new Error('http ' + r.status); return r.blob(); })
+      .then(function (blob) {
+        var type = /^image\/(png|jpe?g|webp)$/i.test(blob.type) ? blob.type : 'image/jpeg';
+        var ext = type.indexOf('png') > -1 ? 'png' : type.indexOf('webp') > -1 ? 'webp' : 'jpg';
+        handleFile(new File([blob], (filePrefix || 'ai-design') + '.' + ext, { type: type }), true);
+      })
+      .catch(function () { setStatus('err', 'Could not load the AI image. Please try again, or upload a file.'); });
   });
 
   /* Quantity is now per-colour in the grid above (see renderGrid / qtySel). */
