@@ -4,17 +4,15 @@
   var TEMPLATE_API_URL = 'https://citylocsproduction.com/api/get-product-template';
   var PREVIEW_IMAGE_BASE = 'https://cdn-zeptoapps.com/product-personalizer/images/citylocs.myshopify.com/';
   var PREVIEW_FONT_BASE = 'https://cdn-zeptoapps.com/product-personalizer/font/citylocs.myshopify.com/';
-  var PREVIEW_CANVAS_WIDTH = 800;
-  var PREVIEW_CANVAS_HEIGHT = 600;
   var PREVIEW_CONFIG = {
     'monogram-custom-hat': previewConfig('Blank-Monogram-Patch-Preview.jpg', [
-      previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 409.333, 50.45, 457.56, 68.65, '#fed7af', 'A'),
-      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 50.6667, 49.61, 332, 54.58, '#fed7af', '', 313)
-    ]),
+      previewField('Custom Text', 'Custom Initial', 1, 'Cl-monogram.ttf', 409.333, 50.45, 457.56, 68.65, '#fed7af', 'A', null, 122),
+      previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 66.6667, 49.61, 338, 54.58, '#fed7af', '', 313)
+    ], 720, 800),
     'monogram-2-letter-custom-hat': previewConfig('2-Letter-Engraved-Monogram-Patch-Preview.jpg', [
       previewField('Custom Text', 'Custom Initials', 2, 'Cl-amarillo-low.ttf', 276, 51.07, 322.98, 68.65, '#fed7af', 'AA'),
       previewField('Custom Text Two', 'Custom Text', 20, 'Eurostile-bold-extended.ttf', 49.3333, 49.89, 247.06, 54.58, '#fed7af', '', 228.56)
-    ]),
+    ], 800, 600, '2-Letter-Engraved-Monogram-Patch-Cover-Bar-Thin.png'),
     'two-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-GOLD-Patch-Preview.jpg', '#e3af26'),
     'silver-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-SILVER-Patch-Preview.jpg', '#b3b3b3'),
     'copper-2-letter-monogram-custom-hat': twoLetterConfig('2-Letter-Monogram-COPPER-Patch-Preview.jpg', '#925024'),
@@ -28,10 +26,12 @@
   };
   var loadedFonts = {};
 
-  function previewField(property, label, max, font, size, cx, baseline, width, color, placeholder, baselineAnchor) {
-    return { property: property, label: label, max: max, font: font, size: size, cx: cx, baseline: baseline, width: width, color: color, placeholder: placeholder, baselineAnchor: baselineAnchor };
+  function previewField(property, label, max, font, size, cx, baseline, width, color, placeholder, baselineAnchor, startX) {
+    return { property: property, label: label, max: max, font: font, size: size, cx: cx, baseline: baseline, width: width, color: color, placeholder: placeholder, baselineAnchor: baselineAnchor, startX: startX };
   }
-  function previewConfig(image, fields) { return { image: image, fields: fields }; }
+  function previewConfig(image, fields, width, height, cover) {
+    return { image: image, fields: fields, width: width || 800, height: height || 600, cover: cover || '' };
+  }
   function twoLetterConfig(image, color) {
     return previewConfig(image, [
       previewField('Custom Letter', 'Custom Initials', 2, 'Eurostile-bold-extended.ttf', 238.667, 51.15, 313.7, 62.97, color, 'AA'),
@@ -172,28 +172,32 @@
       if (previewComponent) previewComponent.hidden = hidden;
     }
     function fitPreview() {
-      var canvas = preview.querySelector('[data-cl-cdb-preview-canvas]');
+      var canvas = preview.querySelector('[data-cl-cdb-preview-canvas="base"]');
+      var topCanvas = preview.querySelector('[data-cl-cdb-preview-canvas="top"]');
       var config = active && PREVIEW_CONFIG[active.handle];
-      if (!canvas || !config) return;
+      if (!canvas || !topCanvas || !config) return;
       var context = canvas.getContext('2d');
+      var topContext = topCanvas.getContext('2d');
       var current = values();
-      context.clearRect(0, 0, PREVIEW_CANVAS_WIDTH, PREVIEW_CANVAS_HEIGHT);
-      config.fields.forEach(function (item) {
+      context.clearRect(0, 0, config.width, config.height);
+      topContext.clearRect(0, 0, config.width, config.height);
+      config.fields.forEach(function (item, index) {
         var display = current[item.property] || item.placeholder || '';
         if (!display) return;
+        var drawContext = config.cover && index > 0 ? topContext : context;
         var family = fontFamily(item.font);
         var fontSize = item.size;
-        var maxWidth = item.width / 100 * PREVIEW_CANVAS_WIDTH;
-        context.font = fontSize + 'px "' + family + '"';
-        while (fontSize > 8 && context.measureText(display).width > maxWidth) {
+        var maxWidth = item.width / 100 * config.width;
+        drawContext.font = fontSize + 'px "' + family + '"';
+        while (fontSize > 8 && drawContext.measureText(display).width > maxWidth) {
           fontSize = Math.max(8, fontSize - 4 / 3);
-          context.font = fontSize + 'px "' + family + '"';
+          drawContext.font = fontSize + 'px "' + family + '"';
         }
         var baseline = item.baselineAnchor == null ? item.baseline : item.baselineAnchor + fontSize * .375;
-        context.fillStyle = item.color;
-        context.textAlign = 'center';
-        context.textBaseline = 'alphabetic';
-        context.fillText(display.toUpperCase(), item.cx / 100 * PREVIEW_CANVAS_WIDTH, baseline);
+        drawContext.fillStyle = item.color;
+        drawContext.textAlign = item.startX == null ? 'center' : 'start';
+        drawContext.textBaseline = 'alphabetic';
+        drawContext.fillText(display.toUpperCase(), item.startX == null ? item.cx / 100 * config.width : item.startX, baseline);
       });
     }
     function renderPreview() {
@@ -205,10 +209,13 @@
         return;
       }
       config.fields.forEach(function (item) { fontFamily(item.font); });
-      preview.innerHTML = '<div class="cl-cdb__preview-stage"><img src="' + PREVIEW_IMAGE_BASE +
+      preview.innerHTML = '<div class="cl-cdb__preview-stage" style="aspect-ratio:' + config.width + '/' + config.height + '"><img src="' + PREVIEW_IMAGE_BASE +
         encodeURIComponent(config.image) + '" alt="Preview of ' + escapeHtml(active.title) + '">' +
-        '<canvas class="cl-cdb__preview-canvas" data-cl-cdb-preview-canvas width="' + PREVIEW_CANVAS_WIDTH +
-        '" height="' + PREVIEW_CANVAS_HEIGHT + '" aria-hidden="true"></canvas>' +
+        '<canvas class="cl-cdb__preview-canvas" data-cl-cdb-preview-canvas="base" width="' + config.width +
+        '" height="' + config.height + '" aria-hidden="true"></canvas>' +
+        (config.cover ? '<img class="cl-cdb__preview-cover" src="' + PREVIEW_IMAGE_BASE + encodeURIComponent(config.cover) + '" alt="" aria-hidden="true">' : '') +
+        '<canvas class="cl-cdb__preview-canvas" data-cl-cdb-preview-canvas="top" width="' + config.width +
+        '" height="' + config.height + '" aria-hidden="true"></canvas>' +
         '</div>';
       setPreviewHidden(false);
       var image = preview.querySelector('img');
