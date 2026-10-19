@@ -106,31 +106,6 @@
   }
   var def = root.getAttribute('data-default') === 'ai' ? 'ai' : 'upload';
   activate(def, false);
-
-  // Relocate Omar's AI studio (a Shopify app block placed anywhere in the
-  // GemPages layout) INTO the "Create with AI" tab mount. App blocks can't be
-  // rendered by our JS, so the merchant drops the block anywhere and we move it
-  // here. Moving a DOM node preserves its listeners/state, and the handshake
-  // event is document/window-level so position is irrelevant. If no real studio
-  // is found, the mount is left as-is (e.g. the dev mock during testing).
-  (function relocateStudio() {
-    var mount = (modal && modal.querySelector('[data-cl-ai-studio-mount]')) || root.querySelector('[data-cl-ai-studio-mount]');
-    if (!mount) return;
-    function tryMove() {
-      var studio = document.querySelector('.ai-image-studio');
-      if (!studio) return false;
-      var block = studio.closest('.shopify-app-block') || studio;
-      if (mount.contains(block)) return true;
-      mount.innerHTML = '';            // clear the dev mock if present
-      mount.appendChild(block);
-      return true;
-    }
-    if (!tryMove()) {                  // app block may render after us — watch briefly
-      var obs = new MutationObserver(function () { if (tryMove()) obs.disconnect(); });
-      obs.observe(document.body, { childList: true, subtree: true });
-      setTimeout(function () { obs.disconnect(); }, 8000);
-    }
-  })();
 })();
 </script>
 {%- endif -%}
