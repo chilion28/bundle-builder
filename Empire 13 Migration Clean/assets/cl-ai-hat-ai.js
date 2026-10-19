@@ -1939,7 +1939,10 @@
   function clearAiProps() {
     [propAiGen, propAiPrompt, propAiStyle, propAiAspect].forEach(function (p) { if (p) p.value = ''; });
   }
-  document.addEventListener('cl:ai-image:selected', function (e) {
+  function onAiImageSelected(e) {
+    // The same CustomEvent object can reach us on both document and window
+    // (a document dispatch bubbles up to window); handle it once.
+    if (e.__clHandled) return; e.__clHandled = true;
     var d = (e && e.detail) || {};
     if (!d.imageUrl) return;
     lastAiDetail = d;
@@ -1952,7 +1955,11 @@
         handleFile(new File([blob], (filePrefix || 'ai-design') + '.' + ext, { type: type }), true);
       })
       .catch(function () { setStatus('err', 'Could not load the AI image. Please try again, or upload a file.'); });
-  });
+  }
+  // Listen on BOTH document and window — the studio currently dispatches on
+  // window; listening on both makes the handshake robust either way.
+  document.addEventListener('cl:ai-image:selected', onAiImageSelected);
+  window.addEventListener('cl:ai-image:selected', onAiImageSelected);
 
   /* Quantity is now per-colour in the grid above (see renderGrid / qtySel). */
 
