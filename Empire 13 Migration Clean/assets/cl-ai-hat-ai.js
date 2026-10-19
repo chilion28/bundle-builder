@@ -1,3 +1,4 @@
+/* cl-ai-hat-ai build: 2026-10-19b (force cache-bust) */
 /* Create Your AI Hat — builder behaviour.
  * Self-contained. Loaded by snippets/cl-ai-hat-builder.liquid.
  *
