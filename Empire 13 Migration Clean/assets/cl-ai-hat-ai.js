@@ -2001,10 +2001,12 @@
       if (propPdf && propPdf.value) props['_Artwork PDF'] = propPdf.value;
       if (propPreview && propPreview.value) props['_Artwork Preview'] = propPreview.value; // framed patch visual
       if (state.aiSource) {                   // AI-studio provenance (set by the bridge)
+        // All `_`-prefixed so they're hidden from the customer (cart/checkout)
+        // but kept on the order for provenance (admin + exports).
         if (propAiGen && propAiGen.value) props['_AI Generation ID'] = propAiGen.value;
-        if (propAiPrompt && propAiPrompt.value) props['AI Prompt'] = propAiPrompt.value;
-        if (propAiStyle && propAiStyle.value) props['AI Style'] = propAiStyle.value;
-        if (propAiAspect && propAiAspect.value) props['AI Aspect Ratio'] = propAiAspect.value;
+        if (propAiPrompt && propAiPrompt.value) props['_AI Prompt'] = propAiPrompt.value;
+        if (propAiStyle && propAiStyle.value) props['_AI Style'] = propAiStyle.value;
+        if (propAiAspect && propAiAspect.value) props['_AI Aspect Ratio'] = propAiAspect.value;
       }
       if (state.text) {                       // ~90% of orders have no patch text
         props['Custom Text'] = state.text;

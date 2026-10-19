@@ -102,8 +102,9 @@ document.dispatchEvent(new CustomEvent('cl:ai-image:selected', {
 ```
 - Fire only on the user's "use this" action, with the FINAL image (not the browse preview).
 - `imageUrl` must be a stable public `cdn.shopify.com/s/files/...` URL (CORS-enabled, full-res).
-- The four non-image fields become order provenance (`_AI Generation ID` / `AI Prompt` /
-  `AI Style` / `AI Aspect Ratio`).
+- The four non-image fields become order provenance, all `_`-prefixed
+  (`_AI Generation ID` / `_AI Prompt` / `_AI Style` / `_AI Aspect Ratio`) so they are
+  hidden from the customer in cart/checkout but kept on the order (admin + exports).
 
 ### 6b. Back end — the 4K upscale on purchase
 - Resolution need is product-size driven: small patches/mini-plates clear print at ~1K;
